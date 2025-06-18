@@ -1,0 +1,9 @@
+siteName: Una Scelta
+htmlHead: >-
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/m4rrc0/ctx-css@c/una-scelta/dist/index.min.css">
+  <link rel="stylesheet"
+  href="/local.css">
+lang: it
+collections:
+  - articles
