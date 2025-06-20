@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="{{lang or 'en'}}" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="{{ eleventy.generator }}" />
+
+    <!-- prettier-ignore -->
+    <script>(function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement)</script>
+
+    <!-- Metadata -->
+    <title>{{ metadata.title }}</title>
+    {% if metadata.description %}
+    <meta name="description" content="{{ metadata.description }}" />
+    {% endif %} {% if metadata.image %}
+    <meta name="image" content="{{ metadata.image }}" />
+    {% endif %}
+
+    <!-- Alternate langs -->
+    <link rel="alternate" hreflang="{{lang}}" href="{{baseUrl}}{{page.url}}" />
+    {% for link in page.url | locale_links %}
+    <link
+      rel="alternate"
+      hreflang="{{link.lang}}"
+      href="{{baseUrl}}{{link.url}}"
+    />
+    {% endfor %}
+    <!-- TODO: Add when we can identify the default lang -->
+    <!-- <link rel="alternate" hreflang="x-default" href="{{page.url}}" /> -->
+
+    <!-- User HTML head injection -->
+    {{ globalSettings.htmlHead | safe }}
+
+    <!-- User CSS head injection -->
+    <style>
+      {{ globalSettings.cssHead | safe }}
+    </style>
+  </head>
+  <body>
+    {% set navPages = collections.all | filterCollection({ by: 'lang', value:
+    lang }) | eleventyNavigation %}
+    <!-- Navigation -->
+    {% if navPages | length %}
+    <header>
+      <nav>
+        <!-- Main pages navigation -->
+        <ul id="main-nav">
+          {% for link in navPages %}
+          <!-- prettier-ignore -->
+          {% if link.key == 'pages' and link.order == -1 and link.data.globalSettings.logo %}
+          <li>
+            <!-- prettier-ignore -->
+            <a 
+              href="{{link.url}}"
+              hreflang="{{link.lang}}"
+              {% if link.url == page.url %}aria-current="page"{% endif %}
+            >
+              <img
+                src="{{link.data.globalSettings.logo}}"
+                alt="{{link.title}}"
+                width="100"
+              />
+            </a>
+          </li>
+          {% else %}
+          <li>
+            <!-- prettier-ignore -->
+            <a
+              href="{{link.url}}"
+              hreflang="{{link.lang}}"
+              {% if link.url == page.url %}aria-current="page"{% endif %}
+              >{{link.title}}</a
+            >
+          </li>
+          {% endif %}
+          <!--  -->
+          {% endfor %}
+        </ul>
+
+        <!-- Language navigation -->
+        {% if page.url | locale_links | length %}
+        <ul id="lang-nav">
+          {% for link in page.url | locale_links %}
+          <li>
+            <small>
+              <!-- prettier-ignore -->
+              <a
+                href="{{link.url}}"
+                hreflang="{{link.lang}}"
+                {% if link.lang == page.lang %}aria-current="page"{% endif %}
+                ><abbr lang="{{link.lang}}" title="{{link.label}}"
+                  >{{link.lang | upper}}</abbr
+                ></a
+              >
+            </small>
+          </li>
+          {% endfor %}
+          <li>
+            <small>
+              <!-- prettier-ignore -->
+              <a
+                href="{{page.url}}"
+                hreflang="{{page.lang}}"
+                {% if page.lang == page.lang %}aria-current="page"{% endif %}
+                ><abbr lang="{{page.lang}}" title="{{page.label}}"
+                  >{{page.lang | upper}}</abbr
+                ></a
+              >
+            </small>
+          </li>
+        </ul>
+        {% endif %}
+      </nav>
+    </header>
+    {% endif %}
+    <!-- End of navigation -->
+
+    <!-- Content -->
+    <main>{{ content | safe }}</main>
+    <footer class="full-bleed-before">
+      <div class="infos grid-auto">
+        <div>
+          <p>{{ dico.address[lang] }}</p>
+          <p style="white-space: break-spaces;">{{ data.address | safe }}</p>
+        </div>
+        <div>
+          <p>Whatsapp</p>
+          <p>{{ data.whatsapp }}</p>
+        </div>
+        <div>
+          <p>Email</p>
+          <p>{{ data.email }}</p>
+        </div>
+      </div>
+      <p class="copyright center intrinsic">{{globalSettings.siteName}} &copy; {{data.year}}</p>
+    </footer>
+  </body>
+</html>
