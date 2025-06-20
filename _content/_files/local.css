@@ -114,6 +114,24 @@ main > p:has(> picture + picture) > picture {
   aspect-ratio: 1;
 }
 
+/* Large massage */
+main > section.full-bleed-before {
+  font-size: var(--step-2);
+  background-color: #3a471a;
+  color: #fff;
+  padding-block: 2rem;
+}
+main > section.full-bleed-before p {
+  text-align: center;
+}
+
+/* Callout */
+section.callout {
+  max-width: var(--width-prose);
+  padding: 1rem;
+  border: 1px solid #c9c9c9;
+}
+
 /* Button */
 .btn {
   text-decoration: none;
