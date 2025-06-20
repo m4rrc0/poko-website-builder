@@ -38,7 +38,11 @@ metadata:
   </ul>
 </section>
 
-{% html-tag name="section" class="center intrinsic" %}{% html-tag name="a" href=$urls.contact class="btn book" %}{% $dico.book %}{% /html-tag %}{% /html-tag %}
+<!-- {% html-tag name="section" class="center intrinsic" %}{% html-tag name="a" href=$urls.contact class="btn book" %}{% $dico.book %}{% /html-tag %}{% /html-tag %} -->
+
+<section class="center intrinsic">
+  <a href="/fr/contact/" class="btn book">{% $dico.book %}</a>
+</section>
 
 more than a room... {% .h2 %}
 

@@ -69,12 +69,22 @@ footer .infos {
   /* justify-items: flex-end; */
   --width-column-min: 12rem;
 }
+footer a {
+  color: inherit;
+}
 
 /* Home links */
 .home-links li {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.home-links li a {
+  text-decoration: none;
+  color: inherit;
+}
+.home-links li a:hover {
+  color: #87855c;
 }
 
 /* Button */
