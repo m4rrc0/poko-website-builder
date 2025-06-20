@@ -5,6 +5,14 @@ video {
   display: block;
 }
 
+main > p:has(> iframe:only-child) {
+  margin-block: var(--step-6);
+}
+
+main > p > iframe:only-child {
+  width: 100%;
+}
+
 /* General Layout */
 body {
   display: flex;
@@ -73,36 +81,8 @@ footer a {
   color: inherit;
 }
 
-/* Home links */
-.home-links li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.home-links li a {
-  text-decoration: none;
-  color: inherit;
-}
-.home-links li a:hover {
-  color: #87855c;
-}
-
-/* Button */
-.btn {
-  text-decoration: none;
-  color: #87855c;
-  text-transform: uppercase;
-  border: 3px solid currentColor;
-  padding: 0.5rem 1rem;
-}
-.btn.book {
-  max-width: 100%;
-  width: max(30%, 16ch);
-  /* width: max-content; */
-  text-align: center;
-}
-
-/* Default Page Elements Layout */
+/* Recurring Page Elements Layout */
+/* Large horizontal images */
 main > p:not(:first-child):has(> picture:only-child) {
   max-width: var(--width-max);
   margin-block: var(--step-6);
@@ -122,4 +102,49 @@ main > p:first-child > picture:only-child {
 }
 main > h1 {
   text-align: center;
+}
+
+/* Gallery */
+main > p:has(> picture + picture) {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+main > p:has(> picture + picture) > picture {
+  aspect-ratio: 1;
+}
+
+/* Button */
+.btn {
+  text-decoration: none;
+  color: #87855c;
+  text-transform: uppercase;
+  border: 3px solid currentColor;
+  padding: 0.5rem 1rem;
+}
+.btn.book {
+  max-width: 100%;
+  width: max(30%, 16ch);
+  /* width: max-content; */
+  text-align: center;
+}
+.btn.book:hover {
+  color: #fff;
+  background-color: #87855c;
+  border-color: #87855c;
+}
+
+/* Unique Elements */
+/* Home links */
+.home-links li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.home-links li a {
+  text-decoration: none;
+  color: inherit;
+}
+.home-links li a:hover {
+  color: #87855c;
 }
