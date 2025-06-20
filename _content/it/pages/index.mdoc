@@ -13,19 +13,28 @@ metadata:
   description: ''
   image: ''
 ---
-![Una scelta - sosta contadina](/_images/logo-Una_Scelta_Sosta.webp)
+<heading-group>
+  <h1>
+    <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" eleventy:pictureattr:style="max-width:300px;margin-inline:auto" />
+  </h1>
+</heading-group>
 
-![L'azienda](/_images/Maison-ombre.webp)
-
-## L'azienda
-
-![La camera](/_images/Main-clefs-ombre.webp)
-
-## La camera
-
-![La tavola](/_images/Main-pates-ombre.webp)
-
-## La tavola
+<section class="home-links">
+  <ul role="list" class="grid-auto">
+    <li class="breakout-clickable">
+      <img src="/_images/Maison-ombre.webp" alt="L'azienda" width="150" eleventy:pictureattr:style="max-width:150px;margin-inline:auto" />
+      <p class="h4"><a href="/it/farm/" class="clickable">L'azienda</a></p>
+    </li>
+    <li class="breakout-clickable">
+      <img src="/_images/Main-clefs-ombre.webp" alt="La camera" width="150" eleventy:pictureattr:style="max-width:150px;margin-inline:auto" />
+      <p class="h4"><a href="/it/room/" class="clickable">La camera</a></p>
+    </li>
+    <li class="breakout-clickable">
+      <img src="/_images/Main-pates-ombre.webp" alt="La tavola" width="150" eleventy:pictureattr:style="max-width:150px;margin-inline:auto" />
+      <p class="h4"><a href="/it/table/" class="clickable">La tavola</a></p>
+    </li>
+  </ul>
+</section>
 
 {% html-tag name="section" class="center intrinsic" %}{% html-tag name="a" href=$urls.contact class="btn book" %}{% $dico.book %}{% /html-tag %}{% /html-tag %}
 
