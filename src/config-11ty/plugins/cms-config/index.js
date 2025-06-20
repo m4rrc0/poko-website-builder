@@ -168,6 +168,9 @@ class CmsConfig {
                 pattern: true
               }
             ],
+            // MEDIAS
+            media_folder: `/${CONTENT_DIR}/_images`,
+            public_folder: "/_images",
             fields: pageFields
         };
         const articleFields = [
@@ -182,7 +185,22 @@ class CmsConfig {
           label_singular: "Article",
           // description: "Articles of the website",
           path: "articles/{{slug}}",
+          media_folder: `/${CONTENT_DIR}/_images`,
+          public_folder: "/_images",
           fields: articleFields
+        };
+        const filesCollection = {
+          ...mostCommonMdocCollectionConfig,
+          name: "files",
+          label: "Files",
+          label_singular: "File",
+          // description: "Articles of the website",
+          path: "files/{{slug}}",
+          media_folder: `/${CONTENT_DIR}/_files`,
+          public_folder: "/_files",
+          fields: [
+            ...commonCollectionFields,
+          ]
         };
 
         const generalConfig = {
@@ -191,19 +209,40 @@ class CmsConfig {
                 repo: CMS_REPO,
                 branch: CMS_BRANCH,
                 base_url: CMS_AUTH_URL,
+                automatic_deployments: false,
             },
-            media_folder: `${CONTENT_DIR}/_images`,
-            public_folder: "/_images",
             site_url: PROD_URL,
             display_url: DISPLAY_URL,
             // logo_url: "https://your-site.com/images/logo.svg",
+            // MEDIAS
+            media_folder: `/${CONTENT_DIR}/_images`,
+            public_folder: "/_images",
+            media_libraries: {
+              stock_assets: { providers: [] },
+              default: {
+                config: {
+                  transformations: {
+                    raster_image: {
+                      format: "webp",
+                      quality: 85,
+                      width: 2048,
+                      height: 2048
+                    },
+                    svg: {
+                      optimize: true
+                    }
+                  }
+                }
+              }
+            },
+            // I18N
             locale: "en", // Locale for the CMS admin ("en" or "jp" while in beta)
             i18n: {
               structure: "multiple_folders",
               locales: ["it", "en", "fr"],
               default_locale: "it", // Defaults to the first locale in the list
             },
-            collections: [pagesCollection, articlesCollection]
+            collections: [pagesCollection, articlesCollection, filesCollection]
         };
 
 		return JSON.stringify(generalConfig, null, isDev ? 2 : 0);

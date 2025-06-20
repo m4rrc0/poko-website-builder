@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import 'dotenv/config'
 import { resolve, join } from 'path';
 
@@ -78,6 +79,8 @@ export const CMS_BRANCH = processEnv.CMS_BRANCH || 'main';
 
 // Fallback hosting service for local dev
 export const PREFERRED_HOSTING = processEnv.PREFERRED_HOSTING || 'node';
+
+assert(CMS_AUTH_URL, '[env] CMS_AUTH_URL is required');
 
 export default {
   NETLIFY_BUILD,
