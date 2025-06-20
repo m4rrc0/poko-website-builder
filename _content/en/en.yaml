@@ -1,0 +1,5 @@
+dico:
+  address: Address
+  book: Book
+urls:
+  contact: /en/contact/

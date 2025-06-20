@@ -1,3 +1,11 @@
+/* Global styles */
+img,
+picture,
+video {
+  display: block;
+}
+
+/* General Layout */
 body {
   display: flex;
   flex-direction: column;
@@ -5,6 +13,9 @@ body {
 }
 body > * {
   width: 100%;
+}
+main > section {
+  margin-block: var(--step-6);
 }
 
 /* Navigation */
@@ -40,10 +51,6 @@ body > header nav picture {
   width: auto;
 }
 
-/* main {
-  flex-grow: 1;
-} */
-
 /* Footer */
 footer {
   margin-block-start: auto;
@@ -61,4 +68,48 @@ footer .infos {
   width: 100%;
   /* justify-items: flex-end; */
   --width-column-min: 12rem;
+}
+
+/* Home links */
+.home-links li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Button */
+.btn {
+  text-decoration: none;
+  color: #87855c;
+  text-transform: uppercase;
+  border: 3px solid currentColor;
+  padding: 0.5rem 1rem;
+}
+.btn.book {
+  max-width: 100%;
+  width: max(30%, 16ch);
+  /* width: max-content; */
+  text-align: center;
+}
+
+/* Default Page Elements Layout */
+main > p:not(:first-child):has(> picture:only-child) {
+  max-width: var(--width-max);
+  margin-block: var(--step-6);
+}
+main > p:not(:first-child) > picture:only-child {
+  aspect-ratio: 3;
+  object-fit: cover;
+}
+
+/* Top illustration */
+main > p:first-child:has(> picture:only-child) {
+  padding-inline: 2rem;
+}
+main > p:first-child > picture:only-child {
+  max-width: 15rem;
+  margin-inline: auto;
+}
+main > h1 {
+  text-align: center;
 }

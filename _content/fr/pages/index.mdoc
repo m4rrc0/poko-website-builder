@@ -13,24 +13,32 @@ metadata:
   description: ''
   image: ''
 ---
-<!-- <img src="/_images/Una_Scelta_Sosta.png" alt="Una Scelta" width="300" eleventy:pictureattr:style="display:block;width:300px;margin-inline: auto" /> -->
+<!-- {% Image src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" eleventy={"pictureattr:style": "max-width:300px;margin-inline: auto"} /%} -->
 
-![Una scelta - sosta contadina](/_images/logo-Una_Scelta_Sosta.webp)
+<heading-group>
+  <h1>
+    <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" eleventy:pictureattr:style="max-width:300px;margin-inline:auto" />
+  </h1>
+</heading-group>
 
-![Le domaine](/_images/Maison-ombre.webp)
+<section class="home-links">
+  <ul role="list" class="grid-auto">
+    <li class="breakout-clickable">
+      <img src="/_images/Maison-ombre.webp" alt="Le domaine" width="150" eleventy:pictureattr:style="max-width:150px;margin-inline:auto" />
+      <p class="h4"><a href="/fr/domain/" class="clickable">Le domaine</a></p>
+    </li>
+    <li class="breakout-clickable">
+      <img src="/_images/Main-clefs-ombre.webp" alt="La chambre" width="150" eleventy:pictureattr:style="max-width:150px;margin-inline:auto" />
+      <p class="h4"><a href="/fr/chambre/" class="clickable">La chambre</a></p>
+    </li>
+    <li class="breakout-clickable">
+      <img src="/_images/Main-pates-ombre.webp" alt="La table" width="150" eleventy:pictureattr:style="max-width:150px;margin-inline:auto" />
+      <p class="h4"><a href="/fr/table/" class="clickable">La table</a></p>
+    </li>
+  </ul>
+</section>
 
-## Le domaine
-
-![La chambre](/_images/Main-clefs-ombre.webp)
-
-## La chambre
-
-![La table](/_images/Main-pates-ombre.webp)
-
-## La table
-
-**BOUTON LIEN RÉSERVER**
-<a href="/fr/contact/" class="btn book">Réserver</a>
+{% html-tag name="section" class="center intrinsic" %}{% html-tag name="a" href=$urls.contact class="btn book" %}{% $dico.book %}{% /html-tag %}{% /html-tag %}
 
 more than a room... {% .h2 %}
 
