@@ -148,3 +148,86 @@ main > p:has(> picture + picture) > picture {
 .home-links li a:hover {
   color: #87855c;
 }
+
+/* Booking calendar */
+.calendar-container {
+  margin: 2rem auto;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.booking-calendar {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.booking-calendar caption {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.booking-calendar th {
+  padding: 0.5rem;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+}
+
+.calendar-day {
+  height: 5rem;
+  width: 14.285%;
+  border: 1px solid #ddd;
+  padding: 0.25rem;
+  vertical-align: top;
+  position: relative;
+}
+
+.calendar-day .date {
+  font-weight: bold;
+  text-align: right;
+}
+
+.calendar-day .price {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* Availability styles */
+.calendar-day.available {
+  background-color: #e8f5e9;
+}
+
+.calendar-day.booked {
+  background-color: #ffebee;
+}
+
+/* Legend styles */
+.calendar-legend {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #ddd;
+}
+
+.legend-item.available .legend-color {
+  background-color: #e8f5e9;
+}
+
+.legend-item.booked .legend-color {
+  background-color: #ffebee;
+}
