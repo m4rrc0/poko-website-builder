@@ -41,14 +41,14 @@
     lang }) | eleventyNavigation %}
     <!-- Navigation -->
     {% if navPages | length %}
-    <header>
-      <nav>
+    <header class="full-bleed-before">
+      <nav class="reel">
         <!-- Main pages navigation -->
-        <ul id="main-nav">
+        <ul role="list" id="main-nav">
           {% for link in navPages %}
           <!-- prettier-ignore -->
           {% if link.key == 'pages' and link.order == -1 and link.data.globalSettings.logo %}
-          <li>
+          <li class="nav-logo">
             <!-- prettier-ignore -->
             <a 
               href="{{link.url}}"

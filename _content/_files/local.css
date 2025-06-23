@@ -1,4 +1,9 @@
 /* Global styles */
+body {
+  font-family: "Questrial", system-ui, sans-serif;
+  margin-block-start: 0;
+}
+
 img,
 picture,
 video {
@@ -46,6 +51,15 @@ body > header nav {
 }
 body > header nav ul {
   align-items: center;
+  justify-content: flex-end;
+}
+body > header nav ul#main-nav {
+  flex-grow: 1;
+  /* width: 100%; */
+  /* flex-wrap: nowrap; */
+}
+.nav-logo {
+  margin-inline-end: auto;
 }
 #lang-nav {
   flex-wrap: nowrap;
@@ -58,12 +72,33 @@ body > header nav picture {
   max-height: 3rem;
   width: auto;
 }
+body > header.full-bleed-before {
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+  background: inherit;
+}
+
+body > header::before {
+  /* box-shadow: 0 0 0.5rem hsl(0 0% 0% / 0.3); */
+  animation: navShadow linear forwards;
+  animation-timeline: view(block);
+  /* animation-timeline: view(); */
+  animation-range-start: 100vh;
+  animation-range-end: 200vh;
+}
+@keyframes navShadow {
+  100% {
+    box-shadow: 0 0.5rem 0.5rem hsl(0 0% 0% / 0.05);
+    /* border-bottom: solid 5px red; */
+  }
+}
 
 /* Footer */
 footer {
   margin-block-start: auto;
-  background-color: #3a471a;
-  color: #fff;
+  background-color: #d4d1a5;
+  color: #3a471a;
   padding: 2em;
   display: flex;
   flex-direction: column;
@@ -150,7 +185,232 @@ main > p:has(> picture + picture) > picture {
 }
 
 /* Booking calendar */
-.calendar-container {
+ol.calendar-list {
+  --_list-items-padding: 1rem;
+  max-width: 100%;
+  /* gap: 1rem; */
+  /* justify-content: center; */
+  padding: 1rem;
+  align-items: stretch;
+  scroll-snap-type: x mandatory;
+  scroll-padding: var(--_list-items-padding);
+}
+
+.calendar-list > li {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: var(--_list-items-padding);
+  scroll-snap-align: start;
+}
+
+table.calendar {
+  /* padding: 0.5rem; */
+  /* width: 100%; */
+  /* max-width: 300px; */
+  /* border-collapse: separate; */
+  /* border-spacing: 0; */
+  /* background-color: white; */
+  /* border-radius: 12px; */
+  /* overflow: hidden; */
+  /* margin: 0 auto; */
+}
+
+table.calendar thead {
+  /* color: #d4d1a5; */
+  color: #c09d74;
+  border-block-start: 1px solid currentColor;
+}
+
+table.calendar th {
+  font-weight: normal;
+  text-transform: uppercase;
+}
+table.calendar th,
+table.calendar td {
+  padding: 0.5rem 0.3rem;
+  text-align: center;
+}
+
+/* Caption styling - month and year */
+table.calendar caption {
+  padding: 1rem 0.3rem;
+  text-align: right;
+  /* display: flex;
+  justify-content: flex-end;
+  align-items: center; */
+  /* padding: 15px 20px 10px; */
+  /* font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0; */
+}
+
+table.calendar td[data-booked="1"] {
+  color: #d8d8d8;
+  /* cursor: not-allowed; */
+  position: relative;
+}
+table.calendar td[data-booked="1"]::after,
+table.calendar td[data-booked="1"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  transform: rotate(45deg);
+  /* border-radius: 50%; */
+  background-color: #d8d8d8;
+}
+table.calendar td[data-booked="1"]::before {
+  transform: rotate(-45deg);
+}
+
+/* table.calendar caption::before {
+    content: "12";
+    font-size: 24px;
+    font-weight: bold;
+} */
+
+/* Header row styling - days of week */
+/* table.calendar thead tr {
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #fdfdfd;
+} */
+
+/* table.calendar th {
+    padding: 10px 0;
+    font-weight: normal;
+    color: #999;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+} */
+
+/* Date cells - general styling */
+/* table.calendar td {
+    padding: 8px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #333;
+    width: 14.28%; /* Equal width for 7 days *
+    position: relative;
+    height: 32px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: 1px solid transparent;
+} */
+
+/* Empty cells */
+/* table.calendar td:empty {
+    background-color: #fafafa;
+    cursor: default;
+    color: transparent;
+} */
+
+/* Booked dates */
+/* table.calendar td[data-booked="1"] {
+    background-color: #f9f9f9;
+    color: #ccc;
+    cursor: not-allowed;
+} */
+
+/* Available dates */
+/* table.calendar td[data-booked="0"] {
+    background-color: white;
+} */
+
+/* Today's date */
+/* table.calendar td.today {
+    font-weight: bold;
+    color: #000;
+} */
+
+/* Weekend days (assuming 6th and 7th columns) */
+/* table.calendar td:nth-child(6),
+table.calendar td:nth-child(7) {
+    color: #e74c3c;
+} */
+
+/* Weekend days that are booked - lighter red */
+/* table.calendar td[data-booked="1"]:nth-child(6),
+table.calendar td[data-booked="1"]:nth-child(7) {
+    color: #f8c8c3;
+} */
+
+/* Highlight for selected range or special dates */
+/* table.calendar td.highlight {
+    background-color: #f39c12;
+    color: white;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+} */
+
+/* Creating the highlight effect with proper styling */
+/* table.calendar td.highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f39c12;
+    z-index: -1;
+} */
+
+/* Highlight range - first day */
+/* table.calendar td.highlight-start {
+    border-radius: 4px 0 0 4px;
+} */
+
+/* Highlight range - last day */
+/* table.calendar td.highlight-end {
+    border-radius: 0 4px 4px 0;
+} */
+
+/* Highlight range - single day */
+/* table.calendar td.highlight-single {
+    border-radius: 4px;
+} */
+
+/* Today's highlight */
+/* table.calendar td.today:not(.highlight) {
+    border: 1px solid #000;
+} */
+
+/* Hover effect */
+/* table.calendar td[data-booked="0"]:hover {
+    background-color: #f8f4e3;
+} */
+
+/* Additional styles for current date display */
+/* table.calendar caption::after {
+    content: "Jul 2019";
+    font-size: 14px;
+    color: #777;
+    font-weight: normal;
+    display: block;
+    text-align: right;
+} */
+
+/* Better styling for highlight range */
+/* table.calendar td.highlight:not(:first-child):not(:last-child) {
+    background-color: rgba(243, 156, 18, 0.7);
+} */
+
+/* For lighter shading on dates that are in other months */
+/* table.calendar td.other-month {
+    color: #ccc;
+} */
+
+/* table.calendar tbody tr:not(:last-child) {
+    border-bottom: 1px solid #f9f9f9;
+} */
+
+/* ------OLD---------------------------------------------- */
+
+/* .calendar-container {
   margin: 2rem auto;
   max-width: 100%;
   overflow-x: auto;
@@ -194,7 +454,6 @@ main > p:has(> picture + picture) > picture {
   font-size: 0.9rem;
 }
 
-/* Availability styles */
 .calendar-day.available {
   background-color: #e8f5e9;
 }
@@ -203,7 +462,6 @@ main > p:has(> picture + picture) > picture {
   background-color: #ffebee;
 }
 
-/* Legend styles */
 .calendar-legend {
   display: flex;
   gap: 1rem;
@@ -230,4 +488,4 @@ main > p:has(> picture + picture) > picture {
 
 .legend-item.booked .legend-color {
   background-color: #ffebee;
-}
+} */
