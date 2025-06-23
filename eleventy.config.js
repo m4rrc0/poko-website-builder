@@ -143,9 +143,11 @@ export default async function (eleventyConfig) {
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);
 
   // --------------------- Plugins Late
-  const userMarkdocTags = await import(`${WORKING_DIR}/_config/tags/index.js`);
+  const userMarkdocTags = await import(
+    `./${WORKING_DIR}/_config/tags/index.js`
+  );
   const userMarkdocNodes = await import(
-    `${WORKING_DIR}/_config/nodes/index.js`
+    `./${WORKING_DIR}/_config/nodes/index.js`
   );
 
   await eleventyConfig.addPlugin(pluginMarkdoc, {
