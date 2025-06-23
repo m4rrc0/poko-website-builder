@@ -1,0 +1,11 @@
+siteName: Una Scelta
+logo: /_images/logo.webp
+htmlHead: >-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/ctx.css">
+  <link rel="stylesheet" href="/local.css">
+lang: it
+collections:
+  - articles

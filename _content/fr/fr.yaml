@@ -1,0 +1,6 @@
+dico:
+  address: Adresse
+  book: Réserver
+  access: Accès
+urls:
+  contact: /fr/contact/
