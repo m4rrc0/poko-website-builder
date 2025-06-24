@@ -18,8 +18,8 @@ const options = {
 export async function ogImageSrc(input, eleventyConfig) {
   let src = `${WORKING_DIR}/${input}`;
   let stats = await Image(src, options);
-  const imgMatch = stats.png[0] || stats.jpeg[0];
-  const url = imgMatch.url;
+  const imgMatch = stats.png?.[0] || stats.jpeg?.[0];
+  const url = imgMatch?.url;
 
   return url;
 }
