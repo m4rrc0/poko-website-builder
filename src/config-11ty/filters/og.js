@@ -1,6 +1,6 @@
 import Image from "@11ty/eleventy-img";
 import { imageTransformOptions } from "../plugins/imageTransform.js";
-import { WORKING_DIR, OUTPUT_DIR } from "../../../env.config.js";
+import { WORKING_DIR, OUTPUT_DIR, BASE_URL } from "../../../env.config.js";
 
 const options = {
   // ...imageTransformOptions,
@@ -19,7 +19,7 @@ export async function ogImageSrc(input, eleventyConfig) {
   let src = `${WORKING_DIR}/${input}`;
   let stats = await Image(src, options);
   const imgMatch = stats.png?.[0] || stats.jpeg?.[0];
-  const url = imgMatch?.url;
+  const url = imgMatch?.url ? `${BASE_URL}${imgMatch.url}` : null;
 
   return url;
 }
