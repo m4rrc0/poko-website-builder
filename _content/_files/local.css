@@ -10,6 +10,10 @@ video {
   display: block;
 }
 
+strong {
+  color: #000;
+}
+
 main > p:has(> iframe:only-child) {
   margin-block: var(--step-6);
 }
@@ -47,6 +51,7 @@ body > header nav {
   }
   & a[aria-current] {
     font-weight: bold;
+    color: #000;
   }
 }
 body > header nav ul {
@@ -118,46 +123,54 @@ footer a {
 
 /* Recurring Page Elements Layout */
 /* Large horizontal images */
-main > p:not(:first-child):has(> picture:only-child) {
+main > p:not(:first-child):has(> picture:only-child),
+main > p:not(:first-child):has(> img:only-child) {
   max-width: var(--width-max);
   margin-block: var(--step-6);
 }
-main > p:not(:first-child) > picture:only-child {
+main > p:not(:first-child) > picture:only-child,
+main > p:not(:first-child) > img:only-child {
   aspect-ratio: 3;
   object-fit: cover;
 }
 
 /* Top illustration */
-main > p:first-child:has(> picture:only-child) {
+main > p:first-child:has(> picture:only-child),
+main > p:first-child:has(> img:only-child) {
   padding-inline: 2rem;
 }
-main > p:first-child > picture:only-child {
+main > p:first-child > picture:only-child,
+main > p:first-child > img:only-child {
   max-width: 15rem;
   margin-inline: auto;
 }
+
 main > h1 {
   text-align: center;
 }
 
 /* Gallery */
-main > p:has(> picture + picture) {
+main > p:has(> picture + picture),
+main > p:has(> img + img) {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
-main > p:has(> picture + picture) > picture {
+main > p:has(> picture + picture) > picture,
+main > p:has(> img + img) > img {
   aspect-ratio: 1;
 }
 
-/* Large massage */
+/* Large message */
 main > section.full-bleed-before {
   font-size: var(--step-2);
-  background-color: #3a471a;
+  background-color: #87855c;
   color: #fff;
   padding-block: 2rem;
 }
 main > section.full-bleed-before p {
   text-align: center;
+  text-wrap: balance;
 }
 
 /* Callout */
@@ -188,7 +201,16 @@ section.callout {
 }
 
 /* Unique Elements */
+/* Home heading-group */
+heading-group img,
+heading-group picture {
+  max-width: 300px;
+  margin-inline: auto;
+}
 /* Home links */
+.home-links {
+  --width-wrap: 19rem;
+}
 .home-links li {
   display: flex;
   flex-direction: column;
@@ -198,8 +220,18 @@ section.callout {
   text-decoration: none;
   color: inherit;
 }
+.home-links picture,
+.home-links img {
+  max-width: 150px;
+  margin-inline: auto;
+}
 .home-links li a:hover {
   color: #87855c;
+}
+@media (max-width: 400px) {
+  .home-links li a {
+    font-size: var(--step-0);
+  }
 }
 
 /* Booking calendar */
@@ -283,227 +315,7 @@ table.calendar td[data-booked="1"]::before {
   transform: rotate(-45deg);
 }
 
-/* table.calendar caption::before {
-    content: "12";
-    font-size: 24px;
-    font-weight: bold;
-} */
-
-/* Header row styling - days of week */
-/* table.calendar thead tr {
-    border-bottom: 1px solid #f0f0f0;
-    background-color: #fdfdfd;
-} */
-
-/* table.calendar th {
-    padding: 10px 0;
-    font-weight: normal;
-    color: #999;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-} */
-
-/* Date cells - general styling */
-/* table.calendar td {
-    padding: 8px 0;
-    text-align: center;
-    font-size: 13px;
-    color: #333;
-    width: 14.28%; /* Equal width for 7 days *
-    position: relative;
-    height: 32px;
-    vertical-align: middle;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    border: 1px solid transparent;
-} */
-
-/* Empty cells */
-/* table.calendar td:empty {
-    background-color: #fafafa;
-    cursor: default;
-    color: transparent;
-} */
-
-/* Booked dates */
-/* table.calendar td[data-booked="1"] {
-    background-color: #f9f9f9;
-    color: #ccc;
-    cursor: not-allowed;
-} */
-
-/* Available dates */
-/* table.calendar td[data-booked="0"] {
-    background-color: white;
-} */
-
-/* Today's date */
-/* table.calendar td.today {
-    font-weight: bold;
-    color: #000;
-} */
-
-/* Weekend days (assuming 6th and 7th columns) */
-/* table.calendar td:nth-child(6),
-table.calendar td:nth-child(7) {
-    color: #e74c3c;
-} */
-
-/* Weekend days that are booked - lighter red */
-/* table.calendar td[data-booked="1"]:nth-child(6),
-table.calendar td[data-booked="1"]:nth-child(7) {
-    color: #f8c8c3;
-} */
-
-/* Highlight for selected range or special dates */
-/* table.calendar td.highlight {
-    background-color: #f39c12;
-    color: white;
-    font-weight: 500;
-    position: relative;
-    z-index: 1;
-} */
-
-/* Creating the highlight effect with proper styling */
-/* table.calendar td.highlight::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #f39c12;
-    z-index: -1;
-} */
-
-/* Highlight range - first day */
-/* table.calendar td.highlight-start {
-    border-radius: 4px 0 0 4px;
-} */
-
-/* Highlight range - last day */
-/* table.calendar td.highlight-end {
-    border-radius: 0 4px 4px 0;
-} */
-
-/* Highlight range - single day */
-/* table.calendar td.highlight-single {
-    border-radius: 4px;
-} */
-
-/* Today's highlight */
-/* table.calendar td.today:not(.highlight) {
-    border: 1px solid #000;
-} */
-
-/* Hover effect */
-/* table.calendar td[data-booked="0"]:hover {
-    background-color: #f8f4e3;
-} */
-
-/* Additional styles for current date display */
-/* table.calendar caption::after {
-    content: "Jul 2019";
-    font-size: 14px;
-    color: #777;
-    font-weight: normal;
-    display: block;
-    text-align: right;
-} */
-
-/* Better styling for highlight range */
-/* table.calendar td.highlight:not(:first-child):not(:last-child) {
-    background-color: rgba(243, 156, 18, 0.7);
-} */
-
-/* For lighter shading on dates that are in other months */
-/* table.calendar td.other-month {
-    color: #ccc;
-} */
-
-/* table.calendar tbody tr:not(:last-child) {
-    border-bottom: 1px solid #f9f9f9;
-} */
-
-/* ------OLD---------------------------------------------- */
-
-/* .calendar-container {
-  margin: 2rem auto;
-  max-width: 100%;
-  overflow-x: auto;
+/* Photo potager recadrage */
+img[src="/assets/images/vnGqJC_t4o-480.webp"] {
+  object-position: 50% 61%;
 }
-
-.booking-calendar {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-}
-
-.booking-calendar caption {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.booking-calendar th {
-  padding: 0.5rem;
-  background-color: #f1f1f1;
-  border: 1px solid #ddd;
-}
-
-.calendar-day {
-  height: 5rem;
-  width: 14.285%;
-  border: 1px solid #ddd;
-  padding: 0.25rem;
-  vertical-align: top;
-  position: relative;
-}
-
-.calendar-day .date {
-  font-weight: bold;
-  text-align: right;
-}
-
-.calendar-day .price {
-  margin-top: 1.5rem;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.calendar-day.available {
-  background-color: #e8f5e9;
-}
-
-.calendar-day.booked {
-  background-color: #ffebee;
-}
-
-.calendar-legend {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  justify-content: center;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.legend-color {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  border: 1px solid #ddd;
-}
-
-.legend-item.available .legend-color {
-  background-color: #e8f5e9;
-}
-
-.legend-item.booked .legend-color {
-  background-color: #ffebee;
-} */

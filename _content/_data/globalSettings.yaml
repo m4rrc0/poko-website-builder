@@ -1,5 +1,7 @@
 siteName: Una Scelta
 logo: /_images/logo.webp
+metadata:
+  image: "/_images/DSC00284-1.webp"
 htmlHead: >-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

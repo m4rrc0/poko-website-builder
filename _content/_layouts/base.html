@@ -10,10 +10,13 @@
 
     <!-- Metadata -->
     <title>{{ metadata.title }}</title>
+    <meta property="og:title" content="{{ metadata.title }}" />
     {% if metadata.description %}
     <meta name="description" content="{{ metadata.description }}" />
+    <meta property="og:description" content="{{ metadata.description }}" />
     {% endif %} {% if metadata.image %}
     <meta name="image" content="{{ metadata.image }}" />
+    <meta property="og:image" content="{{ metadata.image }}" />
     {% endif %}
 
     <!-- Alternate langs -->
@@ -35,7 +38,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Una Scelta" />
     <link rel="manifest" href="/assets/icons/site.webmanifest" />
-    
+
     <!-- User HTML head injection -->
     {{ globalSettings.htmlHead | safe }}
 
