@@ -15,8 +15,10 @@
     <meta name="description" content="{{ metadata.description }}" />
     <meta property="og:description" content="{{ metadata.description }}" />
     {% endif %} {% if metadata.image %}
-    <meta name="image" content="{{ metadata.image }}" />
-    <meta property="og:image" content="{{ metadata.image }}" />
+    <meta name="image" content="{{ metadata.image | og }}" />
+    <meta property="og:image" content="{{ metadata.image | og }}" />
+    <meta property="og:image:url" content="{{ metadata.image | og }}" />
+    <meta property="twitter:image" content="{{ metadata.image | og }}" />
     {% endif %}
 
     <!-- Alternate langs -->
