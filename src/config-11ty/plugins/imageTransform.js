@@ -31,7 +31,7 @@ export const imageTransformOptions = {
 
   // optional, output image widths
   // widths: ["auto"],
-  widths: [20, 480, 768, 1280, "auto"],
+  widths: [480, 768, 1280, "auto"],
 
   // optional, attributes assigned on <img> override these values.
   // defaultAttributes: {

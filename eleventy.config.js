@@ -42,7 +42,9 @@ import {
   first,
   last,
   randomFilter,
+  ogImageSrc,
 } from "./src/config-11ty/filters/index.js";
+// import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
 
 // TODOS:
 // - Look at persisting images in cache between builds: https://github.com/11ty/eleventy-img/issues/285
@@ -138,9 +140,12 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter("first", first);
   eleventyConfig.addFilter("last", last);
   eleventyConfig.addFilter("randomFilter", randomFilter);
+  // Images
+  eleventyConfig.addFilter("og", ogImageSrc);
 
   // --------------------- Shortcodes
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);
+  // eleventyConfig.addShortcode("ogImageSelected", ogImageSelected);
 
   // --------------------- Plugins Late
   const userMarkdocTags = await import(
