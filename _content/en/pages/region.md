@@ -5,14 +5,15 @@ uuid: b6b06b6c65e4
 localizationKey: 031835c2a406
 name: The region
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 5
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![The region](/_images/sapins-arbre-ombre.webp)
 
 # The Region

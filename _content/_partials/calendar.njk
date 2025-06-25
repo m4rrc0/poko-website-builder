@@ -1,0 +1,48 @@
+{% set mondayTr = "2024-07-01" | toLocaleString(lang, { weekday: "short" }) |
+replace(".", "") | upper %} {% set tuesdayTr = "2024-07-02" |
+toLocaleString(lang, { weekday: "short" }) | replace(".", "") | upper %} {% set
+wednesdayTr = "2024-07-03" | toLocaleString(lang, { weekday: "short" }) |
+replace(".", "") | upper %} {% set thursdayTr = "2024-07-04" |
+toLocaleString(lang, { weekday: "short" }) | replace(".", "") | upper %} {% set
+fridayTr = "2024-07-05" | toLocaleString(lang, { weekday: "short" }) |
+replace(".", "") | upper %} {% set saturdayTr = "2024-07-06" |
+toLocaleString(lang, { weekday: "short" }) | replace(".", "") | upper %} {% set
+sundayTr = "2024-07-07" | toLocaleString(lang, { weekday: "short" }) |
+replace(".", "") | upper %}
+
+<ol role="list" class="calendar-list reel stack horizontal">
+{% for monthData in calendar %}
+<li>
+<table class="calendar">
+<caption>
+{{
+[monthData.year, monthData.month - 1] | toLocaleString(lang, { month: "long", year: "numeric" })
+}}
+</caption>
+<thead>
+<tr>
+<th scope="col">{{ mondayTr }}</th>
+<th scope="col">{{ tuesdayTr }}</th>
+<th scope="col">{{ wednesdayTr }}</th>
+<th scope="col">{{ thursdayTr }}</th>
+<th scope="col">{{ fridayTr }}</th>
+<th scope="col">{{ saturdayTr }}</th>
+<th scope="col">{{ sundayTr }}</th>
+</tr>
+</thead>
+
+<tbody>
+{% for week in monthData.weeks %}
+<tr>
+{% for day in week %}
+<td data-price="{{ day.price }}" data-booked="{{ day.booked }}">
+{{ day.date }}
+</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</li>
+{% endfor %}
+</ol>

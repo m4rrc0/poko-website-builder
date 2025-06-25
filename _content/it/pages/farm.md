@@ -5,14 +5,15 @@ uuid: 8be05d9aa2fd
 localizationKey: bab4fe0d7566
 name: L'azienda
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 2
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![L'azienda](/_images/Maison-ombre.webp)
 
 # L'Azienda

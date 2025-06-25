@@ -5,14 +5,15 @@ uuid: 3478c9a70611
 localizationKey: 306b3de99b18
 name: Accueil
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: -1
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 <heading-group>
   <h1>
     <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" />
@@ -36,17 +37,15 @@ metadata:
   </ul>
 </section>
 
-<!-- {% html-tag name="section" class="center intrinsic" %}{% html-tag name="a" href=$urls.contact class="btn book" %}{% $dico.book %}{% /html-tag %}{% /html-tag %} -->
-
 <section class="center intrinsic">
   <a href="/fr/contact/" class="btn book">Réserver</a>
 </section>
 
 ![](/_images/FF7D8734-C740-4332-A548-E7CA01E2CB85.webp)
 
-More than a room... {% .h2 %}
+More than a room... {.h2}
 
-Una Scelta, c'est le chemin qu'ont choisi Karima et Eric, deux italiens de coeur partis de Belgique  pour s'ancrer à Soriano nel Cimino, au coeur de la campagne viterbese.
+Una Scelta, c'est le chemin qu'ont choisi Karima et Eric, deux italiens de coeur partis de Belgique pour s'ancrer à Soriano nel Cimino, au coeur de la campagne viterbese.
 
 Sur leur domaine de 10 hectares, ils produisent vins, huile d'olive, légumes et vous accueillent dans un cadre paisible et exclusif, pour une immersion au rythme de la nature.
 

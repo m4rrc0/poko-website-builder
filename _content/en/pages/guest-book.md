@@ -6,10 +6,11 @@ uuid: 6ee1fd9e0c46
 localizationKey: 485d677ba333
 name: Guest book
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![Guest book](/_images/Terrasse.webp)
 
 # Guest book

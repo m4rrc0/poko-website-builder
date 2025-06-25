@@ -5,14 +5,15 @@ uuid: 424d271d1746
 localizationKey: 8a8032a25c3b
 name: La tavola
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 4
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![La tavola](/_images/Main-pates-ombre.webp)
 
 # La Tavola
@@ -30,9 +31,7 @@ Se desiderate invece qualcosa di più semplice in qualsiasi momento della giorna
 Tutto sarà messo a vostra disposizione nello spazio cucina.
 
 <section class="center intrinsic">
-
-  <a href="/fr/contact/" class="btn book">Réserver</a>
-
+  <a href="/it/contact/" class="btn book">Prenota</a>
 </section>
 
 ![](/_images/Photo-table-galerie-1.webp) ![](/_images/Photo-table-galerie-2.webp) ![](/_images/Photo-table-galerie-3.webp) ![](/_images/Photo-table-galerie-4.webp) ![](/_images/Photo-table-galerie-5.webp) ![](/_images/28856FB4-B258-4A2F-8B5E-988296C8B2B3.webp)

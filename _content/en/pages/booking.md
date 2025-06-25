@@ -5,14 +5,15 @@ uuid: 2b0666b0cc22
 localizationKey: 056629ecb78c
 name: Booking
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 6
 metadata:
-  title: ''
-  description: ''
-  image: 
+  title: ""
+  description: ""
+  image:
 ---
+
 ![Booking](/_images/Main-clefs-ombre.webp)
 
 ## Booking
@@ -21,9 +22,9 @@ Booking requests should be sent by email to info@unascelta.it.
 Availability can be checked on the calendar below.
 The room rate is €150, including breakfast for 2 people (+€10 per additional person).
 
-##  Stay Conditions
+## Stay Conditions
 
-The minimum stay is  2 nights.
+The minimum stay is 2 nights.
 Check-in: 3:00 PM
 Check-out: 11:00 AM
 Pets are welcome upon request.
@@ -36,10 +37,10 @@ Don’t forget to let us know about any food intolerances or allergies.
 <section class="calendar-container">
   <h2>Calendar</h2>
 
-  {% Calendar $calendar /%}
+{% include "calendar.njk" %}
 
 </section>
 
 <section class="center intrinsic">
-  <a href="/fr/contact/" class="btn book">Book Now</a>
+  <a href="/en/contact/" class="btn book">Book Now</a>
 </section>

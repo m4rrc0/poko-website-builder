@@ -5,14 +5,15 @@ uuid: bffbb4cc7155
 localizationKey: bab4fe0d7566
 name: The farm
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 2
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![the farm](/_images/Maison-ombre.webp)
 
 # The Farm

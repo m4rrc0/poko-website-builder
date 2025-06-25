@@ -5,14 +5,15 @@ uuid: 1c57dca44576
 localizationKey: 056629ecb78c
 name: Réservation
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 6
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![Réservation](/_images/Main-clefs-ombre.webp)
 
 ## Réservation
@@ -25,7 +26,7 @@ Le prix de la chambre est de 150€, petit-déjeuner pour 2 personnes inclus (+1
 
 ## Conditions de séjour
 
-La durée de votre séjour parmi nous est de minimum 2 nuits. 
+La durée de votre séjour parmi nous est de minimum 2 nuits.
 
 Check-in: 15h
 
@@ -35,14 +36,14 @@ Vos animaux sont les bienvenus sur demande.
 
 ## Table d'hôtes
 
-Si vous souhaitez dîner sur place le soir de votre arrivée, merci de le mentionner dans votre demande de réservation.  
+Si vous souhaitez dîner sur place le soir de votre arrivée, merci de le mentionner dans votre demande de réservation.
 
 N'oubliez pas de nous informer de vos éventuelles intolérances ou allergies alimentaires.
 
 <section class="calendar-container">
   <h2>Calendrier</h2>
 
-  {% Calendar $calendar /%}
+{% include "calendar.njk" %}
 
 </section>
 

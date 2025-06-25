@@ -5,19 +5,20 @@ uuid: d97accacb2fa
 localizationKey: 5b94dcacac19
 name: Contact
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 9
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![Contact](/_images/Eric-et-Karima-ombre.webp)
 
 # Contact
 
-## {% $dico.address %}
+## {{ dico.address }}
 
 Una Scelta - Azienda Agricola Santarello  
 Contrada Fornacchia  
@@ -30,9 +31,9 @@ Strada della Poggiarella 98b,
 
 ## Mail
 
-info@unascelta.it
+{{ "info@unascelta.it" | emailLink }}
 
-## {% $dico.access %}
+## {{ dico.access }}
 
 **By plane:**
 Rome-Fiumicino Airport

@@ -5,14 +5,15 @@ uuid: 66368d48b364
 localizationKey: 306b3de99b18
 name: Home
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: -1
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 <heading-group>
   <h1>
     <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" />
@@ -42,7 +43,7 @@ metadata:
 
 ![](/_images/FF7D8734-C740-4332-A548-E7CA01E2CB85.webp)
 
-More than a room... {% .h2 %}
+More than a room... {.h2}
 
 Una Scelta is the path chosen by Karima and Eric, two Italians at heart who left Belgium to put down roots in Soriano nel Cimino, in the peaceful countryside of Viterbo.
 

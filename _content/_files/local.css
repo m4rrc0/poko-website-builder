@@ -294,13 +294,13 @@ table.calendar caption {
     border-bottom: 1px solid #f0f0f0; */
 }
 
-table.calendar td[data-booked="1"] {
+table.calendar td[data-booked="true"] {
   color: #d8d8d8;
   /* cursor: not-allowed; */
   position: relative;
 }
-table.calendar td[data-booked="1"]::after,
-table.calendar td[data-booked="1"]::before {
+table.calendar td[data-booked="true"]::after,
+table.calendar td[data-booked="true"]::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -311,7 +311,7 @@ table.calendar td[data-booked="1"]::before {
   /* border-radius: 50%; */
   background-color: #d8d8d8;
 }
-table.calendar td[data-booked="1"]::before {
+table.calendar td[data-booked="true"]::before {
   transform: rotate(-45deg);
 }
 

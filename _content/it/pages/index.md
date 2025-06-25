@@ -5,14 +5,15 @@ uuid: 3a20a9d05a7c
 localizationKey: 306b3de99b18
 name: Home
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: -1
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 <heading-group>
   <h1>
     <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" />
@@ -42,9 +43,9 @@ metadata:
 
 ![](/_images/FF7D8734-C740-4332-A548-E7CA01E2CB85.webp)
 
-More than a room... {% .h2 %}
+More than a room... {.h2}
 
-Una Scelta è il camino intrapreso da Karima ed Eric, due italiani nel cuore, partiti  da Belgio per mettere radici a Soriano nel Cimino, nella tranquilla campagna viterbese.
+Una Scelta è il camino intrapreso da Karima ed Eric, due italiani nel cuore, partiti da Belgio per mettere radici a Soriano nel Cimino, nella tranquilla campagna viterbese.
 
 Nella lora azienda di 10 ettari, producono vino, olio d'oliva e ortaggi, e vi accolgono in un contesto sereno ed esclusivo, per un'immersione nel ritmo della natura.
 

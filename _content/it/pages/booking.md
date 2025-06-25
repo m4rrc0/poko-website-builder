@@ -5,14 +5,15 @@ uuid: 126b5ac33d91
 localizationKey: 056629ecb78c
 name: Prenotazione
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 6
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![Prenotazione](/_images/Main-clefs-ombre.webp)
 
 # Prenotazione
@@ -39,10 +40,10 @@ Non dimenticate di informarci di eventuali intolleranze o allergie alimentari.
 <section class="calendar-container">
   <h2>Calendario</h2>
 
-  {% Calendar $calendar /%}
+{% include "calendar.njk" %}
 
 </section>
 
 <section class="center intrinsic">
-  <a href="/fr/contact/" class="btn book">Réserver</a>
+  <a href="/it/contact/" class="btn book">Prenota</a>
 </section>

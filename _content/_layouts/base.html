@@ -50,6 +50,8 @@
       {{ globalSettings.cssHead | safe }}
       /* eslint-enable */
     </style>
+    <!-- prettier-ignore -->
+    <style>a[href^="mailto:"] b {display: none;}</style>
   </head>
   <body>
     {% set navPages = collections.all | filterCollection({ by: 'lang', value:
@@ -132,6 +134,8 @@
 
     <!-- Content -->
     <main>{{ content | safe }}</main>
+
+    <!-- Footer -->
     <footer class="full-bleed-before">
       <div class="infos grid-auto">
         <div>

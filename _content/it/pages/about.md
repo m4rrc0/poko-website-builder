@@ -5,14 +5,15 @@ uuid: 5a90b273c70c
 localizationKey: 2b9f85706714
 name: Chi siamo
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 7
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![Chi siamo](/_images/Eric-et-Karima-ombre.webp)
 
 # Chi siamo

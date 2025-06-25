@@ -5,14 +5,15 @@ uuid: 4ff4cee37424
 localizationKey: 0da8ebc98cbc
 name: La camera
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 3
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![La camera](/_images/Main-clefs-ombre.webp)
 
 # La Camera
@@ -29,7 +30,7 @@ Un secondo bagno con doccia si trova vicino alla piscina.
 La colazione per due persone è inclusa nel prezzo della camera.
 
 <section class="center intrinsic">
-  <a href="/fr/contact/" class="btn book">Réserver</a>
+  <a href="/it/contact/" class="btn book">Prenota</a>
 </section>
 
 ![](/_images/Photos-galerie-chambre-1.webp) ![](/_images/Photos-galerie-chambre-2.webp) ![](/_images/Photos-galerie-chambre-3.webp) ![](/_images/Photos-galerie-chambre-4.webp) ![](/_images/Photos-galerie-chambre-5.webp) ![](/_images/7135C485-8102-4017-9B6B-C52CA5AD1144.webp)

@@ -6,10 +6,11 @@ uuid: 5d360bcc27f3
 localizationKey: 485d677ba333
 name: Livre d'or
 metadata:
-  title: ''
-  description: ''
-  image: ''
+  title: ""
+  description: ""
+  image: ""
 ---
+
 ![Livre d'or](/_images/Terrasse.webp)
 
 # Livre d'or
