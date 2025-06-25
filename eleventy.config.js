@@ -1,11 +1,11 @@
-// Plugins
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+// -------- Plugins
 import directoryOutputPlugin from "@11ty/eleventy-plugin-directory-output";
 import { IdAttributePlugin, I18nPlugin } from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import pluginWebc from "@11ty/eleventy-plugin-webc";
-import pluginMarkdoc from "@m4rrc0/eleventy-plugin-markdoc";
+// import pluginMarkdoc from "@m4rrc0/eleventy-plugin-markdoc";
 import eleventyNavigationPlugin from "@11ty/eleventy-navigation";
 import { imageTransformOptions } from "./src/config-11ty/plugins/imageTransform.js";
 import populateInputDir from "./src/config-11ty/plugins/populateInputDir/index.js";
@@ -13,7 +13,9 @@ import yamlData from "./src/config-11ty/plugins/yamlData/index.js";
 import cmsConfig from "./src/config-11ty/plugins/cms-config/index.js";
 import autoCollections from "./src/config-11ty/plugins/auto-collections/index.js";
 // import keystaticPassthroughFiles from './src/config-11ty/plugins/keystaticPassthroughFiles/index.js';
-// Local helper packages
+// -------- Plugins Markdown
+import markdownItAttrs from "markdown-it-attrs";
+// -------- Env Variables
 import {
   WORKING_DIR,
   WORKING_DIR_ABSOLUTE,
@@ -26,16 +28,17 @@ import {
   BASE_URL,
   PROD_URL,
 } from "./env.config.js";
-import * as markdocTags from "./src/config-markdoc/tags/index.js";
-import * as markdocNodes from "./src/config-markdoc/nodes/index.js";
+// import * as markdocTags from "./src/config-markdoc/tags/index.js";
+// import * as markdocNodes from "./src/config-markdoc/nodes/index.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
-import Markdoc from "@markdoc/markdoc";
+// import Markdoc from "@markdoc/markdoc";
 
 // Eleventy Config
 import {
   toISOString,
   formatDate,
   dateToSlug,
+  toLocaleString,
   slugifyPath,
   filterCollection,
   join,
@@ -43,8 +46,10 @@ import {
   last,
   randomFilter,
   ogImageSrc,
+  emailLink,
 } from "./src/config-11ty/filters/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
+import obfuscateEmail from "./src/utils/emailObfuscate.js";
 
 // TODOS:
 // - Look at persisting images in cache between builds: https://github.com/11ty/eleventy-img/issues/285
@@ -81,6 +86,9 @@ export default async function (eleventyConfig) {
   }); // NOTE: watching works but changes does not properly rerender...
   // eleventyConfig.setUseGitIgnore(false);
 
+  // --------------------- Plugins Markdown
+  eleventyConfig.amendLibrary("md", (mdLib) => mdLib.use(markdownItAttrs));
+
   // --------------------- Plugins Early
   eleventyConfig.addPlugin(directoryOutputPlugin);
   eleventyConfig.addPlugin(IdAttributePlugin, {
@@ -95,10 +103,10 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(cmsConfig);
   eleventyConfig.addPlugin(autoCollections);
   // TODO: reinstate this if 11ty Transform proves to be stable
-  // eleventyConfig.addPlugin(pluginWebc, {
-  //   components: "src/components/**/*.webc",
-  //   useTransform: true,
-  // });
+  eleventyConfig.addPlugin(pluginWebc, {
+    components: "src/components/**/*.webc",
+    useTransform: true,
+  });
   // --------------------- Populate files and default content
   // Populate Default Content: Copy `src/content-static/` to `dist`
   eleventyConfig.addPassthroughCopy({ "src/content-static": "/" });
@@ -134,6 +142,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter("toIsoString", toISOString);
   eleventyConfig.addFilter("formatDate", formatDate);
   eleventyConfig.addFilter("dateToSlug", dateToSlug);
+  eleventyConfig.addFilter("toLocaleString", toLocaleString);
   // Array
   eleventyConfig.addFilter("filterCollection", filterCollection);
   eleventyConfig.addFilter("join", join);
@@ -142,41 +151,66 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter("randomFilter", randomFilter);
   // Images
   eleventyConfig.addFilter("og", ogImageSrc);
+  // Email
+  eleventyConfig.addFilter("emailLink", emailLink);
+  // console.log(eleventyConfig.universal.filters.safe);
+  // eleventyConfig.addFilter(
+  //   "emailLink",
+  //   function emailLink(email, subject, body, cc, bcc) {
+  //     // Use it like so: {{ "hello@mookai.be" | emailLink("Subject", "Body", "CC", "BCC") }}
+  //     const { element } = obfuscateEmail(email, subject, body, cc, bcc);
+  //     // return element;
+  //     //   return this.env.filters.safe(element);
+  //     console.log(this);
+  //     return element;
+  //   }
+  // );
 
   // --------------------- Shortcodes
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);
   // eleventyConfig.addShortcode("ogImageSelected", ogImageSelected);
+  // eleventyConfig.addShortcode(
+  //   "emailLink",
+  //   function emailLink(email, subject, body, cc, bcc) {
+  //     // Use it like so: {{ "hello@mookai.be" | emailLink("Subject", "Body", "CC", "BCC") }}
+  //     const { element } = obfuscateEmail(email, subject, body, cc, bcc);
+  //     // return element;
+  //     //   return this.env.filters.safe(element);
+  //     console.log(this);
+  //     return element;
+  //   }
+  // );
 
   // --------------------- Plugins Late
-  const userMarkdocTags = await import(
-    `./${WORKING_DIR}/_config/tags/index.js`
-  );
-  const userMarkdocNodes = await import(
-    `./${WORKING_DIR}/_config/nodes/index.js`
-  );
+  // const userMarkdocTags = await import(
+  //   `./${WORKING_DIR}/_config/tags/index.js`
+  // );
+  // const userMarkdocNodes = await import(
+  //   `./${WORKING_DIR}/_config/nodes/index.js`
+  // );
 
-  await eleventyConfig.addPlugin(pluginMarkdoc, {
-    deferTags: ["ReferencesManual", "For"],
-    usePartials: [
-      {
-        cwd: "src/config-markdoc/partials",
-        patterns: ["**/*.mdoc"],
-        ...(GLOBAL_PARTIALS_PREFIX && { pathPrefix: GLOBAL_PARTIALS_PREFIX }),
-        // pathPrefix: "global", // Files will appear as "global/filename.mdoc"
-        // debug: true,
-      },
-      {
-        cwd: path.join(config.dir.input, config.dir.includes),
-        patterns: ["**/*.{mdoc,md,html,webc}"],
-        // pathPrefix: "partials", // Files will appear as "partials/filename.mdoc"
-        // debug: true,
-      },
-    ],
-    transform: {
-      tags: { ...markdocTags, ...userMarkdocTags },
-      // TODO: Try providing a custom img node for eleventy-img to avoid needing the transform?
-      nodes: { ...markdocNodes, ...userMarkdocNodes },
-    },
-    // debug: true,
-  });
+  // await eleventyConfig.addPlugin(pluginMarkdoc, {
+  //   deferTags: ["ReferencesManual", "For"],
+  //   usePartials: [
+  //     {
+  //       cwd: "src/config-markdoc/partials",
+  //       patterns: ["**/*.mdoc"],
+  //       ...(GLOBAL_PARTIALS_PREFIX && { pathPrefix: GLOBAL_PARTIALS_PREFIX }),
+  //       // pathPrefix: "global", // Files will appear as "global/filename.mdoc"
+  //       // debug: true,
+  //     },
+  //     {
+  //       cwd: path.join(config.dir.input, config.dir.includes),
+  //       patterns: ["**/*.{mdoc,md,html,webc}"],
+  //       // pathPrefix: "partials", // Files will appear as "partials/filename.mdoc"
+  //       // debug: true,
+  //     },
+  //   ],
+  //   transform: {
+  //     tags: { ...markdocTags, ...userMarkdocTags },
+  //     // TODO: Try providing a custom img node for eleventy-img to avoid needing the transform?
+  //     nodes: { ...markdocNodes, ...userMarkdocNodes },
+  //   },
+  //   // debug: true,
+  // });
 }

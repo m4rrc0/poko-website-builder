@@ -35,6 +35,8 @@
     <style>
       {{ globalSettings.cssHead | safe }}
     </style>
+    <!-- prettier-ignore -->
+    <style>a[href^="mailto:"] b {display: none;}</style>
   </head>
   <body>
     {% set navPages = collections.all | filterCollection({ by: 'lang', value:

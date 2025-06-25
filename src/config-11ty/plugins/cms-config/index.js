@@ -43,10 +43,10 @@ const commonCollectionFields = [
   },
 ];
 
-const mostCommonMdocCollectionConfig = {
+const mostCommonMarkdownCollectionConfig = {
   i18n: true,
   folder: `${CONTENT_DIR}`,
-  extension: "mdoc",
+  extension: "md",
   format: "yaml-frontmatter",
   create: true,
   identifier_field: "name",
@@ -254,7 +254,7 @@ class CmsConfig {
       },
     ];
     const pagesCollection = {
-      ...mostCommonMdocCollectionConfig,
+      ...mostCommonMarkdownCollectionConfig,
       name: "pages",
       label: "Pages",
       label_singular: "Page",
@@ -304,7 +304,7 @@ class CmsConfig {
       },
     ];
     const articlesCollection = {
-      ...mostCommonMdocCollectionConfig,
+      ...mostCommonMarkdownCollectionConfig,
       name: "articles",
       label: "Articles",
       label_singular: "Article",
@@ -315,7 +315,7 @@ class CmsConfig {
       fields: articleFields,
     };
     const filesCollection = {
-      ...mostCommonMdocCollectionConfig,
+      ...mostCommonMarkdownCollectionConfig,
       name: "files",
       label: "Files",
       label_singular: "File",
