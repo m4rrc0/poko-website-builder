@@ -117,8 +117,8 @@ export default function () {
           { date: 6, price: 150, booked: 1 },
         ],
         [
-          { date: 7, price: 150, booked: 0 },
-          { date: 8, price: 150, booked: 0 },
+          { date: 7, price: 150, booked: 1 },
+          { date: 8, price: 150, booked: 1 },
           { date: 9, price: 150, booked: 0 },
           { date: 10, price: 150, booked: 0 },
           { date: 11, price: 150, booked: 0 },
