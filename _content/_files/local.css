@@ -36,12 +36,7 @@ main > section {
 }
 
 /* Navigation */
-body > header nav {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 2rem;
-  margin-inline: 1rem;
-  justify-content: space-between;
+body > header {
   & li {
     margin-inline: 0;
   }
@@ -54,36 +49,87 @@ body > header nav {
     color: #000;
   }
 }
-body > header nav ul {
+body > header,
+body > header nav {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2rem;
+  justify-content: space-between;
   align-items: center;
-  justify-content: flex-end;
 }
-body > header nav ul#main-nav {
+body > header nav {
+  align-items: center;
+  overflow: hidden;
   flex-grow: 1;
-  /* width: 100%; */
-  /* flex-wrap: nowrap; */
 }
-.nav-logo {
+body > header ul {
+  display: flex;
+  flex-wrap: nowrap;
+  /* align-items: center; */
+}
+
+body > header * {
+  /* align-items: center;
+  display: flex;
+  flex-wrap: nowrap; */
+}
+body > header #main-nav {
+  /* height: 3rem; */
+}
+body > header .nav-logo {
   margin-inline-end: auto;
+  flex-shrink: 0;
 }
-#lang-nav {
+/* body > header .lang-nav-ul {
   flex-wrap: nowrap;
   gap: 0.5rem;
-  max-height: 3rem;
+} */
+body > header .lang-nav-details {
+  margin: 0;
+  position: relative;
+  background: white;
+  & > * {
+    padding-inline: 0.5rem;
+    text-align: center;
+  }
 }
-body > header nav li,
-body > header nav img,
-body > header nav picture {
+body > header .lang-nav-details summary {
+  /* list-style-type: "⬇ "; */
+  list-style-type: none;
+  font-weight: bold;
+  color: #000;
+  border-bottom: solid 1px #000;
+}
+body > header .lang-nav-details summary::after {
+  /* font-size: 0.8rem; */
+  /* content: "⬇"; */
+}
+body > header .lang-nav-details .content {
+  background: white;
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+#main-nav,
+.nav-logo,
+.lang-nav-ul,
+body > header li,
+body > header img,
+body > header picture {
   max-height: 3rem;
   width: auto;
 }
+
 body > header.full-bleed-before {
   z-index: 1000;
   position: sticky;
   top: 0;
   background: inherit;
 }
-
 body > header::before {
   /* box-shadow: 0 0 0.5rem hsl(0 0% 0% / 0.3); */
   animation: navShadow linear forwards;
@@ -318,4 +364,99 @@ table.calendar td[data-booked="true"]::before {
 /* Photo potager recadrage */
 img[src="/assets/images/vnGqJC_t4o-480.webp"] {
   object-position: 50% 61%;
+}
+
+/* Shadow scroll */
+/* prettier-ignore */
+.scroll-shadows-v {
+  overflow: auto;
+
+  background:
+    /* Shadow Cover TOP */
+    linear-gradient(
+      white 30%,
+      rgba(255, 255, 255, 0)
+    ) center top,
+    
+    /* Shadow Cover BOTTOM */
+    linear-gradient(
+      rgba(255, 255, 255, 0), 
+      white 70%
+    ) center bottom,
+    
+    /* Shadow TOP */
+    radial-gradient(
+      farthest-side at 50% 0,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0)
+    ) center top,
+    
+    /* Shadow BOTTOM */
+    radial-gradient(
+      farthest-side at 50% 100%,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0)
+    ) center bottom;
+  
+  background-repeat: no-repeat;
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* prettier-ignore */
+.scroll-shadows-h {
+  --_opacity-clr: rgba(0, 0, 0, 0.2);
+  /* overflow: auto; */
+
+  background:
+    /* Shadow Cover TOP */
+    linear-gradient(
+      white 30%,
+      rgba(255, 255, 255, 0)
+    ) left center,
+    
+    /* Shadow Cover BOTTOM */
+    linear-gradient(
+      rgba(255, 255, 255, 0), 
+      white 70%
+    ) right center,
+    
+    /* Shadow TOP */
+    radial-gradient(
+      farthest-side at 0 50%,
+      var(--_opacity-clr),
+      rgba(0, 0, 0, 0)
+    ) left center,
+    
+    /* Shadow BOTTOM */
+    radial-gradient(
+      farthest-side at 100% 50%,
+      var(--_opacity-clr),
+      rgba(0, 0, 0, 0)
+    ) right center;
+  
+  background-repeat: no-repeat;
+  /* background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px; */
+  background-color: white;
+  background-size: 2rem 100%, 2rem 100%, 1rem 100%, 1rem 100%;
+
+  background-attachment: local, local, scroll, scroll;
+}
+
+.scroll-shadows-horizontal {
+  /* display: flex; */
+  /* height: auto; */
+  /* overflow-x: auto;
+  overflow-y: hidden; */
+  /* scrollbar-width: none; */
+  /* scrollbar-color: white currentcolor; */
+  background-image: linear-gradient(to right, white, white),
+    linear-gradient(to right, white, white),
+    linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)),
+    linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0));
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
 }

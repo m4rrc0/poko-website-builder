@@ -1,0 +1,30 @@
+<ul role="list" id="lang-nav" class="lang-nav-ul">
+{% for link in page.url | locale_links %}
+<li>
+    <small>
+    <!-- prettier-ignore -->
+    <a
+        href="{{link.url}}"
+        hreflang="{{link.lang}}"
+        {% if link.lang == page.lang %}aria-current="page"{% endif %}
+        ><abbr lang="{{link.lang}}" title="{{link.label}}"
+        >{{link.lang | upper}}</abbr
+        ></a
+    >
+    </small>
+</li>
+{% endfor %}
+<li>
+    <small>
+    <!-- prettier-ignore -->
+    <a
+        href="{{page.url}}"
+        hreflang="{{page.lang}}"
+        {% if page.lang == page.lang %}aria-current="page"{% endif %}
+        ><abbr lang="{{page.lang}}" title="{{page.label}}"
+        >{{page.lang | upper}}</abbr
+        ></a
+    >
+    </small>
+</li>
+</ul>
