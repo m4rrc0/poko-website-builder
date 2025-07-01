@@ -153,18 +153,6 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter("og", ogImageSrc);
   // Email
   eleventyConfig.addFilter("emailLink", emailLink);
-  // console.log(eleventyConfig.universal.filters.safe);
-  // eleventyConfig.addFilter(
-  //   "emailLink",
-  //   function emailLink(email, subject, body, cc, bcc) {
-  //     // Use it like so: {{ "hello@mookai.be" | emailLink("Subject", "Body", "CC", "BCC") }}
-  //     const { element } = obfuscateEmail(email, subject, body, cc, bcc);
-  //     // return element;
-  //     //   return this.env.filters.safe(element);
-  //     console.log(this);
-  //     return element;
-  //   }
-  // );
 
   // --------------------- Shortcodes
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);

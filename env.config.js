@@ -83,6 +83,15 @@ export const REPO_NAME =
 export const REPO =
   processEnv.REPO || (REPO_OWNER && REPO_NAME && `${REPO_OWNER}/${REPO_NAME}`);
 
+// BRANCH inferrence
+// NOTE: Netlify uses BRANCH
+// TODO: Verify Vercel! My understanding is it is VERCEL_GIT_COMMIT_REF
+export const BRANCH =
+  processEnv.BRANCH ||
+  processEnv.CF_PAGES_BRANCH ||
+  processEnv.VERCEL_GIT_COMMIT_REF ||
+  processEnv.GIT_BRANCH;
+
 // PROD URL
 // TODO: This is prone to forgetting to define the base url
 export const BASE_URL = processEnv.BASE_URL?.replace(/\/$/, "");
@@ -93,12 +102,13 @@ export const DISPLAY_URL = processEnv.DISPLAY_URL;
 export const CMS_AUTH_URL = processEnv.CMS_AUTH_URL;
 export const CMS_REPO = processEnv.CMS_REPO;
 export const CMS_BACKEND = processEnv.CMS_BACKEND || "github";
-export const CMS_BRANCH = processEnv.CMS_BRANCH || "main";
+export const CMS_BRANCH = processEnv.CMS_BRANCH || BRANCH;
 
 // Fallback hosting service for local dev
 export const PREFERRED_HOSTING = processEnv.PREFERRED_HOSTING || "node";
 
 assert(CMS_AUTH_URL, "[env] CMS_AUTH_URL is required");
+assert(BASE_URL, "[env] BASE_URL is required");
 
 export default {
   NETLIFY_BUILD,
@@ -114,6 +124,7 @@ export default {
   REPO_OWNER,
   REPO_NAME,
   REPO,
+  BRANCH,
   PREFERRED_HOSTING,
   WORKING_DIR,
 };
