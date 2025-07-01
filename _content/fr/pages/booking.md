@@ -16,12 +16,10 @@ metadata:
 
 ![Réservation](/_images/Main-clefs-ombre.webp)
 
-## Réservation
+# Réservation
 
-Les demandes de réservation sont à envoyer par mail à info@unascelta.it.
-
-Les disponibilités peuvent être consultées sur le calendrier ci-dessous.
-
+Les demandes de réservation sont à envoyer par mail à {{ data.email | emailLink }}.  
+Les disponibilités peuvent être consultées sur le calendrier ci-dessous.  
 Le prix de la chambre est de 150€, petit-déjeuner pour 2 personnes inclus (+10€ par personne supplémentaire).
 
 ## Conditions de séjour
@@ -42,6 +40,7 @@ N'oubliez pas de nous informer de vos éventuelles intolérances ou allergies al
 
 <section class="calendar-container">
   <h2>Calendrier</h2>
+  <p class="callout">Ce calendrier présente les disponibilités actuelles. Les réservations sont confirmées par e-mail.</p>
 
 {% include "calendar.njk" %}
 

@@ -16,10 +16,10 @@ metadata:
 
 ![Booking](/_images/Main-clefs-ombre.webp)
 
-## Booking
+# Booking
 
-Booking requests should be sent by email to info@unascelta.it.
-Availability can be checked on the calendar below.
+Booking requests should be sent by email to {{ data.email | emailLink }}.  
+Availability can be checked on the calendar below.  
 The room rate is €150, including breakfast for 2 people (+€10 per additional person).
 
 ## Stay Conditions
@@ -36,6 +36,7 @@ Don’t forget to let us know about any food intolerances or allergies.
 
 <section class="calendar-container">
   <h2>Calendar</h2>
+  <p class="callout">This calendar shows the current availability. Reservations are confirmed by email.</p>
 
 {% include "calendar.njk" %}
 

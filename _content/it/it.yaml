@@ -2,5 +2,6 @@ dico:
   address: Indirizzo
   book: Prenota
   access: Accesso
+  poweredBy: "Sito creato da <a href='https://www.m4rr.co/' rel='noopener noreferrer'>m4rrc0</a> e <a href='https://www.tess-h.be' rel='noopener noreferrer'>Tess h.</a> di <a href='https://www.mookai.be/' rel='noopener noreferrer'>mookaï asbl</a>"
 urls:
   contact: /it/contact/

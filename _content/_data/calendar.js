@@ -38,12 +38,12 @@ const bookings = [
  * @param {number} offsetDays - Number of days to subtract from today (default: 15)
  * @returns {Array} Calendar data for the specified period
  */
-function generateCalendar(offsetDays = 15) {
+function generateCalendar(offsetDays = 0) {
   // Get today's date
-  const now = new Date("2025-06-25T23:05:09+02:00"); // Using provided timestamp
+  const now = new Date(); // Using provided timestamp
 
   // Calculate start date (today - offsetDays)
-  const startDate = new Date(now);
+  const startDate = new Date();
   startDate.setDate(startDate.getDate() - offsetDays);
 
   // Start from the beginning of the month for startDate

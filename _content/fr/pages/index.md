@@ -14,11 +14,11 @@ metadata:
   image: ""
 ---
 
-<heading-group>
-  <h1>
+<header>
+  <h1 class="h3">
     <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" loading="eager" />
   </h1>
-</heading-group>
+</header>
 
 <section class="home-links">
   <ul role="list" class="switcher">

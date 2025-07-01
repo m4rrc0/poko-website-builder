@@ -48,6 +48,7 @@
     <style>
       {{ globalSettings.cssHead | safe }}
     </style>
+    {# NOTE: E-mail obfuscation styles #}
     <!-- prettier-ignore -->
     <style>a[href^="mailto:"] b {display: none;}</style>
   </head>
@@ -61,8 +62,8 @@
         <!-- Main pages navigation -->
         {% if navPages[0].key == 'pages' and navPages[0].order == -1 and globalSettings.logo %}
         <div class="nav-logo">
-          <!-- prettier-ignore -->
-          <a 
+          {# prettier-ignore #}
+          <a
             href="{{navPages[0].url}}"
             hreflang="{{navPages[0].lang}}"
             {% if navPages[0].url == page.url %}aria-current="page"{% endif %}
@@ -77,12 +78,12 @@
         {% endif %}
         <ul role="list" id="main-nav" class="reel scroll-shadows-horizontal">
           {% for link in navPages %}
-          <!-- prettier-ignore -->
+          {# prettier-ignore #}
           {% if link.key == 'pages' and link.order == -1 and link.data.globalSettings.logo %}
           {# Extract logo out of main list #}
           {% else %}
           <li>
-            <!-- prettier-ignore -->
+            {# prettier-ignore #}
             <a
               href="{{link.url}}"
               hreflang="{{link.lang}}"
@@ -91,7 +92,6 @@
             >
           </li>
           {% endif %}
-          <!--  -->
           {% endfor %}
         </ul>
 
@@ -127,11 +127,21 @@
           </p>
         </div>
         <div>
+          <p>
+            CIR. 056048-AGR-00008<br>
+            CIN. IT056048B5DGMYX8B5<br>
+            IVA. 02350170565
+          </p>
+        </div>
+        <div>
           <p><a href="{{ data.facebook }}" target="_blank" rel="noopener noreferrer">Facebook</a></p>
           <p><a href="{{ data.instagram }}" target="_blank" rel="noopener noreferrer">Instagram</a></p>
         </div>
       </div>
-      <p class="copyright center intrinsic">{{globalSettings.siteName}} &copy; {{data.year}}</p>
+      <div class="center intrinsic stack">
+        <p class="copyright">{{globalSettings.siteName}} &copy; {{data.year}}</p>
+        <p>{{dico.poweredBy | safe}}</p>
+      </div>
     </footer>
   </body>
 </html>

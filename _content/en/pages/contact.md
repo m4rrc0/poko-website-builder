@@ -31,7 +31,7 @@ Strada della Poggiarella 98b,
 
 ## Mail
 
-{{ "info@unascelta.it" | emailLink }}
+{{ data.email | emailLink }}
 
 ## {{ dico.access }}
 
