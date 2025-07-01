@@ -43,5 +43,5 @@ Don’t forget to let us know about any food intolerances or allergies.
 </section>
 
 <section class="center intrinsic">
-  <a href="/en/contact/" class="btn book">Book Now</a>
+  {{ data.email | emailLink({ text: "Book by email", subject: "Booking - Una Scelta", class: "btn book" }) }}
 </section>

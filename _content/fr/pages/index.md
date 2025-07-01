@@ -37,9 +37,7 @@ metadata:
   </ul>
 </section>
 
-<section class="center intrinsic">
-  <a href="/fr/contact/" class="btn book">Réserver</a>
-</section>
+{% include "book-btn.njk" %}
 
 ![](/_images/FF7D8734-C740-4332-A548-E7CA01E2CB85.webp)
 

@@ -47,5 +47,5 @@ N'oubliez pas de nous informer de vos éventuelles intolérances ou allergies al
 </section>
 
 <section class="center intrinsic">
-  <a href="/fr/contact/" class="btn book">Réserver</a>
+  {{ data.email | emailLink({ text: "Réserver par e-mail", subject: "Réservation - Una Scelta", class: "btn book" }) }}
 </section>

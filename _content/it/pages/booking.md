@@ -46,5 +46,5 @@ Non dimenticate di informarci di eventuali intolleranze o allergie alimentari.
 </section>
 
 <section class="center intrinsic">
-  <a href="/it/contact/" class="btn book">Prenota</a>
+  {{ data.email | emailLink({ text: "Prenota per e-mail", subject: "Prenotazione - Una Scelta", class: "btn book" }) }}
 </section>

@@ -30,8 +30,6 @@ Il menu è disponibile solo su prenotazione.
 Se desiderate invece qualcosa di più semplice in qualsiasi momento della giornata (snack, spuntini, bevande fresche), vi sarà proposta una piccola carta di suggerimenti.
 Tutto sarà messo a vostra disposizione nello spazio cucina.
 
-<section class="center intrinsic">
-  <a href="/it/contact/" class="btn book">Prenota</a>
-</section>
+{% include "book-btn.njk" %}
 
 ![](/_images/Photo-table-galerie-1.webp) ![](/_images/Photo-table-galerie-2.webp) ![](/_images/Photo-table-galerie-3.webp) ![](/_images/Photo-table-galerie-4.webp) ![](/_images/Photo-table-galerie-5.webp) ![](/_images/28856FB4-B258-4A2F-8B5E-988296C8B2B3.webp)
