@@ -2,7 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 // -------- Plugins
 import directoryOutputPlugin from "@11ty/eleventy-plugin-directory-output";
-import { IdAttributePlugin, I18nPlugin } from "@11ty/eleventy";
+import { RenderPlugin, IdAttributePlugin, I18nPlugin } from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import pluginWebc from "@11ty/eleventy-plugin-webc";
 // import pluginMarkdoc from "@m4rrc0/eleventy-plugin-markdoc";
@@ -91,6 +91,7 @@ export default async function (eleventyConfig) {
 
   // --------------------- Plugins Early
   eleventyConfig.addPlugin(directoryOutputPlugin);
+  eleventyConfig.addPlugin(RenderPlugin);
   eleventyConfig.addPlugin(IdAttributePlugin, {
     selector: "h1,h2,h3,h4,h5,h6,.id-attr", // default: "h1,h2,h3,h4,h5,h6"
   });
@@ -104,7 +105,11 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(autoCollections);
   // TODO: reinstate this if 11ty Transform proves to be stable
   eleventyConfig.addPlugin(pluginWebc, {
-    components: "src/components/**/*.webc",
+    components: [
+      "npm:@11ty/eleventy-img/*.webc",
+      "src/components/**/*.webc",
+      `${WORKING_DIR}/_components/**/*.webc`,
+    ],
     useTransform: true,
   });
   // --------------------- Populate files and default content
