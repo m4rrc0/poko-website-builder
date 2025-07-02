@@ -1,0 +1,6 @@
+<div :class="(`with-sidebar ${className} ${swap === 'true' ? 'swap' : ''}`)" :style="(`--width-sidebar: ${imgWidth}px`)">
+<img :src="src" :alt="alt" :width="imgWidth" :style="(`max-width: ${imgWidth}px; margin-inline: auto;`)">
+<div class="content">
+<slot></slot>
+</div>
+</div>

@@ -26,30 +26,57 @@ Un vignoble d'1,5 ha, une centaine d'oliviers, un potager, des arbres fruitiers 
 Délimité par une falaise, d'où l'on peut apercevoir les vestiges d'anciennes habitations souterraines étrusques et par les réserves naturelles environnantes telles que celle de _Corviano_, caractérisée par sa grande biodiversité, le domaine bénéficie d'un environnement propice à une agriculture biologique de qualité. De plus, un terroir volcanique provenant des terres du Lac de Bolsena, formé par l'effondrement de cratères _des Monts Vulsini_, apporte aux cultures fertilité et équilibre.
 C'est dans ce petit coin de paradis, que nous apprenons chaque jour à mieux comprendre la nature qui les entoure et tentent de sublimer les produits qu'ils cultivent dans le respect et l'amour du terroir qui leur est confié.
 
-## Le Vignoble et le Vin
+{% include "book-btn.njk" %}
+
+{% renderTemplate "webc" %}
+<img-txt src="/_images/Vignes.webp" alt="Illustration vignoble" img-width="320" class-name="azienda-img-txt">
+
+## Le Vignoble et le Vin {.h3}
 
 Nous avons planté notre vignoble en janvier 2020. Pour le choix des cépages, nous avons naturellement sélectionné des variétés autochtones afin de réaliser des vins en harmonie avec le terroir : Trebbiano Toscano, Malvasia et Vermentino pour le blanc, Sangiovese et Ciliegiolo pour le rouge.
 
 Nous avons réalisé notre première cuvée en 2024 : des vins sains, issus de l'agriculture biologique et d'une vinification propre et peu interventionniste.
+</img-txt>
+{% endrenderTemplate %}
 
-## Les Oliviers
+{% renderTemplate "webc" %}
+<img-txt src="/_images/Oliviers.webp" alt="Illustration oliviers" img-width="320" class-name="azienda-img-txt" swap="true">
+
+## Les Oliviers {.h3}
 
 122 oliviers de variétés Moraiolo, Leccino et Frantoia sont répartis dans le domaine. Issue d'olives n'ayant subi aucun traitement chimique, notre huile extra vierge est obtenue directement par la pression du fruit sans aucun additif. Résultat : une huile naturelle, non filtrée, riche en vitamine E et autres antioxydants.
+</img-txt>
+{% endrenderTemplate %}
 
 ![](/_images/IMG_0164.webp)
 
-## Les Fruitiers
+{% renderTemplate "webc" %}
+<img-txt src="/_images/sapins-arbre-ombre.webp" alt="Illustration sapins" img-width="320" class-name="azienda-img-txt">
+
+## Les Fruitiers {.h3}
 
 Pommiers, abricotiers, jujubiers, cerisiers et autres pruniers donnent l'occasion à Eric de vous confectionner de délicieuses confitures que vous aurez l'occasion de déguster lors de vos petits-déjeuner.
+</img-txt>
+{% endrenderTemplate %}
 
-## Le Potager
+{% renderTemplate "webc" %}
+<img-txt src="/_images/Potager-Eric.webp" alt="Illustration potager" img-width="320" class-name="azienda-img-txt" swap="true">
+
+## Le Potager {.h3}
 
 Nous cultivons nos propres légumes et plantes aromatiques dans notre serre et notre potager naturel, créé selon les principes de la permaculture, sans pesticide ni herbicide. Au fil des saisons, nous pouvons proposer à nos hôtes, des plats cuisinés à partir de nos produits par Eric, chef et amoureux de la cuisine depuis de nombreuses années.
+</img-txt>
+{% endrenderTemplate %}
 
 ![](/_images/Photo-potager-domaine.webp)
 
-## Les Ruches
+{% renderTemplate "webc" %}
+<img-txt src="/_images/Ruches.webp" alt="Illustration ruches" img-width="320" class-name="azienda-img-txt">
+
+## Les Ruches {.h3}
 
 L'azienda possède 10 familles d'abeilles. Nous produisons notre propre miele millefiori. Nous avons choisi de placer nos ruches au milieu d'un terrain voisin de 80ha en culture biologique, ce qui permet à nos abeilles de butiner dans un environnement propice à la réalisation d'un miel de très grande qualité.
+</img-txt>
+{% endrenderTemplate %}
 
 {% include "book-btn.njk" %}

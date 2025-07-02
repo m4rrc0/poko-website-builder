@@ -1,0 +1,10 @@
+<pre @raw="JSON.stringify(eleventypass)"></pre>
+
+<div :class="(`with-sidebar ${className} ${swap === 'true' ? 'swap' : ''}`)" :style="(`--width-sidebar: ${imgWidth}px`)">
+
+<eleventy-image :eleventy="(eleventypass)" :src="src" :alt="alt" :width="imgWidth" :style="(`max-width: ${imgWidth}px; margin-inline: auto;`)"></eleventy-image>
+
+<div class="content">
+<slot></slot>
+</div>
+</div>

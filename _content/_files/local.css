@@ -248,6 +248,19 @@ main > section.full-bleed-before p {
   border-color: #87855c;
 }
 
+/* azienda: img-txt sections */
+.azienda-img-txt {
+  max-width: var(--width-max);
+  margin-inline: auto;
+  margin-block: var(--step-6);
+  align-items: center;
+}
+@media (min-width: 700px) {
+  .azienda-img-txt.swap > .content {
+    order: -1;
+  }
+}
+
 /* Unique Elements */
 /* Home header */
 main > header img,
@@ -300,18 +313,6 @@ ol.calendar-list {
   scroll-snap-align: start;
 }
 
-table.calendar {
-  /* padding: 0.5rem; */
-  /* width: 100%; */
-  /* max-width: 300px; */
-  /* border-collapse: separate; */
-  /* border-spacing: 0; */
-  /* background-color: white; */
-  /* border-radius: 12px; */
-  /* overflow: hidden; */
-  /* margin: 0 auto; */
-}
-
 table.calendar thead {
   /* color: #d4d1a5; */
   color: #c09d74;
@@ -332,19 +333,10 @@ table.calendar td {
 table.calendar caption {
   padding: 1rem 0.3rem;
   text-align: right;
-  /* display: flex;
-  justify-content: flex-end;
-  align-items: center; */
-  /* padding: 15px 20px 10px; */
-  /* font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    border-bottom: 1px solid #f0f0f0; */
 }
 
 table.calendar td[data-booked="true"] {
   color: #d8d8d8;
-  /* cursor: not-allowed; */
   position: relative;
 }
 table.calendar td[data-booked="true"]::after,
@@ -356,7 +348,6 @@ table.calendar td[data-booked="true"]::before {
   width: 50%;
   height: 2px;
   transform: rotate(45deg);
-  /* border-radius: 50%; */
   background-color: #d8d8d8;
 }
 table.calendar td[data-booked="true"]::before {
@@ -369,82 +360,6 @@ img[src="/assets/images/vnGqJC_t4o-480.webp"] {
 }
 
 /* Shadow scroll */
-/* prettier-ignore */
-.scroll-shadows-v {
-  overflow: auto;
-
-  background:
-    /* Shadow Cover TOP */
-    linear-gradient(
-      white 30%,
-      rgba(255, 255, 255, 0)
-    ) center top,
-    
-    /* Shadow Cover BOTTOM */
-    linear-gradient(
-      rgba(255, 255, 255, 0), 
-      white 70%
-    ) center bottom,
-    
-    /* Shadow TOP */
-    radial-gradient(
-      farthest-side at 50% 0,
-      rgba(0, 0, 0, 0.2),
-      rgba(0, 0, 0, 0)
-    ) center top,
-    
-    /* Shadow BOTTOM */
-    radial-gradient(
-      farthest-side at 50% 100%,
-      rgba(0, 0, 0, 0.2),
-      rgba(0, 0, 0, 0)
-    ) center bottom;
-  
-  background-repeat: no-repeat;
-  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-  background-attachment: local, local, scroll, scroll;
-}
-
-/* prettier-ignore */
-.scroll-shadows-h {
-  --_opacity-clr: rgba(0, 0, 0, 0.2);
-  /* overflow: auto; */
-
-  background:
-    /* Shadow Cover TOP */
-    linear-gradient(
-      white 30%,
-      rgba(255, 255, 255, 0)
-    ) left center,
-    
-    /* Shadow Cover BOTTOM */
-    linear-gradient(
-      rgba(255, 255, 255, 0), 
-      white 70%
-    ) right center,
-    
-    /* Shadow TOP */
-    radial-gradient(
-      farthest-side at 0 50%,
-      var(--_opacity-clr),
-      rgba(0, 0, 0, 0)
-    ) left center,
-    
-    /* Shadow BOTTOM */
-    radial-gradient(
-      farthest-side at 100% 50%,
-      var(--_opacity-clr),
-      rgba(0, 0, 0, 0)
-    ) right center;
-  
-  background-repeat: no-repeat;
-  /* background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px; */
-  background-color: white;
-  background-size: 2rem 100%, 2rem 100%, 1rem 100%, 1rem 100%;
-
-  background-attachment: local, local, scroll, scroll;
-}
-
 .scroll-shadows-horizontal {
   /* display: flex; */
   /* height: auto; */
