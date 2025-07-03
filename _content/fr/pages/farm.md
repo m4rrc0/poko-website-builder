@@ -5,15 +5,14 @@ uuid: 266eb806f2ca
 localizationKey: bab4fe0d7566
 name: Le domaine
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 2
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![Le domaine](/_images/Maison-ombre.webp)
 
 # Le Domaine
@@ -51,7 +50,7 @@ Nous avons réalisé notre première cuvée en 2024 : des vins sains, issus de l
 ![](/_images/IMG_0164.webp)
 
 {% renderTemplate "webc" %}
-<img-txt src="/_images/sapins-arbre-ombre.webp" alt="Illustration sapins" img-width="320" class-name="azienda-img-txt">
+<img-txt src="/_images/Sapins-Arbre.webp" alt="Illustration sapins" img-width="320" class-name="azienda-img-txt">
 
 ## Les Fruitiers {.h3}
 

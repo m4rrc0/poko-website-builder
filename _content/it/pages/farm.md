@@ -5,15 +5,14 @@ uuid: 8be05d9aa2fd
 localizationKey: bab4fe0d7566
 name: L'azienda
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 2
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![L'azienda](/_images/Maison-ombre.webp)
 
 # L'Azienda
@@ -51,7 +50,7 @@ Il risultato: un olio naturale, non filtrato, ricco di vitamina E e di altri ant
 ![](/_images/IMG_0164.webp)
 
 {% renderTemplate "webc" %}
-<img-txt src="/_images/sapins-arbre-ombre.webp" alt="illustrazione arbres" img-width="320" class-name="azienda-img-txt">
+<img-txt src="/_images/Sapins-Arbre.webp" alt="illustrazione arbres" img-width="320" class-name="azienda-img-txt">
 
 ## Il Frutteto {.h3}
 

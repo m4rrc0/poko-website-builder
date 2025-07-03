@@ -5,15 +5,14 @@ uuid: bffbb4cc7155
 localizationKey: bab4fe0d7566
 name: The farm
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 2
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![the farm](/_images/Maison-ombre.webp)
 
 # The Farm
@@ -51,7 +50,7 @@ The result: a natural, unfiltered oil, rich in vitamin E and other antioxidants.
 ![](/_images/IMG_0164.webp)
 
 {% renderTemplate "webc" %}
-<img-txt src="/_images/sapins-arbre-ombre.webp" alt="Illustration Orchard" img-width="320" class-name="azienda-img-txt">
+<img-txt src="/_images/Sapins-Arbre.webp" alt="Illustration Orchard" img-width="320" class-name="azienda-img-txt">
 
 ## The Orchard {.h3}
 
