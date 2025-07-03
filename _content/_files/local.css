@@ -334,6 +334,12 @@ main > header picture {
 .home-links li a:hover {
   color: #87855c;
 }
+.home-links li:has(a:hover) img,
+.home-links li:has(a:hover) picture {
+  /* filter: sepia(1) hue-rotate(57.21deg) saturate(45) contrast(1)
+    brightness(0.45); */
+  filter: invert(20%);
+}
 @media (max-width: 400px) {
   .home-links li a {
     font-size: var(--step-0);
