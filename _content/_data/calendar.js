@@ -17,7 +17,7 @@ const rates = {
 const bookings = [
   {
     from: "2025-06-01",
-    until: "2025-07-08",
+    until: "2025-07-09",
   },
   {
     from: "2025-07-24",
