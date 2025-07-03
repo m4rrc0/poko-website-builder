@@ -46,6 +46,8 @@ export const imageTransformOptions = {
       alt: "", // required
       loading: "lazy",
       decoding: "async",
+      sizes:
+        "(max-width: 480px) 480px, (max-width: 768px) 768px, (max-width: 1280px) 1280px, 100vw",
     },
 
     // HTML attributes added to `<picture>` (omitted when <img> used)

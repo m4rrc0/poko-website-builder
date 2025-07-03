@@ -1,6 +1,7 @@
 // NOTE: I I need to work on a Sveltia fork: https://github.com/sveltia/sveltia-cms/issues/180#issuecomment-2256112119
 import {
   NODE_ENV,
+  WORKING_DIR_ABSOLUTE,
   CONTENT_DIR,
   PROD_URL,
   DISPLAY_URL,
@@ -255,6 +256,7 @@ class CmsConfig {
     ];
     const pagesCollection = {
       ...mostCommonMarkdownCollectionConfig,
+      icon: "description",
       name: "pages",
       label: "Pages",
       label_singular: "Page",
@@ -305,6 +307,8 @@ class CmsConfig {
     ];
     const articlesCollection = {
       ...mostCommonMarkdownCollectionConfig,
+      // icon: "article",
+      icon: "ink_pen",
       name: "articles",
       label: "Articles",
       label_singular: "Article",
@@ -323,6 +327,17 @@ class CmsConfig {
       path: "files/{{slug}}",
       media_folder: `/${CONTENT_DIR}/_files`,
       public_folder: "/_files",
+      fields: [...commonCollectionFields],
+    };
+    const dataFilesCollection = {
+      ...mostCommonMarkdownCollectionConfig,
+      extension: "yaml",
+      name: "dataFiles",
+      label: "Data Files",
+      label_singular: "Data File",
+      path: "_data/{{slug}}",
+      media_folder: `/${CONTENT_DIR}/_data`,
+      public_folder: "/_data",
       fields: [...commonCollectionFields],
     };
 
@@ -365,7 +380,14 @@ class CmsConfig {
         locales: ["it", "en", "fr"],
         default_locale: "it", // Defaults to the first locale in the list
       },
-      collections: [pagesCollection, articlesCollection, filesCollection],
+      collections: [
+        pagesCollection,
+        articlesCollection,
+        filesCollection,
+        dataFilesCollection,
+        ...data.userConfig.collections,
+      ],
+      singletons: [...data.userConfig.singletons],
     };
 
     return JSON.stringify(generalConfig, null, isDev ? 2 : 0);
@@ -375,7 +397,22 @@ class CmsConfig {
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
 
-  eleventyConfig.addTemplate("admin/config.11ty.js", CmsConfig);
+  let userConfig = {
+    collections: [],
+    singletons: [],
+  };
+
+  try {
+    const uc = await import(`${WORKING_DIR_ABSOLUTE}/_config/index.js`);
+    userConfig = {
+      ...userConfig,
+      ...uc,
+    };
+  } catch (error) {
+    console.error("Could not import user config\n", error);
+  }
+
+  eleventyConfig.addTemplate("admin/config.11ty.js", CmsConfig, { userConfig });
 }
 
 // Example Blog Collection
