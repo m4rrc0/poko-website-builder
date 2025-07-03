@@ -1,3 +1,8 @@
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import yaml from "js-yaml";
+
 const rates = {
   default: {
     price: 150,
@@ -14,31 +19,31 @@ const rates = {
   },
 };
 
-const bookings = [
-  {
-    from: "2025-06-01",
-    until: "2025-07-09",
-  },
-  {
-    from: "2025-07-24",
-    until: "2025-08-11",
-  },
-  {
-    from: "2025-07-17",
-    until: "2025-07-21",
-  },
-  {
-    from: "2025-07-15",
-    until: "2025-07-15",
-  },
-];
+// const bookingsLocal = [
+//   {
+//     from: "2025-06-01",
+//     until: "2025-07-09",
+//   },
+//   {
+//     from: "2025-07-24",
+//     until: "2025-08-11",
+//   },
+//   {
+//     from: "2025-07-17",
+//     until: "2025-07-21",
+//   },
+//   {
+//     from: "2025-07-15",
+//     until: "2025-07-15",
+//   },
+// ];
 
 /**
  * Generate calendar data based on rates and bookings
  * @param {number} offsetDays - Number of days to subtract from today (default: 15)
  * @returns {Array} Calendar data for the specified period
  */
-function generateCalendar(offsetDays = 0) {
+function generateCalendar(offsetDays = 0, bookingsData = []) {
   // Get today's date
   const now = new Date(); // Using provided timestamp
 
@@ -51,7 +56,7 @@ function generateCalendar(offsetDays = 0) {
 
   // Find the latest booking date from our data
   // Parse all booking dates to find the latest one
-  const bookingDates = bookings.map((booking) => new Date(booking.until));
+  const bookingDates = bookingsData.map((booking) => new Date(booking.until));
   const latestBookingDate = new Date(
     Math.max(...bookingDates.map((date) => date.getTime()))
   );
@@ -86,7 +91,7 @@ function generateCalendar(offsetDays = 0) {
 
   // Create a set of all booked dates for quick lookup
   const bookedDates = new Set();
-  bookings.forEach((booking) => {
+  bookingsData.forEach((booking) => {
     // Parse booking dates and ensure they're set to the right day boundaries
     const start = new Date(booking.from);
     start.setHours(0, 0, 0, 0);
@@ -225,6 +230,23 @@ function generateCalendar(offsetDays = 0) {
 }
 
 // export default generateCalendar;
-export default function () {
-  return generateCalendar();
+export default async function () {
+  try {
+    // Get the directory path using import.meta.url (ESM approach)
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    // Use path.resolve to get the absolute path to calendar-data.yaml
+    const calendarDataPath = path.resolve(__dirname, "calendar-data.yaml");
+
+    // Read and parse the YAML file
+    const calendarDataContent = await fs.readFile(calendarDataPath, "utf-8");
+    const calendarData = yaml.load(calendarDataContent);
+    const bookings = calendarData.bookings;
+
+    return generateCalendar(0, bookings);
+  } catch (error) {
+    console.error("Error reading bookings.yaml:", error);
+    throw error;
+  }
 }
