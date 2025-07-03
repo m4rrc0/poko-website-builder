@@ -18,7 +18,7 @@ metadata:
 
 # La Camera
 
-![La chambre](/_images/Photo-chambre.webp)
+![La camera](/_images/Photo-chambre.webp)
 
 Soggiornerete in un alloggio accogliente adiacente alla nostra cantina.
 Progettato per 2 a 4 persone, offre uno spazio confortevole che comprende una camera con letto matrimoniale, un bagno privato con doccia, articoli da toeletta gratuiti e un asciugacapelli, oltre a un soggiorno con divano letto per due persone.
@@ -31,4 +31,4 @@ La colazione per due persone è inclusa nel prezzo della camera.
 
 {% include "book-btn.njk" %}
 
-![](/_images/Photos-galerie-chambre-1.webp) ![](/_images/Photos-galerie-chambre-2.webp) ![](/_images/Photos-galerie-chambre-3.webp) ![](/_images/Photos-galerie-chambre-4.webp) ![](/_images/Photos-galerie-chambre-5.webp) ![](/_images/7135C485-8102-4017-9B6B-C52CA5AD1144.webp)
+{% include "galery-room.md" %}

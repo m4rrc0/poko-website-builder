@@ -31,4 +31,4 @@ Breakfast for two people is included in the room rate.
 
 {% include "book-btn.njk" %}
 
-![](/_images/Photos-galerie-chambre-1.webp) ![](/_images/Photos-galerie-chambre-2.webp) ![](/_images/Photos-galerie-chambre-3.webp) ![](/_images/Photos-galerie-chambre-4.webp) ![](/_images/Photos-galerie-chambre-5.webp) ![](/_images/7135C485-8102-4017-9B6B-C52CA5AD1144.webp)
+{% include "galery-room.md" %}

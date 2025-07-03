@@ -26,4 +26,4 @@ Si vous souhaitez quelque chose de plus simple à tout moment de la journée(sna
 
 {% include "book-btn.njk" %}
 
-![](/_images/Photo-table-galerie-1.webp) ![](/_images/Photo-table-galerie-2.webp) ![](/_images/Photo-table-galerie-3.webp) ![](/_images/Photo-table-galerie-4.webp) ![](/_images/Photo-table-galerie-5.webp) ![](/_images/28856FB4-B258-4A2F-8B5E-988296C8B2B3.webp)
+{% include "galery-table.md" %}
