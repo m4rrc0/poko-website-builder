@@ -19,7 +19,17 @@ metadata:
 
 ![The farm-photo](/_images/BAE19F68-358C-466B-9059-58397E9EEEC3.webp)
 
-Lost in the Viterbo countryside, in the heart of Tuscia, the land of the Etruscans, one immediately feels soothed by the calm and the magnificent view over the nearby Umbrian hills. It is by taking a _strada bianca_, one of those unpaved gravel roads that cross the fields, that one reaches this beautiful 10-hectare estate run with organic farming methods. A 1.5-hectare vineyard, around a hundred olive trees, a vegetable garden, fruit trees, beehives, a guest room and a _table d’hôtes_ are the main areas of activity. Bordered by a cliff from which one can glimpse the remains of ancient underground Etruscan dwellings, and by nearby nature reserves such as Corviano, known for its great biodiversity, the estate benefits from an environment ideal for high-quality organic agriculture. Moreover, the volcanic soil from the lands around Lake Bolsena — formed by the collapse of the craters of the Vulsini Mountains — gives the crops both fertility and balance. It is in this little corner of paradise that we learn each day to better understand the nature surrounding them and strive to elevate the products they grow, with deep respect and love for the land they have been entrusted with.
+Lost in the Viterbo countryside, in the heart of Tuscia — the land of the Etruscans — one immediately feels soothed by the calm and the magnificent view over the nearby Umbrian hills.
+
+A strada bianca — one of those unpaved gravel roads that wind through the fields — leads to this beautiful 10-hectare estate, cultivated using organic farming methods.
+
+A 1.5-hectare vineyard, around a hundred olive trees, a vegetable garden, fruit trees, beehives, a guest room, and a table d’hôtes make up the estate’s main activities.
+
+Bordered by a cliff, from which one can glimpse the remains of ancient underground Etruscan dwellings, and by nearby nature reserves like Corviano — known for its rich biodiversity — the estate enjoys an ideal environment for high-quality organic agriculture.
+
+What’s more, the volcanic soil from the lands around Lake Bolsena — formed by the collapse of the Vulsini Mountains' craters — brings both fertility and balance to the crops.
+
+It’s in this little corner of paradise that we learn each day to better understand the nature surrounding us, and strive to elevate the products we grow, with deep respect and love for the land we’ve been entrusted with.
 
 {% include "book-btn.njk" %}
 
@@ -28,9 +38,10 @@ Lost in the Viterbo countryside, in the heart of Tuscia, the land of the Etrusca
 
 ## The Vineyard and the Wine {.h3}
 
-We planted our vineyard in January 2020. For the choice of grape varieties, we naturally selected native ones to create wines in harmony with the local terroir: Trebbiano Toscano, Malvasia, and Vermentino for the white wines; Sangiovese and Ciliegiolo for the red. We produced our first cuvée in 2024.
+We planted our vineyard in January 2020. When choosing grape varieties, we naturally opted for native ones, aiming to craft wines that reflect and respect the local terroir: Trebbiano Toscano, Malvasia, and Vermentino for the whites; Sangiovese and Ciliegiolo for the reds. We produced our first cuvée in 2024.
 
-Our wines are healthy, made from organic farming practices and a clean, low-intervention winemaking approach.
+Our wines are pure and healthy, made using organic farming methods and a clean, low-intervention winemaking approach.
+
 </img-txt>
 {% endrenderTemplate %}
 
@@ -54,7 +65,8 @@ The result: a natural, unfiltered oil, rich in vitamin E and other antioxidants.
 
 ## The Orchard {.h3}
 
-Apple trees, apricot trees, jujube trees, cherry trees, and various plum trees give Eric the chance to prepare delicious jams that you’ll enjoy at breakfast.
+Apple trees, apricot trees, jujube trees, cherry trees, and various plum trees give Eric the chance to prepare delicious jam that you’ll enjoy at breakfast.
+
 </img-txt>
 {% endrenderTemplate %}
 
@@ -63,9 +75,10 @@ Apple trees, apricot trees, jujube trees, cherry trees, and various plum trees g
 
 ## The Vegetable Garden {.h3}
 
-We grow our own vegetables and aromatic herbs in our greenhouse and natural garden, created following permaculture principles, without pesticides or herbicides.
+We grow our own vegetables and aromatic herbs in a greenhouse and natural garden designed according to permaculture principles—without pesticides or herbicides.
 
-As the seasons change, we’re able to offer our guests dishes prepared with our own produce by Eric, a chef with a deep love for cooking for many years.
+As the seasons change, Eric, a chef with a deep passion for cooking, prepares dishes for our guests using the fresh produce we harvest.
+
 </img-txt>
 {% endrenderTemplate %}
 
