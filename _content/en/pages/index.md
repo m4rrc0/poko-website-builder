@@ -40,7 +40,7 @@ metadata:
 
 ![](/_images/FF7D8734-C740-4332-A548-E7CA01E2CB85.webp)
 
-More than a room... {.h2}
+More than just a room... {.h2}
 
 Una Scelta is the journey of Karima and Eric, two Italians at heart who left Belgium to plant roots in Soriano nel Cimino, nestled in the peaceful countryside of Viterbo.
 

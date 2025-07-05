@@ -40,7 +40,7 @@ metadata:
 
 ![](/_images/FF7D8734-C740-4332-A548-E7CA01E2CB85.webp)
 
-More than a room... {.h2}
+More than  just a room... {.h2}
 
 Una Scelta, c'est le chemin qu'ont choisi Karima et Eric, deux italiens de coeur partis de Belgique pour s'ancrer à Soriano nel Cimino, au coeur de la campagne viterbese.
 
