@@ -5,29 +5,27 @@ uuid: e6963a022504
 localizationKey: 0da8ebc98cbc
 name: The room
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 3
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![The room](/_images/Main-clefs-ombre.webp)
 
 # The Room
 
 ![](/_images/Photo-chambre.webp)
 
-You will stay in a cozy accommodation adjoining our cantina.
-Designed for 2 to 4 people, it offers a comfortable space including a bedroom with a double bed, a private bathroom with a shower, free toiletries, and a hairdryer, as well as a living area with a sofa bed for two people.
-You can also enjoy a pleasant terrace.
-The room is equipped with air conditioning and Wi-Fi. Towels and bed linen are provided.
-An independent kitchen area is also available for your use.
-Moreover, when the weather permits, a swimming pool is reserved for you to cool off and relax.
-A second bathroom with a shower is located near the pool.
-Breakfast for two people is included in the room rate.
+You'll stay in a cozy guesthouse adjoining our cantina. Designed for 2 to 4 guests, it offers a comfortable space with a bedroom featuring a double bed, a private bathroom with a shower, complimentary toiletries, and a hairdryer. The living area includes a sofa bed that sleeps two.
+
+You’ll also enjoy a pleasant terrace, and the room is equipped with air conditioning, Wi-Fi, towels, and bed linen. A private kitchen area is available for your use.
+
+When the weather is kind, a swimming pool is reserved for your enjoyment—perfect for cooling off and relaxing. A second bathroom with a shower is conveniently located near the pool.
+
+Breakfast for two is included in the room rate.
 
 {% include "book-btn.njk" %}
 

@@ -5,15 +5,14 @@ uuid: 4ff4cee37424
 localizationKey: 0da8ebc98cbc
 name: La camera
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 3
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![La camera](/_images/Main-clefs-ombre.webp)
 
 # La Camera

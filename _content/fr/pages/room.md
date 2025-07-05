@@ -5,15 +5,14 @@ uuid: 1a857f771089
 localizationKey: 0da8ebc98cbc
 name: La chambre
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 3
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![La chambre](/_images/Main-clefs-ombre.webp)
 
 # La Chambre
