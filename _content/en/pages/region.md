@@ -19,7 +19,6 @@ metadata:
 
 Ideally located at the crossroads of Lazio, Umbria, and Tuscany, our azienda is the perfect base for numerous excursions and visits. Just a short walk away lies the Corviano Nature Reserve, a rich blend of biodiversity, culture, and archaeology. Here, you can explore Etruscan necropolises and medieval sites like the Cascata del Martelluzzo.
 
-
 A bit further afield—only a 15-minute drive—is the Sacro Bosco, the Monster Park of Bomarzo. These extravagant Renaissance gardens, filled with strange and sometimes eerie sculptures, are sure to cap.
 
 Several must-see Italian cities are also well worth a visit: Rome (90 km), Florence (200 km), Viterbo (10 km), Orvieto (50 km).
