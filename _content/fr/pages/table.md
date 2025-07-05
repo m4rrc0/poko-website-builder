@@ -5,15 +5,14 @@ uuid: e438db01ae48
 localizationKey: 8a8032a25c3b
 name: La table
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 4
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![La table](/_images/Main-pates-ombre.webp)
 
 # La Table

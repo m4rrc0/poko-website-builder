@@ -5,29 +5,25 @@ uuid: b39d15c11817
 localizationKey: 8a8032a25c3b
 name: The table
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 4
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![The table](/_images/Main-pates-ombre.webp)
 
 # The Table
 
 ![](/_images/DSC00291.webp)
 
-With 30 years of experience as a chef in his own restaurants, Eric invites you to discover his cuisine through a seasonal menu prepared with products he has either grown in his garden or carefully selected from local producers.
-The three-course menu can be adapted to your dietary intolerances and is offered at the price of €40 per person.
+With 30 years of experience as a chef running his own restaurant, Eric invites you to discover his cuisine through a seasonal menu crafted from ingredients he grows in his garden or carefully sources from local producers. The three-course menu, priced at €40 per person, can be adapted to accommodate dietary intolerances.
 
-Our selection of house wines, along with a few hand-picked bottles, will complete this exclusive experience.
-This menu is available by reservation only.
+Our selection of house wines, complemented by a few hand-picked bottles, rounds out this exclusive experience. Please note that this menu is available by reservation only.
 
-If you prefer something simpler at any time of the day (snacks, light bites, refreshments), a small selection of suggestions will be available.
-Everything will be at your disposal in the kitchen area.
+If you prefer something lighter at any time of day—snacks, small bites, or refreshments—a modest selection will be available. Everything you need will be provided in the kitchen area.
 
 {% include "book-btn.njk" %}
 

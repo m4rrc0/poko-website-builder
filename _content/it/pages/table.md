@@ -5,15 +5,14 @@ uuid: 424d271d1746
 localizationKey: 8a8032a25c3b
 name: La tavola
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 4
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![La tavola](/_images/Main-pates-ombre.webp)
 
 # La Tavola
