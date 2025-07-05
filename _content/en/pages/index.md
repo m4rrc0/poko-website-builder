@@ -5,15 +5,14 @@ uuid: 66368d48b364
 localizationKey: 306b3de99b18
 name: Home
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: -1
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 <header>
   <h1>
     <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" loading="eager" />
@@ -43,14 +42,16 @@ metadata:
 
 More than a room... {.h2}
 
-Una Scelta is the path chosen by Karima and Eric, two Italians at heart who left Belgium to put down roots in Soriano nel Cimino, in the peaceful countryside of Viterbo.
+Una Scelta is the journey of Karima and Eric, two Italians at heart who left Belgium to plant roots in Soriano nel Cimino, nestled in the peaceful countryside of Viterbo.
 
-On their 10-hectare estate, they produce wine, olive oil, and vegetables, and welcome you into a serene and exclusive setting, for an immersive experience in harmony with nature.
+On their 10-hectare estate, they grow vegetables, produce wine and olive oil, and welcome guests into a serene and exclusive setting — an immersive experience in harmony with nature.
 
-Accommodation, sharing, walks, home-cooked meals, and discoveries : a simple, genuine, and deeply vibrant stay.
+Stays here are about connection: comfortable accommodation, heartfelt conversations, scenic walks, home-cooked meals, and meaningful discoveries.
+
+A stay that’s simple, genuine, and full of life.
 
 <section class="full-bleed-before">
-  <p>Come share our little paradise just one hour away from Rome</p>
+  <p>Just an hour from Rome — come enjoy our little slice of paradise.</p>
 </section>
 
 ![](/_images/30B11B1D-F306-4ABB-80C1-491AF03C671D.webp)

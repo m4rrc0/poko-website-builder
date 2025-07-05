@@ -5,15 +5,14 @@ uuid: 3478c9a70611
 localizationKey: 306b3de99b18
 name: Accueil
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: -1
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 <header>
   <h1 class="h3">
     <img src="/_images/logo-Una_Scelta_Sosta.webp" width="300" alt="Una scelta - sosta contadina" loading="eager" />
