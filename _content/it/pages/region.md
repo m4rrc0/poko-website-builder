@@ -5,15 +5,14 @@ uuid: d135e2780635
 localizationKey: 031835c2a406
 name: La regione
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 5
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![La regione](/_images/sapins-arbre-ombre.webp)
 
 # La Regione
