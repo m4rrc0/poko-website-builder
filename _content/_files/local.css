@@ -22,6 +22,15 @@ main > p > iframe:only-child {
   width: 100%;
 }
 
+:where(a, button, label, span, p, li, dt, dd, th, td, code, summary) svg {
+  height: 1em;
+  width: 1em;
+}
+:where(a, button, label, span, p, li, dt, dd, th, td, code, summary)
+  svg.icon:not(.right) {
+  margin-inline-end: 0.25rem;
+}
+
 /* General Layout */
 body {
   display: flex;
