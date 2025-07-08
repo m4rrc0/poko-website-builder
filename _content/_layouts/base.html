@@ -112,7 +112,7 @@
       <div class="infos grid-auto">
         <div>
           <p>
-            {{ dico.address }}<br>
+            {{ dico.address }}{% icon "googlemaps" class="right" %}<br>
             <a href="{{ data.gmaps }}" target="_blank" rel="noopener noreferrer" style="white-space: pre-line">{{ data.address | safe }}</a>
           </p>
         </div>
