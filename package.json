@@ -48,15 +48,18 @@
     "@m4rrc0/eleventy-plugin-markdoc": "^0.1.6",
     "@markdoc/markdoc": "^0.5.2",
     "@sindresorhus/slugify": "^2.2.1",
+    "@tabler/icons": "^3.34.0",
     "@types/bun": "latest",
     "chalk": "^5.4.1",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
+    "eleventy-plugin-icons": "^4.5.3",
     "fast-glob": "^3.3.3",
     "fast-sort": "^3.4.1",
     "he": "^1.2.0",
     "js-yaml": "^4.1.0",
     "markdown-it-attrs": "^4.3.1",
+    "simple-icons": "^15.5.0",
     "typescript": "^5.8.2"
   }
 }

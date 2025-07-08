@@ -5,6 +5,7 @@ import directoryOutputPlugin from "@11ty/eleventy-plugin-directory-output";
 import { RenderPlugin, IdAttributePlugin, I18nPlugin } from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import pluginWebc from "@11ty/eleventy-plugin-webc";
+import pluginIcons from "eleventy-plugin-icons";
 // import pluginMarkdoc from "@m4rrc0/eleventy-plugin-markdoc";
 import eleventyNavigationPlugin from "@11ty/eleventy-navigation";
 import { imageTransformOptions } from "./src/config-11ty/plugins/imageTransform.js";
@@ -49,7 +50,6 @@ import {
   emailLink,
 } from "./src/config-11ty/filters/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
-import obfuscateEmail from "./src/utils/emailObfuscate.js";
 
 // TODOS:
 // - Look at persisting images in cache between builds: https://github.com/11ty/eleventy-img/issues/285
@@ -112,6 +112,20 @@ export default async function (eleventyConfig) {
     ],
     useTransform: true,
   });
+  eleventyConfig.addPlugin(pluginIcons, {
+    sources: [
+      {
+        name: "simple",
+        path: "node_modules/simple-icons/icons",
+        default: true,
+      },
+      {
+        name: "tabler",
+        path: "node_modules/@tabler/icons/icons",
+      },
+    ],
+  });
+
   // --------------------- Populate files and default content
   // Populate Default Content: Copy `src/content-static/` to `dist`
   eleventyConfig.addPassthroughCopy({ "src/content-static": "/" });
