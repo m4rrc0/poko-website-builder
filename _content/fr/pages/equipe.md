@@ -25,12 +25,7 @@ Notre équipe pédagogique partage une vision commune de l'enfant et de l'éduca
 
 ## Composition de l'équipe
 
-### Direction et secrétariat
-
-La direction coordonne l'équipe pédagogique et assure le lien entre tous les acteurs de l'école (enfants, animateurs, parents, pouvoir organisateur) dans une démarche collégiale et participative. Elle est accompagnée par le secrétariat pour la réalisation de ces tâches.
-
-- **Direction** : Grégoire Louveaux
-- **Secrétariat** : Coralie Ullens
+### 
 
 ### Équipe maternelle
 
@@ -112,6 +107,13 @@ Les surveillants jouent un rôle essentiel dans le bien-être des enfants pendan
 - Muriel Delattre
 - Juliette Splingard
 - Mathieu Brouwer
+
+### Direction et secrétariat
+
+La direction coordonne l'équipe pédagogique et assure le lien entre tous les acteurs de l'école (enfants, animateurs, parents, pouvoir organisateur) dans une démarche collégiale et participative. Elle est accompagnée par le secrétariat pour la réalisation de ces tâches.
+
+- **Direction** : Grégoire Louveaux
+- **Secrétariat** : Coralie Ullens
 
 ## Une équipe en formation continue
 
