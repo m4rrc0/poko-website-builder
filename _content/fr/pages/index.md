@@ -64,13 +64,6 @@ Nous accueillons les enfants de 2½ à 12 ans dans un cadre à taille humaine o�
 
 ## Actualités et vie de l'école
 
-<div class="news-section">
-  <div class="news-highlight">
-    <h3>Journées portes ouvertes</h3>
-    <p class="news-date">10 décembre 2024</p>
-    <p>Venez découvrir notre école lors de nos séances d'information pour les inscriptions 2025-2026. Deux sessions sont prévues à 16h30 et 17h30.</p>
-    <p><a href="/inscription/" class="read-more">Plus d'informations</a></p>
-  </div>
   
   <div class="news-sidebar">
     <h3>Vie quotidienne</h3>
