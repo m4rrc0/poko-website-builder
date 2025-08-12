@@ -3,7 +3,6 @@ translationKey: la-vie-de-l-ecole
 status: published
 name: La vie de l'école
 ---
-
 # La vie de l'école
 
 L'Autre École est un lieu de vie collégiale où se concrétisent au quotidien les valeurs de coopération, de liberté responsable et de solidarité. Notre organisation quotidienne et les événements qui rythment l'année reflètent directement notre projet pédagogique et nos options fondamentales.
@@ -18,16 +17,15 @@ L'école ouvre ses portes à 8h et les referme à 18h du lundi au vendredi. Le m
 
 Notre journée est organisée pour favoriser l'équilibre entre les différents temps d'apprentissage et le respect des rythmes des enfants :
 
-- **8h00 - 8h30** : Accueil progressif des enfants
-- **8h30 - 9h00** : Moment collectif (quoi de neuf/salon, lancement de la journée)
-- **9h00 - 10h20** : Travail individuel (TI) ou activités collectives selon les classes
-- **10h20 - 10h40** : Détente avec collation et petit magasin
-- **10h40 - 12h20** : Ateliers ou projets de classe
-- **12h20 - 13h40** : Repas en classe et grande détente dans la cour
-- **13h30 - 15h10** : Activités diverses (projets, sorties, travail en groupe)
-- **15h10 - 15h30** : Détente
-- **15h30 - 16h10** : Conseil de classe hebdomadaire ou bilan de journée
-- **16h10 - 18h00** : Garderie et activités périscolaires (avec collations à 16h et 17h)
+- **8h00 - 8h25** : Accueil progressif des enfants
+- **8h30 - 9h00** : Début des cours. Élèves présents en classe et prêts**&#32;**à participer aux activités collectives.
+- **10h10 - 10h40** : Petite détente (récréation
+- **10h40 - 12h20** : Activités de classe
+- **12h20 - 13h40** : Repas en classe suivi de la grande détente dans la cour
+- **13h40 - 15h20** : Activités diverses (projets, sorties, travail en groupe)
+- **15h20 - 15h30** : Clôture de la classe et réalisation des services
+- **15h30 - 16h00** : Heure des parents
+- **16h00 - 18h00** : Garderie (avec collations à 16h et 17h)
 
 ### Spécificités de notre organisation
 
