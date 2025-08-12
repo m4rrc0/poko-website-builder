@@ -27,19 +27,17 @@ Notre équipe pédagogique partage une vision commune de l'enfant et de l'éduca
 
 ### Direction et secrétariat
 
-La direction coordonne l'équipe pédagogique et assure le lien entre tous les acteurs de l'école (enfants, animateurs, parents, pouvoir organisateur) dans une démarche collégiale et participative.
+La direction coordonne l'équipe pédagogique et assure le lien entre tous les acteurs de l'école (enfants, animateurs, parents, pouvoir organisateur) dans une démarche collégiale et participative. Elle est accompagnée par le secrétariat pour la réalisation de ces tâches.
 
 - **Direction** : Grégoire Louveaux
+- **Secrétariat** : Coralie Ullens
 
 ### Équipe maternelle
 
 En maternelle, nos animatrices travaillent en classes verticales, regroupant des enfants d'âges différents. Cette organisation favorise la coopération, l'entraide et permet à chaque enfant d'évoluer à son rythme dans un environnement riche et stimulant.
 
 - **Classe verticale accueil/première maternelle** : Virginie Dupuis
-- **Classes verticales 1e/2e/3e maternelle** :
-- Christelle Cordonnier
-- Angie Pique (remplacée par Amandine Montecchio)
-- Ella Gyömörey
+- **Classes verticales 1e/2e/3e maternelle** : Christelle Cordonnier et Amandine Montecchio
 - **Puéricultrice** : Laura Brasseur
 
 ### Équipe primaire
@@ -50,8 +48,9 @@ En primaire aussi, nous favorisons la continuité pédagogique et le travail en 
 
 Les premières années du primaire sont cruciales pour l'acquisition des outils fondamentaux de lecture, d'écriture et de mathématiques, toujours dans une démarche active et coopérative.
 
-- **Animateurs du cycle** :
-- Bernard Van Keirsbilck
+**Animateurs du cycle** :
+
+- Bernard et Damien Van Keirsbilck
 - Nathalie Van Vyve
 - **Co-titulaire dans le cycle** : Laurence Géradon
 
@@ -62,9 +61,9 @@ Ce cycle permet d'approfondir les apprentissages et de développer davantage l'a
 - **Animatrices du cycle** :
 - Véronique Piscaglia
 - Fabienne Kariger
-- **Co-titulaires dans le cycle** :
-- Chantal Meuleman
-- Laurence Géradon
+- **Co-titulaire dans le cycle** :
+- Charlotte Fripiat
+- Lionel Sylos
 
 #### Troisième cycle (5ème et 6ème primaires)
 
@@ -73,8 +72,8 @@ Les dernières années du primaire sont orientées vers l'accomplissement de pro
 - **Animatrices du cycle** :
 - Céline Duquenne
 - Micheline Thieren
-- **Co-titulaires dans le cycle** :
-- Chantal Meuleman
+- **Co-titulaire dans le cycle** :
+- Charlotte Fripiat
 - Laurence Géradon
 
 ### Équipes transversales
@@ -85,13 +84,13 @@ Ces animateurs et animatrices interviennent auprès de plusieurs classes et enri
 
 L'apprentissage du néerlandais se fait dans une perspective communicative et culturelle, en lien avec des projets concrets comme les correspondances avec des classes néerlandophones.
 
-- **Animatrice** : Katrien Nijs
+- **Animatrice** : Mélanie Simons
 
 #### Éducation physique
 
 Les activités sportives à l'Autre École mettent l'accent sur la coopération plutôt que sur la compétition, et sur le plaisir du mouvement.
 
-- **Animateur** : Lionel Sylos (remplacé par Charlotte Conté et Vincent Nuttin jusqu'en janvier)
+- **Animateur** : Lionel Sylos 
 
 #### Musique
 
@@ -111,7 +110,7 @@ Les surveillants jouent un rôle essentiel dans le bien-être des enfants pendan
 
 - Chantal Sylvain
 - Muriel Delattre
-- Laura Stevens
+- Juliette Splingard
 - Mathieu Brouwer
 
 ## Une équipe en formation continue
