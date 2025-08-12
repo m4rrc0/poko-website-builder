@@ -31,10 +31,6 @@ Site web en (re)construction {.callout}
 <div class="hero">
   <div class="hero-content">
     <p class="tagline">Une école Freinet où chaque enfant est acteur de ses apprentissages dans un environnement coopératif et bienveillant.</p>
-    <p class="hero-buttons cluster">
-      <a href="/ecole/" class="button">Découvrir notre école</a>
-      <a href="/inscription/" class="button button-accent">Informations inscriptions</a>
-    </p>
   </div>
 </div>
 
@@ -105,3 +101,8 @@ L'Autre École se distingue par son approche globale de l'éducation qui s'artic
     <p><a href="/contact/" class="button button-outline">Tous les contacts</a></p>
   </div>
 </div>
+
+<p class="hero-buttons cluster">
+      <a href="/ecole/" class="button">Découvrir notre école</a>
+      <a href="/inscription/" class="button button-accent">Informations inscriptions</a>
+    </p>
