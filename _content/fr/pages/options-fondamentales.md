@@ -1,9 +1,8 @@
 ---
 translationKey: options-fondamentales
-status: published
+status: inactive
 name: Options fondamentales
 ---
-
 # Options fondamentales
 
 ## Introduction
@@ -30,7 +29,6 @@ C'est-à-dire quelles sont les convictions profondes qui guident notre jugement 
 L'Autre École s'inspire des idées politiques et pédagogiques de Célestin Freinet. Elle fonde son action sur les principes complémentaires de solidarité sociale et d'épanouissement individuel qui se traduisent notamment par :
 
 - une adhésion aux valeurs de coopération, d'autonomie et de liberté, de respect des personnes et de la nature, d'égalité, également de pluralisme dans les limites de tolérance imposées par ces valeurs,
-
 - un refus de l'élitisme, du dogmatisme, de la compétition, de l'aliénation, des concentrations de pouvoirs et de richesses, de la domination et de l'exploitation des hommes, de l'exclusion et du racisme.
 
 L'Autre École entend appliquer ces principes dans sa pédagogie, dans son organisation interne et au niveau de son insertion dans la société.
@@ -58,11 +56,8 @@ Nous sommes opposés à toute forme d'endoctrinement et à toute forme d'autorit
 "Ma liberté commence là où commence celle des autres", Albert Jacquard implique que la liberté ne préexiste pas, elle se construit et s'articule sur plusieurs éléments:
 
 - la prise de conscience de soi et l’affirmation de soi, la découverte des autres, la rencontre, la négociat ion, la concessio n et après accord, l'entente. La structuration de la vie à l'école en foncti on des objectifs pédagogiques ;
-
 - les contraintes de la réalité qu'il s'agit de prendre en compte, sans lesquels toute vie sociale est rendue pénible : l'horaire, la sécurité, le respect des espac es, le respect du matériel ... ;
-
 - l'ouverture à l'autre (c'est -à-dire l'acceptation de l'autre comme être différent) : nous sommes pour une société sans guerre, ni racisme ni sexisme ni autres formes de discrimination et d'exploitation de l'être humain ;
-
 - l'intérêt général : il s'agit d'être sensible aux besoins des groupes dont on fait partie, d'accepter leurs choix en ce sens, même lorsque cela nous oblige à relativiser nos désirs individuels.
 
 Ces notions ne sont pas tellement faciles à mettre en pratique car, dans notre histoire affective et sociale, l'autre a bien souvent été ressenti comme une contrainte. Quant à l'intérêt général, il a tellement servi de prétexte pour nous faire marcher dans des intérêts particuliers ...
