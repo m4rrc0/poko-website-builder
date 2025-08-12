@@ -5,7 +5,6 @@ name: Accueil
 eleventyNavigation:
   order: 1
 ---
-
 Site web en (re)construction {.callout}
 
 <!--
@@ -17,9 +16,9 @@ Site web en (re)construction {.callout}
 - Annonces importantes du moment?
 - Infographie Freinet
 
-1. histoqique et valeurs
+1. historique et valeurs
 2. Actus
-3. Insciption
+3. Inscription
 4. Equipe et contact
 5. Doc parents
 6. Vie de l'école
