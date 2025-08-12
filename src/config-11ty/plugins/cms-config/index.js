@@ -570,7 +570,7 @@ class CmsConfig {
         widget: "markdown",
         required: false,
         i18n: true,
-        editor_components: [],
+        editor_components: ["eleventyImage", "partial", "wrapper"],
       },
       {
         name: "eleventyNavigation",
