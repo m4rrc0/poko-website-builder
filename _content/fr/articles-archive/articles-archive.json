@@ -1,0 +1,5 @@
+{
+  "layout": "articles-archive.html",
+  "tags": ["articles", "_archive2025"],
+  "permalink": "/articles/{{ title | slugify }}-{{ date | dateToSlug }}/index.html"
+}

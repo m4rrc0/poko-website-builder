@@ -1,0 +1,18 @@
+siteName: L'autre école
+productionUrl: https://www.autre-ecole.org
+htmlHead: |-
+  <!-- link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kimeiga/bahunya/dist/bahunya.min.css" -->
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"> -->
+  <link rel="stylesheet" href="/assets/files/ctx.css"> <link rel="stylesheet" href="/assets/files/local.css">
+languages:
+  - code: fr
+    name: Français
+    customUrlPrefix:
+      prefix: ""
+    status: published
+    isCmsDefault: true
+    isWebsiteDefault: true
+collections:
+  - articles
+cssHead: ""
+lang: fr
