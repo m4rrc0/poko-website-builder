@@ -15,19 +15,19 @@ Cette section regroupe les documents fondamentaux qui définissent notre identit
 
 Les Options Fondamentales constituent le texte fondateur de l'Autre École, rédigé par les parents fondateurs. Ce document essentiel définit les valeurs, l'approche pédagogique et les principes organisationnels qui guident notre école depuis sa création.
 
-📃 [Télécharger les Options Fondamentales](/assets/files/options-fondamentales.pdf)
+📃 [Télécharger les Options Fondamentales](/options-fondamentales.pdf)
 
 ### Règlement d'Ordre Intérieur (ROI)
 
 Le ROI détaille les règles de vie commune et les aspects pratiques du fonctionnement quotidien de l'école, dans le respect des valeurs définies par nos Options Fondamentales.
 
-📃 [Télécharger le Règlement d'Ordre Intérieur](/assets/files/ROI-Autre-Ecole.pdf)
+📃 [Télécharger le Règlement d'Ordre Intérieur](/ressources/ROI-Autre-Ecole.pdf)
 
 ### Règlement des Études
 
 Ce document précise notre approche de l'évaluation, l'organisation des apprentissages et le suivi du parcours scolaire des enfants.
 
-📃 [Télécharger le Règlement des Études](/assets/files/Reglement-Etudes-Autre-Ecole.pdf)
+📃 [Télécharger le Règlement des Études](/ressources/Reglement-Etudes-Autre-Ecole.pdf)
 
 ### Projet d'établissement
 
@@ -41,21 +41,21 @@ Cette section rassemble les documents administratifs et pratiques utiles au quot
 
 En cas d'absence de votre enfant en âge d'obligation scolaire (dès 5 ans), vous devez rentrer un justificatif d'absence à l'école. Voici un exemplaire à imprimer et compléter.
 
-📃 [Télécharger le justificatif d'absence](/assets/files/Justificatif-Absence-AE.pdf)
+📃 [Télécharger le justificatif d'absence](/ressources/Justificatif-Absence-AE.pdf)
 
 ### Formulaires d'autorisation
 
 Différents formulaires d'autorisation sont nécessaires pour certaines activités scolaires :
 
-📃 [Autorisation de sortie autonome](/assets/files/Autorisation-Sortie-Autonome.pdf) (pour les enfants autorisés à quitter seuls l'école)
+📃 [Autorisation de sortie autonome](/ressources/Autorisation-Sortie-Autonome.pdf) (pour les enfants autorisés à quitter seuls l'école)
 
-📃 [Autorisation de prise et diffusion d'images](/assets/files/Autorisation-Images.pdf)
+📃 [Autorisation de prise et diffusion d'images](/ressources/Autorisation-Images.pdf)
 
 ### Calendrier scolaire
 
 Retrouvez les dates importantes de l'année scolaire (congés, fêtes, journées pédagogiques) :
 
-📃 [Calendrier scolaire 2024-2025](/assets/files/Calendrier-2024-2025.pdf)
+📃 [Calendrier scolaire 2024-2025](/ressources/Calendrier-2024-2025.pdf)
 
 ## Outils pédagogiques
 
