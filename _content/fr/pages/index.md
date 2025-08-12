@@ -80,29 +80,15 @@ L'Autre École se distingue par son approche globale de l'éducation qui s'artic
 - **Organisation coopérative** : décisions collectives et responsabilités partagées
 - **Ouverture sur le monde** : ancrer les apprentissages dans la réalité sociale et culturelle
 
-<div class="cta-box">
-  <h3>Rejoignez-nous</h3>
-  <p>L'inscription à l'Autre École est avant tout une adhésion à un projet coopératif et participatif. Découvrez notre processus d'inscription et les modalités de participation des familles.</p>
-  <p><a href="/inscription/" class="button">Processus d'inscription</a></p>
-</div>
-
-## Ressources et contacts
-
-<div class="resources-contacts">
-  <div class="resources-col">
-    <h3>Documents et ressources</h3>
-    <p>Consultez nos documents institutionnels, les outils pédagogiques et les ressources pour les familles.</p>
-    <p><a href="/ressources/" class="button button-outline">Accéder aux ressources</a></p>
-  </div>
-  
-  <div class="contacts-col">
-    <h3>Nous contacter</h3>
-    <p>L'Autre École<br>Place Govaert 1<br>1160 Auderghem<br>Tél. : +32 (0)2 660 72 38</p>
-    <p><a href="/contact/" class="button button-outline">Tous les contacts</a></p>
-  </div>
-</div>
-
 <p class="hero-buttons cluster">
       <a href="/ecole/" class="button">Découvrir notre école</a>
       <a href="/inscription/" class="button button-accent">Informations inscriptions</a>
     </p>
+
+## Ressources 
+
+<div class="resources-contacts">
+  <div class="resources-col">
+    <p>Consultez nos documents institutionnels, les outils pédagogiques et les ressources pour les familles.</p>
+    <p><a href="/ressources/" class="button button-outline">Accéder aux ressources</a></p>
+  </div>
