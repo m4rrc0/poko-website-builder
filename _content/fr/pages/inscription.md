@@ -5,7 +5,6 @@ name: Inscription
 eleventyNavigation:
   order: 20
 ---
-
 # S'inscrire à l'Autre École
 
 ## Une inscription qui est avant tout une adhésion
@@ -25,9 +24,7 @@ Cette adhésion implique une réelle cohérence entre les valeurs véhiculées �
 Pour cela, nous vous invitons à :
 
 1. **Explorer notre site web** - Découvrez nos pages sur les [valeurs](/valeurs/), la [pédagogie](/pedagogie/), la [vie de l'école](/la-vie-de-l-ecole/) et le [projet d'établissement](/projet-d-etablissement/)
-
 2. **Lire nos Options Fondamentales** - Ce document fondateur définit l'identité et l'esprit de notre école
-
 3. **Participer à une séance d'information** - Ces rencontres vous permettent de mieux comprendre notre approche et de poser toutes vos questions
 
 ## Notre structure et capacité d'accueil
@@ -47,14 +44,14 @@ Notre processus d'inscription se déroule en plusieurs étapes :
 
 ### 1. Séances d'information
 
-La participation à une séance d'information est **obligatoire** pour toute famille souhaitant inscrire un enfant à l'Autre École. Ces séances, organisées une à deux fois par an, permettent :
+La participation à une séance d'information est **obligatoire** pour toute famille souhaitant inscrire un enfant à l'Autre École. Ces séances auront lieu durant la journée Portes Ouvertes. Elles permettent :
 
 - De présenter en détail notre projet pédagogique et nos spécificités
 - D'exposer les modalités de participation des parents à la vie de l'école
 - De visiter les locaux et de rencontrer des membres de l'équipe
 - De répondre à toutes vos questions
 
-**Pour l'année scolaire 2025-2026**, la prochaine séance d'information est prévue en décembre 2025. Consultez notre site à partir du mois d'octobre 2025 pour connaître la date exacte et les modalités d'inscription à cette séance.
+**Pour l'année scolaire 2026-2027**, la date retenue pour les Portes Ouvertes n'est pas encore arrêtée. Consultez notre site à partir du mois d'octobre 2025 pour connaître la date exacte et les modalités d'inscription à cette journée.
 
 ### 2. Formulaire de préinscription
 
