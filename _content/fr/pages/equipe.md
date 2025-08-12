@@ -5,7 +5,6 @@ name: L'équipe
 eleventyNavigation:
   order: 7
 ---
-
 # L'équipe pédagogique de l'Autre École
 
 ## Des animateurs et animatrices, pas des enseignants
@@ -22,7 +21,7 @@ L'animateur ou l'animatrice n'est pas celui ou celle qui "enseigne" de manière 
 
 Notre équipe pédagogique partage une vision commune de l'enfant et de l'éducation, fondée sur les valeurs de liberté, responsabilité, solidarité et coopération.
 
-![L'équipe pédagogique de l'Autre École en 2023-2024](/_images/pages/equipe/Equipe-23-24-scaled.jpg)
+![L'équipe pédagogique de l'Autre École en 2025](/_images/IMG_6228.webp)
 
 ## Composition de l'équipe
 
@@ -38,9 +37,9 @@ En maternelle, nos animatrices travaillent en classes verticales, regroupant des
 
 - **Classe verticale accueil/première maternelle** : Virginie Dupuis
 - **Classes verticales 1e/2e/3e maternelle** :
-  - Christelle Cordonnier
-  - Angie Pique (remplacée par Amandine Montecchio)
-  - Ella Gyömörey
+- Christelle Cordonnier
+- Angie Pique (remplacée par Amandine Montecchio)
+- Ella Gyömörey
 - **Puéricultrice** : Laura Brasseur
 
 ### Équipe primaire
@@ -52,8 +51,8 @@ En primaire aussi, nous favorisons la continuité pédagogique et le travail en 
 Les premières années du primaire sont cruciales pour l'acquisition des outils fondamentaux de lecture, d'écriture et de mathématiques, toujours dans une démarche active et coopérative.
 
 - **Animateurs du cycle** :
-  - Bernard Van Keirsbilck
-  - Nathalie Van Vyve
+- Bernard Van Keirsbilck
+- Nathalie Van Vyve
 - **Co-titulaire dans le cycle** : Laurence Géradon
 
 #### Deuxième cycle (3ème et 4ème primaires)
@@ -61,22 +60,22 @@ Les premières années du primaire sont cruciales pour l'acquisition des outils 
 Ce cycle permet d'approfondir les apprentissages et de développer davantage l'autonomie et les projets de recherche.
 
 - **Animatrices du cycle** :
-  - Véronique Piscaglia
-  - Fabienne Kariger
+- Véronique Piscaglia
+- Fabienne Kariger
 - **Co-titulaires dans le cycle** :
-  - Chantal Meuleman
-  - Laurence Géradon
+- Chantal Meuleman
+- Laurence Géradon
 
 #### Troisième cycle (5ème et 6ème primaires)
 
 Les dernières années du primaire sont orientées vers l'accomplissement de projets complexes et la préparation à l'autonomie nécessaire pour le secondaire.
 
 - **Animatrices du cycle** :
-  - Céline Duquenne
-  - Micheline Thieren
+- Céline Duquenne
+- Micheline Thieren
 - **Co-titulaires dans le cycle** :
-  - Chantal Meuleman
-  - Laurence Géradon
+- Chantal Meuleman
+- Laurence Géradon
 
 ### Équipes transversales
 
