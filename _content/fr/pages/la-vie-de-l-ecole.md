@@ -35,7 +35,7 @@ Les enfants sortent du bâtiment pour l'heure des parents (entre 15h30 et 16h). 
 
 À partir de 16h, les enfants présents dans la cour sont comptabilisés à la garderie. Ils reçoivent deux collations (une première à 16h et une deuxième à 17h).
 
-Le tarif est de :
+Tarifs:
 
 - 2€ pour 1 enfant
 - 3,50€ pour 2 enfants
