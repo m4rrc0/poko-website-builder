@@ -158,12 +158,6 @@ Pour assurer une communication fluide entre tous les acteurs de l'école :
 - **Entretiens individuels** : trois rendez-vous formels par an entre les familles et les animateurs
 - **Tableau d'affichage** : informations importantes et annonces de la vie de l'école
 
-## Le Forum
-
-Tous les lundis matins, toute l’école se rassemble au Forum.
-
-C’est un moment de reconnaissance de chacun: on souhaite les anniversaire, on accueille les nouveaux, les visiteurs. Un enfant ou une classe peut annoncer une activité, faire une demande… Un groupe ou quelques enfants peuvent présenter un chant, une poésie, un dialogue en néerlandais, …
-
 ## Conseil de classe
 
 Il a lieu une fois par semaine, pendant 50 minutes.
