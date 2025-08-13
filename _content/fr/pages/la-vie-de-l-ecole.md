@@ -27,6 +27,23 @@ Notre journée est organisée pour favoriser l'équilibre entre les différents 
 - **15h30 - 16h00** : Heure des parents
 - **16h00 - 18h00** : Garderie (avec collations à 16h et 17h)
 
+### Service de classe et sortie
+
+Après avoir réalisé leur service de classe, les enfants sortent du bâtiment pour l'heure des parents (entre 15h30 et 16h). C'est le moment où les plus grands peuvent quitter seuls l'école (s'ils ont une carte de sortie) et où les parents viennent chercher leur(s) enfant(s).
+
+### Garderie du soir
+
+À partir de 16h, les enfants présents dans la cour sont comptabilisés à la garderie. Ils reçoivent deux collations (une première à 16h et une deuxième à 17h).
+
+Le tarif est de :
+
+- 2€ pour 1 enfant
+- 3,50€ pour 2 enfants
+- 4,50€ pour 3 enfants
+- 5,50€ pour 4 enfants et plus d'une même famille
+
+La garderie ferme ses portes à 18h. Si des parents viennent récupérer leur enfant après 18h, le tarif horaire passe à 8€/h. Toute heure entamée est due dans son entièreté.
+
 ### Spécificités de notre organisation
 
 #### Les repas
@@ -140,35 +157,6 @@ Pour assurer une communication fluide entre tous les acteurs de l'école :
 - **Réunions de classe** : organisées en début d'année pour présenter le fonctionnement de la classe
 - **Entretiens individuels** : trois rendez-vous formels par an entre les familles et les animateurs
 - **Tableau d'affichage** : informations importantes et annonces de la vie de l'école
-
-## Conclusion
-
-La vie à l'Autre École est organisée pour permettre à chaque enfant de grandir dans un environnement stimulant, bienveillant et cohérent avec nos valeurs fondamentales. L'organisation du temps et de l'espace, les rituels collectifs et les moments de partage contribuent tous à créer une véritable communauté éducative où chacun trouve sa place et peut s'épanouir.
-
-### Horaires généraux
-
-L'école ouvre ses portes à 8h et les referme à 18h du lundi au vendredi. Le mercredi, l'école ferme à 13h et il n'y a pas de garderie organisée durant l'après-midi.
-
-Les cours débutent à 8h30 en primaire et 8h40 en maternel. Les enfants sont attendus en classe, au plus tard, cinq minutes avant le début des cours.
-
-La petite détente (récréation) se déroule de 10h10 à 10h40.
-
-### Service de classe et sortie
-
-Après avoir réalisé leur service de classe, les enfants sortent du bâtiment pour l'heure des parents (entre 15h30 et 16h). C'est le moment où les plus grands peuvent quitter seuls l'école (s'ils ont une carte de sortie) et où les parents viennent chercher leur(s) enfant(s).
-
-### Garderie du soir
-
-À partir de 16h, les enfants présents dans la cour sont comptabilisés à la garderie. Ils reçoivent deux collations (une première à 16h et une deuxième à 17h).
-
-Le tarif est de :
-
-- 2€ pour 1 enfant
-- 3,50€ pour 2 enfants
-- 4,50€ pour 3 enfants
-- 5,50€ pour 4 enfants et plus d'une même famille
-
-La garderie ferme ses portes à 18h. Si des parents viennent récupérer leur enfant après 18h, le tarif horaire passe à 8€/h. Toute heure entamée est due dans son entièreté.
 
 ## Le Forum
 
