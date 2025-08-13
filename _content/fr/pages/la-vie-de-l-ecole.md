@@ -27,9 +27,9 @@ Notre journée est organisée pour favoriser l'équilibre entre les différents 
 - **15h30 - 16h00** : Heure des parents
 - **16h00 - 18h00** : Garderie (avec collations à 16h et 17h)
 
-### Service de classe et sortie
+### Sortie
 
-Après avoir réalisé leur service de classe, les enfants sortent du bâtiment pour l'heure des parents (entre 15h30 et 16h). C'est le moment où les plus grands peuvent quitter seuls l'école (s'ils ont une carte de sortie) et où les parents viennent chercher leur(s) enfant(s).
+Les enfants sortent du bâtiment pour l'heure des parents (entre 15h30 et 16h). C'est le moment où les plus grands peuvent quitter seuls l'école (s'ils ont une carte de sortie) et où les parents viennent chercher leur(s) enfant(s).
 
 ### Garderie du soir
 
