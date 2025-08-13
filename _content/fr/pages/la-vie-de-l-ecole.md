@@ -27,11 +27,11 @@ Notre journée est organisée pour favoriser l'équilibre entre les différents 
 - **15h30 - 16h00** : Heure des parents
 - **16h00 - 18h00** : Garderie (avec collations à 16h et 17h)
 
-### Sortie
+### Les sortie
 
 Les enfants sortent du bâtiment pour l'heure des parents (entre 15h30 et 16h). C'est le moment où les plus grands peuvent quitter seuls l'école (s'ils ont une carte de sortie) et où les parents viennent chercher leur(s) enfant(s).
 
-### Garderie du soir
+### La garderie du soir
 
 À partir de 16h, les enfants présents dans la cour sont comptabilisés à la garderie. Ils reçoivent deux collations (une première à 16h et une deuxième à 17h).
 
@@ -52,7 +52,7 @@ Les repas quotidiens se prennent en classe et non dans un réfectoire. Ce moment
 
 En maternelle, les classes organisent un repas collectif hebdomadaire et des collations quotidiennes préparés à tour de rôle par les familles. Ce système favorise la découverte de nouvelles saveurs et crée un lien entre l'école et les familles.
 
-#### Les détentes
+#### Les détentes (récréations)
 
 Les temps de détente sont communs aux enfants de maternelle et de primaire. Cette organisation décloisonnée favorise les interactions entre enfants d'âges différents et contribue à la cohésion au sein de l'école.
 
@@ -116,7 +116,7 @@ L'enfant choisit l'atelier auquel il participera. Il y a généralement 5 cycles
 - **Marché de Noël** : vente d'objets fabriqués par les enfants au profit de projets solidaires
 - **Soirée des parents** : moment de rencontre informel entre les familles
 
-### Les classes vertes
+### Classes de dépaysement (classes vertes)
 
 Tous les ans, dès la deuxième maternelle, chaque classe part en séjour dans le cadre d'un projet pédagogique spécifique. Ces séjours constituent des moments privilégiés pour :
 
@@ -125,7 +125,7 @@ Tous les ans, dès la deuxième maternelle, chaque classe part en séjour dans l
 - Explorer un environnement différent
 - Développer l'autonomie
 
-### Les sorties culturelles et pédagogiques
+### Sorties culturelles et pédagogiques
 
 Tout au long de l'année, de nombreuses sorties sont organisées :
 
