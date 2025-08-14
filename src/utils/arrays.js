@@ -1,4 +1,6 @@
 import { sort } from "fast-sort";
+// TODO: Memoize this function
+// import memoize from "memoize";
 import { tryMatchNestedVariable } from "./objects.js";
 
 export function filterCollection(collection, filtersRaw) {

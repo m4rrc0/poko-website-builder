@@ -1,6 +1,6 @@
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import Nunjucks from "nunjucks";
+// import { fileURLToPath } from "node:url";
+// import Nunjucks from "nunjucks";
 // -------- Plugins
 import directoryOutputPlugin from "@11ty/eleventy-plugin-directory-output";
 import { RenderPlugin, IdAttributePlugin, I18nPlugin } from "@11ty/eleventy";
@@ -16,6 +16,7 @@ import autoCollections from "./src/config-11ty/plugins/auto-collections/index.js
 import htmlClassesTransform from "./src/config-11ty/plugins/html-classes-transform/index.js";
 import populateInputDir from "./src/config-11ty/plugins/populateInputDir/index.js";
 import partialsPlugin from "./src/config-11ty/plugins/partials/index.js";
+import buildExternalCSS from "./src/config-11ty/plugins/buildExternalCSS/index.js";
 // import keystaticPassthroughFiles from './src/config-11ty/plugins/keystaticPassthroughFiles/index.js';
 // -------- Plugins Markdown
 import markdownItAttrs from "markdown-it-attrs";
@@ -37,10 +38,7 @@ import {
   PROD_URL,
   languages,
 } from "./env.config.js";
-// import * as markdocTags from "./src/config-markdoc/tags/index.js";
-// import * as markdocNodes from "./src/config-markdoc/nodes/index.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
-// import Markdoc from "@markdoc/markdoc";
 
 // Eleventy Config
 import {
@@ -197,6 +195,7 @@ export default async function (eleventyConfig) {
       },
     ],
   });
+  await eleventyConfig.addPlugin(buildExternalCSS);
   // TODO: import those classes from a data file
   eleventyConfig.addPlugin(htmlClassesTransform, {
     classes: {
@@ -238,7 +237,11 @@ export default async function (eleventyConfig) {
   // Populate Default Content with virtual templates
   await eleventyConfig.addPlugin(populateInputDir, {
     // logLevel: 'debug',
-    sources: ["src/content"],
+    sources: [
+      // TODO: Make this selectable from the CMS
+      "src/themes/default",
+      "src/content",
+    ],
   });
   // Populate Default Content with virtual templates
   await eleventyConfig.addPlugin(partialsPlugin, {

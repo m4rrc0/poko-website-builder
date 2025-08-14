@@ -312,6 +312,39 @@ class CmsConfig {
         },
       ],
     };
+    const stylesFields = [
+      {
+        name: "body",
+        label: "Content",
+        widget: "code",
+        required: false,
+        output_code_only: true,
+        default_language: "css",
+        allow_language_selection: false,
+      },
+    ];
+    const stylesCollection = {
+      name: "styles",
+      label: "Styles",
+      label_singular: "Style",
+      path: "{{slug}}",
+      icon: "brush",
+      folder: `${CONTENT_DIR}/_styles`,
+      extension: "css",
+      format: "yaml-frontmatter",
+      create: true,
+      // MEDIAS
+      media_folder: `/${CONTENT_DIR}/_images`,
+      public_folder: "/_images",
+      sortable_fields: {
+        fields: ["slug"],
+        default: {
+          field: "slug",
+          direction: "ascending",
+        },
+      },
+      fields: stylesFields,
+    };
     const partialsFields = [
       {
         name: "body",
@@ -335,7 +368,6 @@ class CmsConfig {
       extension: "md",
       format: "yaml-frontmatter",
       create: true,
-      identifier_field: "name",
       // MEDIAS
       media_folder: `/${CONTENT_DIR}/_images`,
       public_folder: "/_images",
@@ -693,12 +725,12 @@ class CmsConfig {
       // TODO: check if it works
       slug: "{{name | localize}}", // This allows the slug to be localized
       summary:
-        "{{name}} {{eleventyNavigation.add | ternary(' (nav ', '')}}{{eleventyNavigation.order}}{{eleventyNavigation.add | ternary(')', '')}}",
+        "{{name}} {{eleventyNavigation.order | ternary(' (nav ', '')}}{{eleventyNavigation.order}}{{eleventyNavigation.order | ternary(')', '')}}",
       sortable_fields: {
         fields: [
           "eleventyNavigation.parent",
           "name",
-          "eleventyNavigation.add",
+          // "eleventyNavigation.add",
           "eleventyNavigation.order",
         ],
         default: {
@@ -706,13 +738,13 @@ class CmsConfig {
           direction: "ascending",
         },
       },
-      view_filters: [
-        {
-          label: "Navigation",
-          field: "eleventyNavigation.add",
-          pattern: true,
-        },
-      ],
+      // view_filters: [
+      //   {
+      //     label: "Navigation",
+      //     field: "eleventyNavigation.add",
+      //     pattern: true,
+      //   },
+      // ],
       // MEDIAS
       media_folder: `/${CONTENT_DIR}/_images`,
       public_folder: "/_images",
@@ -897,6 +929,7 @@ class CmsConfig {
           ? []
           : [
               dataCollection,
+              stylesCollection,
               { divider: true },
               partialsCollection,
               sectionsCollection,
