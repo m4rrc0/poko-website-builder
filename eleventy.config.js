@@ -19,6 +19,7 @@ import htmlClassesTransform from "./src/config-11ty/plugins/html-classes-transfo
 import populateInputDir from "./src/config-11ty/plugins/populateInputDir/index.js";
 import partialsPlugin from "./src/config-11ty/plugins/partials/index.js";
 import buildExternalCSS from "./src/config-11ty/plugins/buildExternalCSS/index.js";
+import pluginUnoCSS from "./src/config-11ty/plugins/plugin-eleventy-unocss/index.js";
 // import keystaticPassthroughFiles from './src/config-11ty/plugins/keystaticPassthroughFiles/index.js';
 // -------- Plugins Markdown
 import markdownItAttrs from "markdown-it-attrs";
@@ -232,11 +233,7 @@ export default async function (eleventyConfig) {
       // body: "imported-body-class",
     },
   });
-  // TODO: Try integrating CSS into every html file
-  // TODO: Choose method
-  // - 11ty Bundler
-  // - UnoCSS with [bun-plugin-unocss](https://github.com/stacksjs/bun-plugin-unocss)
-  // eleventyConfig.addPlugin(embedPageCss);
+  await eleventyConfig.addPlugin(pluginUnoCSS);
 
   // --------------------- Populate files and default content
   // Populate Default Content: Copy `src/content-static/` to `dist`

@@ -1,6 +1,6 @@
 import { build as bunBuild, plugin as bunPlugin } from "bun";
 import fglob from "fast-glob";
-import { BUILD_LEVEL } from "../../../../env.config.js";
+import { MINIFY } from "../../../../env.config.js";
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
@@ -21,7 +21,7 @@ export default async function (eleventyConfig, pluginOptions) {
     // naming: '[name].css',
     // naming: "index.css",
     // plugins: [cssTransformPlugin],
-    minify: BUILD_LEVEL === "production",
+    minify: MINIFY,
     cssChunking: true,
   });
 }
