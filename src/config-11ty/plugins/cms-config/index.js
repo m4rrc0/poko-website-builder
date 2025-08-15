@@ -119,6 +119,15 @@ class CmsConfig {
           allow_language_selection: false,
         },
         {
+          name: "cssHead",
+          label: "Internal Styles (CSS)",
+          widget: "code",
+          required: false,
+          default_language: "css",
+          output_code_only: true,
+          allow_language_selection: false,
+        },
+        {
           name: "languages",
           label: "Languages",
           description: "❗️ Re-build your site to see your changes here",

@@ -7,9 +7,8 @@ import { transformLanguage } from "./src/utils/languages.js";
 
 const processEnv = typeof process !== "undefined" ? process.env : {};
 
-console.log({ processEnv });
-
 // GENERAL
+export const DEBUG = processEnv.DEBUG === "false" ? false : true;
 export const NODE_ENV = processEnv.NODE_ENV || "production";
 export const ELEVENTY_RUN_MODE = processEnv.ELEVENTY_RUN_MODE;
 // Can be "cdn", "npm", "<relative-path>"
@@ -113,12 +112,6 @@ export const REPO =
   (REPO_OWNER && REPO_NAME && `${REPO_OWNER}/${REPO_NAME}`) ||
   GITHUB_REPO_INFERRED;
 
-console.log({
-  GIT_REMOTES: processEnv.GIT_REMOTES,
-  GITHUB_REPO_INFERRED,
-  REPO,
-});
-
 export const PROD_BRANCH = processEnv.PROD_BRANCH || "main";
 // BRANCH inferrence
 // NOTE: Netlify uses BRANCH
@@ -136,6 +129,10 @@ export const BUILD_LEVEL =
   (BRANCH === PROD_BRANCH && ELEVENTY_RUN_MODE === "build" && "production") ||
   (BRANCH && PROD_BRANCH && ELEVENTY_RUN_MODE === "build" && "draft") ||
   "production"; // Better safe than sorry
+export const MINIFY =
+  processEnv.MINIFY === "false"
+    ? false
+    : BUILD_LEVEL === "production" || BUILD_LEVEL === "draft";
 
 // CMS
 export const CMS_AUTH_URL = processEnv.CMS_AUTH_URL;
@@ -181,21 +178,11 @@ export const BASE_URL = processEnv.BASE_URL?.replace(/\/+$/, "");
 export const DISPLAY_URL =
   processEnv.DISPLAY_URL?.replace(/\/+$/, "") || BASE_URL || PROD_URL;
 
-// export default {
-//   NETLIFY_BUILD,
-//   CLOUDFLARE_BUILD,
-//   VERCEL_BUILD,
-//   LOCAL_BUILD,
-//   VERCEL_GIT_REPO_OWNER,
-//   VERCEL_GIT_REPO_SLUG,
-//   REPOSITORY_URL,
-//   NETLIFY_REPO_NAME,
-//   NETLIFY_REPO_OWNER,
-//   NETLIFY_REPO,
-//   REPO_OWNER,
-//   REPO_NAME,
-//   REPO,
-//   BRANCH,
-//   PREFERRED_HOSTING,
-//   WORKING_DIR,
-// };
+if (DEBUG) {
+  console.log({ processEnv });
+  console.log({
+    GIT_REMOTES: processEnv.GIT_REMOTES,
+    GITHUB_REPO_INFERRED,
+    REPO,
+  });
+}

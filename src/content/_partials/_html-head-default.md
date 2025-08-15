@@ -3,10 +3,6 @@
 <meta name="generator" content="{{ eleventy.generator }}" />
 <meta name="generator" content="poko" />
 
-{# JS detection #}
-
-<script>(function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement)</script>
-
 {# Metadata #}
 {% include "_metadata-default.md" ignore missing %}
 {% include "_metadata.md" ignore missing %}
@@ -22,15 +18,23 @@
 
 {# Favicons #} {# TODO: Generate favicons, manifest, etc #}
 
-{# User HTML head injection #}
+{# HTML head injection #}
 
 {% include "_html-head.md" ignore missing %}
 {{ globalSettings.htmlHead | safe }}
+{% getBundle "html", "head" %}
 
-{# User CSS head injection #}
+{# Internal CSS: E-mail obfuscation + CSS head injection (from globalSettings) + bundle #}
 
-<style>{{ globalSettings.cssHead | safe }}</style>
+<style>
+a[href^="mailto:"] b {display: none;}
+{{ globalSettings.cssHead | safe }}
+{% getBundle "css" %}
+</style>
 
-{# NOTE: E-mail obfuscation styles #}
+{# JS: detection + bundle #}
 
-<style>a[href^="mailto:"] b {display: none;}</style>
+<script>
+(function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement)
+{% getBundle "js" %}
+</script>

@@ -1,6 +1,8 @@
 import path from "node:path";
 // import { fileURLToPath } from "node:url";
 // import Nunjucks from "nunjucks";
+import { transform as lightningTransform } from "lightningcss";
+
 // -------- Plugins
 import directoryOutputPlugin from "@11ty/eleventy-plugin-directory-output";
 import { RenderPlugin, IdAttributePlugin, I18nPlugin } from "@11ty/eleventy";
@@ -23,9 +25,11 @@ import markdownItAttrs from "markdown-it-attrs";
 // -------- Env Variables
 import * as env from "./env.config.js";
 import {
+  DEBUG,
   CMS_IMPORT,
   ELEVENTY_RUN_MODE,
   BUILD_LEVEL,
+  MINIFY,
   WORKING_DIR,
   WORKING_DIR_ABSOLUTE,
   CONTENT_DIR,
@@ -65,7 +69,9 @@ import {
 } from "./src/config-11ty/shortcodes/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
 
-console.log("---------ENV-----------\n", env, "\n---------/ENV---------");
+if (DEBUG) {
+  console.log("---------ENV-----------\n", env, "\n---------/ENV---------");
+}
 
 // TODOS:
 // - Look at persisting images in cache between builds: https://github.com/11ty/eleventy-img/issues/285
@@ -151,6 +157,9 @@ export default async function (eleventyConfig) {
   // --------------------- Plugins Markdown
   eleventyConfig.amendLibrary("md", (mdLib) => mdLib.use(markdownItAttrs));
 
+  // --------------------- Bundles
+  eleventyConfig.addBundle("html");
+
   // --------------------- Plugins Early
   eleventyConfig.addPlugin(directoryOutputPlugin);
   eleventyConfig.addPlugin(RenderPlugin);
@@ -181,6 +190,25 @@ export default async function (eleventyConfig) {
       `${WORKING_DIR}/_components/**/*.webc`,
     ],
     useTransform: true,
+    bundlePluginOptions: {
+      transforms: [
+        async function (content) {
+          let { type, page } = this;
+
+          if (type === "css") {
+            let { code, map } = lightningTransform({
+              // filename: 'style.css',
+              code: Buffer.from(content),
+              minify: MINIFY,
+              // sourceMap: true
+            });
+
+            return code;
+          }
+          return content;
+        },
+      ],
+    },
   });
   eleventyConfig.addPlugin(pluginIcons, {
     sources: [
@@ -312,4 +340,17 @@ export default async function (eleventyConfig) {
   //     return element;
   //   }
   // );
+
+  // --------------------- Bundles (late to override WebC Plugin)
+  // eleventyConfig.addPlugin(function (eleventyConfig) {
+  //   eleventyConfig.addBundle("css", {
+  //     // File extension used for bundle file output, defaults to bundle name
+  //     outputFileExtension: "css",
+  //     // Name of shortcode for use in templates, defaults to bundle name
+  //     shortcodeName: "css",
+  //     // shortcodeName: false, // disable this feature.
+  //     // Any <style> tags in the HTML should be included in this bundle -> https://www.11ty.dev/docs/plugins/bundle/#bundling-html-node-content
+  //     bundleHtmlContentFromSelector: "style",
+  //   });
+  // });
 }
