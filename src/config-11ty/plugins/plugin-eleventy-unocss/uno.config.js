@@ -9,10 +9,11 @@ import {
   // transformerVariantGroup
 } from "unocss";
 // import presetWind4 from '@unocss/preset-wind4'
-import rules from "./unocss-rules.js";
+import layoutRules from "./rules/ctx-layouts.js";
+import utilitiesRules from "./rules/ctx-utilities.js";
 
 export default defineConfig({
-  rules,
+  rules: [...layoutRules, ...utilitiesRules],
   // shortcuts: [
   //   // ...
   // ],

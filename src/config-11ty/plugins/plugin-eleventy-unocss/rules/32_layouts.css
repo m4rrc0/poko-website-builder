@@ -1,0 +1,454 @@
+/* === CTX Layouts === */
+/* Immensely inspired by Every Layout */
+/* -------- BOX ------------ */
+/*
+--padding-box: var dimension (fallback to --padding OR --gap/2 OR 0.5em)
+--border-width-box: var dimension (fallback to --border-width OR --size-border OR 1px)
+REMOVED ~~color-light~~
+REMOVED ~~color-dark~~
+*/
+:where(.box) {
+  display: block;
+  --padding-box: var(--padding, calc(var(--gap, 1em) / 2));
+  --border-width-box: var(--border-width, var(--size-border, 1px));
+  padding: var(--padding-box);
+  border: var(--border-width-box) solid;
+}
+:where(.box.no-border) {
+  border: none;
+  outline: var(--border-width-box) solid transparent;
+  outline-offset: calc(var(--border-width-box) * -1);
+}
+/* For high contrast mode if no border */
+
+/* -------- FLOW (previously STACK) ------------ */
+/*
+--flow-space: var dimension (fallback to --gap OR 1em)
+.recursive: class bool
+.split-after-[x]: class -> x = int (0 < x < 6)
+NEW: .split-after-me: class -> to specify after which element we want to split
+NEW: .horizontal: class bool
+NEW: .stop: class bool -> apply `class="flow recursive stop"` to stop recursion down this path
+*/
+:where(.flow) {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+:where(.flow:not(.horizontal)) > *,
+:where(.flow.recursive:not(.horizontal)) * {
+  margin-block: 0;
+}
+:where(.flow:not(.horizontal)) > * + *,
+:where(.flow.recursive:not(.horizontal)) * + * {
+  margin-block-start: var(--flow-space, 1em);
+}
+:where(.flow:not(.horizontal):only-child) {
+  block-size: 100%;
+}
+/* horizontal mod */
+:where(.flow.horizontal) {
+  flex-direction: row;
+  align-items: center;
+}
+:where(.flow.horizontal) > *,
+:where(.flow.horizontal.recursive) * {
+  margin-inline: 0;
+}
+:where(.flow.horizontal) > * + *,
+:where(.flow.horizontal.recursive) * + * {
+  margin-inline-start: var(--gap-stack);
+}
+:where(.flow.horizontal:only-child) {
+  inline-size: 100%;
+}
+/* split-after */ /* prettier-ignore */
+:where(.flow:not(.horizontal)) > .split-after-me { margin-block-end: auto; } /* prettier-ignore */
+:where(.flow.horizontal) > .split-after-me { margin-inline-end: auto; } /* prettier-ignore */
+:where(.flow:not(.horizontal).split-after-1) > :nth-child(1) { margin-block-end: auto; } /* prettier-ignore */
+:where(.flow.horizontal.split-after-1) > :nth-child(1) { margin-inline-end: auto; } /* prettier-ignore */
+:where(.flow:not(.horizontal).split-after-2) > :nth-child(2) { margin-block-end: auto; } /* prettier-ignore */
+:where(.flow.horizontal.split-after-2) > :nth-child(2) { margin-inline-end: auto; } /* prettier-ignore */
+:where(.flow:not(.horizontal).split-after-3) > :nth-child(3) { margin-block-end: auto; } /* prettier-ignore */
+:where(.flow.horizontal.split-after-3) > :nth-child(3) { margin-inline-end: auto; } /* prettier-ignore */
+:where(.flow:not(.horizontal).split-after-4) > :nth-child(4) { margin-block-end: auto; } /* prettier-ignore */
+:where(.flow.horizontal.split-after-4) > :nth-child(4) { margin-inline-end: auto; } /* prettier-ignore */
+:where(.flow:not(.horizontal).split-after-5) > :nth-child(5) { margin-block-end: auto; } /* prettier-ignore */
+:where(.flow.horizontal.split-after-5) > :nth-child(5) { margin-inline-end: auto; } /* prettier-ignore */
+/* --- ... --- */
+
+:where(.flow:not(.horizontal).recursive.stop) * + *,
+:where(.flow.horizontal.recursive.stop) * + * {
+  margin-block-start: 0;
+  margin-inline-start: 0;
+}
+
+/* -------- CENTER ------------ */
+/*
+--max-width: var dimension (fallback to --width-max OR --measure OR 60ch)
+.text: class bool
+--gutters-center: var dimension (fallback to --padding OR --gap/2 OR 0.5em)
+.intrinsic: class bool
+*/
+:where(.center) {
+  --gutters-center: var(--padding, calc(var(--gap, 1em) / 2));
+  display: block;
+  box-sizing: content-box;
+  margin-inline: auto;
+  max-inline-size: var(--max-width, var(--width-max, var(--measure, 60ch)));
+  padding-inline: var(--gutters-center);
+}
+:where(.center.text) {
+  text-align: center;
+}
+:where(.center.intrinsic) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* .center.max {
+  inline-size: 100%;
+
+  width: var(--max-width, var(--width-max, var(--measure, 60ch)));
+  max-width: 100%;
+} */
+
+/* -------- CLUSTER ------------ */
+/*
+--gap-cluster: var dimension (fallback to --gap OR 1em)
+--justify-cluster: var keyword -> for horizontal alignment (fallback to flex-start)
+--align-cluster: var keyword -> for vertical alignment (fallback to center)
+*/
+:where(.cluster) {
+  --gap-cluster: var(--gap, 1em);
+  --justify-cluster: flex-start;
+  --align-cluster: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-cluster);
+  justify-content: var(--justify-cluster);
+  align-items: var(--align-cluster);
+}
+
+/* TODO: Are focus styles OK ??? */
+/* focus style is hidden if we don't allow overflow */
+/* we can use this if there are outer margins to our cluster > than the inner margins between elements */
+/* TODO: we could try and find a better way to know if we can overflew */
+/* .cluster:not(.overflow) *:focus {
+  outline: 1px solid;
+  outline-offset: -1px;
+} */
+
+/* TODO: Can we split this? */
+/* Does not work */
+/* .cluster.split-after-1 > * > :nth-child(1) { margin-right: auto; } /* prettier-ignore */
+
+/* -------- WITH SIDEBAR ------------ */
+/*
+--gap-sidebar: var dimension (fallback to --gap OR 1em)
+--width-sidebar: var dimension | The width of the sidebar (empty means not set; defaults to the content width)
+--content-min: var dimension(%) = 50% | The narrowest the content (main) element can be before wrapping. Should be a percentage.
+.right: class bool | Whether the sidebar element is the :last-child or :first-child
+*/
+/* TODO: Find method to change order of element when they wrap 
+-> ?? can we use dir: rtl; to swap the order of elements when they wrap?? */
+:where(.with-sidebar) {
+  --gap-sidebar: var(--gap, 1em);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sidebar);
+}
+:where(.with-sidebar:not(.right)) > :first-child,
+:where(.with-sidebar.right) > :last-child {
+  flex-basis: var(--width-sidebar);
+  flex-grow: 1;
+}
+:where(.with-sidebar:not(.right)) > :last-child,
+:where(.with-sidebar.right) > :first-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: var(--content-min, 50%);
+}
+
+/* -------- SWITCHER ------------ */
+/*
+--gap-switcher: var dimension | The space (margin) between the (child) elements (fallback to --gap OR 1em)
+--grow-switcher: var int | Should children grow?
+--width-wrap: var dimension | The container width at which the component switches between a horizontal and vertical layout
+.limit-[x]: class -> x = int (1 < x < 9) | The maximum number of elements allowed to appear in the horizontal configuration
+*/
+:where(.switcher) {
+  --gap-switcher: var(--gap, 1em);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-switcher);
+}
+:where(.switcher) > * {
+  flex-grow: var(--grow-switcher, 1);
+  /* TODO: is 30rem a good default? / Might use ch if we know the text length of all list elements */
+  flex-basis: calc((var(--width-wrap, 30rem) - 100%) * 999);
+  /* MOD IN V1: do I need to care about the gap?I guess not but... */
+  /* flex-basis: calc(
+	(var(--container-wrap, 20rem) - (100% - var(--gap))) * 999
+  ); */
+}
+/* prettier-ignore */
+:where(.switcher.limit-2) > :nth-last-child(n+3), :where(.switcher.limit-2) > :nth-last-child(n+3) ~ * { flex-basis: 100%; } /* prettier-ignore */
+:where(.switcher.limit-3) > :nth-last-child(n+4), :where(.switcher.limit-3) > :nth-last-child(n+4) ~ * { flex-basis: 100%; } /* prettier-ignore */
+:where(.switcher.limit-4) > :nth-last-child(n+5), :where(.switcher.limit-4) > :nth-last-child(n+5) ~ * { flex-basis: 100%; } /* prettier-ignore */
+:where(.switcher.limit-5) > :nth-last-child(n+6), :where(.switcher.limit-5) > :nth-last-child(n+6) ~ * { flex-basis: 100%; } /* prettier-ignore */
+:where(.switcher.limit-6) > :nth-last-child(n+7), :where(.switcher.limit-6) > :nth-last-child(n+7) ~ * { flex-basis: 100%; } /* prettier-ignore */
+:where(.switcher.limit-7) > :nth-last-child(n+8), :where(.switcher.limit-7) > :nth-last-child(n+8) ~ * { flex-basis: 100%; } /* prettier-ignore */
+:where(.switcher.limit-8) > :nth-last-child(n+9), :where(.switcher.limit-8) > :nth-last-child(n+9) ~ * { flex-basis: 100%; } /* prettier-ignore */
+
+/* -------- COVER ------------ */
+/* TODO: from here haven't used custom selectors for all yet */
+/*
+--gap-cover: var dimension | The minimum space between and around the child elements
+--min-height-cover: var dimension (100vh) | The minimum height of the parent element, before it grows to accommodate its content
+.no-padding: class bool  (false) | Whether to remove the padding from the parent element
+NEW: .centered | place a ".centered" class on the child that needs centering
+*/
+:where(.cover) {
+  --gap-cover: var(--gap, 1em);
+  display: flex;
+  flex-direction: column;
+  min-block-size: var(--min-height-cover, 100vh);
+  padding: var(--gap-cover);
+}
+:where(.cover.no-padding) {
+  padding: 0;
+}
+:where(.cover) > * {
+  margin-block: var(--gap-cover);
+}
+:where(.cover) > :first-child:not(.centered) {
+  margin-block-start: 0;
+}
+:where(.cover) > :last-child:not(.centered) {
+  margin-block-end: 0;
+}
+:where(.cover) > .centered {
+  margin-block: auto;
+}
+/* TODO: do this with a mixin and/or function if we need it */ /*
+.cover.center-h1 > :first-child:not(h1) { margin-block-start: 0; } .cover.center-h1 > :last-child:not(h1) { margin-block-end: 0; } .cover.center-h1 > h1 { margin-block: auto; }
+.cover.center-h2 > :first-child:not(h2) { margin-block-start: 0; } .cover.center-h2 > :last-child:not(h2) { margin-block-end: 0; } .cover.center-h2 > h2 { margin-block: auto; }
+*/
+
+/* -------- GRID ------------ */
+/* 
+--gap-grid: var dimension | The space (margin) between the (child) elements (fallback to --gap OR 1em)
+--width-column-min: var dimension -> minimum col width (or flex-basis if in flex mode)
+--width-column-max: var dimension -> max col width
+*/
+:where(.grid-auto) {
+  --gap-grid: var(--gap, 1em);
+  display: grid;
+  grid-gap: var(--gap-grid);
+  /* TODO: What is a good default? Every Layout's website set 250px by default. I had 10rem in V1. */
+  /* grid-template-columns: repeat(auto-fit, minmax(min(var(--width-column-min, 250px), 100%), 1fr)); */
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--width-column-min, 10rem), 100%), 1fr));
+}
+
+:where(.grid-auto) > * {
+  max-inline-size: var(--width-column-max, none);
+}
+
+/* -------- FRAME ------------ */
+/* TODO HERE */
+/*
+--n: var int -> numerator
+--d: var int -> denominator
+NEW: --aspect-ratio: var number or fraction (16/9) | The element's aspect ratio
+NEW: --object-fit-frame: var keyword
+*/
+
+:where(.frame) {
+  --n: 16;
+  --d: 9;
+  aspect-ratio: var(--n) / var(--d);
+  /* TODO: check if this var notation works on all browsers */
+  aspect-ratio: var(--aspect-ratio, var(--n) / var(--d));
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+:where(.frame) > .frame-inner {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: var(--object-fit-frame, cover);
+}
+
+/* -------- REEL ------------ */
+/*
+--item-width: var dimension or keyword (auto) | The width of each child element
+--height: var dimension or keyword (auto) | The height of the parent (Reel) element
+--gap-reel: var dimension | The space between each child element, and between the child elements and the scrollbar
+NEW: .no-bar: class bool (false), // Whether to display the scrollbar
+--color-track: var color (currentcolor)
+--color-thumb: var color (white)
+NEW: .no-js: class bool (false) | Wether the observer has been setup to manage the "overflowing" classname
+*/
+/* TODO: ? Javascript observer for scrollbar ? Can we avoid it? */
+/* TODO: ? implement background attachment local for affordance instead. http://lea.verou.me/2012/04/background-attachment-local/ */
+/* TODO: ? should --color-thumb have a fallback? */
+
+:where(.reel) {
+  --gap-reel: var(--gap, 1em);
+  display: flex;
+  block-size: var(--height, auto);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-color: var(--color-thumb, currentColor) var(--color-track, transparent);
+}
+/* NEW */
+:where(.reel.no-bar) {
+  scrollbar-width: none;
+}
+:where(.reel) > * {
+  flex: 0 0 var(--item-width, auto);
+}
+/* TODO: decide if we expand this selector */
+/* .reel > .img,
+.reel > .image, */
+:where(.reel) > img {
+  block-size: 100%;
+  flex-basis: auto;
+  /* ?? Shouldn't it be inline-size: auto; */
+  width: auto;
+}
+:where(.reel) > * + * {
+  margin-inline-start: var(--gap-reel);
+}
+:where(.reel.overflowing:not(.no-bar)),
+:where(.reel.no-js:not(.no-bar)) {
+  padding-block-end: var(--gap-reel);
+}
+/* TODO: NEW -> part of nuds-colors. should we set defaults and override in nuds-colors? */
+:where(.reel)::-webkit-scrollbar {
+  block-size: 1rem; /* NOTE: shouldn't it be --gap-reel instead ? */
+}
+/* NEW */
+:where(.reel.no-bar)::-webkit-scrollbar {
+  display: none;
+}
+:where(.reel)::-webkit-scrollbar-track {
+  background-color: var(--color-track, transparent);
+}
+:where(.reel)::-webkit-scrollbar-thumb {
+  background-color: var(--color-track, transparent);
+  background-image: linear-gradient(
+    var(--color-track, transparent) 0,
+    var(--color-track, transparent) 0.25rem,
+    var(--color-thumb, currentColor) 0.25rem,
+    var(--color-thumb, currentColor) 0.75rem,
+    var(--color-track, transparent) 0.75rem
+  );
+}
+
+/* -------- IMPOSTER ------------ */
+/* 
+--margin-imposter: var dimension
+.fixed: class bool | to position the imposter relatve to the viewport
+NEW: --position-imposter: var keyword | alternative positionning. overrides the .fixed class
+.breakout: class bool | Whether the element is allowed to break out of the container over which it is positioned
+*/
+:where(.imposter) {
+  display: block;
+  position: var(--position-imposter, absolute);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
+}
+:where(.imposter:not(.breakout)) {
+  --margin-imposter: 0px;
+  overflow: auto;
+  max-inline-size: calc(100% - (var(--margin-imposter) * 2));
+  max-block-size: calc(100% - (var(--margin-imposter) * 2));
+}
+:where(.imposter.fixed) {
+  position: var(--position-imposter, fixed);
+}
+
+/* -------- ICON ------------ */
+/* 
+--width-icon: var length
+--height-icon: var length
+--vertical-align-icon: var keyword OR length | length -> in case we want to make a large icon and center it manually
+.lowercase: class bool | place it on icon fo icon only OR on .with-icon to force lowercase text
+.right: class bool | reverse margin for icon on the right
+.super: class bool
+.sub: class bool
+REMARK: .icon can be used alone if we don't need to control over space between icon and text
+*/
+:where(.icon) {
+  /* Usually 0.75em more closely matches uppercase letter height */
+  width: var(--width-icon, 0.75em);
+  /* 1cap Not yet supported and unrecognized fallback messes things / 1cap = nominal height of capital letters of the element's font */
+  /* width: var(--width-icon, 1cap); */
+  height: var(--height-icon, 0.75em);
+  /* height: var(--height-icon, 1cap); */
+  vertical-align: var(--vertical-align-icon, -0.125em);
+}
+:where(.icon.lowercase),
+:where(.lowercase) > .icon {
+  /* TODO: ?is this a good default? */
+  width: var(--width-icon, 0.6em);
+  /* matches lowercase height of "x" */
+  width: var(--width-icon, 1ex);
+  height: var(--height-icon, 0.6em);
+  height: var(--height-icon, 1ex);
+}
+:where(.icon.sub),
+:where(.icon.super),
+:where(.super) > .icon,
+:where(.sub) > .icon {
+  /* TODO: ?is this a good default? */
+  width: var(--width-icon, 0.25em);
+  height: var(--height-icon, 0.25em);
+}
+:where(.icon.sub),
+:where(.sub) > .icon {
+  vertical-align: var(--vertical-align-icon, sub);
+}
+:where(.icon.super),
+:where(.super) > .icon {
+  vertical-align: var(--vertical-align-icon, super);
+}
+:where(.with-icon) {
+  display: inline-flex;
+  align-items: baseline;
+}
+:where(.with-icon.lowercase) {
+  text-transform: lowercase;
+}
+:where(.with-icon:not(.right)) .icon {
+  margin-inline-end: var(--gap-icon, 1rem);
+  margin-inline-end: var(--gap-icon, 1ch);
+}
+:where(.with-icon.right) .icon {
+  margin-inline-start: var(--gap-icon, 1rem);
+  margin-inline-start: var(--gap-icon, 1ch);
+}
+:where(.with-icon) .icon:only-child {
+  margin-inline-end: 0;
+  margin-inline-start: 0;
+}
+/* NOTE: use it like so */
+/* IMPORTANT to set width and height on the svg in case CSS fails to load */
+/* 
+<span class="with-icon">
+  <svg class="icon" width="0.75em" height="0.75em">
+	<use href="/path/to/icons.svg#my-icon"></use>
+  </svg>
+  Close
+</span>
+OR if there is no text -> ?? role and aria-label on svg or span ??
+<span class="with-icon" role="img" aria-label="{label}">
+  <svg class="icon" width="0.75em" height="0.75em">
+	<use href="/path/to/icons.svg#my-icon"></use>
+  </svg>
+</span>
+*/

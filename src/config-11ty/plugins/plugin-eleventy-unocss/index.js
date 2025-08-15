@@ -13,7 +13,7 @@ export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.addTransform("UnoCSS", async function (content) {
     if ((this.page.outputPath || "").endsWith(".html")) {
       const { css } = await generator.generate(content);
-      console.log(`UnoCSS generated:\n${css}`);
+      // console.log(`UnoCSS generated:\n${css}`);
       const contents = content.replace(
         "</style>",
         `/* UnoCSS */
