@@ -5,7 +5,8 @@ name: L'équipe
 eleventyNavigation:
   order: 7
 ---
-# L'équipe pédagogique de l'Autre École
+
+# L'équipe pédagogique
 
 ## Des animateurs et animatrices, pas des enseignants
 
@@ -25,7 +26,7 @@ Notre équipe pédagogique partage une vision commune de l'enfant et de l'éduca
 
 ## Composition de l'équipe
 
-### 
+###
 
 ### Équipe maternelle
 
@@ -85,7 +86,7 @@ L'apprentissage du néerlandais se fait dans une perspective communicative et cu
 
 Les activités sportives à l'Autre École mettent l'accent sur la coopération plutôt que sur la compétition, et sur le plaisir du mouvement.
 
-- **Animateur** : Lionel Sylos 
+- **Animateur** : Lionel Sylos
 
 #### Musique
 

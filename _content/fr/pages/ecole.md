@@ -6,7 +6,9 @@ eleventyNavigation:
   order: 2
 ---
 
-# L'Autre École : Un lieu de vie et d'épanouissement
+# L'Autre École
+
+Un lieu de vie et d'épanouissement {.h2}
 
 ## Notre identité et notre mission
 
@@ -77,3 +79,7 @@ En 1996, après des années d'efforts et grâce à l'engagement des parents et d
 Toujours fidèle à ses principes fondateurs, l'Autre École a su évoluer avec son temps tout en préservant l'essence de son projet éducatif : permettre à chaque enfant de grandir en liberté et en responsabilité, dans un cadre coopératif et solidaire.
 
 _Le livre d'Henry Landroit « Histoire de l'Autre École 1973-1996 » qui retrace une partie de l'histoire de l'école est disponible. Pour plus d'informations, n'hésitez pas à [nous contacter]({{ "contact" | locale_url }})._
+
+{% css %}
+.h2 {margin-block-start: 0;}
+{% endcss %}
