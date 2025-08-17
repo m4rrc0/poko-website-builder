@@ -22,7 +22,7 @@ L'animateur ou l'animatrice n'est pas celui ou celle qui "enseigne" de manière 
 
 Notre équipe pédagogique partage une vision commune de l'enfant et de l'éducation, fondée sur les valeurs de liberté, responsabilité, solidarité et coopération.
 
-![L'équipe pédagogique de l'Autre École en 2025](/_images/IMG_6228.webp)
+![L'équipe pédagogique de l'Autre École en 2025](/_images/Equipe-2024-2025-face.webp)
 
 ## Composition de l'équipe
 
