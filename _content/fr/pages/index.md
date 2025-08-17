@@ -5,7 +5,6 @@ name: Accueil
 eleventyNavigation:
   order: 1
 ---
-
 Site web en (re)construction {.callout}
 
 <!--
@@ -31,11 +30,15 @@ Site web en (re)construction {.callout}
 
 Une école Freinet où chaque enfant est acteur de ses apprentissages dans un environnement coopératif et bienveillant.
 
+<img src="/_images/pages/equipe/Equipe-23-24-scaled.jpg" alt="" loading="eager" />
+
 ## Notre identité
 
 L'Autre École est un établissement d'enseignement fondamental libre subventionné qui s'inspire de la pédagogie Freinet et fonctionne sur un modèle participatif. Fondée en 1973 à l'initiative d'un groupe de parents, notre école poursuit depuis plus de 50 ans une mission éducative fondée sur des valeurs de solidarité, d'épanouissement individuel, de responsabilité et de démocratie.
 
 Nous accueillons les enfants de 2½ à 12 ans dans un cadre à taille humaine où l'apprentissage se fait par la coopération, l'expression libre et la responsabilisation.
+
+<div class="grid-auto"><div>
 
 ### Pédagogie active
 
@@ -43,17 +46,23 @@ Une approche Freinet où l'enfant construit ses apprentissages à partir de ses 
 
 [En savoir plus sur notre pédagogie]({{ "pedagogie" | locale_url }})
 
+</div><div>
+
 ### Vie participative
 
 Une structure de cogestion unique où parents et équipe pédagogique s'engagent ensemble pour faire vivre le projet d'école.
 
 [Découvrir notre organisation]({{ "projet-d-etablissement" | locale_url }})
 
+</div><div>
+
 ### Vivre ensemble
 
 Un lieu d'épanouissement où les enfants développent leur autonomie et leur sens des responsabilités dans le respect de chacun.
 
 [Nos valeurs]({{ "valeurs" | locale_url }})
+
+</div></div>
 
 ## Actualités et vie de l'école
 

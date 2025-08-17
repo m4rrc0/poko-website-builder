@@ -14,9 +14,9 @@ L'Autre École est une communauté éducative où la communication et l'échange
 
 ### Adresse
 
-[Place Govaert 1](https://maps.app.goo.gl/QB9vWySp2xD6QfHD9)  
-[1160 Auderghem](https://maps.app.goo.gl/QB9vWySp2xD6QfHD9)  
-[Bruxelles, BELGIQUE](https://maps.app.goo.gl/QB9vWySp2xD6QfHD9)
+[Place Govaert 1,  
+1160 Auderghem,  
+Bruxelles, BELGIQUE](https://maps.app.goo.gl/QB9vWySp2xD6QfHD9)
 
 ### Téléphone
 

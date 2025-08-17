@@ -1,3 +1,5 @@
+<img src="/_images/bandeau-autoportraits-bleu.svg" alt="" loading="lazy" class="footer-portraits" />
+
 <footer class="palette-contrast full-bleed-before flow" style="gap: 1rem;">
 <address>
 <p>{{ data.name }}</p>
@@ -12,7 +14,12 @@
 </footer>
 
 {% css "external" %}
+.footer-portraits {
+display: block;
+max-width: 100%;
+}
 body > footer {
+margin-block-start: 0;
 padding-block: 2rem;
 text-align: center;
 & > :is(address, div) > p {

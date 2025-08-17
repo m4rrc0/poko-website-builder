@@ -80,6 +80,10 @@
   /* TODO: this is for the Reel Layout Component */
   /* --track-color */
   /* --thumb-color */
+
+  /* Custom Variables */
+  --link-vertical-offset: 3px;
+  --link-vertical-offset-closed: calc(100% - 10px);
 }
 
 .palette-contrast {
@@ -96,44 +100,100 @@ body {
   margin-block-start: 0;
 }
 
-body > header,
-body > footer {
-  max-width: var(--width-prose);
-}
-
 /* More beautiful links background */
-a:hover {
-  background-color: transparent;
+a {
+  display: inline-block;
   position: relative;
   isolation: isolate; /* TODO: ? Prevents the shadow from bleeding into the content */
-  /* color: var(--color-text, currentColor); */
+  text-decoration: none;
 }
-a:hover::before {
+a::before {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 0 -0.2em;
   box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
   border-radius: 0.2rem;
+  /* inset: 0 -0.2em; */
+  bottom: var(--link-vertical-offset);
+  top: var(--link-vertical-offset-closed);
+  left: -0.2em;
+  right: -0.2em;
+  transition: top 0.05s ease-in-out;
+}
+a:hover {
+  background: none;
+  /* background-color: transparent; */
+  /* color: var(--color-text, currentColor); */
+}
+a:hover::before {
+  /* content: "";
+  position: absolute;
+  z-index: -1;
+  box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
+  border-radius: 0.2rem;
+  inset: 0 -0.2em; */
+  transition: top 0.05s ease-in-out;
+  top: var(--link-vertical-offset);
 }
 
 /* General Layout */
 
+body > footer {
+  max-width: var(--width-prose);
+}
+
+body > * ~ * {
+  margin-block-start: var(--step-4);
+}
+
 /* Navigation */
 
+.nav-logo {
+  display: block;
+  /* block-size: calc(var(--step-0) * 1.5); */
+  block-size: var(--step-4);
+}
+
 body > header {
+  /* max-width: var(--width-prose); */
+  padding-block: 1rem;
   text-transform: uppercase;
+  border-bottom: 3px solid var(--color-text-decoration);
+  margin-block-end: 1rem;
   & li {
     margin-inline: 0;
   }
   & :is(a, abbr) {
     text-decoration: none;
     color: inherit;
+    &::before {
+      top: 100%;
+    }
   }
   & a[aria-current] {
     font-weight: bold;
+    &::before {
+      top: var(--link-vertical-offset-closed);
+    }
+    &:hover::before {
+      top: var(--link-vertical-offset);
+    }
+  }
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  & > a {
+    --color-bg__a--hover: transparent;
   }
 }
+
+/* @media (max-width: 600px) {
+  body > header {    
+    gap: 2rem;
+    justify-content: space-between;
+  }
+} */
 
 /* Footer */
 
@@ -146,6 +206,17 @@ body > header {
   border: 2px dotted #c09d74;
   text-wrap: balance;
   text-align: center;
+}
+
+main > div,
+main > section {
+  padding-block: var(--step-4);
+}
+
+main > image,
+main > picture {
+  display: block;
+  margin-block: var(--step-4);
 }
 
 /* Unique Elements */
