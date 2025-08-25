@@ -1,0 +1,28 @@
+fr:
+  lang: fr
+  createdAt: 2025-08-18T09:57:00.000Z
+  uuid: 19500709f06c
+  localizationKey: cb0f1a1d949f
+  name: index - core concepts
+  blocks:
+    - type: markdown
+      value: |-
+        ### Pédagogie active
+
+        Une approche Freinet où l'enfant construit ses apprentissages à partir de ses expériences, de ses intérêts et de la vie coopérative.
+
+        [En savoir plus sur notre pédagogie]({{ "pedagogie" | locale_url }})
+    - type: markdown
+      value: |-
+        ### Vie participative
+
+        Une structure de cogestion unique où parents et équipe pédagogique s'engagent ensemble pour faire vivre le projet d'école.
+
+        [Découvrir notre organisation]({{ "projet-d-etablissement" | locale_url }})
+    - type: markdown
+      value: |-
+        ### Vivre ensemble
+
+        Un lieu d'épanouissement où les enfants développent leur autonomie et leur sens des responsabilités dans le respect de chacun.
+
+        [Nos valeurs]({{ "valeurs" | locale_url }})

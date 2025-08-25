@@ -1,0 +1,10 @@
+<div
+  class="switcher"
+  style="--width-wrap: var(--width-prose); --gap-switcher: var(--step-2)"
+>
+  {% for block in blocks %} {% if block.type == "markdown" %}
+  <div>
+    {{ block.value | renderContent("njk,md", { languages: languages, collections: collections }) | safe }}
+  </div>
+  {% endif %} {% endfor %}
+</div>

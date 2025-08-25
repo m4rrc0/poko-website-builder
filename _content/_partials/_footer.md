@@ -2,10 +2,10 @@
 
 <footer class="palette-contrast full-bleed-before flow" style="gap: 1rem;">
 <address>
-<p>{{ data.name }}</p>
-<p>{{ data.address }}</p>
-<p>{{ data.phone }}</p>
-<p>{{ data.email | emailLink }}</p>
+<p>{{ vars.name }}</p>
+<p>{{ vars.address }}</p>
+<p>{{ vars.phone }}</p>
+<p>{{ vars.email | emailLink }}</p>
 </address>
 <div>
 <p>Site web éco-conçu avec passion par les parents d’Oona et Liloo</p>

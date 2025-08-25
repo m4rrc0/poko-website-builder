@@ -1,6 +1,6 @@
 ---
 translationKey: equipe
-status: published
+status: inactive
 name: L'équipe
 eleventyNavigation:
   order: 7
@@ -21,6 +21,8 @@ L'animateur ou l'animatrice n'est pas celui ou celle qui "enseigne" de manière 
 - Organise le milieu éducatif pour stimuler la curiosité et l'autonomie
 
 Notre équipe pédagogique partage une vision commune de l'enfant et de l'éducation, fondée sur les valeurs de liberté, responsabilité, solidarité et coopération.
+
+{% section "front-and-back.njk", {"blocks":[{"src":"/_images/Equipe-2024-2025-face.webp","alt":"L'équipe pédagogique de l'Autre École","title":"","width":null,"aspectRatio":null,"loading":"","imgAttrs":"","type":"image"},{"src":"/_images/Equipe-2024-2025-dos.webp","alt":"L'équipe pédagogique de l'Autre École (de dos)","title":"","width":null,"aspectRatio":null,"loading":"","imgAttrs":"","type":"image"}]} %}
 
 ## Composition de l'équipe
 
@@ -113,8 +115,6 @@ La direction coordonne l'équipe pédagogique et assure le lien entre tous les a
 
 - **Direction** : Grégoire Louveaux
 - **Secrétariat** : Coralie Ullens
-
-{% section "front-and-back.njk", {"blocks":[{"src":"/_images/Equipe-2024-2025-face.webp","alt":"L'équipe pédagogique de l'Autre École","title":"","width":null,"aspectRatio":null,"loading":"","imgAttrs":"","type":"image"},{"src":"/_images/Equipe-2024-2025-dos.webp","alt":"L'équipe pédagogique de l'Autre École (de dos)","title":"","width":null,"aspectRatio":null,"loading":"","imgAttrs":"","type":"image"}]} %}
 
 ## Une équipe en formation continue
 

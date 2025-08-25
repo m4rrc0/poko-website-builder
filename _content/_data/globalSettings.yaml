@@ -1,17 +1,15 @@
 siteName: L'autre école
 productionUrl: https://www.autre-ecole.org
-htmlHead: |-
-  <link rel="stylesheet" href="/assets/styles/local.css">
-cssHead: |-
-
+htmlHead: <link rel="stylesheet" href="/assets/styles/local.css">
 languages:
   - code: fr
     name: Français
     customUrlPrefix:
-      prefix: ""
+      prefix: ''
     status: published
     isCmsDefault: true
     isWebsiteDefault: true
 collections:
   - articles
+  - people
 lang: fr

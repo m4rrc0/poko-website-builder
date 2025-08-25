@@ -5,6 +5,7 @@ name: Accueil
 eleventyNavigation:
   order: 1
 ---
+
 Site web en (re)construction {.callout}
 
 <!--
@@ -30,7 +31,7 @@ Site web en (re)construction {.callout}
 
 Une école Freinet où chaque enfant est acteur de ses apprentissages dans un environnement coopératif et bienveillant.
 
-<img src="/_images/pages/equipe/Equipe-23-24-scaled.jpg" alt="" loading="eager" />
+<img src="/_images/Batiment-accueil.webp" alt="" style="aspect-ratio: 2;" />
 
 ## Notre identité
 
@@ -38,31 +39,9 @@ L'Autre École est un établissement d'enseignement fondamental libre subvention
 
 Nous accueillons les enfants de 2½ à 12 ans dans un cadre à taille humaine où l'apprentissage se fait par la coopération, l'expression libre et la responsabilisation.
 
-<div class="grid-auto"><div>
+{% section "switcher-width-prose.njk", {"blocks":[{"type":"markdown","value":"### Pédagogie active{% n %}{% n %}Une approche Freinet où l'enfant construit ses apprentissages à partir de ses expériences, de ses intérêts et de la vie coopérative.{% n %}{% n %}[En savoir plus sur notre pédagogie]({{ 'pedagogie' | locale_url }})"},{"value":"### Vie participative{% n %}{% n %}Une structure de cogestion unique où parents et équipe pédagogique s'engagent ensemble pour faire vivre le projet d'école.{% n %}{% n %}[Découvrir notre organisation]({{ 'projet-d-etablissement' | locale_url }})","type":"markdown"},{"value":"### Vivre ensemble{% n %}{% n %}Un lieu d'épanouissement où les enfants développent leur autonomie et leur sens des responsabilités dans le respect de chacun.{% n %}{% n %}[Nos valeurs]({{ \"valeurs\" | locale_url }})","type":"markdown"}]} %}
 
-### Pédagogie active
-
-Une approche Freinet où l'enfant construit ses apprentissages à partir de ses expériences, de ses intérêts et de la vie coopérative.
-
-[En savoir plus sur notre pédagogie]({{ "pedagogie" | locale_url }})
-
-</div><div>
-
-### Vie participative
-
-Une structure de cogestion unique où parents et équipe pédagogique s'engagent ensemble pour faire vivre le projet d'école.
-
-[Découvrir notre organisation]({{ "projet-d-etablissement" | locale_url }})
-
-</div><div>
-
-### Vivre ensemble
-
-Un lieu d'épanouissement où les enfants développent leur autonomie et leur sens des responsabilités dans le respect de chacun.
-
-[Nos valeurs]({{ "valeurs" | locale_url }})
-
-</div></div>
+<img src="/_images/bandeau-papier.webp" alt="" />
 
 ## Actualités et vie de l'école
 
@@ -82,6 +61,8 @@ L'Autre École se distingue par son approche globale de l'éducation qui s'artic
 - **Ouverture sur le monde** : ancrer les apprentissages dans la réalité sociale et culturelle
 
 [Découvrir notre école]({{ "ecole" | locale_url }}) [Informations inscriptions]({{ "inscription" | locale_url }}) {.cluster}
+
+<img src="/_images/IMG_4865.webp" alt="" style="aspect-ratio:4;" />
 
 ## Ressources
 

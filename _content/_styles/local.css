@@ -84,6 +84,8 @@
   /* Custom Variables */
   --link-vertical-offset: 3px;
   --link-vertical-offset-closed: calc(100% - 10px);
+  --box-shadow-grid: 0px 15px 30px var(--color-shadow);
+  --border-radius-grid: 12px;
 }
 
 .palette-contrast {
@@ -213,7 +215,7 @@ main > section {
   padding-block: var(--step-4);
 }
 
-main > image,
+main > img,
 main > picture {
   display: block;
   margin-block: var(--step-4);
