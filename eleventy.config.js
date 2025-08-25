@@ -22,7 +22,12 @@ import buildExternalCSS from "./src/config-11ty/plugins/buildExternalCSS/index.j
 import pluginUnoCSS from "./src/config-11ty/plugins/plugin-eleventy-unocss/index.js";
 // import keystaticPassthroughFiles from './src/config-11ty/plugins/keystaticPassthroughFiles/index.js';
 // -------- Plugins Markdown
+import markdownItContainer from "markdown-it-container";
+// import { container as markdownItContainer } from "@mdit/plugin-container"
+import markdownItMark from "markdown-it-mark";
+import markdownItLinkAttributes from "markdown-it-link-attributes";
 import markdownItAttrs from "markdown-it-attrs";
+import markdownItBracketedSpans from "markdown-it-bracketed-spans";
 // -------- Env Variables
 import * as env from "./env.config.js";
 import {
@@ -64,6 +69,7 @@ import {
 } from "./src/config-11ty/filters/index.js";
 import {
   newLine,
+  fetchFile as fetchFileShortcode,
   image,
   gallery,
   wrapper,
@@ -99,6 +105,25 @@ function shouldNotRender(data) {
     return true;
   }
   return false;
+}
+
+function mditRenderContainerTag(tagName, tokens, idx, options, env, Renderer) {
+  tokens[idx].tag = tagName;
+  return Renderer.renderToken(tokens, idx, options);
+}
+function mRCTOptions(tagName) {
+  return {
+    render: function (tokens, idx, options, env, Renderer) {
+      return mditRenderContainerTag(
+        tagName,
+        tokens,
+        idx,
+        options,
+        env,
+        Renderer
+      );
+    },
+  };
 }
 
 /**
@@ -156,7 +181,94 @@ export default async function (eleventyConfig) {
   });
 
   // --------------------- Plugins Markdown
-  eleventyConfig.amendLibrary("md", (mdLib) => mdLib.use(markdownItAttrs));
+  eleventyConfig.amendLibrary(
+    "md",
+    (mdLib) =>
+      mdLib
+        // https://github.com/markdown-it/markdown-it-container
+        // .use(markdownItContainer, "@", {
+        //   render: function (tokens, idx) {
+        //     const token = tokens[idx];
+        //     const attrsStr =
+        //       token.attrs
+        //         ?.map(([name, value]) => `${name}="${value}"`)
+        //         ?.join(" ") || "";
+        //     const tagMatch = token.info
+        //       .trim()
+        //       .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
+        //     const tag = tagMatch ? tagMatch[1] : "div";
+
+        //     console.log({ token, idx, tag, attrsStr });
+
+        //     return token.nesting === 1 ? `<${tag} ${attrsStr}>` : `</${tag}>`;
+        //   },
+        // })
+        .use(markdownItContainer, "section", mRCTOptions("section"))
+        .use(markdownItContainer, "aside", mRCTOptions("aside"))
+        .use(markdownItContainer, "article", mRCTOptions("article"))
+        .use(markdownItContainer, "footer", mRCTOptions("footer"))
+        .use(markdownItContainer, "header", mRCTOptions("header"))
+        .use(markdownItContainer, "nav", mRCTOptions("nav"))
+        .use(markdownItContainer, "main", mRCTOptions("main"))
+        .use(markdownItContainer, "div", mRCTOptions("div"))
+        .use(markdownItContainer, "block")
+        .use(markdownItContainer, "flow")
+        .use(markdownItContainer, "grid-auto")
+        .use(markdownItContainer, "cluster")
+        .use(markdownItContainer, "switcher")
+
+        // .use(markdownItContainer, {
+        //   name: "@",
+        //   // render: function (tokens, idx) {
+        //   //   const token = tokens[idx];
+        //   //   const attrsStr =
+        //   //     token.attrs
+        //   //       ?.map(([name, value]) => `${name}="${value}"`)
+        //   //       ?.join(" ") || "";
+        //   //   const tagMatch = token.info
+        //   //     .trim()
+        //   //     .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
+        //   //   const tag = tagMatch ? tagMatch[1] : "div";
+
+        //   //   return token.nesting === 1 ? `<${tag} ${attrsStr}>` : `</${tag}>`;
+        //   // },
+        //   openRender: (tokens, idx, _options) => {
+        //     const token = tokens[idx];
+        //     const attrsStr =
+        //       token.attrs
+        //         ?.map(([name, value]) => `${name}="${value}"`)
+        //         ?.join(" ") || "";
+        //     const tagMatch = token.info
+        //       .trim()
+        //       .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
+        //     const tag = tagMatch ? tagMatch[1] : "div";
+
+        //     console.log({ token, tag, attrsStr, _options });
+
+        //     return `<${tag} ${attrsStr}>`;
+        //   },
+        //   closeRender: (tokens, idx, _options) => {
+        //     const tagMatch = tokens[idx].info
+        //       .trim()
+        //       .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
+        //     const tag = tagMatch ? tagMatch[1] : "div";
+
+        //     console.log({ token: tokens[idx], tag, _options });
+
+        //     return `</${tag}>`;
+        //   },
+        // })
+        // .use(markdownItContainer, { name: "block" })
+        // .use(markdownItContainer, { name: "flow" })
+        // .use(markdownItContainer, { name: "grid-auto" })
+        // .use(markdownItContainer, { name: "cluster" })
+        // .use(markdownItContainer, { name: "switcher" })
+
+        .use(markdownItMark) // https://github.com/markdown-it/markdown-it-mark
+        .use(markdownItLinkAttributes) // https://github.com/crookedneighbor/markdown-it-link-attributes
+        .use(markdownItAttrs) // https://github.com/arve0/markdown-it-attrs
+        .use(markdownItBracketedSpans) // https://github.com/mb21/markdown-it-bracketed-spans
+  );
 
   // --------------------- Bundles
   eleventyConfig.addBundle("html");
@@ -274,6 +386,7 @@ export default async function (eleventyConfig) {
       path.join(WORKING_DIR, PARTIALS_DIR),
       path.join("src/content/_partials"),
     ],
+    shortcodeAliases: ["partial", "section"],
   });
   // Copy files (Keystatic)
   // Retrieve public files from the _files directory
@@ -320,7 +433,15 @@ export default async function (eleventyConfig) {
 
   // --------------------- Shortcodes
   // eleventyConfig.addAsyncShortcode("partial", partialShortcode);
+  // eleventyConfig.addShortcode("section", function (...rest) {
+  //   console.log(rest);
+  //   return "SECTIONS";
+  // });
   eleventyConfig.addShortcode("n", newLine);
+  await eleventyConfig.addNunjucksAsyncShortcode(
+    "fetchFile",
+    fetchFileShortcode
+  );
   eleventyConfig.addShortcode("image", image);
   eleventyConfig.addShortcode("gallery", gallery);
   eleventyConfig.addPairedShortcode("wrapper", wrapper);

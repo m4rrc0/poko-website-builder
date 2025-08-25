@@ -31,6 +31,7 @@ a[href^="mailto:"] b {display: none;}
 {{ globalSettings.cssHead | safe }}
 {% getBundle "css" %}
 </style>
+<link rel="stylesheet" href="{% getBundleFileUrl 'css', 'external' %}">
 
 {# JS: detection + bundle #}
 

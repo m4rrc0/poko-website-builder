@@ -10,6 +10,31 @@ export default [
     },
   ],
 
+  // Background shadow to extend the bg a little bit around inline elements
+  [
+    /^background-shadow$/,
+    (match, { symbols }) => {
+      return [
+        {
+          [symbols.selector]: () => `:where(.background-shadow)`,
+          "background-color": "transparent",
+          position: "relative",
+          isolation:
+            "isolate" /* TODO: ? Prevents the shadow from bleeding into the content */,
+          color: "var(--color-text, currentColor)",
+        },
+        {
+          [symbols.selector]: () => `:where(.background-shadow)::before`,
+          content: "''",
+          position: "absolute",
+          "z-index": "-1",
+          inset: "0 -0.2em",
+          "box-shadow": "inset 100vw 100vh var(--color-bg, Canvas)",
+        },
+      ];
+    },
+  ],
+
   // Truncate utility
   [
     /^truncate$/,
@@ -82,7 +107,8 @@ export default [
           "box-shadow": "var(--shadow-breakout-clickable)",
         },
         {
-          [symbols.selector]: () => `:where(.breakout-clickable) .clickable::after`,
+          [symbols.selector]: () =>
+            `:where(.breakout-clickable) .clickable::after`,
           content: "''",
           display: "block",
           position: "absolute",
@@ -92,7 +118,8 @@ export default [
           height: "100%",
         },
         {
-          [symbols.selector]: () => `:where(.breakout-clickable) a:only-of-type::after`,
+          [symbols.selector]: () =>
+            `:where(.breakout-clickable) a:only-of-type::after`,
           content: "''",
           display: "block",
           position: "absolute",
@@ -112,20 +139,24 @@ export default [
           transform: "var(--transform-breakout-clickable-hover)",
         },
         {
-          [symbols.selector]: () => `:where(.breakout-clickable) .clickable:focus`,
+          [symbols.selector]: () =>
+            `:where(.breakout-clickable) .clickable:focus`,
           outline: "none",
         },
         {
-          [symbols.selector]: () => `:where(.breakout-clickable) a:only-of-type:focus`,
+          [symbols.selector]: () =>
+            `:where(.breakout-clickable) a:only-of-type:focus`,
           outline: "none",
         },
         {
-          [symbols.selector]: () => `:where(.breakout-clickable) .clickable:focus::after`,
+          [symbols.selector]: () =>
+            `:where(.breakout-clickable) .clickable:focus::after`,
           outline: "1px solid var(--color-outline--focus, currentColor)",
           "outline-offset": "calc(var(--focus-offset, 1rem) / 2 * -1)",
         },
         {
-          [symbols.selector]: () => `:where(.breakout-clickable) a:only-of-type:focus::after`,
+          [symbols.selector]: () =>
+            `:where(.breakout-clickable) a:only-of-type:focus::after`,
           outline: "1px solid var(--color-outline--focus, currentColor)",
           "outline-offset": "calc(var(--focus-offset, 1rem) / 2 * -1)",
         },
@@ -140,7 +171,8 @@ export default [
       return {
         [symbols.selector]: () => `:where(.full-bleed)`,
         width: "min(99.99vw, var(--full-bleed-max-width, 99.99vw))",
-        "margin-left": "calc(50% - min(99.99vw, var(--full-bleed-max-width, 99.99vw)) / 2)",
+        "margin-left":
+          "calc(50% - min(99.99vw, var(--full-bleed-max-width, 99.99vw)) / 2)",
       };
     },
   ],
@@ -157,7 +189,8 @@ export default [
         {
           [symbols.selector]: () => `:where(.full-bleed-before)::before`,
           width: "min(99.99vw, var(--full-bleed-max-width, 99.99vw))",
-          "margin-left": "calc(50% - min(99.99vw, var(--full-bleed-max-width, 99.99vw)) / 2)",
+          "margin-left":
+            "calc(50% - min(99.99vw, var(--full-bleed-max-width, 99.99vw)) / 2)",
           position: "absolute",
           content: "''",
           display: "block",
@@ -181,7 +214,8 @@ export default [
         {
           [symbols.selector]: () => `:where(.full-bleed-after)::after`,
           width: "min(99.99vw, var(--full-bleed-max-width, 99.99vw))",
-          "margin-left": "calc(50% - min(99.99vw, var(--full-bleed-max-width, 99.99vw)) / 2)",
+          "margin-left":
+            "calc(50% - min(99.99vw, var(--full-bleed-max-width, 99.99vw)) / 2)",
           position: "absolute",
           content: "''",
           display: "block",
@@ -255,7 +289,8 @@ export default [
     (match, { symbols }) => {
       return [
         {
-          [symbols.selector]: () => `:where(.external-link-icons) a[target='_blank']::after`,
+          [symbols.selector]: () =>
+            `:where(.external-link-icons) a[target='_blank']::after`,
           content: "''",
           "background-color": "var(--icon-primary)",
           display: "inline-flex",
@@ -286,12 +321,13 @@ export default [
     (match, { symbols }) => {
       return {
         [symbols.selector]: () => `:where(.scroll-shadows-horizontal)`,
-        "background-image": 
+        "background-image":
           "linear-gradient(to right, white, white), " +
           "linear-gradient(to right, white, white), " +
           "linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0)), " +
           "linear-gradient(to left, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0))",
-        "background-position": "left center, right center, left center, right center",
+        "background-position":
+          "left center, right center, left center, right center",
         "background-repeat": "no-repeat",
         "background-color": "white",
         "background-size": "20px 100%, 20px 100%, 10px 100%, 10px 100%",

@@ -22,6 +22,270 @@ const locales = languages
   .filter((lang) => /^published|draft/.test(lang.status))
   .map((lang) => lang.code);
 
+const keyField = {
+  name: "key",
+  label: "Key",
+  widget: "string",
+  required: true,
+  hint: "Unique identifier for the data item",
+};
+const varsField = {
+  name: "vars",
+  label: "Variables (vars)",
+  widget: "keyvalue",
+  i18n: true,
+  required: false,
+};
+const imageFields = [
+  {
+    name: "src",
+    label: "Image",
+    widget: "image",
+    required: true,
+  },
+  {
+    name: "alt",
+    label: "Alt Text",
+    widget: "string",
+    required: false,
+    hint: "~125 characters max; Be specific, concise, focused on the image purpose, avoid redundant phrases like 'image of…'",
+  },
+  {
+    name: "title",
+    label: "Title",
+    widget: "string",
+    required: false,
+  },
+  {
+    name: "width",
+    label: "Width",
+    widget: "number",
+    value_type: "int",
+    required: false,
+    hint: "In px; Leave empty for auto; Useful for image optimization when not full width.",
+  },
+  {
+    name: "aspectRatio",
+    label: "Aspect Ratio",
+    widget: "number",
+    value_type: "float",
+    hint: "Width / Height => square = 1; 16:9 = 1.78; 4:3 = 1.33; Extra wide = 4;",
+    required: false,
+  },
+  {
+    name: "loading",
+    label: "Loading",
+    widget: "select",
+    options: [
+      { value: "", label: "Default" },
+      { value: "lazy", label: "Lazy" },
+      { value: "eager", label: "Eager" },
+    ],
+    required: false,
+    hint: "Select 'Eager' for images that are visible in the initial viewport;",
+  },
+  {
+    name: "imgAttrs",
+    label: "Other Image Attributes",
+    widget: "string",
+    required: false,
+  },
+];
+const dataListField = {
+  name: "dataList",
+  label: "Custom Data List (dataList)",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  i18n: true,
+  types: [
+    {
+      name: "text",
+      label: "Text",
+      widget: "object",
+      required: false,
+      fields: [
+        keyField,
+        {
+          name: "value",
+          label: "Value",
+          widget: "string",
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "markdown",
+      label: "Markdown",
+      widget: "object",
+      required: false,
+      fields: [
+        keyField,
+        {
+          name: "value",
+          label: "Value",
+          widget: "markdown",
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "image",
+      label: "Image",
+      widget: "object",
+      required: false,
+      fields: [keyField, ...imageFields],
+    },
+  ],
+};
+const statusField = {
+  name: "status",
+  label: "Status",
+  widget: "select",
+  options: [
+    { value: "", label: "Default" },
+    { value: "published", label: "Published" },
+    { value: "draft", label: "Draft" },
+    { value: "noindex", label: "Noindex" },
+    // TODO: later implement encrypted pages
+    // { value: 'private', label: 'Private' },
+    { value: "inactive", label: "Inactive" },
+  ],
+  default: "",
+  required: false,
+  i18n: true,
+};
+const generatePageField = {
+  name: "generatePage",
+  label: "Generate Page",
+  widget: "select",
+  hint: "Generate page for this entry or only use it as preview in lists etc?",
+  options: [
+    { value: "", label: "Default" },
+    { value: "normal", label: "Generate Page" },
+    { value: "previewOnly", label: "Preview Only" },
+  ],
+  default: "",
+  required: false,
+  i18n: "duplicate",
+};
+const bodyMarkdownField = {
+  name: "body",
+  label: "Content",
+  widget: "markdown",
+  required: false,
+  i18n: true,
+  editor_components: ["eleventyImage", "partial", "wrapper", "section"],
+};
+const eleventyNavigationField = {
+  name: "eleventyNavigation",
+  label: "Main Navigation",
+  widget: "object",
+  collapsed: true,
+  required: false,
+  summary: "Position: {{fields.order}} | Nav Title: {{fields.title}}",
+  i18n: true,
+  fields: [
+    {
+      name: "title",
+      label: "Title",
+      widget: "string",
+      required: false,
+      i18n: true,
+      hint: "Default: Page Name",
+    },
+    {
+      name: "parent",
+      label: "Parent Page",
+      widget: "relation",
+      collection: "pages",
+      search_fields: ["name"],
+      value_field: "name",
+      display_fields: ["name"],
+      required: false,
+      i18n: "duplicate",
+    },
+    {
+      name: "order",
+      label: "Order",
+      widget: "number",
+      default: 0,
+      required: false,
+      i18n: "duplicate",
+    },
+  ],
+};
+const simpleMetadataField = {
+  name: "metadata",
+  label: "Metadata",
+  widget: "object",
+  required: false,
+  collapsed: true,
+  i18n: true,
+  fields: [
+    {
+      name: "title",
+      label: "Title",
+      widget: "string",
+      required: false,
+      hint: "Default: Page Name",
+      i18n: true,
+    },
+    {
+      name: "description",
+      label: "Description",
+      widget: "text",
+      required: false,
+      i18n: true,
+    },
+    {
+      name: "image",
+      label: "Image",
+      widget: "object",
+      required: false,
+      hint: "The default image used when sharing this web page",
+      i18n: "duplicate",
+      fields: imageFields,
+    },
+  ],
+};
+const pagePreviewField = {
+  name: "preview",
+  label: "Preview",
+  widget: "object",
+  required: false,
+  collapsed: true,
+  i18n: true,
+  hint: "Fields to be used when linking to this page or listing it",
+  fields: [
+    {
+      name: "title",
+      label: "Title",
+      widget: "string",
+      required: false,
+      // hint: "Default: Page Name",
+      i18n: true,
+    },
+    {
+      name: "description",
+      label: "Description",
+      widget: "text",
+      required: false,
+      // hint: "Default: Metadata description",
+      i18n: true,
+    },
+    {
+      name: "image",
+      label: "Image",
+      widget: "object",
+      required: false,
+      // hint: "The default image used when creating a visual preview of the page on your website. Default: Metadata image",
+      // allow_multiple: false,
+      i18n: true,
+      fields: imageFields,
+    },
+  ],
+};
 const commonCollectionFields = [
   {
     name: "lang",
@@ -130,7 +394,7 @@ class CmsConfig {
         {
           name: "languages",
           label: "Languages",
-          description: "❗️ Re-build your site to see your changes here",
+          hint: "❗️ Re-build your site to see your changes here",
           widget: "list",
           required: true,
           collapsed: true,
@@ -180,7 +444,7 @@ class CmsConfig {
             {
               name: "isCmsDefault",
               label: "Is CMS Default",
-              description: "Defaults to the first language of the list",
+              hint: "Defaults to the first language of the list",
               widget: "boolean",
               required: true,
               default: false,
@@ -188,7 +452,7 @@ class CmsConfig {
             {
               name: "isWebsiteDefault",
               label: "Is Website Default",
-              description: "Defaults to the first language of the list",
+              hint: "Defaults to the first language of the list",
               widget: "boolean",
               required: true,
               default: false,
@@ -203,7 +467,7 @@ class CmsConfig {
           required: false,
           // TODO: populate this from existing collection definitions
           // TODO: more customization on collections
-          options: ["articles"],
+          options: ["articles", "people"],
         },
       ],
     };
@@ -225,20 +489,22 @@ class CmsConfig {
           // format: "yaml",
           i18n: true,
           fields: [
-            {
-              name: "dico",
-              label: "Dico",
-              widget: "keyvalue",
-              i18n: true,
-              required: false,
-            },
-            {
-              name: "data",
-              label: "Data",
-              widget: "keyvalue",
-              i18n: true,
-              required: false,
-            },
+            // {
+            //   name: "dico",
+            //   label: "Dico",
+            //   widget: "keyvalue",
+            //   i18n: true,
+            //   required: false,
+            // },
+            // {
+            //   name: "data",
+            //   label: "Data",
+            //   widget: "keyvalue",
+            //   i18n: true,
+            //   required: false,
+            // },
+            varsField,
+            dataListField,
             // {
             //   name: "defaultLanguage",
             //   label: "Default Language",
@@ -354,19 +620,72 @@ class CmsConfig {
       },
       fields: stylesFields,
     };
-    const partialsFields = [
-      {
-        name: "body",
-        label: "Content",
-        widget: "markdown",
-        required: false,
-
-        // widget: "code",
-        // required: false,
-        // output_code_only: true,
-        // allow_language_selection: false,
+    const pageLayoutsCollection = {
+      name: "layouts",
+      label: "Page Layouts",
+      label_singular: "Page Layout",
+      path: "{{slug}}",
+      icon: "edit_document",
+      folder: `${CONTENT_DIR}/_layouts`,
+      extension: "njk",
+      format: "yaml-frontmatter",
+      create: true,
+      // MEDIAS
+      media_folder: `/${CONTENT_DIR}/_images`,
+      public_folder: "/_images",
+      sortable_fields: {
+        fields: ["slug"],
+        default: {
+          field: "slug",
+          direction: "ascending",
+        },
       },
-    ];
+      fields: [
+        {
+          name: "body",
+          label: "Layout Markup",
+          hint: "Page layout markup as Nunjucks flavored HTML",
+          widget: "code",
+          language: "html",
+          required: false,
+          output_code_only: true,
+          allow_language_selection: false,
+        },
+      ],
+    };
+    const sectionLayoutsCollection = {
+      name: "sectionLayouts",
+      label: "Section Layouts",
+      label_singular: "Section Layout",
+      path: "{{slug}}",
+      icon: "slide_library",
+      folder: `${CONTENT_DIR}/_partials`,
+      extension: "njk",
+      format: "yaml-frontmatter",
+      create: true,
+      // MEDIAS
+      media_folder: `/${CONTENT_DIR}/_images`,
+      public_folder: "/_images",
+      sortable_fields: {
+        fields: ["slug"],
+        default: {
+          field: "slug",
+          direction: "ascending",
+        },
+      },
+      fields: [
+        {
+          name: "body",
+          label: "Layout Markup",
+          hint: "Section layout markup as Nunjucks flavored HTML",
+          widget: "code",
+          language: "html",
+          required: false,
+          output_code_only: true,
+          allow_language_selection: false,
+        },
+      ],
+    };
     const partialsCollection = {
       name: "partials",
       label: "Partials",
@@ -387,98 +706,104 @@ class CmsConfig {
           direction: "ascending",
         },
       },
-      fields: partialsFields,
-    };
-    const sectionFields = [
-      ...commonCollectionFields,
-      {
-        name: "name",
-        label: "Name",
-        widget: "string",
-        required: true,
-        i18n: "duplicate",
-      },
-      {
-        name: "blocks",
-        label: "Blocks",
-        widget: "list",
-        required: false,
-        i18n: true,
-        types: [
-          {
-            name: "images",
-            label: "Images",
-            widget: "object",
-            required: false,
-            fields: [
-              {
-                name: "images",
-                label: "Images",
-                widget: "image",
-                required: false,
-                allow_multiple: true,
-              },
-            ],
-          },
-          {
-            name: "markdown",
-            label: "Markdown",
-            widget: "object",
-            required: false,
-            fields: [
-              {
-                name: "value",
-                label: "Value",
-                widget: "markdown",
-                required: false,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: "styles",
-        label: "Styles",
-        widget: "code",
-        required: false,
-        output_code_only: true,
-        allow_language_selection: false,
-        language: "css",
-      },
-    ];
-    const sectionsCollection = {
-      name: "sections",
-      label: "Sections",
-      label_singular: "Section",
-      icon: "add_column_right",
-      slug: "{{name}}", // This allows the slug to be localized
-      folder: `${CONTENT_DIR}`,
-      path: "sections/{{slug}}",
-      i18n: { structure: "single_file" },
-      extension: "yaml",
-      create: true,
-      identifier_field: "name",
-      summary: "{{name}}",
-      sortable_fields: {
-        fields: ["name"],
-        default: {
-          field: "name",
-          direction: "ascending",
+      fields: [
+        {
+          name: "body",
+          label: "Content",
+          widget: "markdown",
+          required: false,
+
+          // widget: "code",
+          // required: false,
+          // output_code_only: true,
+          // allow_language_selection: false,
         },
-      },
-      // MEDIAS
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      fields: sectionFields,
+      ],
     };
+    // const sectionFields = [
+    //   ...commonCollectionFields,
+    //   {
+    //     name: "name",
+    //     label: "Name",
+    //     widget: "string",
+    //     required: true,
+    //     i18n: "duplicate",
+    //   },
+    //   {
+    //     name: "blocks",
+    //     label: "Blocks",
+    //     widget: "list",
+    //     required: false,
+    //     i18n: true,
+    //     types: [
+    //       {
+    //         name: "images",
+    //         label: "Images",
+    //         widget: "object",
+    //         required: false,
+    //         fields: [
+    //           {
+    //             name: "images",
+    //             label: "Images",
+    //             widget: "image",
+    //             required: false,
+    //             allow_multiple: true,
+    //           },
+    //         ],
+    //       },
+    //       {
+    //         name: "markdown",
+    //         label: "Markdown",
+    //         widget: "object",
+    //         required: false,
+    //         fields: [
+    //           {
+    //             name: "value",
+    //             label: "Value",
+    //             widget: "markdown",
+    //             required: false,
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     name: "styles",
+    //     label: "Styles",
+    //     widget: "code",
+    //     required: false,
+    //     output_code_only: true,
+    //     allow_language_selection: false,
+    //     language: "css",
+    //   },
+    // ];
+    // const sectionsCollection = {
+    //   name: "sections",
+    //   label: "Sections",
+    //   label_singular: "Section",
+    //   icon: "add_column_right",
+    //   slug: "{{name}}", // This allows the slug to be localized
+    //   folder: `${CONTENT_DIR}`,
+    //   path: "sections/{{slug}}",
+    //   i18n: { structure: "single_file" },
+    //   extension: "yaml",
+    //   create: true,
+    //   identifier_field: "name",
+    //   summary: "{{name}}",
+    //   sortable_fields: {
+    //     fields: ["name"],
+    //     default: {
+    //       field: "name",
+    //       direction: "ascending",
+    //     },
+    //   },
+    //   // MEDIAS
+    //   media_folder: `/${CONTENT_DIR}/_images`,
+    //   public_folder: "/_images",
+    //   fields: sectionFields,
+    // };
     const pageFields = [
       ...commonCollectionFields,
-      // {
-      //   name: "partial",
-      //   label: "Partial",
-      //   widget: "relation",
-      //   collection: "partials",
-      // },
       // { name: 'collection', label: 'Collection', widget: 'object', types: [
       //   { name: 'pages', label: 'Pages', widget: 'object', fields: [
       //     { name: 'pages', label: 'Pages', widget: 'relation', collection: 'pages' },
@@ -487,109 +812,8 @@ class CmsConfig {
       //     { name: 'articles', label: 'Articles', widget: 'relation', collection: 'articles' },
       //   ]},
       // ]},
-      // {
-      //   name: 'advancedLink',
-      //   label: 'Advanced Link',
-      //   required: false,
-      //   widget: 'object',
-      //   types: [
-      //     { name: 'internal', label: 'Internal', widget: 'object', fields: [
-      //       { name: 'collection', label: 'Collection', widget: 'object', types: [
-      //         { name: 'pages', label: 'Pages', widget: 'relation', collection: 'pages', search_fields: ['name'], value_field: 'name', display_fields: ['name'] },
-      //         { name: 'articles', label: 'Articles', widget: 'relation', collection: 'articles', search_fields: ['name'], value_field: 'name', display_fields: ['name'] },
-      //       ]},
-      //       // { name: 'href', label: 'Href', widget: 'string' },
-      //       { name: 'target', label: 'Target', widget: 'select', options: [
-      //         { value: '_self', label: 'Self' },
-      //         { value: '_blank', label: 'Blank' }
-      //       ] },
-      //       { name: 'rel', label: 'Rel', widget: 'select', options: [
-      //         { value: 'noopener', label: 'Noopener' },
-      //         { value: 'noreferrer', label: 'Noreferrer' }
-      //       ] },
-      //       { name: 'class', label: 'Class', widget: 'string' }
-      //     ]},
-      //     { name: 'external', label: 'External', widget: 'object', fields: [
-      //       { name: 'url', label: 'URL', widget: 'string' },
-      //       { name: 'target', label: 'Target', widget: 'select', options: [
-      //         { value: '_self', label: 'Self' },
-      //         { value: '_blank', label: 'Blank' }
-      //       ] },
-      //       { name: 'rel', label: 'Rel', widget: 'select', options: [
-      //         { value: 'noopener', label: 'Noopener' },
-      //         { value: 'noreferrer', label: 'Noreferrer' }
-      //       ] },
-      //       { name: 'class', label: 'Class', widget: 'string' }
-      //     ]},
-      //     { name: 'file', label: 'File', widget: 'object', fields: [
-      //       { name: 'file', label: 'File', widget: 'object', fields: [
-      //         { name: 'discriminant', label: 'Discriminant', widget: 'select', options: [
-      //           { value: 'filesLibrary', label: 'Files Library' },
-      //           { value: 'local', label: 'Local' },
-      //           { value: 'external', label: 'External' }
-      //         ] },
-      //         { name: 'value', label: 'Value', widget: 'string' }
-      //       ] },
-      //       { name: 'target', label: 'Target', widget: 'select', options: [
-      //         { value: '_self', label: 'Self' },
-      //         { value: '_blank', label: 'Blank' }
-      //       ] },
-      //       { name: 'download', label: 'Download', widget: 'boolean' },
-      //       { name: 'hreflang', label: 'Hreflang', widget: 'string' },
-      //       { name: 'rel', label: 'Rel', widget: 'select', options: [
-      //         { value: 'noopener', label: 'Noopener' },
-      //         { value: 'noreferrer', label: 'Noreferrer' }
-      //       ] },
-      //       { name: 'class', label: 'Class', widget: 'string' }
-      //     ]},
-      //     { name: 'email', label: 'Email', widget: 'object', fields: [
-      //       { name: 'email', label: 'Email', widget: 'string' },
-      //       { name: 'subject', label: 'Subject', widget: 'string' },
-      //       { name: 'cc', label: 'CC', widget: 'string' },
-      //       { name: 'bcc', label: 'BCC', widget: 'string' },
-      //       { name: 'body', label: 'Body', widget: 'string' },
-      //       { name: 'target', label: 'Target', widget: 'select', options: [
-      //         { value: '_self', label: 'Self' },
-      //         { value: '_blank', label: 'Blank' }
-      //       ] },
-      //       { name: 'hreflang', label: 'Hreflang', widget: 'string' },
-      //       { name: 'rel', label: 'Rel', widget: 'select', options: [
-      //         { value: 'noopener', label: 'Noopener' },
-      //         { value: 'noreferrer', label: 'Noreferrer' }
-      //       ] },
-      //       { name: 'class', label: 'Class', widget: 'string' }
-      //     ]},
-      //     { name: 'phone', label: 'Phone', widget: 'object', fields: [
-      //       { name: 'phone', label: 'Phone', widget: 'string' },
-      //       { name: 'target', label: 'Target', widget: 'select', options: [
-      //         { value: '_self', label: 'Self' },
-      //         { value: '_blank', label: 'Blank' }
-      //       ] },
-      //       { name: 'hreflang', label: 'Hreflang', widget: 'string' },
-      //       { name: 'rel', label: 'Rel', widget: 'select', options: [
-      //         { value: 'noopener', label: 'Noopener' },
-      //         { value: 'noreferrer', label: 'Noreferrer' }
-      //       ] },
-      //       { name: 'class', label: 'Class', widget: 'string' }
-      //     ]}
-      //   ]
-      // },
-      {
-        name: "status",
-        label: "Status",
-        widget: "select",
-        options: [
-          { value: "published", label: "Published" },
-          { value: "draft", label: "Draft" },
-          { value: "noindex", label: "Noindex" },
-          // TODO: later implement encrypted pages
-          // { value: 'private', label: 'Private' },
-          { value: "inactive", label: "Inactive" },
-        ],
-        default: "published",
-        required: true,
-        i18n: true,
-      },
+      statusField,
+      generatePageField,
       {
         name: "name",
         label: "Page Name",
@@ -605,123 +829,12 @@ class CmsConfig {
       //   i18n: true,
       // },
       // { name: "path", label: "Page URL path", widget: "string", required: true, pattern: ['^(?![\s\/\-]*$)(?!\/)[a-z0-9\/\-]*[a-z0-9\-]$', "URL must contain only letters, numbers, dashes, and forward slashes (not starting or ending with a slash or dash), and at least one letter or number"], hint: "URL-friendly slug or path (may contain '/' and '-'). NOTE: The homepage must be called 'index'"},
-      {
-        name: "body",
-        label: "Content",
-        widget: "markdown",
-        required: false,
-        i18n: true,
-        editor_components: ["eleventyImage", "partial", "wrapper"],
-      },
-      {
-        name: "eleventyNavigation",
-        label: "Main Navigation",
-        widget: "object",
-        collapsed: true,
-        required: false,
-        summary: "Position: {{fields.order}} | Nav Title: {{fields.title}}",
-        i18n: true,
-        fields: [
-          {
-            name: "title",
-            label: "Title",
-            widget: "string",
-            required: false,
-            i18n: true,
-            hint: "Default: Page Name",
-          },
-          {
-            name: "parent",
-            label: "Parent Page",
-            widget: "relation",
-            collection: "pages",
-            search_fields: ["name"],
-            value_field: "name",
-            display_fields: ["name"],
-            required: false,
-            i18n: "duplicate",
-          },
-          {
-            name: "order",
-            label: "Order",
-            widget: "number",
-            default: 0,
-            required: false,
-            i18n: "duplicate",
-          },
-        ],
-      },
-      {
-        name: "metadata",
-        label: "Metadata",
-        widget: "object",
-        required: false,
-        collapsed: true,
-        i18n: true,
-        fields: [
-          {
-            name: "title",
-            label: "Title",
-            widget: "string",
-            required: false,
-            hint: "Default: Page Name",
-            i18n: true,
-          },
-          {
-            name: "description",
-            label: "Description",
-            widget: "text",
-            required: false,
-            i18n: true,
-          },
-          {
-            name: "image",
-            label: "Image",
-            widget: "image",
-            required: false,
-            hint: "The default image used for sharing preview",
-            allow_multiple: false,
-            media_library: { config: { max_file_size: 10000000 } },
-            i18n: "duplicate",
-          },
-        ],
-      },
-      {
-        name: "pagePreview",
-        label: "Page Preview",
-        widget: "object",
-        required: false,
-        collapsed: true,
-        i18n: true,
-        fields: [
-          {
-            name: "title",
-            label: "Title",
-            widget: "string",
-            required: false,
-            hint: "Default: Page Name",
-            i18n: true,
-          },
-          {
-            name: "description",
-            label: "Description",
-            widget: "text",
-            required: false,
-            hint: "Default: Metadata description",
-            i18n: true,
-          },
-          {
-            name: "image",
-            label: "Image",
-            widget: "image",
-            required: false,
-            hint: "The default image used when creating a visual preview of the page on your website. Default: Metadata image",
-            allow_multiple: false,
-            media_library: { config: { max_file_size: 10000000 } },
-            i18n: "duplicate",
-          },
-        ],
-      },
+      bodyMarkdownField,
+      eleventyNavigationField,
+      simpleMetadataField,
+      pagePreviewField,
+      varsField,
+      dataListField,
     ];
     const pagesCollection = {
       ...mostCommonMarkdownCollectionConfig,
@@ -729,7 +842,7 @@ class CmsConfig {
       label: "Pages",
       label_singular: "Page",
       icon: "description",
-      thumbnail: ["pagePreview.image", "metadata.image"],
+      thumbnail: ["pagePreview.image.src", "metadata.image.src"],
       path: "pages/{{slug}}",
       // TODO: check if it works
       slug: "{{name | localize}}", // This allows the slug to be localized
@@ -777,21 +890,21 @@ class CmsConfig {
     };
     const articleFields = [
       ...commonCollectionFields,
+      statusField,
+      generatePageField,
       {
         name: "name",
         label: "Article Name",
         widget: "string",
         required: true,
-        hint: "Internal name that will be used to generate the URL",
         i18n: true,
       },
-      {
-        name: "body",
-        label: "Content",
-        widget: "markdown",
-        required: false,
-        i18n: true,
-      },
+      bodyMarkdownField,
+      eleventyNavigationField,
+      simpleMetadataField,
+      pagePreviewField,
+      varsField,
+      dataListField,
     ];
     const articlesCollection = {
       ...mostCommonMarkdownCollectionConfig,
@@ -805,6 +918,36 @@ class CmsConfig {
       media_folder: `/${CONTENT_DIR}/_images`,
       public_folder: "/_images",
       fields: articleFields,
+    };
+    const personFields = [
+      ...commonCollectionFields,
+      statusField,
+      generatePageField,
+      {
+        name: "name",
+        label: "Name",
+        widget: "string",
+        required: true,
+        i18n: "duplicate",
+      },
+      bodyMarkdownField,
+      eleventyNavigationField,
+      simpleMetadataField,
+      pagePreviewField,
+      varsField,
+      dataListField,
+    ];
+    const peopleCollection = {
+      ...mostCommonMarkdownCollectionConfig,
+      // icon: "article",
+      icon: "person",
+      name: "people",
+      label: "People",
+      label_singular: "Person",
+      path: "people/{{slug}}",
+      media_folder: `/${CONTENT_DIR}/_images`,
+      public_folder: "/_images",
+      fields: personFields,
     };
 
     // const rawFilesCollection = {
@@ -865,6 +1008,7 @@ class CmsConfig {
 
     const optionalCollections = {
       articles: articlesCollection,
+      people: peopleCollection,
     };
     const selectedOptionalCollections = (selectedCollections || [])
       .map((collectionName) => optionalCollections[collectionName])
@@ -903,6 +1047,8 @@ class CmsConfig {
         stock_assets: { providers: [] },
         default: {
           config: {
+            slugify_filename: true, // default: false
+            max_file_size: 10000000,
             transformations: {
               raster_image: {
                 format: "webp",
@@ -937,14 +1083,16 @@ class CmsConfig {
         ...(mustSetup
           ? []
           : [
-              dataCollection,
-              stylesCollection,
-              { divider: true },
-              partialsCollection,
-              sectionsCollection,
-              { divider: true },
               pagesCollection,
               ...selectedOptionalCollections,
+              { divider: true },
+              partialsCollection,
+              pageLayoutsCollection,
+              sectionLayoutsCollection,
+              { divider: true },
+              dataCollection,
+              stylesCollection,
+              // sectionsCollection,
               {
                 divider: Boolean(
                   !mustSetup && data.userConfig.collections?.length
@@ -999,3 +1147,92 @@ export default async function (eleventyConfig, pluginOptions) {
 // - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
 // - { label: "Rating (scale of 1-5)", name: "rating", widget: "number", required: false }
 // - { label: "Body", name: "body", widget: "markdown", required: false }
+
+// ADVANCED LINK FIELD WIP
+// {
+//   name: 'advancedLink',
+//   label: 'Advanced Link',
+//   required: false,
+//   widget: 'object',
+//   types: [
+//     { name: 'internal', label: 'Internal', widget: 'object', fields: [
+//       { name: 'collection', label: 'Collection', widget: 'object', types: [
+//         { name: 'pages', label: 'Pages', widget: 'relation', collection: 'pages', search_fields: ['name'], value_field: 'name', display_fields: ['name'] },
+//         { name: 'articles', label: 'Articles', widget: 'relation', collection: 'articles', search_fields: ['name'], value_field: 'name', display_fields: ['name'] },
+//       ]},
+//       // { name: 'href', label: 'Href', widget: 'string' },
+//       { name: 'target', label: 'Target', widget: 'select', options: [
+//         { value: '_self', label: 'Self' },
+//         { value: '_blank', label: 'Blank' }
+//       ] },
+//       { name: 'rel', label: 'Rel', widget: 'select', options: [
+//         { value: 'noopener', label: 'Noopener' },
+//         { value: 'noreferrer', label: 'Noreferrer' }
+//       ] },
+//       { name: 'class', label: 'Class', widget: 'string' }
+//     ]},
+//     { name: 'external', label: 'External', widget: 'object', fields: [
+//       { name: 'url', label: 'URL', widget: 'string' },
+//       { name: 'target', label: 'Target', widget: 'select', options: [
+//         { value: '_self', label: 'Self' },
+//         { value: '_blank', label: 'Blank' }
+//       ] },
+//       { name: 'rel', label: 'Rel', widget: 'select', options: [
+//         { value: 'noopener', label: 'Noopener' },
+//         { value: 'noreferrer', label: 'Noreferrer' }
+//       ] },
+//       { name: 'class', label: 'Class', widget: 'string' }
+//     ]},
+//     { name: 'file', label: 'File', widget: 'object', fields: [
+//       { name: 'file', label: 'File', widget: 'object', fields: [
+//         { name: 'discriminant', label: 'Discriminant', widget: 'select', options: [
+//           { value: 'filesLibrary', label: 'Files Library' },
+//           { value: 'local', label: 'Local' },
+//           { value: 'external', label: 'External' }
+//         ] },
+//         { name: 'value', label: 'Value', widget: 'string' }
+//       ] },
+//       { name: 'target', label: 'Target', widget: 'select', options: [
+//         { value: '_self', label: 'Self' },
+//         { value: '_blank', label: 'Blank' }
+//       ] },
+//       { name: 'download', label: 'Download', widget: 'boolean' },
+//       { name: 'hreflang', label: 'Hreflang', widget: 'string' },
+//       { name: 'rel', label: 'Rel', widget: 'select', options: [
+//         { value: 'noopener', label: 'Noopener' },
+//         { value: 'noreferrer', label: 'Noreferrer' }
+//       ] },
+//       { name: 'class', label: 'Class', widget: 'string' }
+//     ]},
+//     { name: 'email', label: 'Email', widget: 'object', fields: [
+//       { name: 'email', label: 'Email', widget: 'string' },
+//       { name: 'subject', label: 'Subject', widget: 'string' },
+//       { name: 'cc', label: 'CC', widget: 'string' },
+//       { name: 'bcc', label: 'BCC', widget: 'string' },
+//       { name: 'body', label: 'Body', widget: 'string' },
+//       { name: 'target', label: 'Target', widget: 'select', options: [
+//         { value: '_self', label: 'Self' },
+//         { value: '_blank', label: 'Blank' }
+//       ] },
+//       { name: 'hreflang', label: 'Hreflang', widget: 'string' },
+//       { name: 'rel', label: 'Rel', widget: 'select', options: [
+//         { value: 'noopener', label: 'Noopener' },
+//         { value: 'noreferrer', label: 'Noreferrer' }
+//       ] },
+//       { name: 'class', label: 'Class', widget: 'string' }
+//     ]},
+//     { name: 'phone', label: 'Phone', widget: 'object', fields: [
+//       { name: 'phone', label: 'Phone', widget: 'string' },
+//       { name: 'target', label: 'Target', widget: 'select', options: [
+//         { value: '_self', label: 'Self' },
+//         { value: '_blank', label: 'Blank' }
+//       ] },
+//       { name: 'hreflang', label: 'Hreflang', widget: 'string' },
+//       { name: 'rel', label: 'Rel', widget: 'select', options: [
+//         { value: 'noopener', label: 'Noopener' },
+//         { value: 'noreferrer', label: 'Noreferrer' }
+//       ] },
+//       { name: 'class', label: 'Class', widget: 'string' }
+//     ]}
+//   ]
+// },

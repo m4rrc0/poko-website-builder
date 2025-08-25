@@ -26,11 +26,66 @@ layout: null
     <link href="config.json" type="application/json" rel="cms-config-url" />
     <script webc:raw>
       function multilineToInline(content) {
-        return content.replace(/\n/g, "{% n %}");
+        return typeof content === 'string' ? content.replace(/\n/g, "{% n %}") : content;
       }
       function inlineToMultiline(content) {
-        return content.replace(/\{% n %\}/g, "\n");
+        return typeof content === 'string' ? content.replace(/\{% n %\}/g, "\n") : content;
       }
+      const imageFields = [
+        {
+          name: "src",
+          label: "Image",
+          widget: "image",
+          required: true,
+        },
+        {
+          name: "alt",
+          label: "Alt Text",
+          widget: "string",
+          required: false,
+          hint: "~125 characters max; Be specific, concise, focused on the image purpose, avoid redundant phrases like 'image of…'",
+        },
+        {
+          name: "title",
+          label: "Title",
+          widget: "string",
+          required: false,
+        },
+        {
+          name: "width",
+          label: "Width",
+          widget: "number",
+          value_type: "int",
+          required: false,
+          hint: "In px; Leave empty for auto; Useful for image optimization when not full width.",
+        },
+        {
+          name: "aspectRatio",
+          label: "Aspect Ratio",
+          widget: "number",
+          value_type: "float",
+          hint: "Width / Height => square = 1; 16:9 = 1.78; 4:3 = 1.33; Extra wide = 4;",
+          required: false,
+        },
+        {
+          name: "loading",
+          label: "Loading",
+          widget: "select",
+          options: [
+            { value: "", label: "Default" },
+            { value: "lazy", label: "Lazy" },
+            { value: "eager", label: "Eager" },
+          ],
+          required: false,
+          hint: "Select 'Eager' for images that are visible in the initial viewport;",
+        },
+        {
+          name: "imgAttrs",
+          label: "Other Image Attributes",
+          widget: "string",
+          required: false,
+        },
+      ];
 
       CMS.registerEditorComponent({
         id: "eleventyImage",
@@ -306,6 +361,7 @@ layout: null
             label: "Select Partial",
             widget: "relation",
             collection: "partials",
+            required: true,
           },
           // {
           //   name: "data",
@@ -326,7 +382,8 @@ layout: null
           {
             name: "templateEngineOverride",
             label: "Markup language override",
-            widget: "select",
+            // widget: "select",
+            widget: "hidden",
             required: false,
             // default: "njk,md",
             options: [
@@ -392,8 +449,6 @@ layout: null
               : []),
           ];
 
-          console.log({ data, dataString, args });
-
           return `{% partial ${args.join(", ")} %}`;
         },
         toPreview: function (data) {
@@ -406,10 +461,11 @@ layout: null
         label: "Wrapper",
         icon: "lunch_dining",
         fields: [
-          { name: "content", label: "Content", widget: "markdown" },
+          { name: "content", label: "Content", widget: "markdown", required: false },
           {
             name: "wrapperTag",
             label: "Wrapper Tag",
+            required: false,
             widget: "select",
             options: [
               { value: "div", label: "div" },
@@ -431,6 +487,7 @@ layout: null
             name: "wrapperAttrs",
             label: "Wrapper Attributes",
             widget: "string",
+            required: false,
           },
         ],
         pattern:
@@ -464,6 +521,102 @@ layout: null
           return `{% wrapper tag="${wrapperTag}"${
             tagAttrs ? `, ${tagAttrs}` : ""
           } %}${inlineContent}{% endwrapper %}`;
+        },
+        toPreview: function (data) {
+          return `TEST`;
+        },
+      });
+
+      CMS.registerEditorComponent({
+        id: "section",
+        label: "Section",
+        icon: "brick",
+        fields: [
+          {
+            name: "blocks",
+            label: "Blocks",
+            widget: "list",
+            required: false,
+            i18n: true,
+            types: [
+              {
+                name: "image",
+                label: "Image",
+                widget: "object",
+                required: false,
+                fields: imageFields,
+              },
+              {
+                name: "markdown",
+                label: "Markdown",
+                widget: "object",
+                required: false,
+                fields: [
+                  {
+                    name: "value",
+                    widget: "markdown",
+                    required: false,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "sectionSlug",
+            label: "Select Section Layout",
+            widget: "relation",
+            collection: "sectionLayouts",
+            required: true,
+          },
+        ],
+        pattern: /^{% section\s+(.*?)\s*%}$/ms,
+        fromBlock: function (match) {
+          // Parse the arguments from the captured string
+          const argumentsString = match[1];
+          // Currently have 2 arguments: 
+          // {% section "test-section.njk", {"blocks":[]} %}
+          const argSeparatorIndex = argumentsString.indexOf(", ");
+          const slugWithQuotes = argumentsString.slice(0, argSeparatorIndex);
+          const sectionSlug = slugWithQuotes
+            .replace(/("|')/g, "")
+            .replace(/\.njk$/, "");
+
+          const dataString = argumentsString.slice(argSeparatorIndex + 2);
+          const data = JSON.parse(dataString);
+          let blocks = data?.blocks || [];
+          
+          blocks = blocks.map((block) => {
+            if (block.type === "markdown") {
+              return {
+                ...block,
+                value: inlineToMultiline(block.value),
+              }
+            }
+            return block;
+          });
+
+          return {
+            sectionSlug,
+            blocks
+          };
+        },
+        toBlock: function (data) {
+          const sectionSlug = data.sectionSlug;
+          const sectionSlugWithQuotes = `"${sectionSlug}.njk"`;
+
+          const blocks = (data.blocks || []).map((block) => {
+            if (block.type === "markdown") {
+              return {
+                ...block,
+                value: multilineToInline(block.value),
+              }
+            }
+            return block;
+          });
+
+          const dataString = JSON.stringify({blocks});
+
+          return `{% section ${sectionSlugWithQuotes}, ${dataString} %}`;
         },
         toPreview: function (data) {
           return `TEST`;

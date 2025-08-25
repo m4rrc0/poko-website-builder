@@ -46,16 +46,21 @@ function lookupTemplateTranslations(inputOptional, templates) {
 // lang is optional and overwrites the current page's lang
 export function locale_url(input, langOverride, propName = "url") {
   // const originalFilter = this.env.getFilter("locale_url_original");
-  const lang = langOverride || this.page.lang;
-  const templateTranslations = lookupTemplateTranslations.call(this, input);
+  try {
+    const lang = langOverride || this.page.lang;
+    const templateTranslations = lookupTemplateTranslations.call(this, input);
 
-  const translationMatch = templateTranslations?.find((translation) => {
-    return translation.lang === lang;
-  });
+    const translationMatch = templateTranslations?.find((translation) => {
+      return translation.lang === lang;
+    });
 
-  const propMatch = getNestedValue(translationMatch, propName);
+    const propMatch = getNestedValue(translationMatch, propName);
 
-  return propMatch;
+    return propMatch;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 // inclusionOption can be "all", "others", "self" or a lang code

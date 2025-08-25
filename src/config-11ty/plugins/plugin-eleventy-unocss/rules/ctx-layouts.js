@@ -650,4 +650,21 @@ export default [
       };
     },
   ],
+
+  // Pile mini web machine. Src: https://www.youtube.com/watch?v=6qpEOBkDr88&list=PLX8LsyX8bNOso4WoMGtE2I4vmnfCHSDKn&index=41
+  [
+    /^pile$/,
+    (match, { symbols }) => {
+      return [
+        {
+          [symbols.selector]: () => `:where(.pile)`,
+          display: "grid",
+        },
+        {
+          [symbols.selector]: () => `:where(.pile) > *`,
+          "grid-area": "1/1",
+        },
+      ];
+    },
+  ],
 ];

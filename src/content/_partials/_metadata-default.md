@@ -1,4 +1,5 @@
 {# TODO: Improve metadata #}
+{% set metaImage = metadata.image.src or metadata.image %}
 
 <title>{{ metadata.title }}</title>
 <meta property="og:title" content="{{ metadata.title }}" />
@@ -8,9 +9,9 @@
 <meta name="description" content="{{ metadata.description }}" />
 <meta property="og:description" content="{{ metadata.description }}" />
 {% endif %}
-{% if metadata.image %}
-<meta name="image" content="{{ metadata.image | ogImage }}" />
-<meta property="og:image" content="{{ metadata.image | ogImage }}" />
-<meta property="og:image:url" content="{{ metadata.image | ogImage }}" />
-<meta property="twitter:image" content="{{ metadata.image | ogImage }}" />
+{% if metaImage %}
+<meta name="image" content="{{ metaImage | ogImage }}" />
+<meta property="og:image" content="{{ metaImage | ogImage }}" />
+<meta property="og:image:url" content="{{ metaImage | ogImage }}" />
+<meta property="twitter:image" content="{{ metaImage | ogImage }}" />
 {% endif %}
