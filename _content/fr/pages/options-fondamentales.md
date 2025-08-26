@@ -7,11 +7,11 @@ name: Options fondamentales
 
 ## Introduction
 
-L’Autre École ne peut vivre sans une adhésion et une participation à son projet ; cette condition est source de richesse et de possibilités nouvelles. L’Autre École est notre affaire à tous.
+L’Autre École ne peut vivre sans une adhésion et une participation à son projet; cette condition est source de richesse et de possibilités nouvelles. L’Autre École est notre affaire à tous.
 
 Nous, parents de l’Autre École, nous voulons contribuer au développement d’une société plus solidaire et plus juste. Nous voulons préparer nos enfants à participer à cette lutte permanente.
 
-Nous avons rêvé, nous rêvons encore d’une société plus vraie, plus juste, plus fraternelle, plus libre. Quelle p art de ce rêve allons nous léguer à nos enfants ? Nous voulons que l’éducation n’entrave pas leur imagination , ni leur lien avec la réalité et ce qu’elle impose d’effort, de patience et de calcul dans la réalisation des projets rêvés.
+Nous avons rêvé, nous rêvons encore d’une société plus vraie, plus juste, plus fraternelle, plus libre. Quelle p art de ce rêve allons nous léguer à nos enfants? Nous voulons que l’éducation n’entrave pas leur imagination , ni leur lien avec la réalité et ce qu’elle impose d’effort, de patience et de calcul dans la réalisation des projets rêvés.
 
 Notre but est de réduire l’écart entre le rêve et la réalité en poursuivant notre action éducative.
 
@@ -21,12 +21,12 @@ Trop souvent, le souci de conformer l’enfant à la société existante y domin
 
 L’enfant réduit au rôle d’élève s’y cantonnait à reproduire, à restituer fidèlement le message délivré. C’e st pour que puisse s’épanouir un autre type de projet que l’Autre École fut créée en 1973.
 
-## Chapitre 1 : les valeurs fondamentales
+## Chapitre 1: les valeurs fondamentales
 
-Quelles sont nos valeurs ?  
-C'est-à-dire quelles sont les convictions profondes qui guident notre jugement pour déterminer si une fin ou un moyen est souhaitable ou non ?
+Quelles sont nos valeurs?  
+C'est-à-dire quelles sont les convictions profondes qui guident notre jugement pour déterminer si une fin ou un moyen est souhaitable ou non?
 
-L'Autre École s'inspire des idées politiques et pédagogiques de Célestin Freinet. Elle fonde son action sur les principes complémentaires de solidarité sociale et d'épanouissement individuel qui se traduisent notamment par :
+L'Autre École s'inspire des idées politiques et pédagogiques de Célestin Freinet. Elle fonde son action sur les principes complémentaires de solidarité sociale et d'épanouissement individuel qui se traduisent notamment par:
 
 - une adhésion aux valeurs de coopération, d'autonomie et de liberté, de respect des personnes et de la nature, d'égalité, également de pluralisme dans les limites de tolérance imposées par ces valeurs,
 - un refus de l'élitisme, du dogmatisme, de la compétition, de l'aliénation, des concentrations de pouvoirs et de richesses, de la domination et de l'exploitation des hommes, de l'exclusion et du racisme.
@@ -35,44 +35,44 @@ L'Autre École entend appliquer ces principes dans sa pédagogie, dans son organ
 
 ### La vie
 
-L'école est un lieu de vie. Place donc à la spontanéité, au désordre, à la joie, aux conflits, au doute, au mouvement… Ceci ne veut pas dire que l'ordre, la décision, l'effort n'ont pas de sens : nous croyons que ce sont aussi des aspects de la vie, mais nous ne voulons pas qu'ils occupent une place exclusive, totalitaire.
+L'école est un lieu de vie. Place donc à la spontanéité, au désordre, à la joie, aux conflits, au doute, au mouvement… Ceci ne veut pas dire que l'ordre, la décision, l'effort n'ont pas de sens: nous croyons que ce sont aussi des aspects de la vie, mais nous ne voulons pas qu'ils occupent une place exclusive, totalitaire.
 
 ### La convivialité
 
 Nous participons à un projet commun avec les contacts humains qui en découlent. Nous vivons l'espri t de communauté : nous formons un ensemble, chacun se sent membre d'un groupe social au sein duquel chacun partage une expérience et poursuit des buts communs.
 
-L'envie de rencontre, de contacts est un élément important pour nous et nous y répondons notamme nt par le maintien d'un établissement de petite taille et la diminution des cloisonnements qui permettent une très large rencontre entre les personnes de tous âges et de toutes fonctions.
+L'envie de rencontre, de contacts est un élément important pour nous et nous y répondons notamment par le maintien d'un établissement de petite taille et la diminution des cloisonnements qui permettent une très large rencontre entre les personnes de tous âges et de toutes fonctions.
 
 ### L'épanouissement individuel, processus de socialisation
 
-L'homme est un être social. L'individu ne peut bien s'épanouir qu'en société, avec ses semblables, sans les utiliser, les manipuler ni tâcher de les dépasser, de les éclipser ou de les ignorer. Une éducation trop centrée sur l'individu compromettrait les possibilité s de dé velopper sa dimension sociale. Mais chaque être humain est unique, irremplaçable, singulier, différent. Cette différence est à respecter et à cultiver. L'épanouissement de l'enfant comme personne passe aussi par l'acceptation de sa singularité, de s a dif férence. Notre souci est d'arriver à ce que l'enfant se construise une image positive de lui-même. Cet enfant bien dans sa peau n'aura n ul besoin d'envier son voisin. Cet équilibre entre un soi épanoui et un respect des autres est source d'une véritab le communication. Cela nous entraine bien loin de tout esprit de compétition.
+L'homme est un être social. L'individu ne peut bien s'épanouir qu'en société, avec ses semblables, sans les utiliser, les manipuler ni tâcher de les dépasser, de les éclipser ou de les ignorer. Une éducation trop centrée sur l'individu compromettrait les possibilité s de dé velopper sa dimension sociale. Mais chaque être humain est unique, irremplaçable, singulier, différent. Cette différence est à respecter et à cultiver. L'épanouissement de l'enfant comme personne passe aussi par l'acceptation de sa singularité, de sa différence. Notre souci est d'arriver à ce que l'enfant se construise une image positive de lui-même. Cet enfant bien dans sa peau n'aura n ul besoin d'envier son voisin. Cet équilibre entre un soi épanoui et un respect des autres est source d'une véritab le communication. Cela nous entraine bien loin de tout esprit de compétition.
 
 ### La liberté
 
 Nous sommes opposés à toute forme d'endoctrinement et à toute forme d'autoritarisme. Nous sommes pour l'esprit critique et la liberté.
 
-"Ma liberté s'arrête là où co mmence celle des autres". Cette citation induit inévitablement la perception négative de l'autre, il est là comme obstacle. Cette conception de la liberté conduit à l'isolement total, ou à la frustration permanente et à la révolte.
+"Ma liberté s'arrête là où commence celle des autres". Cette citation induit inévitablement la perception négative de l'autre, il est là comme obstacle. Cette conception de la liberté conduit à l'isolement total, ou à la frustration permanente et à la révolte.
 
 "Ma liberté commence là où commence celle des autres", Albert Jacquard implique que la liberté ne préexiste pas, elle se construit et s'articule sur plusieurs éléments:
 
-- la prise de conscience de soi et l’affirmation de soi, la découverte des autres, la rencontre, la négociat ion, la concessio n et après accord, l'entente. La structuration de la vie à l'école en foncti on des objectifs pédagogiques ;
-- les contraintes de la réalité qu'il s'agit de prendre en compte, sans lesquels toute vie sociale est rendue pénible : l'horaire, la sécurité, le respect des espac es, le respect du matériel ... ;
-- l'ouverture à l'autre (c'est -à-dire l'acceptation de l'autre comme être différent) : nous sommes pour une société sans guerre, ni racisme ni sexisme ni autres formes de discrimination et d'exploitation de l'être humain ;
-- l'intérêt général : il s'agit d'être sensible aux besoins des groupes dont on fait partie, d'accepter leurs choix en ce sens, même lorsque cela nous oblige à relativiser nos désirs individuels.
+- la prise de conscience de soi et l’affirmation de soi, la découverte des autres, la rencontre, la négociation, la concessio n et après accord, l'entente. La structuration de la vie à l'école en foncti on des objectifs pédagogiques;
+- les contraintes de la réalité qu'il s'agit de prendre en compte, sans lesquels toute vie sociale est rendue pénible : l'horaire, la sécurité, le respect des espac es, le respect du matériel...;
+- l'ouverture à l'autre (c'est-à-dire l'acceptation de l'autre comme être différent): nous sommes pour une société sans guerre, ni racisme ni sexisme ni autres formes de discrimination et d'exploitation de l'être humain;
+- l'intérêt général: il s'agit d'être sensible aux besoins des groupes dont on fait partie, d'accepter leurs choix en ce sens, même lorsque cela nous oblige à relativiser nos désirs individuels.
 
-Ces notions ne sont pas tellement faciles à mettre en pratique car, dans notre histoire affective et sociale, l'autre a bien souvent été ressenti comme une contrainte. Quant à l'intérêt général, il a tellement servi de prétexte pour nous faire marcher dans des intérêts particuliers ...
+Ces notions ne sont pas tellement faciles à mettre en pratique car, dans notre histoire affective et sociale, l'autre a bien souvent été ressenti comme une contrainte. Quant à l'intérêt général, il a tellement servi de prétexte pour nous faire marcher dans des intérêts particuliers...
 
 ### La responsabilité
 
-Nous observons qu'une certaine confusion entre laisser-aller, laxisme, renoncement, confort et liberté dans la société, la famille, l'école, entrave le développement de la responsabilité. Cela ne nous satisfait pas. Car si nous so mmes résolument adversaires des contraintes arbitraires, nous pensons qu'il est fondamental d'être responsable de soi, de ses sentiments, de ses paroles, de ses actes et d'être coresponsable de ce que l'on partage avec d'autres, c'est -à-dire d'assumer chaq ue situation dans sa complexité, dans sa totalité, donc aussi avec ses aspects pénibles ou difficiles.
+Nous observons qu'une certaine confusion entre laisser-aller, laxisme, renoncement, confort et liberté dans la société, la famille, l'école, entrave le développement de la responsabilité. Cela ne nous satisfait pas. Car si nous sommes résolument adversaires des contraintes arbitraires, nous pensons qu'il est fondamental d'être responsable de soi, de ses sentiments, de ses paroles, de ses actes et d'être coresponsable de ce que l'on partage avec d'autres, c'est-à-dire d'assumer chaq ue situation dans sa complexité, dans sa totalité, donc aussi avec ses aspects pénibles ou difficiles.
 
 ### La coopération et la solidarité
 
-Nous sommes opposés à l'esprit de compétition, aux rapports de force. Nous voulons vivre et développer la coopération et la solidarité. Chaque membre d'une équipe peut y avoir sa place, s'y exprimer, contribuer en fonction de ce qu'il est, dans la perspective d'une réalisation commune dont le groupe ou un responsable désigné est le garant. La confrontation cédera le plus souvent la place à la négociation et au partenariat. Nous voulons faire face ensemble aux problèmes qui se présentent, être à côté de ceux qui sont en difficulté. La solidarité est antinomique de l'exclusion et d'un accès inégal à la culture et à l'instruc tion. La coopération et la solidarité sont promues à l'Autre École, elles s'inscrivent aussi dans un cadre plus global où elles se traduisent par des rapports solidaires avec les déshérités de la planète et un devoir de respect de l'environnement, bien com mun de l'humanité. L'existence même de l'Autre École repose sur la coopération et la solidarité des familles qui la composent. Dans la classe, un temps important est consacré à la gestion de la vie collective.
+Nous sommes opposés à l'esprit de compétition, aux rapports de force. Nous voulons vivre et développer la coopération et la solidarité. Chaque membre d'une équipe peut y avoir sa place, s'y exprimer, contribuer en fonction de ce qu'il est, dans la perspective d'une réalisation commune dont le groupe ou un responsable désigné est le garant. La confrontation cédera le plus souvent la place à la négociation et au partenariat. Nous voulons faire face ensemble aux problèmes qui se présentent, être à côté de ceux qui sont en difficulté. La solidarité est antinomique de l'exclusion et d'un accès inégal à la culture et à l'instruction. La coopération et la solidarité sont promues à l'Autre École, elles s'inscrivent aussi dans un cadre plus global où elles se traduisent par des rapports solidaires avec les déshérités de la planète et un devoir de respect de l'environnement, bien com mun de l'humanité. L'existence même de l'Autre École repose sur la coopération et la solidarité des familles qui la composent. Dans la classe, un temps important est consacré à la gestion de la vie collective.
 
 ### Le travail
 
-« Je dis : éducation par le travail. Qu'on n'entende pas aussitôt : éducation par le travail manuel, comme si le travail devait désigner exclusivement l'activité manuelle. Elle est cela, il est vrai, à l'origine, mais sans que cette activité ne soit jamais arbitrairement séparée d'une hau te spiritualité qui l'illumine, isolée du processus vital dont elle est un élément, aussi bien que du processus social qui la conditionne. Cette idée d'éducation par le travail ne signifie pas, non plus, que dans l'école nouvelle que je crois nécessaire à la société actuelle, on se contentera de jardiner, de soigner les bêtes et les plantes, de clouer, de maçonner et de forger. C'est là la conception méprisante du travail qui laisse aux uns la charge aride de l'effort musculaire et de l'habileté manuelle - comme à une machine à laquelle on demande seulement d'assurer, avec un minimum de sollicitude, les gestes socialement indispensables - pour réserver à d'autres les besognes nobles où la pensée reste prépondérante. Le travail est un tout : il peut y avoir a utant de bon sens, d'intelligence, d'utile et philosophique spéculation dans le cerveau de l'homme qui bâtit un mur que dans celui du savant cherchant dans son laboratoire. Seulement, chacun exerce ses fonctions selon ses tendances et ses possibilités et, dans un État bien organisé, elles auraient toutes leur éminente noblesse. »  
+«Je dis: éducation par le travail. Qu'on n'entende pas aussitôt: éducation par le travail manuel, comme si le travail devait désigner exclusivement l'activité manuelle. Elle est cela, il est vrai, à l'origine, mais sans que cette activité ne soit jamais arbitrairement séparée d'une hau te spiritualité qui l'illumine, isolée du processus vital dont elle est un élément, aussi bien que du processus social qui la conditionne. Cette idée d'éducation par le travail ne signifie pas, non plus, que dans l'école nouvelle que je crois nécessaire à la société actuelle, on se contentera de jardiner, de soigner les bêtes et les plantes, de clouer, de maçonner et de forger. C'est là la conception méprisante du travail qui laisse aux uns la charge aride de l'effort musculaire et de l'habileté manuelle - comme à une machine à laquelle on demande seulement d'assurer, avec un minimum de sollicitude, les gestes socialement indispensables - pour réserver à d'autres les besognes nobles où la pensée reste prépondérante. Le travail est un tout: il peut y avoir a utant de bon sens, d'intelligence, d'utile et philosophique spéculation dans le cerveau de l'homme qui bâtit un mur que dans celui du savant cherchant dans son laboratoire. Seulement, chacun exerce ses fonctions selon ses tendances et ses possibilités et, dans un État bien organisé, elles auraient toutes leur éminente noblesse.»  
 Célestin FREINET, L'Éducation du travail.
 
 Outre une nécessité économique, le travail est un élément essentiel d’épanouissement de la personne et de la société, à condition qu’il s’agisse d’un travail à la fois socialement utile et librement choisi, qui intéresse le travailleur, sur lequel celui-ci a un pouvoir et dont il se sent responsable.
@@ -81,7 +81,7 @@ Outre une nécessité économique, le travail est un élément essentiel d’ép
 
 Nous voulons résister aux pressions incessantes de groupes économiques, politiques, philosophiques qui, à travers les médias notamment, nous font croire ceci ou cela, nous poussent à consommer leurs marchandises culturelles et matérielles. Nous voulons chercher, comparer, réfuter, nous poser des questions, discuter, trouver en nous et avec les autres notre propre vérité et nous voulons pouvoir critiquer librement ce qui nous déplait, comme ce qui nous plait.
 
-A l'Autre École, nous essayons de donner à nos enfants le maximum de moyens leur permettant d'en faire autant s'ils le dé sirent. Nous essayons également d'appliquer à nous -mêmes ce précieux esprit critique : que faisons -nous ? Jusqu'à quel point metton s-nous nos idées en pratique ? Quels sont les échecs, le s faiblesses de l'Autre École ?
+A l'Autre École, nous essayons de donner à nos enfants le maximum de moyens leur permettant d'en faire autant s'ils le désirent. Nous essayons également d'appliquer à nous -mêmes ce précieux esprit critique: que faisons -nous? Jusqu'à quel point mettons-nous nos idées en pratique? Quels sont les échecs, les faiblesses de l'Autre École?
 
 La présente brochure témoigne, entre autres, de cette préoccupation constante, de ses richesses et de ses limites.
 
@@ -89,7 +89,7 @@ La présente brochure témoigne, entre autres, de cette préoccupation constante
 
 Nous sommes pour la coexistence, à l'école aussi, d'attitudes philosophiques, religieuses et politiques différentes. En cela, nous appliquons notre valeur "liberté de pensée". Cela en constitue également une source : la confrontation des points de vue stimule l'esprit et la découverte par chacun de ses choix personnels. Il n'y a pas de vérité unique mais une multiplicité de regards possibles sur le monde. La diversité est une richesse mais, comme la liberté, pas de façon inconditionnelle.
 
-Quelle est l'étendue de ce pluralisme ? Comme nous demandons à nos membres d'adhérer aux options fondamentales de l'école, on pourrait parler de pluralisme limité : l'adhésion à un système de valeurs au sein duquel il existe une marge de pluralisme.
+Quelle est l'étendue de ce pluralisme? Comme nous demandons à nos membres d'adhérer aux options fondamentales de l'école, on pourrait parler de pluralisme limité: l'adhésion à un système de valeurs au sein duquel il existe une marge de pluralisme.
 
 ### L'égalité
 
@@ -97,144 +97,56 @@ Nous bannissons les ségrégations et prônons l'égalité dans le respect de la
 
 ### La démocratie
 
-Nous sommes pour l'augmentation du pouvoir du citoyen dans le système social, par rapport à l'État et aux diverses puissances socio-économiques. Nous voulons que chaque être humain ait le maximum de pouvoir sur lui-même et ce dont il fait partie, qu'il ait notamment un pouvoir de choix complet pour ce qui ne concerne que lui et qu'au-delà, lorsque d'autres personnes sont concernées, il puisse partager le pouvoir avec elles. Nous essayons de mettre cela en pratique à l'Autre École : il n'y a pas de directeur, de professeurs tout -puissants, les enfants participent à l'élaboration d'une partie des règles régissant la vie de l’école, les parent s ont accès aux données qui concernent la vie de l'école et disposent d'un pouvoir dans les organes de décision.
+Nous sommes pour l'augmentation du pouvoir du citoyen dans le système social, par rapport à l'État et aux diverses puissances socio-économiques. Nous voulons que chaque être humain ait le maximum de pouvoir sur lui-même et ce dont il fait partie, qu'il ait notamment un pouvoir de choix complet pour ce qui ne concerne que lui et qu'au-delà, lorsque d'autres personnes sont concernées, il puisse partager le pouvoir avec elles. Nous essayons de mettre cela en pratique à l'Autre École: il n'y a pas de directeur, de professeurs tout -puissants, les enfants participent à l'élaboration d'une partie des règles régissant la vie de l’école, les parent s ont accès aux données qui concernent la vie de l'école et disposent d'un pouvoir dans les organes de décision.
 
 ### La politique
 
-Il n'est pas possible d'aborder sérieusement les questions liées à l'éducation et à l'enseignement sans rencontrer des problèmes de nature sociale et politique. C'est notamment par le système éducatif que les soci étés assurent leur continuité. Dans ce contexte, éduquer et instruire contribuent à assurer la permanence des rapports sociaux. Dans un système social dominé par le pouvoi r de l'argent, l'individualisme et le déséquilibre économique, le système éducatif véhicule des modèles de rapports d e domination et d'exploitation.
+Il n'est pas possible d'aborder sérieusement les questions liées à l'éducation et à l'enseignement sans rencontrer des problèmes de nature sociale et politique. C'est notamment par le système éducatif que les sociétés assurent leur continuité. Dans ce contexte, éduquer et instruire contribuent à assurer la permanence des rapports sociaux. Dans un système social dominé par le pouvoir de l'argent, l'individualisme et le déséquilibre économique, le système éducatif véhicule des modèles de rapports d e domination et d'exploitation.
 
-Les structures existantes servent au maintien de l'ordre et de la culture dominante. Pédagogie et politique sont donc intimement liées : comment imaginer une société égalitaire et solidaire formée par des personnes conditionnées par une pédagogie basée sur le conformisme et la compétition ?
+Les structures existantes servent au maintien de l'ordre et de la culture dominante. Pédagogie et politique sont donc intimement liées: comment imaginer une société égalitaire et solidaire formée par des personnes conditionnées par une pédagogie basée sur le conformisme et la compétition?
 
 ### L'évolution, le changement
 
-L'enfant est un être en évolution. L'être humain est une personne en évolution. L'école est une institution en évolution. Nous voulons respecter ce mouvement naturel , lui faire une place, être ouverts à ce qui peut arriver. Nous voulons aussi être acteurs de changement dans la société. Ce second a spect est plus problématique. Il se heurte à nos peurs, à notre désir de conserver les avantages acquis, à la perte des repères idéologiques et des projets de société et, bien sûr, à la résistance des structures sociales en place e t à la faiblesse de nos moyens. Nous voulons pro mouvoir un type d'éducation : qui rejette les doctrines, leur préférant quelques valeurs points de repères, pouvant être contradictoires, quoique non antagoniques, et susceptibles d’évolution ; qui imprègne, de fait, l'enfant de ces valeurs, con sciemment et inconsciemment ; qui impose le moins possible.
+L'enfant est un être en évolution. L'être humain est une personne en évolution. L'école est une institution en évolution. Nous voulons respecter ce mouvement naturel, lui faire une place, être ouverts à ce qui peut arriver. Nous voulons aussi être acteurs de changement dans la société. Ce second a spect est plus problématique. Il se heurte à nos peurs, à notre désir de conserver les avantages acquis, à la perte des repères idéologiques et des projets de société et, bien sûr, à la résistance des structures sociales en place e t à la faiblesse de nos moyens. Nous voulons pro mouvoir un type d'éducation : qui rejette les doctrines, leur préférant quelques valeurs points de repères, pouvant être contradictoires, quoique non antagoniques, et susceptibles d’évolution; qui imprègne, de fait, l'enfant de ces valeurs, con sciemment et inconsciemment; qui impose le moins possible.
 
 ### Notre conception de la culture
 
 Notre conception de la culture est résolument ouverte. Plusieurs cultures cohabitent, influencées par l’appartenance à une communauté sociale, à une classe ou à une catégorie d’âge. Toutes ont leur valeur et nous refusons de privilégier l’une ou l’autre d’entre elles, à l’exclusion toutefois de celles qui véhiculent un message discriminatoire ou d’intolérance. L’école est donc un lieu où la culture de l’enfant est confrontée aux cultures de ses camarades et à celles des adultes. Chacune de ces approches étant porteuse de différences significatives et éminemment respectables.
 
-Nous sommes conscients que notre société propose une monoculture qui favorise, par des mécanismes complexes, ceux qui adhèrent aux valeurs qu’elle véhicule : course au pouvoir et à l’argent, individualisme, compétition, arrivisme…
+Nous sommes conscients que notre société propose une monoculture qui favorise, par des mécanismes complexes, ceux qui adhèrent aux valeurs qu’elle véhicule: course au pouvoir et à l’argent, individualisme, compétition, arrivisme…
 
 Le pluralisme culturel, indispensable si nous voulons réussir une école à l’écoute de l’autre, est le fruit d’une lutte quotidienne contre une pression sociale omniprésente.
 
-# Chapitre II : la pédagogie
+# Chapitre 2: la pédagogie
 
-Le choix de vie et de société que fait l'Autre École se traduit dans sa
+Le choix de vie et de société que fait l'Autre École se traduit dans sa pratique quotidienne. L'Autre École se veut un lie u de vie où chacun a sa place. Nous considérons l'enfant comme un être à part entière, promouvons l'expression libre, la créativité et la vie coopérative et tenons compte des dimensions intellectuelle et af fective. Nous favorisons l'auto -évaluation, la prise de conscience et la prise de responsabilité. Nous avons le souci de développer l’esprit critique.
 
-pratique quotidienne. L'Autre École se veut un lie u de vie où chacun
+## L'enfant: un être à part entière
 
-a sa place. Nous considérons l'enfant comme un être à part entière,
-
-promouvons l'expression libre, la créativité et la vie coopérative et
-
-tenons compte des dimensions intellectuelle et af fective. Nous
-
-favorisons l'auto -évaluation, la prise de conscience et la prise de
-
-responsabilité. Nous avons le souci de développer l’esprit critique.
-
-L'enfant : un être à part entière
-
-À l'Autre École, le but de l'éducation est de permettre à chaque
-
-enfant d'être autant que possible lui -même et de vivre ses rapports
-
-sociaux en foncti on de ce qu'il est profondément. L'enfant qui arrive
-
-à l'école a déjà un long passé qui est son histoire, affective et sociale,
-
-l'histoire de ses premières années, qui semblent décisives, et aussi
-
-l'histoire de sa famille, de sa classe sociale, de son ento urage civique,
-
-qui est inscrite en lui. L'enfant est un être naturellement évolutif qui
-
-porte en lui ses propres potentialités, son rythme personnel, ses
-
-choix propres. Dès lors, nous essayons de tenir compte, en
-
-permanence, de ces facteurs dans notre rela tion avec l'enfant.
+À l'Autre École, le but de l'éducation est de permettre à chaque enfant d'être autant que possible lui -même et de vivre ses rapports sociaux en foncti on de ce qu'il est profondément. L'enfant qui arrive à l'école a déjà un long passé qui est son histoire, affective et sociale, l'histoire de ses premières années, qui semblent décisives, et aussi l'histoire de sa famille, de sa classe sociale, de son entourage civique, qui est inscrite en lui. L'enfant est un être naturellement évolutif qui porte en lui ses propres potentialités, son rythme personnel, ses choix propres. Dès lors, nous essayons de tenir compte, en permanence, de ces facteurs dans notre rela tion avec l'enfant.
 
 L'enfant est une personne qui vit sa vie ici et maintenant.
 
-L'expression libre, la créativité
+L'expression libre, la créativité. Nous suscitons un climat où l'enfant peut comprendre la critique de son travail, indispensable au progrès, sans pour autant se sentir jugé .
 
-Nous suscitons un climat où l'enfant peut comprendre la critique de
+C'est ainsi que l'enfant prend conscience de sa valeur. Chacun a le droit de s'exprimer, librement. Outre le travail créatif qui se manifeste notamment dans les textes libres, nous favorisons l'aspect psychomoteur et l'aspect artistique. La création est la confrontation d’un projet personnel et d’un cadre d’action. Cela permet une exploration du dit cadre. Elle s’inscrit dans la continuité des projets tels les conférences, les questionnements personnels. Les enfants découvrent aussi que le processus de cr éation inclut la nécessité du L’Autre École
 
-son travail, indispensable au progrès, sans pour autant se sentir jugé .
-
-C'est ainsi que l'enfant prend conscience de sa valeur. Chacun a le
-
-droit de s'exprimer, librement. Outre le travail créatif qui se
-
-manifeste notamment dans les textes libres, nous favorisons l'aspect
-
-psychomoteur et l'aspect artistique. La création est la confrontation
-
-d’un projet personnel et d’un cadre d’action. Cela permet une
-
-exploration du dit cadre. Elle s’inscrit dans la continuité des projets
-
-tels les conférences, les questionnements personnels. Les enfants
-
-découvrent aussi que le processus de cr éation inclut la nécessité du L’Autre École
-
-> Options Fondament ales
+> Options Fondamentales
 > 11
 
-renoncement. Même s'ils sont parfois invités à "peindre comme ...,
+renoncement. Même s'ils sont parfois invités à "peindre comme ..., écrire comme...", ce processus de reproduction est transitoire: les enfants se réapproprient les techniques en y recourant pour faire
 
-écrire comme ...", ce processus de reproduction est transitoire : les
+autre chose dans leurs créations propres. Ainsi, ils s'ouvrent à la culture environnante et se créent leur propre mode d'expression.
 
-enfants se réapproprient les techniques en y recourant pour faire
+## La vie coopérative
 
-autre chose dans leurs créations propres. Ainsi, ils s'ouvrent à la
+Considérer un enfant comme un être à part entière, c'est, entre autres choses, accepter son désaccord, son rejet et comprendre qu'ils peuvent parfois s e traduire de manière violente.
 
-culture environnante et se créent leur propre mode d'expression.
+Les conflits ne sont pas passés sous silence, bien au contraire. Ils sont. l’essence même d’une vie relationnelle. Les enfants apprennent, dès la maternelle, à utiliser la parole comme moyen de résolution des conflits. Reconnaître l’existence et l’importance de l’autre comme différent.
 
-La vie coopérative
+Le Conseil de classe, lui aussi, permet à chacun d'exprimer son point de vue, au groupe de trouver des solutions et de discuter des moyens à mettre en oeuvre afin d'é viter ces conflits à l'avenir. C’est en écoutant les points de vues des autres et en exprimant le sien que l’enfant se construit petit à petit comme un être libre, engagé, concerné par la cellule sociale dans laquelle il évolue.
 
-Considérer un enfant comme un être à part entière, c'est, entre
-
-autres choses, accepter son désaccord, son rejet et comprendr e qu'ils
-
-peuvent parfois s e traduire de manière violente.
-
-Les conflits ne sont pas passés sous silence, bien au contraire. Ils sont
-
-l’essence même d’une vie relationnelle. Les enfants apprennent, dès
-
-la maternelle, à utiliser la parole comme moyen de réso lution des
-
-conflits. Reconnaître l’existence et l’importance de l’autre comme
-
-différent.
-
-Le Conseil de classe, lui aussi, permet à chacun d'exprimer son point
-
-de vue, au groupe de trouver des solutions et de discuter des moyens
-
-à mettre en oeuvre afin d'é viter ces conflits à l'avenir. C’est en
-
-écoutant les points de vues des autres et en exprimant le sien que
-
-l’enfant se construit petit à petit comme un être libre, engagé,
-
-concerné par la cellule so ciale dans laquelle il évolue.
-
-Le fait de poser les probl èmes, d'en parler est libérateur et aide
-
-l'enfant à prendre conscience de sa part de responsabilité et, dès
-
-lors, à l'assumer. En outre, favoriser l'expression des problèmes
-
-réconcilie liberté individuelle et vie de groupe : chacun prend
-
-conscience de la n écessité de règles de vie. Une partie de celles -ci
-
-sont élaborées et contrôlées par le groupe. Chacun sait que toute
-
-règle doit être respectée mais aussi qu'elle peut être remise en
+Le fait de poser les problèmes, d'en parler est libérateur et aide l'enfant à prendre conscience de sa part de responsabilité et, dès lors, à l'assumer. En outre, favoriser l'expression des problèmes réconcilie liberté individuelle et vie de groupe: chacun prend conscience de la nécessité de règles de vie. Une partie de celles -ci sont élaborées et contrôlées par le groupe. Chacun sait que toute règle doit être respectée mais aussi qu'elle peut être remise en
 
 question au Conseil de classe ou d’école.
 
