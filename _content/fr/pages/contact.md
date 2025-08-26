@@ -5,7 +5,6 @@ name: Contact
 eleventyNavigation:
   order: 15
 ---
-
 # Contacter l'Autre École
 
 L'Autre École est une communauté éducative où la communication et l'échange sont au cœur de notre fonctionnement. N'hésitez pas à nous contacter pour toute question concernant notre projet pédagogique, nos activités ou pour prendre rendez-vous.
@@ -20,27 +19,27 @@ Bruxelles, BELGIQUE](https://maps.app.goo.gl/QB9vWySp2xD6QfHD9)
 
 ### Téléphone
 
-Tél. : [+32 (0)2 660 72 38](tel:003226607238)
+Tél.: [+32 (0)2 660 72 38](tel:003226607238)
 
-Nous vous invitons à privilégier les appels durant les heures de secrétariat :
+Nous vous invitons à privilégier les appels durant les heures de secrétariat:
 
-- Lundi, mardi, jeudi et vendredi : 8h30 - 16h00
-- Mercredi : 8h30 - 12h30
+- Lundi, mardi, jeudi et vendredi: 8h30 - 16h00
+- Mercredi: 8h30 - 12h30
 
 ### E-mails
 
-- **Direction**, Grégoire Louveaux : {{ "direction@autre-ecole.org" | emailLink }}
-- **Secrétariat** : {{ "secretariat@autre-ecole.org" | emailLink }}
+- **Direction**, Grégoire Louveaux: {{ "direction@autre-ecole.org" | emailLink }}
+- **Secrétariat**: {{ "secretariat@autre-ecole.org" | emailLink }}
 
 ## Venir à l'Autre École
 
 ### En transports en commun
 
-Notre école est facilement accessible via plusieurs lignes de transport en commun :
+Notre école est facilement accessible via plusieurs lignes de transport en commun:
 
-- **Bus** : Ligne 34 - Arrêt "Rond Point du Souverain"
-- **Métro** : Ligne 5 - Station "Herrmann-Debroux"
-- **Tram** : Ligne 8 - Arrêt "Rond Point du Souverain"
+- **Bus**: Ligne 34 - Arrêt "Rond Point du Souverain"
+- **Métro**: Ligne 5 - Station "Herrmann-Debroux"
+- **Tram**: Ligne 8 - Arrêt "Rond Point du Souverain"
 
 Depuis la station Herrmann-Debroux, l'école est à environ 10 minutes de marche.
 
@@ -62,14 +61,13 @@ Pour toute autre demande de visite, merci de contacter au préalable le secréta
 
 ## Contacter une commission spécifique
 
-Dans l'esprit participatif de l'Autre École, plusieurs commissions composées de parents et de membres de l'équipe pédagogique gèrent différents aspects de la vie de l'école. Selon la nature de votre demande, vous pouvez contacter directement la commission concernée :
+Dans l'esprit participatif de l'Autre École, plusieurs commissions composées de parents et de membres de l'équipe pédagogique gèrent différents aspects de la vie de l'école. Selon la nature de votre demande, vous pouvez contacter directement la commission concernée:
 
-- **Commission Bâtiment** : pour les questions liées aux locaux et à l'infrastructure
-- **Commission Communication** : pour les aspects liés au site web, aux publications et à la visibilité de l'école
-- **Commission Pédagogie** : pour les réflexions sur le projet pédagogique et son évolution
-- **Commission Finances** : pour les questions administratives et financières
-- **Commission Fêtes** : pour l'organisation des événements communautaires
-- **Commission Jardin** : pour les projets liés aux espaces extérieurs et au potager
-- **Commission Informatique** : pour les questions liées au site web et à la gestion des données
+- **Commission travaux**: pour les questions liées aux locaux et à l'infrastructure
+- **Commission Jardin**: pour les projets liés aux espaces extérieurs et au potager
+- **Commission Pédagogie**: pour les réflexions sur le projet pédagogique et son évolution
+- **Commission Finances**: pour les questions administratives et financières
+- **Commission Fêtes**: pour l'organisation des événements communautaires
+- **Commission Informatique**: pour les questions liées au site web et à la gestion des données
 
 Pour obtenir les coordonnées spécifiques de chaque commission, n'hésitez pas à contacter le secrétariat.
