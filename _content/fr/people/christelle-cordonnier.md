@@ -8,7 +8,6 @@ name: Christelle Cordonnier
 preview:
   image:
     src: /_images/ae-autoportraits-christelle.svg
-    alt: Christelle Cordonnier
 vars:
   role: Animatrice
   classroom: M1, 2, 3
@@ -16,7 +15,7 @@ dataList:
   - type: image
     key: imgVerso
     src: /_images/Photo-Christelle.webp
-    alt: Virginie Dupuis
+    alt: ''
     title: ''
     width: null
     aspectRatio: null
