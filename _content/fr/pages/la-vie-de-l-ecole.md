@@ -27,7 +27,7 @@ Notre journée est organisée pour favoriser l'équilibre entre les différents 
 - **15h30 - 16h00**: Heure des parents
 - **16h00 - 18h00**: Garderie (avec collations à 16h et 17h)
 
-{% partial "test.md" %}
+{% partial "gallery-la-vie-de-lecole.md" %}
 
 ### Les sortie
 
