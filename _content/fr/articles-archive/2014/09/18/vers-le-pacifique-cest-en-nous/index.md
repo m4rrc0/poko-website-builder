@@ -1,5 +1,5 @@
 ---
-title: le Pacifique&#8230;. C'est en nous !
+title: le Pacifique. C'est en nous !
 authors:
   - name: Marie
     url: https://www.autre-ecole.org/author/marie/

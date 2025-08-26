@@ -1,5 +1,5 @@
 ---
-title: Souvenirs&#8230; journée en forêt
+title: Souvenirs journée en forêt
 authors:
   - name: Christelle
     url: https://www.autre-ecole.org/author/christelle/

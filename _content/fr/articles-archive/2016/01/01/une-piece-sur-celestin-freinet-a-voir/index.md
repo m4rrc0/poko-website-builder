@@ -1,5 +1,5 @@
 ---
-title: Une pièce sur Célestin Freinet&#8230; à voir!!!
+title: Une pièce sur Célestin Freinet à voir!!!
 authors:
   - name: Christelle
     url: https://www.autre-ecole.org/author/christelle/

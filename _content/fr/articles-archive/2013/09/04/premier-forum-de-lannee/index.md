@@ -1,5 +1,5 @@
 ---
-title: Premier forum de l'année&#8230;
+title: Premier forum de l'année
 authors:
   - name: Christelle
     url: https://www.autre-ecole.org/author/christelle/

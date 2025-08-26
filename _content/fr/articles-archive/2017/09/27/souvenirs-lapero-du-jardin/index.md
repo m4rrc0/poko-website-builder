@@ -1,5 +1,5 @@
 ---
-title: Souvenirs&#8230;l'apéro du jardin
+title: Souvenirs l'apéro du jardin
 authors:
   - name: Christelle
     url: https://www.autre-ecole.org/author/christelle/

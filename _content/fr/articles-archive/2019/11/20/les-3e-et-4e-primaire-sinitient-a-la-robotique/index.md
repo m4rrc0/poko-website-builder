@@ -1,5 +1,5 @@
 ---
-title: Les 3e et 4e primaire s'initient à la robotique&#8230;
+title: Les 3e et 4e primaire s'initient à la robotique
 authors:
   - name: Christelle
     url: https://www.autre-ecole.org/author/christelle/
