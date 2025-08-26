@@ -9,8 +9,9 @@ preview:
   image:
     src: /_images/ae-autoportraits-lionel.svg
 vars:
+  '13': '13'
   role: Animateur
-  classroom: Éducation physique
+  classroom: Salle du corps
   ageGroup: '13'
 dataList:
   - type: image
