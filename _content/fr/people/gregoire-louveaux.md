@@ -15,7 +15,7 @@ vars:
 dataList:
   - type: image
     key: imgVerso
-    src: /_images/Photo-Gregoire.webp
+    src: /_images/Photo-Grégoire.webp
     alt: Grégoire Louveaux
     title: ''
     width: null
