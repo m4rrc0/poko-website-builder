@@ -1098,38 +1098,12 @@ Des membres élus :
 
 Missions du Conseil de Participation
 
-- Projet d’Etablissement : débattre, amender, compléter et propo ser
-
-des adaptations en lien avec le plan de pilotage (si nécessaire). Le
-
-proposer ensuite à l’approbation du Pouvoir Organisateur.
-
-- Contrat d’Objectifs : remettre un avis sur le plan de pilotage avant
-
-qu’il ne soit remis au DCO ; bénéficier de retours sur l ’évaluation
-
-de la mise en œuvre du Contrat d’Objectifs .
-
-- Frais scolaires : mener une réflexion globale sur les frais liés aux
-
-activités culturelles et sportives s’inscrivant dans le Projet
-
-d’Etablissement. Etudier et proposer la mise en place d’un
-
-mécanisme de solidarité entre les élèves pour le paiement des
-
-frais. Vérifier l’application du décret Gratuité.
-
-- Le Règlement d’Ordre Intérieur : débattre, amender, compléter le
-
-cas échéant (par consensus) .
-
+- Projet d’Etablissement : débattre, amender, compléter et proposer des adaptations en lien avec le plan de pilotage (si nécessaire). Le proposer ensuite à l’approbation du Pouvoir Organisateur.
+- Contrat d’Objectifs : remettre un avis sur le plan de pilotage avant qu’il ne soit remis au DCO ; bénéficier de retours sur l’évaluation de la mise en œuvre du Contrat d’Objectifs .
+- Frais scolaires : mener une réflexion globale sur les frais liés aux activités culturelles et sportives s’inscrivant dans le Projet d’Etablissement. Etudier et proposer la mise en place d’un mécanisme de solidarité entre les élèves pour le paiement des frais. Vérifier l’application du décret Gratuité.
+- Le Règlement d’Ordre Intérieur : débattre, amender, compléter le cas échéant (par consensus) .
 - Autres propositions de soutien au Conseil d’Administration de
 
-l’asbl Animation -Education .
+l’asbl Animation-Education.
 
-Les tâches citées ci -dessus ont déjà été menées et revues à différents
-
-moments de l’existence de l’Autre École. Elles restent susceptibles
-
-d’être remises au travail.
+Les tâches citées ci -dessus ont déjà été menées et revues à différents moments de l’existence de l’Autre École. Elles restent susceptibles d’être remises au travail.
