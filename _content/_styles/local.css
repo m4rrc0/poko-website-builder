@@ -108,34 +108,41 @@ a {
   position: relative;
   isolation: isolate; /* TODO: ? Prevents the shadow from bleeding into the content */
   text-decoration: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
+    border-radius: 0.2rem;
+    /* inset: 0 -0.2em; */
+    bottom: var(--link-vertical-offset);
+    top: var(--link-vertical-offset-closed);
+    left: -0.2em;
+    right: -0.2em;
+    transition: top 0.05s ease-in-out;
+  }
+  &:hover {
+    background: none;
+    /* background-color: transparent; */
+    /* color: var(--color-text, currentColor); */
+  }
+  &:hover::before {
+    /* content: "";
+    position: absolute;
+    z-index: -1;
+    box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
+    border-radius: 0.2rem;
+    inset: 0 -0.2em; */
+    transition: top 0.05s ease-in-out;
+    top: var(--link-vertical-offset);
+  }
 }
-a::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
-  border-radius: 0.2rem;
-  /* inset: 0 -0.2em; */
-  bottom: var(--link-vertical-offset);
-  top: var(--link-vertical-offset-closed);
-  left: -0.2em;
-  right: -0.2em;
-  transition: top 0.05s ease-in-out;
-}
-a:hover {
-  background: none;
-  /* background-color: transparent; */
-  /* color: var(--color-text, currentColor); */
-}
-a:hover::before {
-  /* content: "";
-  position: absolute;
-  z-index: -1;
-  box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
-  border-radius: 0.2rem;
-  inset: 0 -0.2em; */
-  transition: top 0.05s ease-in-out;
-  top: var(--link-vertical-offset);
+/* Remove special link styles on image links */
+a:has(> :is(img, picture):only-child) {
+  &::before {
+    content: none;
+  }
 }
 
 /* General Layout */

@@ -5,7 +5,7 @@ lang }, { by: 'parent', value: undefined }]) | eleventyNavigation %}
 
 <header>
 <a href="/">
-<img src="/_images/logo-AE-new-blue.svg" alt="" loading="eager" class="nav-logo" />
+<img src="/_images/logo-AE-new-blue.svg" alt="" loading="eager" class="nav-logo" width="70" style="width: 70px;" />
 </a>
 <nav>
 <!-- Main pages navigation -->
