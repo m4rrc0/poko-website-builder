@@ -15,7 +15,7 @@ L'école ouvre ses portes à 8h et les referme à 18h du lundi au vendredi. Le m
 
 ### Journée type
 
-Notre journée est organisée pour favoriser l'équilibre entre les différents temps d'apprentissage et le respect des rythmes des enfants :
+Notre journée est organisée pour favoriser l'équilibre entre les différents temps d'apprentissage et le respect des rythmes des enfants:
 
 - **8h00 - 8h25**: Accueil progressif des enfants
 - **8h30 - 9h00**: Début des cours. Élèves présents en classe et prêts**&#32;**à participer aux activités collectives.
@@ -37,7 +37,7 @@ Les enfants sortent du bâtiment pour l'heure des parents (entre 15h30 et 16h). 
 
 À partir de 16h, les enfants présents dans la cour sont comptabilisés à la garderie. Ils reçoivent deux collations (une première à 16h et une deuxième à 17h).
 
-Tarifs:
+**Tarifs:**
 
 - 2€ pour 1 enfant
 - 3,50€ pour 2 enfants
@@ -107,6 +107,14 @@ Les thèmes proposés sont variés:
 - Arts de la parole
 
 L'enfant choisit l'atelier auquel il participera. Il y a généralement 5 cycles d'ateliers par an, permettant ainsi à chacun de découvrir différentes activités.
+
+### Le nettoyage des classes
+
+Durant l'année 3 tours de nettoyage des classes sont assurés par les parents. Ces moments sont planifier à l'avance.
+
+### Repas et collations collectives
+
+En d'accueil et ce jusqu'en 3e maternelle sont organisé chaque semaine par une famille des repas et collations collectives. Les parents peuvent s'inscrive 2-3x sur l'année pour la classe de leurs enfants.
 
 ## Les temps forts de l'année scolaire
 
