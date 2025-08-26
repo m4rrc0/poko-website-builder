@@ -7,7 +7,7 @@ generatePage: previewOnly
 name: Anne Garcia
 preview:
   image:
-    src: /_images/ae-autoportraits-fanny.svg
+    src: /_images/ae-autoportraits-anne.svg
 vars:
   role: Bibliothécaire
   classroom: la BCD
@@ -15,7 +15,7 @@ vars:
 dataList:
   - type: image
     key: imgVerso
-    src: /_images/Photo-Fanny.webp
+    src: /_images/Photo-Anne.webp
     alt: ''
     title: ''
     width: null
