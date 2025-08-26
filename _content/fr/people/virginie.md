@@ -11,7 +11,8 @@ preview:
     alt: Virginie Dupuis
 vars:
   role: Animatrice
-  classroom: Classe d'accueil
+  classroom: Classe fleurie
+  classCycle: Classe d'accueil
 dataList:
   - type: image
     key: imgVerso
