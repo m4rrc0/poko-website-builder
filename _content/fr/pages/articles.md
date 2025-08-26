@@ -36,7 +36,7 @@ La pédagogie Freinet encourage l'expression libre et la coopération. Dans cet 
 - **Réflexions pédagogiques** des parents et partenaires
 - **Comptes-rendus** des projets et événements de l'école
 
-Si vous êtes membre de notre communauté et souhaitez proposer un article, contactez la commission Communication via l'adresse {{ "communication@autre-ecole.org" | emailLink }}.
+Si vous êtes membre de notre communauté et souhaitez proposer un article, contactez n'hésitez pas à contacter l'école.
 
 ## Archives par thématiques
 
