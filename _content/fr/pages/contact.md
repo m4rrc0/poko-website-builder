@@ -59,6 +59,8 @@ Si vous souhaitez découvrir notre école en vue d'une possible inscription, nou
 
 Pour toute autre demande de visite, merci de contacter au préalable le secrétariat par téléphone ou par email.
 
+<img src="/_images/contact-batiment.webp" alt="" />
+
 ## Contacter une commission spécifique
 
 Dans l'esprit participatif de l'Autre École, plusieurs commissions composées de parents et de membres de l'équipe pédagogique gèrent différents aspects de la vie de l'école. Selon la nature de votre demande, vous pouvez contacter directement la commission concernée:
