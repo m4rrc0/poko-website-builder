@@ -11,19 +11,21 @@ eleventyNavigation:
 
 Inscription à l'Autre École signifie avant tout adhésion à son projet pédagogique. Choisir notre école, c'est s'engager dans un parcours éducatif différent, fondé sur les principes de la pédagogie Freinet et sur des valeurs fortes comme la liberté, la responsabilité, la solidarité, la coopération et le pluralisme.
 
-Conformément à nos Options Fondamentales, nous considérons que :
+Conformément à nos Options Fondamentales, nous considérons que:
 
 > "L'inscription d'un enfant à l'Autre École signifie l'adhésion des parents à un projet pédagogique spécifique et la volonté d'y participer activement, tant sur le plan des idées que sur celui de l'organisation concrète."
 
 Cette adhésion implique une réelle cohérence entre les valeurs véhiculées à l'école et celles transmises dans le milieu familial, ainsi qu'une participation active des parents à la vie de l'école.
 
-{% section "switcher-width-prose.njk", {"blocks":[]} %}
+<img src="/_images/IMG_4718.webp" alt="" />
+
+<img src="/_images/patchwork-1.webp" alt="" />
 
 ## Comprendre notre projet avant de s'engager
 
 **Avant d'envisager une inscription à l'Autre École, il est essentiel que vous preniez pleinement connaissance de notre projet pédagogique afin de faire un choix éclairé et réfléchi.**
 
-Pour cela, nous vous invitons à :
+Pour cela, nous vous invitons à:
 
 1. **Explorer notre site web** - Découvrez nos pages sur les [valeurs](/valeurs/), la [pédagogie](/pedagogie/), la [vie de l'école](/la-vie-de-l-ecole/) et le [projet d'établissement](/projet-d-etablissement/)
 2. **Lire nos Options Fondamentales** - Ce document fondateur définit l'identité et l'esprit de notre école
@@ -31,7 +33,7 @@ Pour cela, nous vous invitons à :
 
 ## Notre structure et capacité d'accueil
 
-L'Autre École est un établissement à taille humaine comprenant :
+L'Autre École est un établissement à taille humaine comprenant:
 
 - 3 classes maternelles en organisation verticale (multi-âges)
 - 6 classes primaires également organisées en cycles verticaux
@@ -40,13 +42,15 @@ Cette structure verticale signifie que chaque classe accueille des enfants d'âg
 
 Le nombre de places disponibles varie d'année en année en fonction des départs et est généralement plus important en classes maternelles qu'en primaire.
 
+<img src="/_images/IMG_4860.webp" alt="" />
+
 ## Processus d'inscription
 
-Notre processus d'inscription se déroule en plusieurs étapes :
+Notre processus d'inscription se déroule en plusieurs étapes:
 
 ### 1. Séances d'information
 
-La participation à une séance d'information est **obligatoire** pour toute famille souhaitant inscrire un enfant à l'Autre École. Ces séances auront lieu durant la journée Portes Ouvertes. Elles permettent :
+La participation à une séance d'information est **obligatoire** pour toute famille souhaitant inscrire un enfant à l'Autre École. Ces séances auront lieu durant la journée Portes Ouvertes. Elles permettent:
 
 - De présenter en détail notre projet pédagogique et nos spécificités
 - D'exposer les modalités de participation des parents à la vie de l'école
@@ -69,7 +73,7 @@ Après cette rencontre, si les deux parties confirment leur accord, l'inscriptio
 
 ## L'engagement attendu des parents
 
-L'inscription à l'Autre École implique un engagement concret des parents dans la vie de l'école. Cet engagement se traduit par :
+L'inscription à l'Autre École implique un engagement concret des parents dans la vie de l'école. Cet engagement se traduit par:
 
 - **La participation à au moins une commission** (pédagogie, bâtiment, communication, fêtes, finances...)
 - **La présence aux assemblées générales** (3 à 4 par an)
