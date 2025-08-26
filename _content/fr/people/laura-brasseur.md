@@ -7,7 +7,7 @@ generatePage: previewOnly
 name: Laura Brasseur
 preview:
   image:
-    src: /_images/ae-autoportraits-amandine.svg
+    src: /_images/ae-autoportraits-laura.svg
 vars:
   role: Puéricultrice
   classroom: Classe fleurie, arc-en-ciel, paillettes
@@ -15,7 +15,7 @@ vars:
 dataList:
   - type: image
     key: imgVerso
-    src: /_images/Photo-Amandine.webp
+    src: /_images/Photo-Laura.webp
     alt: ''
     title: ''
     width: null
