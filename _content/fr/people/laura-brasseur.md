@@ -10,7 +10,7 @@ preview:
     src: /_images/ae-autoportraits-laura.svg
 vars:
   role: Puéricultrice
-  classroom: Classe fleurie, arc-en-ciel, paillettes
+  classroom: Classes fleurie, arc-en-ciel, paillettes
   classCycle: (Classe d'accueil, M1, M2, M3)
   ageGroup: '4'
 dataList:
