@@ -17,6 +17,8 @@ Conformément à nos Options Fondamentales, nous considérons que :
 
 Cette adhésion implique une réelle cohérence entre les valeurs véhiculées à l'école et celles transmises dans le milieu familial, ainsi qu'une participation active des parents à la vie de l'école.
 
+{% section "switcher-width-prose.njk", {"blocks":[]} %}
+
 ## Comprendre notre projet avant de s'engager
 
 **Avant d'envisager une inscription à l'Autre École, il est essentiel que vous preniez pleinement connaissance de notre projet pédagogique afin de faire un choix éclairé et réfléchi.**
