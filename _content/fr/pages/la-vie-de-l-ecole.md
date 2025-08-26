@@ -105,6 +105,7 @@ Les thèmes proposés sont variés:
 - Environnement
 - Sciences
 - Arts de la parole
+- …
 
 L'enfant choisit l'atelier auquel il participera. Il y a généralement 5 cycles d'ateliers par an, permettant ainsi à chacun de découvrir différentes activités.
 
