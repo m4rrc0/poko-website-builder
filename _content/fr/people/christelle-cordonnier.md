@@ -10,7 +10,8 @@ preview:
     src: /_images/ae-autoportraits-christelle.svg
 vars:
   role: Animatrice
-  classroom: Paillettes (M1, 2, 3)
+  classroom: Classe paillettes
+  classCycle: (M1, 2, 3)
 dataList:
   - type: image
     key: imgVerso
