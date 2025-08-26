@@ -28,7 +28,7 @@ Nos espaces sont pensés pour favoriser tant les apprentissages structurés que 
 
 ## Notre approche éducative
 
-L'Autre École se distingue par son approche pédagogique fondée sur plusieurs piliers essentiels :
+L'Autre École se distingue par son approche pédagogique fondée sur plusieurs piliers essentiels:
 
 ### [Nos valeurs]({{ "valeurs" | locale_url }})
 
@@ -65,13 +65,15 @@ L'Autre École a été fondée le 1er septembre 1973 par un groupe de parents an
 
 Les débuts ont été modestes mais enthousiastes. Située dans une maison avenue Parmentier, l'école ne comportait au départ qu'une trentaine d'enfants. Elle a rapidement attiré des familles en recherche d'une approche éducative alternative, centrée sur l'épanouissement de l'enfant.
 
-Au fil des années, l'école a connu plusieurs déménagements, occupant successivement différents bâtiments en location :
+Au fil des années, l'école a connu plusieurs déménagements, occupant successivement différents bâtiments en location:
 
 - Avenue Parmentier (1973)
 - Boulevard Brand Whitlock
 - Avenue des Fleurs
 - Boulevard Saint-Michel
 - Place Govaert 8
+
+<img src="/_images/ligne-du-temps-batiment.webp" alt="" />
 
 En 1996, après des années d'efforts et grâce à l'engagement des parents et de l'équipe pédagogique, l'école a pu s'installer dans un bâtiment construit spécifiquement pour elle, à son emplacement actuel, place Govaert 1 à Auderghem.
 
@@ -82,3 +84,5 @@ _Le livre d'Henry Landroit « Histoire de l'Autre École 1973-1996 » qui retrac
 {% css %}
 .h2 {margin-block-start: 0;}
 {% endcss %}
+
+{% partial "Gallery-lecole.md" %}
