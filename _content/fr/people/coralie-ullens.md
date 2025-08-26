@@ -12,6 +12,7 @@ preview:
 vars:
   personalEmail: secretariat@autre-ecole.org
   role: Secrétariat
+  ageGroup: '1'
 dataList:
   - type: image
     key: imgVerso
