@@ -10,7 +10,7 @@ preview:
     src: /_images/ae-autoportraits-coralie.svg
     alt: Coralie Ullens
 vars:
-  email: secretariat@autre-ecole.org
+  personalEmail: secretariat@autre-ecole.org
   role: Secrétariat
 dataList:
   - type: image
