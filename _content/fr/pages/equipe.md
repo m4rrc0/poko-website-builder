@@ -5,14 +5,13 @@ name: L'équipe
 eleventyNavigation:
   order: 7
 ---
-
 # L'équipe pédagogique
 
 ## Des animateurs et animatrices, pas des enseignants
 
 À l'Autre École, en cohérence avec notre approche pédagogique Freinet et nos options fondamentales, nous n'utilisons pas le terme "enseignant" mais "animateur" ou "animatrice". Cette différence de vocabulaire reflète une conception différente du rôle de l'adulte dans la relation pédagogique.
 
-L'animateur ou l'animatrice n'est pas celui ou celle qui "enseigne" de manière verticale, mais plutôt une personne qui :
+L'animateur ou l'animatrice n'est pas celui ou celle qui "enseigne" de manière verticale, mais plutôt une personne qui:
 
 - Crée les conditions favorables à l'apprentissage et à l'expression
 - Accompagne l'enfant dans ses découvertes et tâtonnements
@@ -28,47 +27,31 @@ Notre équipe pédagogique partage une vision commune de l'enfant et de l'éduca
 
 ### Équipe maternelle
 
-En maternelle, nos animatrices travaillent en classes verticales, regroupant des enfants d'âges différents. Cette organisation favorise la coopération, l'entraide et permet à chaque enfant d'évoluer à son rythme dans un environnement riche et stimulant.
+**Virginie Dupuis, Christelle Cordonnier, Amandine Montecchio et Laura Brasseur.**
 
-- **Classe verticale accueil/première maternelle** : Virginie Dupuis
-- **Classes verticales 1e/2e/3e maternelle** : Christelle Cordonnier et Amandine Montecchio
-- **Puéricultrice** : Laura Brasseur
+En maternelle, nos animatrices travaillent en classes verticales, regroupant des enfants d'âges différents. Cette organisation favorise la coopération, l'entraide et permet à chaque enfant d'évoluer à son rythme dans un environnement riche et stimulant.
 
 ### Équipe primaire
 
 En primaire aussi, nous favorisons la continuité pédagogique et le travail en cycles. Nos animateurs et animatrices travaillent en étroite collaboration pour assurer un suivi cohérent de chaque enfant et développer des projets communs.
 
-#### Premier cycle (1ère et 2ème primaires)
+#### P1, P2
+
+**Bernard et Damien Van Keirsbilck, Nathalie Van Vyve et Laurence Géradon.**
 
 Les premières années du primaire sont cruciales pour l'acquisition des outils fondamentaux de lecture, d'écriture et de mathématiques, toujours dans une démarche active et coopérative.
 
-**Animateurs du cycle** :
+#### P3, P4
 
-- Bernard et Damien Van Keirsbilck
-- Nathalie Van Vyve
-- **Co-titulaire dans le cycle** : Laurence Géradon
-
-#### Deuxième cycle (3ème et 4ème primaires)
+**Véronique Piscaglia et Fabienne Kariger**.
 
 Ce cycle permet d'approfondir les apprentissages et de développer davantage l'autonomie et les projets de recherche.
 
-- **Animatrices du cycle** :
-- Véronique Piscaglia
-- Fabienne Kariger
-- **Co-titulaire dans le cycle** :
-- Charlotte Fripiat
-- Lionel Sylos
+#### P5, P6
 
-#### Troisième cycle (5ème et 6ème primaires)
+**Céline Duquenne, Micheline Thieren et Laurence Gérandon.**
 
 Les dernières années du primaire sont orientées vers l'accomplissement de projets complexes et la préparation à l'autonomie nécessaire pour le secondaire.
-
-- **Animatrices du cycle** :
-- Céline Duquenne
-- Micheline Thieren
-- **Co-titulaire dans le cycle** :
-- Charlotte Fripiat
-- Laurence Géradon
 
 ### Équipes transversales
 
@@ -76,43 +59,39 @@ Ces animateurs et animatrices interviennent auprès de plusieurs classes et enri
 
 #### Néerlandais
 
-L'apprentissage du néerlandais se fait dans une perspective communicative et culturelle, en lien avec des projets concrets comme les correspondances avec des classes néerlandophones.
+**Mélanie Simons.**
 
-- **Animatrice** : Mélanie Simons
+L'apprentissage du néerlandais se fait dans une perspective communicative et culturelle, en lien avec des projets concrets comme les correspondances avec des classes néerlandophones.
 
 #### Éducation physique
 
-Les activités sportives à l'Autre École mettent l'accent sur la coopération plutôt que sur la compétition, et sur le plaisir du mouvement.
+**Lionel Sylos.**
 
-- **Animateur** : Lionel Sylos
+Les activités sportives à l'Autre École mettent l'accent sur la coopération plutôt que sur la compétition, et sur le plaisir du mouvement.
 
 #### Musique
 
+**Fanny Moreau.**
+
 L'expression artistique occupe une place importante dans notre pédagogie, permettant aux enfants de développer leur sensibilité et leur créativité.
 
-- **Animatrice** : Fanny Moreau
+#### Bibliothèque et documentation (la BCD)
 
-#### Bibliothèque et Centre de Documentation (BCD)
+**Anne Garcia.**
 
 La BCD est un lieu central d'apprentissage, de découverte et d'autonomie pour les enfants, avec des animations régulières autour du livre et de la recherche documentaire.
 
-- **Animatrice** : Anne Garcia
-
 ### Équipe de surveillance et d'encadrement
+
+**Chantal Sylvain, Muriel Delattre, Juliette Splingard et Mathieu Brouwer.**
 
 Les surveillants jouent un rôle essentiel dans le bien-être des enfants pendant les temps de détente et les repas, en cohérence avec les valeurs et l'approche pédagogique de l'école.
 
-- Chantal Sylvain
-- Muriel Delattre
-- Juliette Splingard
-- Mathieu Brouwer
-
 ### Direction et secrétariat
 
-La direction coordonne l'équipe pédagogique et assure le lien entre tous les acteurs de l'école (enfants, animateurs, parents, pouvoir organisateur) dans une démarche collégiale et participative. Elle est accompagnée par le secrétariat pour la réalisation de ces tâches.
+**Grégoire Louveaux et Coralie Ullens.**
 
-- **Direction** : Grégoire Louveaux
-- **Secrétariat** : Coralie Ullens
+La direction coordonne l'équipe pédagogique et assure le lien entre tous les acteurs de l'école (enfants, animateurs, parents, pouvoir organisateur) dans une démarche collégiale et participative. Elle est accompagnée par le secrétariat pour la réalisation de ces tâches.
 
 {% section "front-and-back.njk", {"blocks":[{"src":"/_images/Equipe-2024-2025-face.webp","alt":"L'équipe pédagogique de l'Autre École","title":"","width":null,"aspectRatio":null,"loading":"","imgAttrs":"","type":"image"},{"src":"/_images/Equipe-2024-2025-dos.webp","alt":"L'équipe pédagogique de l'Autre École (de dos)","title":"","width":null,"aspectRatio":null,"loading":"","imgAttrs":"","type":"image"}]} %}
 
@@ -129,7 +108,7 @@ Conformément à notre projet pédagogique, l'équipe de l'Autre École s'engage
 
 L'équipe pédagogique de l'Autre École fonctionne selon le principe de collégialité, en cohérence avec les valeurs démocratiques défendues dans nos options fondamentales. Les décisions concernant la vie de l'école sont prises collectivement, après discussion et recherche de consensus.
 
-La collaboration entre animateurs et animatrices permet :
+La collaboration entre animateurs et animatrices permet:
 
 - Un partage des compétences et des expériences
 - Une cohérence pédagogique à travers les cycles
