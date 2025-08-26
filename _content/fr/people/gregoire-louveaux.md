@@ -7,7 +7,7 @@ generatePage: previewOnly
 name: Grégoire Louveaux
 preview:
   image:
-    src: /_images/AE-autoportraits-Gregoire-bleu.svg
+    src: /_images/AE-autoportraits-Gregoire.svg
     alt: Grégoire Louveaux
 vars:
   email: direction@autre-ecole.org
