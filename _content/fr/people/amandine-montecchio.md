@@ -12,6 +12,7 @@ vars:
   role: Animatrice
   classroom: Classe arc-en-ciel
   classCycle: (M1, M2, M3)
+  ageGroup: '3'
 dataList:
   - type: image
     key: imgVerso
