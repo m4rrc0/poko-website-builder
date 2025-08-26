@@ -12,6 +12,7 @@ preview:
 vars:
   personalEmail: direction@autre-ecole.org
   role: Direction
+  ageGroup: '0'
 dataList:
   - type: image
     key: imgVerso
