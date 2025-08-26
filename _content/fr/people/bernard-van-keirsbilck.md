@@ -12,6 +12,7 @@ vars:
   role: Animatreur
   classroom: Classe rouge
   classCycle: (P1, P2)
+  ageGroup: '6'
 dataList:
   - type: image
     key: imgVerso
