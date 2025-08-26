@@ -3,12 +3,11 @@ translationKey: pedagogie
 status: published
 name: Pédagogie
 ---
-
 # Notre approche pédagogique
 
 À l'Autre École, notre pédagogie s'inspire des principes de Célestin Freinet et se traduit dans notre pratique quotidienne. L'école se veut avant tout un lieu de vie où chacun a sa place, où l'enfant est considéré comme un être à part entière.
 
-![Schéma de la pédagogie Freinet](/_images/pages/pedagogie/Bulle-pedagogie-Freinet-AE-24-MAI-final-1.jpg)
+<img src="/_images/pedagogie_freinet.webp" alt="" />
 
 ## Les fondements de notre pédagogie
 
