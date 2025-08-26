@@ -5,7 +5,6 @@ name: Accueil
 eleventyNavigation:
   order: 1
 ---
-
 Site web en (re)construction {.callout}
 
 <!--
@@ -53,12 +52,12 @@ Nous accueillons les enfants de 2½ à 12 ans dans un cadre à taille humaine o�
 
 ## Un projet éducatif unique
 
-L'Autre École se distingue par son approche globale de l'éducation qui s'articule autour de principes fondamentaux :
+L'Autre École se distingue par son approche globale de l'éducation qui s'articule autour de principes fondamentaux:
 
-- **Méthodes naturelles d'apprentissage** : apprendre en faisant, par tâtonnement expérimental et en fonction des besoins réels
-- **Expression libre et créative** : donner la parole à l'enfant sous toutes ses formes
-- **Organisation coopérative** : décisions collectives et responsabilités partagées
-- **Ouverture sur le monde** : ancrer les apprentissages dans la réalité sociale et culturelle
+- **Méthodes naturelles d'apprentissage**: apprendre en faisant, par tâtonnement expérimental et en fonction des besoins réels
+- **Expression libre et créative**: donner la parole à l'enfant sous toutes ses formes
+- **Organisation coopérative**: décisions collectives et responsabilités partagées
+- **Ouverture sur le monde**: ancrer les apprentissages dans la réalité sociale et culturelle
 
 [Découvrir notre école]({{ "ecole" | locale_url }}) [Informations inscriptions]({{ "inscription" | locale_url }}) {.cluster}
 
