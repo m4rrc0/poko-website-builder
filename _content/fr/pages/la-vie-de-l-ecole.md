@@ -120,7 +120,7 @@ L'enfant choisit l'atelier auquel il participera. Il y a généralement 5 cycles
 
 ### Classes de dépaysement (classes vertes)
 
-Tous les ans, dès la deuxième maternelle, chaque classe part en séjour dans le cadre d'un projet pédagogique spécifique. Ces séjours constituent des moments privilégiés pour :
+Tous les ans, dès la deuxième maternelle, chaque classe part en séjour dans le cadre d'un projet pédagogique spécifique. Ces séjours constituent des moments privilégiés pour:
 
 - Renforcer la cohésion du groupe
 - Vivre ensemble dans un autre contexte
@@ -129,7 +129,7 @@ Tous les ans, dès la deuxième maternelle, chaque classe part en séjour dans l
 
 ### Sorties culturelles et pédagogiques
 
-Tout au long de l'année, de nombreuses sorties sont organisées :
+Tout au long de l'année, de nombreuses sorties sont organisées:
 
 - Spectacles (théâtre, danse, musique)
 - Visites de musées et d'expositions
@@ -140,14 +140,13 @@ Tout au long de l'année, de nombreuses sorties sont organisées :
 
 ### Les commissions
 
-La vie de l'école repose sur l'engagement des parents et des animateurs au sein de différentes commissions thématiques :
+La vie de l'école repose sur l'engagement des parents et des animateurs au sein de différentes commissions thématiques:
 
-- Commission Pédagogie
-- Commission Bâtiment et Jardin
-- Commission Communication
-- Commission Fêtes et Événements
-- Commission Finances
-- Commission Informatique
+- Commission **Travaux**
+- Commission **Jardin**
+- Commission **Fêtes**
+- Commission **Finances**
+- Commission **Informatique**
 
 Chaque commission se réunit régulièrement pour travailler sur ses projets et rendre compte de ses actions lors des assemblées générales.
 
