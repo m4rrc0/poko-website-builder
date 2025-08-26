@@ -4,7 +4,7 @@ createdAt: 2025-08-26T09:50:00.000Z
 uuid: '080201757369'
 localizationKey: 49d4833999e1
 generatePage: previewOnly
-name: Anne Garcia
+name: Chantal Sylvain
 preview:
   title: Chantal Sylvain
   image:
