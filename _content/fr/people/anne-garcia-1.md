@@ -10,7 +10,7 @@ preview:
   image:
     src: /_images/ae-autoportraits-chantal-s.svg
 vars:
-  role: Surveillance et d'encadrement
+  role: Surveillance et encadrement
   ageGroup: '16'
 dataList:
   - type: image
