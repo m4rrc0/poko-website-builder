@@ -82,8 +82,10 @@
   /* --thumb-color */
 
   /* Custom Variables */
-  --link-vertical-offset: 3px;
-  --link-vertical-offset-closed: calc(100% - 10px);
+  --deco-thickness: 0.5em;
+  --deco-thickness-hover: 1.2em;
+  --deco-offset: -0.2em;
+  --deco-offset-hover: -0.9em;
   --box-shadow-grid: 0px 15px 30px var(--color-shadow);
   --border-radius-grid: 12px;
 }
@@ -104,45 +106,20 @@ body {
 
 /* More beautiful links background */
 a {
-  display: inline-block;
-  position: relative;
-  isolation: isolate; /* TODO: ? Prevents the shadow from bleeding into the content */
-  text-decoration: none;
-
-  &::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
-    border-radius: 0.2rem;
-    /* inset: 0 -0.2em; */
-    bottom: var(--link-vertical-offset);
-    top: var(--link-vertical-offset-closed);
-    left: -0.2em;
-    right: -0.2em;
-    transition: top 0.05s ease-in-out;
-  }
-  &:hover {
-    background: none;
-    /* background-color: transparent; */
-    /* color: var(--color-text, currentColor); */
-  }
-  &:hover::before {
-    /* content: "";
-    position: absolute;
-    z-index: -1;
-    box-shadow: inset 100vw 100vh var(--color-bg__a--hover);
-    border-radius: 0.2rem;
-    inset: 0 -0.2em; */
-    transition: top 0.05s ease-in-out;
-    top: var(--link-vertical-offset);
-  }
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: var(--deco-thickness);
+  text-underline-offset: var(--deco-offset);
+  transition: text-decoration-thickness 0.2s ease-in-out,
+    text-underline-offset 0.2s ease-in-out;
+}
+a:hover {
+  background: none;
+  text-decoration-thickness: var(--deco-thickness-hover);
+  text-underline-offset: var(--deco-offset-hover);
 }
 /* Remove special link styles on image links */
 a:has(> :is(img, picture):only-child) {
-  &::before {
-    content: none;
-  }
+  text-decoration: none;
 }
 
 /* General Layout */
@@ -159,8 +136,7 @@ body > * ~ * {
 
 .nav-logo {
   display: block;
-  /* block-size: calc(var(--step-0) * 1.5); */
-  block-size: var(--step-4);
+  inline-size: var(--step-6);
 }
 
 body > header {
@@ -173,20 +149,16 @@ body > header {
     margin-inline: 0;
   }
   & :is(a, abbr) {
-    text-decoration: none;
     color: inherit;
-    &::before {
-      top: 100%;
+    &:not([aria-current]) {
+      text-decoration-thickness: 0;
+      &:hover {
+        text-decoration-thickness: var(--deco-thickness-hover);
+      }
     }
   }
   & a[aria-current] {
     font-weight: bold;
-    &::before {
-      top: var(--link-vertical-offset-closed);
-    }
-    &:hover::before {
-      top: var(--link-vertical-offset);
-    }
   }
   display: flex;
   flex-direction: column;
