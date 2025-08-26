@@ -11,7 +11,7 @@ preview:
 vars:
   role: Animatrice
   classroom: Classe paillettes
-  classCycle: (M1, 2, 3)
+  classCycle: (M1, M2, M3)
 dataList:
   - type: image
     key: imgVerso
