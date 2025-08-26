@@ -6,7 +6,6 @@ localizationKey: 49d4833999e1
 generatePage: previewOnly
 name: Chantal Sylvain
 preview:
-  title: Chantal Sylvain
   image:
     src: /_images/ae-autoportraits-chantal-s.svg
 vars:
