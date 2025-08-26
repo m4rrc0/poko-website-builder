@@ -12,7 +12,7 @@ preview:
 vars:
   role: Animatrice
   classroom: Classe fleurie
-  classCycle: Classe d'accueil
+  classCycle: (Classe d'accueil)
 dataList:
   - type: image
     key: imgVerso
