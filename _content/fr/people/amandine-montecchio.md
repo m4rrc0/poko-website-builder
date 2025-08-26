@@ -10,7 +10,8 @@ preview:
     src: /_images/ae-autoportraits-amandine.svg
 vars:
   role: Animatrice
-  classroom: Arc-en-ciel (M1, 2, 3)
+  classroom: Classe arc-en-ciel
+  classCycle: (M1, 2, 3)
 dataList:
   - type: image
     key: imgVerso
