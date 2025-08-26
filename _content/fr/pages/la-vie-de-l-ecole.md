@@ -58,7 +58,7 @@ En maternelle, les classes organisent un repas collectif hebdomadaire et des col
 
 Les temps de détente sont communs aux enfants de maternelle et de primaire. Cette organisation décloisonnée favorise les interactions entre enfants d'âges différents et contribue à la cohésion au sein de l'école.
 
-Les enfants disposent d'espaces variés :
+Les enfants disposent d'espaces variés:
 
 - Une cour avec bac à sable et modules de jeux
 - Un terrain d'aventures avec balançoire et espace pour construire des cabanes
@@ -72,7 +72,7 @@ Dans le respect de notre vision de l'enfant comme un être responsable, les dép
 
 ### Le Forum
 
-Chaque lundi matin, tous les enfants et les animateurs se rassemblent dans l'espace central de l'école pour le Forum. Ce moment important permet :
+Chaque lundi matin, tous les enfants et les animateurs se rassemblent dans l'espace central de l'école pour le Forum. Ce moment important permet:
 
 - Le partage d'informations générales
 - L'annonce des anniversaires de la semaine
@@ -85,7 +85,7 @@ Ce rituel hebdomadaire renforce le sentiment d'appartenance à une communauté �
 
 Structure essentielle qui organise la vie coopérative de l'école, le conseil se réunit chaque semaine. Il rassemble deux délégués de chaque classe primaire et un animateur. Les classes maternelles sont représentées par des enfants plus âgés.
 
-Le conseil traite :
+Le conseil traite:
 
 - Des relations entre les classes
 - De l'organisation d'activités communes
@@ -96,7 +96,7 @@ Le conseil traite :
 
 Une après-midi par semaine, des activités sont organisées en ateliers. Les enfants, dès la 3e maternelle, y sont répartis de manière verticale, mélangeant ainsi les différents âges.
 
-Les thèmes proposés sont variés :
+Les thèmes proposés sont variés:
 
 - Arts plastiques
 - Musique
@@ -112,11 +112,11 @@ L'enfant choisit l'atelier auquel il participera. Il y a généralement 5 cycles
 
 ### Événements annuels
 
-- **Journée portes ouvertes** (printemps) : ouverture de l'école aux familles intéressées par notre pédagogie
-- **Fête de l'école** (juin) : moment convivial réunissant toute la communauté scolaire
-- **Assemblées générales** : deux réunions annuelles pour définir les grandes orientations de l'école
-- **Marché de Noël** : vente d'objets fabriqués par les enfants au profit de projets solidaires
-- **Soirée des parents** : moment de rencontre informel entre les familles
+- **Soirée des parents**: moment de rencontre informel entre les familles
+- **Marché de Noël**: vente d'objets fabriqués par les enfants au profit de projets solidaires
+- **Journée portes ouvertes** (printemps): ouverture de l'école aux familles intéressées par notre pédagogie
+- **Fête de l'école** (juin): moment convivial réunissant toute la communauté scolaire
+- **Assemblées générales**: deux réunions annuelles pour définir les grandes orientations de l'école
 
 ### Classes de dépaysement (classes vertes)
 
