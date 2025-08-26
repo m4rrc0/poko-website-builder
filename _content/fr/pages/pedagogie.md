@@ -13,9 +13,9 @@ name: Pédagogie
 
 Notre approche pédagogique repose sur six piliers essentiels qui structurent la vie et les apprentissages à l'Autre École :
 
-### L'enfant : un être à part entière
+### L'enfant: un être à part entière
 
-À l'Autre École, le but de l'éducation est de permettre à chaque enfant d'être lui-même et de vivre ses rapports sociaux en fonction de ce qu'il est profondément. Nous reconnaissons que :
+À l'Autre École, le but de l'éducation est de permettre à chaque enfant d'être lui-même et de vivre ses rapports sociaux en fonction de ce qu'il est profondément. Nous reconnaissons que:
 
 - L'enfant arrive à l'école avec une histoire affective et sociale déjà riche
 - Il porte en lui ses propres potentialités et son rythme personnel
@@ -25,7 +25,7 @@ Cette vision guide notre relation avec l'enfant au quotidien et façonne nos pra
 
 ### L'expression libre et la créativité
 
-Nous suscitons un climat où l'enfant peut :
+Nous suscitons un climat où l'enfant peut:
 
 - Comprendre la critique de son travail sans se sentir jugé comme personne
 - S'exprimer librement à travers différents médias (textes libres, arts, psychomotricité)
@@ -46,7 +46,7 @@ Cette approche positive des conflits et des règles fait partie de la vie coopé
 
 ### Méthodes naturelles d'apprentissage
 
-Nos méthodes pédagogiques respectent le processus naturel d'acquisition des connaissances :
+Nos méthodes pédagogiques respectent le processus naturel d'acquisition des connaissances:
 
 - Nous partons des apports des enfants, de leurs intérêts et de leurs besoins
 - La curiosité naturelle de l'enfant est le moteur de l'apprentissage
@@ -57,17 +57,17 @@ L'animateur (enseignant) est un accompagnateur structurant qui n'est ni le déte
 
 ### Évaluation sans compétition
 
-À l'Autre École, il n'y a ni points, ni classement, ni comparaison entre enfants. L'évaluation est néanmoins essentielle et repose sur trois aspects :
+À l'Autre École, il n'y a ni points, ni classement, ni comparaison entre enfants. L'évaluation est néanmoins essentielle et repose sur trois aspects:
 
-- **L'autoévaluation** : l'enfant est amené progressivement à évaluer son travail, son attitude et ses acquis
-- **L'évaluation par le groupe** : à travers la vie quotidienne, les conseils de classe et les présentations de travaux
-- **L'évaluation des animateurs** : continue et formative, avec trois moments institutionnalisés dans l'année (un entretien avec chaque famille et deux bilans écrits)
+- **L'autoévaluation**: l'enfant est amené progressivement à évaluer son travail, son attitude et ses acquis
+- **L'évaluation par le groupe**: à travers la vie quotidienne, les conseils de classe et les présentations de travaux
+- **L'évaluation des animateurs**: continue et formative, avec trois moments institutionnalisés dans l'année (un entretien avec chaque famille et deux bilans écrits)
 
 Cette approche permet à l'enfant de construire une image positive de lui-même et de développer ses propres systèmes de référence.
 
 ### Prise de conscience et de responsabilité
 
-Nos pratiques pédagogiques amènent l'enfant à :
+Nos pratiques pédagogiques amènent l'enfant à:
 
 - Prendre conscience des réalités tant personnelles que collectives
 - Jouer un rôle actif dans la vie du groupe
@@ -77,7 +77,7 @@ Cette dimension est essentielle pour former des citoyens autonomes et engagés.
 
 ## Pour aller plus loin
 
-Notre pédagogie s'inscrit dans un projet global qui intègre :
+Notre pédagogie s'inscrit dans un projet global qui intègre:
 
 - [Nos valeurs fondamentales](/valeurs/) qui guident notre action éducative
 - [La vie quotidienne de l'école](/la-vie-de-l-ecole/) qui concrétise ces principes
