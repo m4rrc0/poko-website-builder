@@ -5,7 +5,6 @@ name: L'école
 eleventyNavigation:
   order: 2
 ---
-
 # L'Autre École
 
 Un lieu de vie et d'épanouissement {.h2}
