@@ -11,7 +11,7 @@ Un lieu de vie et d'épanouissement {.h2}
 
 ## Notre identité et notre mission
 
-L'Autre École est née d'un projet ambitieux : créer un environnement éducatif différent, où les enfants peuvent grandir et apprendre dans le respect de leur individualité, tout en développant le sens de la collectivité. Fondée sur les principes de la pédagogie Freinet et sur des valeurs humanistes fortes, notre école est à la fois :
+L'Autre École est née d'un projet ambitieux : créer un environnement éducatif différent, où les enfants peuvent grandir et apprendre dans le respect de leur individualité, tout en développant le sens de la collectivité. Fondée sur les principes de la pédagogie Freinet et sur des valeurs humanistes fortes, notre école est à la fois:
 
 - **Un lieu d'apprentissage** où les enfants construisent leurs savoirs de manière active et coopérative
 - **Un espace de liberté et d'expression** où chacun peut développer sa créativité et son esprit critique
@@ -24,7 +24,7 @@ Notre mission est de former des citoyens libres, responsables et solidaires, cap
 
 Située à Auderghem, dans un bâtiment conçu spécifiquement pour notre projet pédagogique, l'Autre École accueille environ 220 élèves de la maternelle à la 6ème primaire. Notre taille modérée nous permet de maintenir une atmosphère familiale où chaque enfant est connu et reconnu dans sa singularité.
 
-Nos espaces sont pensés pour favoriser tant les apprentissages structurés que les découvertes autonomes et les interactions sociales : classes ouvertes, ateliers polyvalents, bibliothèque, jardin et potager, terrains de jeux diversifiés.
+Nos espaces sont pensés pour favoriser tant les apprentissages structurés que les découvertes autonomes et les interactions sociales: classes ouvertes, ateliers polyvalents, bibliothèque, jardin et potager, terrains de jeux diversifiés.
 
 ## Notre approche éducative
 
