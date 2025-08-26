@@ -5,10 +5,9 @@ name: Articles
 eleventyNavigation:
   order: 9
 ---
-
 # La parole de l'Autre École
 
-Cette page rassemble les articles, réflexions et témoignages rédigés par les différents acteurs de notre communauté éducative : animateurs, parents, enfants et partenaires. Chaque contribution illustre une facette de notre projet pédagogique et de notre vie coopérative.
+Cette page rassemble les articles, réflexions et témoignages rédigés par les différents acteurs de notre communauté éducative: animateurs, parents, enfants et partenaires. Chaque contribution illustre une facette de notre projet pédagogique et de notre vie coopérative.
 
 ## Nos derniers articles
 
@@ -30,7 +29,7 @@ Cette page rassemble les articles, réflexions et témoignages rédigés par les
 
 ## Contribuer à la réflexion collective
 
-La pédagogie Freinet encourage l'expression libre et la coopération. Dans cet esprit, nous accueillons les contributions de tous les membres de notre communauté :
+La pédagogie Freinet encourage l'expression libre et la coopération. Dans cet esprit, nous accueillons les contributions de tous les membres de notre communauté:
 
 - **Témoignages de pratiques** partagés par les animateurs
 - **Récits d'expériences** vécues par les enfants
