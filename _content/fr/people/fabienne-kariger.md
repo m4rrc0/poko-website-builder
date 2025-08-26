@@ -12,6 +12,7 @@ vars:
   role: Animatrice
   classroom: Classe blanche
   classCycle: (P3, P4)
+  ageGroup: '8'
 dataList:
   - type: image
     key: imgVerso
