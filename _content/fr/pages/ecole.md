@@ -50,7 +50,7 @@ _Pour plus d'informations pratiques sur le fonctionnement quotidien de l'école,
 
 ## Une école participative
 
-L'Autre École est organisée selon un modèle de cogestion qui implique activement les parents dans la vie de l'école. Cette participation se traduit par :
+L'Autre École est organisée selon un modèle de cogestion qui implique activement les parents dans la vie de l'école. Cette participation se traduit par:
 
 - **L'adhésion aux Options Fondamentales** lors de l'inscription de l'enfant
 - **L'engagement dans les commissions** qui gèrent différents aspects de la vie de l'école
