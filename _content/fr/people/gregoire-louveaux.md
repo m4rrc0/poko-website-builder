@@ -10,7 +10,7 @@ preview:
     src: /_images/AE-autoportraits-Gregoire.svg
     alt: Grégoire Louveaux
 vars:
-  email: direction@autre-ecole.org
+  personalEmail: direction@autre-ecole.org
   role: Direction
 dataList:
   - type: image
