@@ -1,0 +1,203 @@
+/* ctx.css */
+@import "./_ctx.css";
+
+/* Variables setup */
+
+:root {
+  /* Size Scale */
+  /* @link https://utopia.fyi/type/calculator?c=360,16,1.2,1240,20,1.25,6,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+  /* Step -2: 11.1111px → 12.8px */
+  --step--2: clamp(0.6944rem, 0.6513rem + 0.1919vw, 0.8rem);
+  /* Step -1: 13.3333px → 16px */
+  --step--1: clamp(0.8333rem, 0.7652rem + 0.303vw, 1rem);
+  /* Step 0: 16px → 20px */
+  --step-0: clamp(1rem, 0.8977rem + 0.4545vw, 1.25rem);
+  /* Step 1: 19.2px → 25px */
+  --step-1: clamp(1.2rem, 1.0517rem + 0.6591vw, 1.5625rem);
+  /* Step 2: 23.04px → 31.25px */
+  --step-2: clamp(1.44rem, 1.2301rem + 0.933vw, 1.9531rem);
+  /* Step 3: 27.648px → 39.0625px */
+  --step-3: clamp(1.728rem, 1.4362rem + 1.2971vw, 2.4414rem);
+  /* Step 4: 33.1776px → 48.8281px */
+  --step-4: clamp(2.0736rem, 1.6734rem + 1.7785vw, 3.0518rem);
+  /* Step 5: 39.8131px → 61.0352px */
+  --step-5: clamp(2.4883rem, 1.9457rem + 2.4116vw, 3.8147rem);
+  /* Step 6: 47.7757px → 76.2939px */
+  --step-6: clamp(2.986rem, 2.2568rem + 3.2407vw, 4.7684rem);
+
+  /* Page widths */
+  --width-max: 80rem;
+  /* NOTE: Do not use ch here because it is applied to headings and we want an uniform width */
+  --width-prose: 50rem;
+
+  /* Colors: Variables */
+  --white: rgba(255, 255, 255, 1);
+  --blue: rgba(52, 60, 144, 1);
+  --yellow: rgba(235, 218, 0, 1);
+  --gray-shadow: rgba(0, 0, 0, 0.25);
+
+  /* Colors: Default palette */
+  --color-text: var(--blue);
+  --color-bg: var(--white);
+  /* --color-border: var(); */
+  /* --color-outline: var(); */
+  --color-text-decoration: var(--yellow);
+  /* --color-text-emphasis: var(); */
+  /* --color-shadow has to be used manually in box-shadow definitions */
+  --color-shadow: var(--gray-shadow);
+  /* --color-caret: var(); */
+  /* --color-column-rule: var(); */
+  /* --color-fill: var(); */
+  /* --color-stroke: var(); */
+  /* --- FOCUS --- */
+  /* --color-outline--focus: var(); */
+  /* --- SELECTION --- */
+  /* --color-text--selection: var(); */
+  --color-bg--selection: var(--yellow);
+  /* --- A --- */
+  /* --color-text__a: var(--color-text); */
+  /* --color-bg__a: transparent; */
+  /* --color-text__a--hover: var(); */
+  --color-bg__a--hover: var(--yellow);
+  /* --- BUTTON --- */
+  /* --color-text__button: var(); */
+  /* --color-bg__button: var(); */
+  /* --color-border__button: var(); */
+  /* --color-text__button--hover: var(); */
+  /* --color-bg__button--hover: var(); */
+  /* --color-border__button--hover: var(); */
+  /* --color-text__button--disabled: var(--color-front-accent-theme); */
+  /* --color-bg__button--disabled: var(--color-bg); */
+  /* --- CODE --- */
+  /* --color-text__code: var(--color-bg); */
+  /* --color-bg__code: var(--color-front-accent-theme); */
+  /* --color-border__code: var(--color-front-theme); */
+  /* --- MARK --- */
+  /* --color-text__mark: var(--color-bg); */
+  --color-bg__mark: var(--yellow);
+  /* --color-border__mark: var(--color-front-theme); */
+  /* --- SCROLLBAR --- */
+  /* TODO: this is for the Reel Layout Component */
+  /* --track-color */
+  /* --thumb-color */
+
+  /* Custom Variables */
+  --deco-thickness: 0.5em;
+  --deco-thickness-hover: 1.2em;
+  --deco-offset: -0.2em;
+  --deco-offset-hover: -0.9em;
+  --box-shadow-grid: 0px 15px 30px var(--color-shadow);
+  --border-radius-grid: 12px;
+}
+
+.palette-contrast {
+  --color-text: var(--white);
+  --color-bg: var(--blue);
+  --color-text--selection: var(--blue);
+  --color-text__a--hover: var(--blue);
+}
+
+/* Global styles */
+
+body {
+  font-family: "Roboto Flex Variable", Roboto, system-ui, sans-serif;
+  margin-block-start: 0;
+}
+
+/* More beautiful links background */
+a {
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: var(--deco-thickness);
+  text-underline-offset: var(--deco-offset);
+  transition: text-decoration-thickness 0.2s ease-in-out,
+    text-underline-offset 0.2s ease-in-out;
+}
+a:hover {
+  background: none;
+  text-decoration-thickness: var(--deco-thickness-hover);
+  text-underline-offset: var(--deco-offset-hover);
+}
+/* Remove special link styles on image links */
+a:has(> :is(img, picture):only-child) {
+  text-decoration: none;
+}
+
+/* General Layout */
+
+body > footer {
+  max-width: var(--width-prose);
+}
+
+body > * ~ * {
+  margin-block-start: var(--step-4);
+}
+
+/* Navigation */
+
+.nav-logo {
+  display: block;
+  inline-size: var(--step-6);
+}
+
+body > header {
+  /* max-width: var(--width-prose); */
+  padding-block: 1rem;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--color-text-decoration);
+  margin-block-end: 1rem;
+  & li {
+    margin-inline: 0;
+  }
+  & :is(a, abbr) {
+    color: inherit;
+    &:not([aria-current]) {
+      text-decoration-thickness: 0;
+      &:hover {
+        text-decoration-thickness: var(--deco-thickness-hover);
+      }
+    }
+  }
+  & a[aria-current] {
+    font-weight: bold;
+  }
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  & > a {
+    --color-bg__a--hover: transparent;
+  }
+}
+
+/* @media (max-width: 600px) {
+  body > header {    
+    gap: 2rem;
+    justify-content: space-between;
+  }
+} */
+
+/* Footer */
+
+/* Recurring Page Elements Layout */
+
+/* Callout */
+.callout {
+  max-width: var(--width-prose);
+  padding: 1rem;
+  border: 2px dotted #c09d74;
+  text-wrap: balance;
+  text-align: center;
+}
+
+main > div,
+main > section {
+  padding-block: var(--step-4);
+}
+
+main > img,
+main > picture {
+  display: block;
+  margin-block: var(--step-4);
+}
+
+/* Unique Elements */

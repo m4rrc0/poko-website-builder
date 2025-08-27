@@ -626,6 +626,102 @@ ${inlineContent}
         },
       });
 
+      CMS.registerEditorComponent({
+        id: "section",
+        label: "Section",
+        icon: "brick",
+        fields: [
+          {
+            name: "blocks",
+            label: "Blocks",
+            widget: "list",
+            required: false,
+            i18n: true,
+            types: [
+              {
+                name: "image",
+                label: "Image",
+                widget: "object",
+                required: false,
+                fields: imageFields,
+              },
+              {
+                name: "markdown",
+                label: "Markdown",
+                widget: "object",
+                required: false,
+                fields: [
+                  {
+                    name: "value",
+                    widget: "markdown",
+                    required: false,
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "sectionSlug",
+            label: "Select Section Layout",
+            widget: "relation",
+            collection: "sectionLayouts",
+            required: true,
+          },
+        ],
+        pattern: /^{% section\s+(.*?)\s*%}$/ms,
+        fromBlock: function (match) {
+          // Parse the arguments from the captured string
+          const argumentsString = match[1];
+          // Currently have 2 arguments: 
+          // {% section "test-section.njk", {"blocks":[]} %}
+          const argSeparatorIndex = argumentsString.indexOf(", ");
+          const slugWithQuotes = argumentsString.slice(0, argSeparatorIndex);
+          const sectionSlug = slugWithQuotes
+            .replace(/("|')/g, "")
+            .replace(/\.njk$/, "");
+
+          const dataString = argumentsString.slice(argSeparatorIndex + 2);
+          const data = JSON.parse(dataString);
+          let blocks = data?.blocks || [];
+          
+          blocks = blocks.map((block) => {
+            if (block.type === "markdown") {
+              return {
+                ...block,
+                value: inlineToMultiline(block.value),
+              }
+            }
+            return block;
+          });
+
+          return {
+            sectionSlug,
+            blocks
+          };
+        },
+        toBlock: function (data) {
+          const sectionSlug = data.sectionSlug;
+          const sectionSlugWithQuotes = `"${sectionSlug}.njk"`;
+
+          const blocks = (data.blocks || []).map((block) => {
+            if (block.type === "markdown") {
+              return {
+                ...block,
+                value: multilineToInline(block.value),
+              }
+            }
+            return block;
+          });
+
+          const dataString = JSON.stringify({blocks});
+
+          return `{% section ${sectionSlugWithQuotes}, ${dataString} %}`;
+        },
+        toPreview: function (data) {
+          return `TEST`;
+        },
+      });
+
       // TODO: decide if we want to keep this or use sections instead
       // <ul>{% for item in data %}<li>Item: {{item}}</li>{% endfor %}<ul>
       // CMS.registerEditorComponent({

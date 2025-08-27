@@ -1,0 +1,24 @@
+{% if blocks.length == 2 and blocks[0].type == "image" and blocks[1].type ==
+"image" %}
+
+<figure class="front-and-back pile">
+  <img
+    class="back"
+    src="{{ blocks[0].src }}"
+    alt="{{ blocks[0].alt }}"
+    loading="lazy"
+  />
+  <img
+    class="front"
+    src="{{ blocks[1].src }}"
+    alt="{{ blocks[1].alt }}"
+    loading="lazy"
+    aria-hidden="true"
+  />
+</figure>
+
+{% css "external" %}
+.front-and-back > .front { opacity: 1; transition: opacity 0.1s ease-in-out; }
+.front-and-back:hover > .front { opacity: 0; }
+{% endcss %}
+{% endif %}
