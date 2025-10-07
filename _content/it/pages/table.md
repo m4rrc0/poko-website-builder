@@ -21,7 +21,7 @@ metadata:
 
 Forte di 30 anni di esperienza come chef nei suoi ristoranti, Eric vi propone di scoprire la sua cucina attraverso un menu preparato con i prodotti coltivati nel suo orto o selezionati presso produttori locali.
 Un menu stagionale articolato in 3 portate, adattabile in base alle vostre intolleranze alimentari.
-Vi viene proposto al prezzo di 40€ a persona.
+Vi viene proposto al prezzo di 45€ a persona.
 
 I nostri vini, insieme ad alcune etichette selezionate, completeranno questo momento esclusivo.
 Il menu è disponibile solo su prenotazione.

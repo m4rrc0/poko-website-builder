@@ -19,7 +19,7 @@ metadata:
 
 ![](/_images/DSC00291.webp)
 
-With 30 years of experience as a chef running his own restaurant, Eric invites you to discover his cuisine through a seasonal menu crafted from ingredients he grows in his garden or carefully sources from local producers. The three-course menu, priced at €40 per person, can be adapted to accommodate dietary intolerances.
+With 30 years of experience as a chef running his own restaurant, Eric invites you to discover his cuisine through a seasonal menu crafted from ingredients he grows in his garden or carefully sources from local producers. The three-course menu, priced at €45 per person, can be adapted to accommodate dietary intolerances.
 
 Our selection of house wines, complemented by a few hand-picked bottles, rounds out this exclusive experience. Please note that this menu is available by reservation only.
 
