@@ -5,22 +5,21 @@ uuid: 2b0666b0cc22
 localizationKey: 056629ecb78c
 name: Booking
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 6
 metadata:
-  title: ""
-  description: ""
-  image:
+  title: ''
+  description: ''
+  image: null
 ---
-
 ![Booking](/_images/Main-clefs-ombre.webp)
 
 # Booking
 
 Booking requests should be sent by email to {{ data.email | emailLink }}.  
 Availability can be checked on the calendar below.  
-The room rate is €150, including breakfast for 2 people (+€10 per additional person).
+The room rate is €165, including breakfast for 2 people (+€10 per additional person).
 
 ## Stay Conditions
 

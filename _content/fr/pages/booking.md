@@ -5,22 +5,21 @@ uuid: 1c57dca44576
 localizationKey: 056629ecb78c
 name: Réservation
 eleventyNavigation:
-  title: ""
-  parent: ""
+  title: ''
+  parent: ''
   order: 6
 metadata:
-  title: ""
-  description: ""
-  image: ""
+  title: ''
+  description: ''
+  image: ''
 ---
-
 ![Réservation](/_images/Main-clefs-ombre.webp)
 
 # Réservation
 
 Les demandes de réservation sont à envoyer par mail à {{ data.email | emailLink }}.  
 Les disponibilités peuvent être consultées sur le calendrier ci-dessous.  
-Le prix de la chambre est de 150€, petit-déjeuner pour 2 personnes inclus (+10€ par personne supplémentaire).
+Le prix de la chambre est de 165€, petit-déjeuner pour 2 personnes inclus (+10€ par personne supplémentaire).
 
 ## Conditions de séjour
 
