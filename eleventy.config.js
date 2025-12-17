@@ -69,6 +69,7 @@ import eleventyComputed from "./src/data/eleventyComputed.js";
 
 // Eleventy Config
 import {
+  glob as globFilter,
   toISOString,
   formatDate,
   dateToSlug,
@@ -85,6 +86,7 @@ import {
   asc,
   desc,
   ogImageSrc,
+  image as imageFilter,
   emailLink,
   htmlAttrs,
   htmlImgAttrs,
@@ -558,6 +560,7 @@ export default async function (eleventyConfig) {
     ],
     shortcodeAliases: [
       "partial",
+      "htmlPartial",
       "component",
       // "section"
     ],
@@ -574,6 +577,8 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter("slugifyPath", (input) =>
     slugifyPath(input, eleventyConfig),
   );
+  // Files
+  eleventyConfig.addAsyncFilter("glob", globFilter);
   // I18n
   eleventyConfig.addFilter("locale_url", locale_url);
   eleventyConfig.addFilter("link", locale_url); // Alias for locale_url
@@ -594,6 +599,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter("desc", desc);
   // Images
   eleventyConfig.addAsyncFilter("ogImage", ogImageSrc);
+  eleventyConfig.addAsyncFilter("image", imageFilter);
   // Email
   eleventyConfig.addFilter("emailLink", emailLink);
   // HTML helpers

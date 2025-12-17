@@ -66,6 +66,7 @@
     "eleventy-plugin-robotstxt": "^1.0.2",
     "fast-glob": "^3.3.3",
     "fast-sort": "^3.4.1",
+    "hash-sum": "^2.0.0",
     "he": "^1.2.0",
     "js-yaml": "^4.1.0",
     "lightningcss": "^1.30.1",

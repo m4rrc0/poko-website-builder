@@ -2,10 +2,7 @@ import { OUTPUT_DIR, WORKING_DIR } from "../../../env.config.js";
 
 // console.log({ WORKING_DIR })
 
-export const imageTransformOptions = {
-  // which file extensions to process
-  extensions: "html", // Default
-
+export const imageOptionsDefaults = {
   // Only optimize images when they are requested in the browser.
   // transformOnRequest: false, // General default
   // transformOnRequest: process.env.ELEVENTY_RUN_MODE === "serve" // (default for HTML Transform and WebC component)
@@ -57,4 +54,10 @@ export const imageTransformOptions = {
     fallback: "largest", // or "smallest"
     // fallback: "smallest", // or "smallest"
   },
+};
+
+export const imageTransformOptions = {
+  ...imageOptionsDefaults,
+  // which file extensions to process
+  extensions: "html", // Default
 };

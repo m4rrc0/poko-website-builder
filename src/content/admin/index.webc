@@ -39,10 +39,10 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
       const extractProperty = (argumentsString, propName) => {
         const startIndex = argumentsString.indexOf(propName + '=');
         if (startIndex === -1) return null;
-        
+
         const valueStart = startIndex + propName.length + 1;
         const firstChar = argumentsString[valueStart];
-        
+
         // Determine opening and closing delimiters
         let openChar, closeChar;
         if (firstChar === '[') {
@@ -54,14 +54,14 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
         } else {
           return null;
         }
-        
+
         let depth = 0;
         let inString = false;
         let escape = false;
-        
+
         for (let i = valueStart; i < argumentsString.length; i++) {
           const char = argumentsString[i];
-          
+
           if (escape) {
             escape = false;
             continue;
@@ -91,19 +91,19 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
       const extractQuotedString = (argumentsString, propName) => {
         const startIndex = argumentsString.indexOf(propName + '=');
         if (startIndex === -1) return null;
-        
+
         const valueStart = startIndex + propName.length + 1;
         const firstChar = argumentsString[valueStart];
-        
+
         // Must start with a quote
         if (firstChar !== '"') return null;
-        
+
         let escape = false;
-        
+
         // Start from the character after the opening quote
         for (let i = valueStart + 1; i < argumentsString.length; i++) {
           const char = argumentsString[i];
-          
+
           if (escape) {
             escape = false;
             continue;
@@ -256,7 +256,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
           const argumentsString = match[1];
           // Currently in this form:
           // {% image src="path/to/image.jpg", alt="Description", width="800" %}
-          
+
           const src = extractQuotedString(argumentsString, 'src') || "";
           const alt = extractQuotedString(argumentsString, 'alt') || "";
           const aspectRatio = extractQuotedString(argumentsString, 'aspectRatio') || "";
@@ -265,7 +265,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
           const loading = extractQuotedString(argumentsString, 'loading') || "";
           const wrapper = extractQuotedString(argumentsString, 'wrapper') || "";
           // const imgAttrs = extractQuotedString(argumentsString, 'imgAttrs') || "";
-          
+
           return {
             src,
             ...(alt && { alt }),
@@ -362,6 +362,126 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
         pattern: /^{% (?:include|partial)\s+([^>]*?)\s*%}$/ms,
 
         fromBlock: function (match) {
+          // Parse the arguments from the captured string
+          const argsString = match[1];
+          const args = argsString.split(", ").map((arg) => arg.trim());
+
+          // Extract the slug (removing quotes and .md extension)
+          const slugWithQuotes = args[0];
+          const partialSlug = slugWithQuotes
+            .replace(/("|')/g, "")
+            .replace(/\.md$/, "");
+
+          // Extract data object if present (second argument)
+          let data;
+          if (args.length > 1) {
+            try {
+              data = JSON.parse(args[1]);
+            } catch (e) {
+              // If parsing fails, it might not be a valid JSON
+              console.log("Error parsing data JSON:", e);
+            }
+          }
+
+          // Extract template engine override if present (third argument)
+          let templateEngineOverride;
+          if (args.length > 2) {
+            templateEngineOverride = args[2].replace(/("|')/g, "");
+          }
+
+          return {
+            partialSlug,
+            data,
+            templateEngineOverride,
+          };
+        },
+        toBlock: function (data) {
+          // TODO: data could be a keyval field
+          const dataString = data.data ? JSON.stringify(data.data) : "{}";
+          // const dataString = data.data ? data.data : "{}";
+
+          const args = [
+            `"${data.partialSlug}.md"`,
+            ...(data.data && dataString !== "{}"
+              ? [dataString]
+              : data.templateEngineOverride
+              ? ["{}"]
+              : []),
+            ...(data.templateEngineOverride
+              ? [`"${data.templateEngineOverride}"`]
+              : []),
+          ];
+
+          return `{% partial ${args.join(", ")} %}`;
+        },
+        toPreview: function (data) {
+          return `TEST`;
+        },
+      });
+
+      CMS.registerEditorComponent({
+        id: "htmlPartial",
+        label: "Partial (HTML)",
+        icon: "brick",
+        fields: [
+          {
+            name: "partialSlug",
+            label: "Select Partial",
+            widget: "relation",
+            collection: "htmlPartials",
+            required: true,
+            value_field: "{{slug}}",
+          },
+          // {
+          //   name: "data",
+          //   label: "Data",
+          //   widget: "keyvalue",
+          //   required: false,
+          // },
+          // {
+          //   name: "data",
+          //   label: "Data",
+          //   widget: "code",
+          //   required: false,
+          //   // TODO: default-language not working
+          //   default_language: "json",
+          //   output_code_only: true,
+          //   allow_language_selection: false,
+          // },
+          {
+            name: "templateEngineOverride",
+            label: "Markup language override",
+            // widget: "select",
+            widget: "hidden",
+            required: false,
+            // default: "njk,md",
+            options: [
+              { value: "", label: "Default" },
+              { value: "njk,md", label: "Markdown" },
+              { value: "njk", label: "Nunjucks (HTML)" },
+              { value: "webc", label: "WebC" },
+            ],
+          },
+        ],
+        // Match example: {% include "book-btn.md" %} or {% partial "book-btn.md" %}
+        // pattern: /^{% (?:include|partial) "(.*?)\.md" %}$/ms,
+        pattern: /^{% (?:htmlPartial|partial) "(.*?)\.njk"\s+(.*?)\s*%}$/ms,
+        fromBlock: function (match) {
+
+          // Parse the arguments from the captured string
+          const fileSlugString = match[1];
+          const argumentsString = match[2];
+
+          console.log({
+            fileSlugString,
+            argumentsString,
+          });
+
+          const typeMatch = argumentsString.match(/type="(.*?)"/);
+          const varsString = extractProperty(argumentsString, 'vars') || "{}";
+
+
+
           // Parse the arguments from the captured string
           const argsString = match[1];
           const args = argsString.split(", ").map((arg) => arg.trim());
@@ -715,7 +835,7 @@ ${content}
           const argumentsString = match[1];
           // Currently in this form:
           // {% section type="grid", vars={}, blocks=[], advanced={ sectionSlug="", vars={}} %}
-          
+
           const typeMatch = argumentsString.match(/type="(.*?)"/);
           const varsString = extractProperty(argumentsString, 'vars') || "{}";
           const blocksString = extractProperty(argumentsString, 'blocks') || "[]";
@@ -743,7 +863,7 @@ ${content}
           const varsString = JSON.stringify(vars);
           const blocksString = JSON.stringify(blocks);
           const advancedString = JSON.stringify(advanced);
-          
+
           return `{% section type="${type}", vars=${varsString}, blocks=${blocksString}, advanced=${advancedString} %}`;
         },
         toPreview: function (data) {
@@ -1003,7 +1123,7 @@ ${content}
           const argumentsString = match[1];
           // Currently in this form:
           // {% links linksData=[{"type":"pages","slugs":["test","index"]}] %}
-          
+
           const linksDataString = extractProperty(argumentsString, 'linksData') || "[]";
           const itemLayoutString = extractProperty(argumentsString, 'itemLayout') || "{}";
           const wrapperLayoutString = extractProperty(argumentsString, 'wrapperLayout') || "{}";
@@ -1025,7 +1145,7 @@ ${content}
           const linksDataString = JSON.stringify(linksData);
           const itemLayoutString = JSON.stringify(itemLayout);
           const wrapperLayoutString = JSON.stringify(wrapperLayout);
-          
+
           return [
             `{% links linksData=${linksDataString}`,
             itemLayoutString ? `, itemLayout=${itemLayoutString}` : "",

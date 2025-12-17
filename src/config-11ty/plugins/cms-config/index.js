@@ -1360,6 +1360,25 @@ class CmsConfig {
         },
       ],
     };
+    const htmlPartialsCollection = {
+      ...partialsCollection,
+      name: "htmlPartials",
+      label: "Partials (HTML)",
+      label_singular: "Partial (HTML)",
+      icon: "brick",
+      extension: "njk",
+      fields: [
+        {
+          name: "body",
+          label: "Content",
+          required: false,
+          widget: "code",
+          output_code_only: true,
+          allow_language_selection: false,
+          language: "html",
+        },
+      ],
+    };
     // const sectionFields = [
     //   ...commonCollectionFields,
     //   {
@@ -1735,6 +1754,7 @@ class CmsConfig {
               ...selectedOptionalCollections,
               { divider: true },
               partialsCollection,
+              htmlPartialsCollection,
               pageLayoutsCollection,
               sectionLayoutsCollection,
               { divider: true },
