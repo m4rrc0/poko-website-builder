@@ -120,6 +120,59 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
         return null;
       };
 
+      const parsePartialSyntax = (match) => {
+          // Parse the arguments from the captured string
+          const partialSlug = match[1];
+          // argumentString is in the form of `, {some: "value"}, "njk,md"`
+          const argumentsString = match[2];
+          const trimmedArgsString = argumentsString.replace(/^\s*,\s*/, "");
+
+          let data = undefined;
+          let templateEngineOverride = undefined;
+
+          // Match object followed by optional string
+          // Object: starts with { and ends with } (handles nested structures)
+          // String: quoted string after the object
+          const objectMatch = trimmedArgsString.match(/^(\{[\s\S]*?\})(?:\s*,\s*["']([^"']+)["'])?$/);
+
+          if (objectMatch) {
+              try {
+                // Use Function constructor to safely evaluate JS object literal (not just JSON)
+                data = new Function("return " + objectMatch[1])();
+              } catch (e) {
+                console.log("Error parsing data object:", e);
+              }
+              if (objectMatch[2]) {
+                templateEngineOverride = objectMatch[2];
+              }
+          }
+
+          return {
+            partialSlug,
+            data,
+            templateEngineOverride,
+          };
+      }
+
+      const stringifyPartial = (data, ext = ".md", scName = "partial") => {
+        const parts = [`"${data.partialSlug}${ext}"`];
+
+        const hasData = data.data && Object.keys(data.data).length > 0;
+        const hasOverride = data.templateEngineOverride;
+
+        if (hasData) {
+            parts.push(JSON.stringify(data.data));
+        } else if (hasOverride) {
+            parts.push("{}");
+        }
+
+        if (hasOverride) {
+            parts.push(`"${data.templateEngineOverride}"`);
+        }
+
+        return `{% ${scName} ${parts.join(", ")} %}`;
+      }
+
       const imageFields = [
         {
           name: "src",
@@ -215,7 +268,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
             label: "Advanced Attributes",
             widget: "object",
             required: false,
-            collapsed: "auto",
+            collapsed: true,
             fields: [
               {
                 name: "title",
@@ -359,60 +412,13 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
         ],
         // Match example: {% include "book-btn.md" %} or {% partial "book-btn.md" %}
         // pattern: /^{% (?:include|partial) "(.*?)\.md" %}$/ms,
-        pattern: /^{% (?:include|partial)\s+([^>]*?)\s*%}$/ms,
-
+        // pattern: /^{% (?:include|partial)\s+([^>]*?)\s*%}$/ms,
+        pattern: /^{% (?:include|partial) "(.*?)\.md"(.*?)\s*%}$/ms,
         fromBlock: function (match) {
-          // Parse the arguments from the captured string
-          const argsString = match[1];
-          const args = argsString.split(", ").map((arg) => arg.trim());
-
-          // Extract the slug (removing quotes and .md extension)
-          const slugWithQuotes = args[0];
-          const partialSlug = slugWithQuotes
-            .replace(/("|')/g, "")
-            .replace(/\.md$/, "");
-
-          // Extract data object if present (second argument)
-          let data;
-          if (args.length > 1) {
-            try {
-              data = JSON.parse(args[1]);
-            } catch (e) {
-              // If parsing fails, it might not be a valid JSON
-              console.log("Error parsing data JSON:", e);
-            }
-          }
-
-          // Extract template engine override if present (third argument)
-          let templateEngineOverride;
-          if (args.length > 2) {
-            templateEngineOverride = args[2].replace(/("|')/g, "");
-          }
-
-          return {
-            partialSlug,
-            data,
-            templateEngineOverride,
-          };
+          return parsePartialSyntax(match);
         },
         toBlock: function (data) {
-          // TODO: data could be a keyval field
-          const dataString = data.data ? JSON.stringify(data.data) : "{}";
-          // const dataString = data.data ? data.data : "{}";
-
-          const args = [
-            `"${data.partialSlug}.md"`,
-            ...(data.data && dataString !== "{}"
-              ? [dataString]
-              : data.templateEngineOverride
-              ? ["{}"]
-              : []),
-            ...(data.templateEngineOverride
-              ? [`"${data.templateEngineOverride}"`]
-              : []),
-          ];
-
-          return `{% partial ${args.join(", ")} %}`;
+          return stringifyPartial(data, ".md", "partial");
         },
         toPreview: function (data) {
           return `TEST`;
@@ -422,7 +428,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
       CMS.registerEditorComponent({
         id: "htmlPartial",
         label: "Partial (HTML)",
-        icon: "brick",
+        icon: "code_blocks",
         fields: [
           {
             name: "partialSlug",
@@ -465,74 +471,12 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
         ],
         // Match example: {% include "book-btn.md" %} or {% partial "book-btn.md" %}
         // pattern: /^{% (?:include|partial) "(.*?)\.md" %}$/ms,
-        pattern: /^{% (?:htmlPartial|partial) "(.*?)\.njk"\s+(.*?)\s*%}$/ms,
+        pattern: /^{% (?:htmlPartial|partial) "(.*?)\.njk"(.*?)\s*%}$/ms,
         fromBlock: function (match) {
-
-          // Parse the arguments from the captured string
-          const fileSlugString = match[1];
-          const argumentsString = match[2];
-
-          console.log({
-            fileSlugString,
-            argumentsString,
-          });
-
-          const typeMatch = argumentsString.match(/type="(.*?)"/);
-          const varsString = extractProperty(argumentsString, 'vars') || "{}";
-
-
-
-          // Parse the arguments from the captured string
-          const argsString = match[1];
-          const args = argsString.split(", ").map((arg) => arg.trim());
-
-          // Extract the slug (removing quotes and .md extension)
-          const slugWithQuotes = args[0];
-          const partialSlug = slugWithQuotes
-            .replace(/("|')/g, "")
-            .replace(/\.md$/, "");
-
-          // Extract data object if present (second argument)
-          let data;
-          if (args.length > 1) {
-            try {
-              data = JSON.parse(args[1]);
-            } catch (e) {
-              // If parsing fails, it might not be a valid JSON
-              console.log("Error parsing data JSON:", e);
-            }
-          }
-
-          // Extract template engine override if present (third argument)
-          let templateEngineOverride;
-          if (args.length > 2) {
-            templateEngineOverride = args[2].replace(/("|')/g, "");
-          }
-
-          return {
-            partialSlug,
-            data,
-            templateEngineOverride,
-          };
+          return parsePartialSyntax(match);
         },
         toBlock: function (data) {
-          // TODO: data could be a keyval field
-          const dataString = data.data ? JSON.stringify(data.data) : "{}";
-          // const dataString = data.data ? data.data : "{}";
-
-          const args = [
-            `"${data.partialSlug}.md"`,
-            ...(data.data && dataString !== "{}"
-              ? [dataString]
-              : data.templateEngineOverride
-              ? ["{}"]
-              : []),
-            ...(data.templateEngineOverride
-              ? [`"${data.templateEngineOverride}"`]
-              : []),
-          ];
-
-          return `{% partial ${args.join(", ")} %}`;
+          return stringifyPartial(data, ".njk", "htmlPartial");
         },
         toPreview: function (data) {
           return `TEST`;

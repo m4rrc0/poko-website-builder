@@ -226,6 +226,20 @@ export default [
       ];
     },
   ],
+  // Bleed background with the least interference
+  [
+    /^bleed-bg$/,
+    (match, { symbols }) => {
+      return {
+        [symbols.selector]: () => `:where(.bleed-bg)`,
+        "border-image": `conic-gradient(var(--color-bg) 0 0) fill 0/0/
+          var(--bleed-top, var(--bleed-block, 0))
+          var(--bleed-right, var(--bleed-inline, 100vw))
+          var(--bleed-bottom, var(--bleed-block, 0))
+          var(--bleed-left, var(--bleed-inline, 100vw))`,
+      };
+    },
+  ],
 
   // Skew border before utility
   [

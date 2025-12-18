@@ -452,6 +452,9 @@ const mostCommonMarkdownCollectionConfig = {
       direction: "ascending",
     },
   },
+  editor: {
+    preview: false,
+  },
 };
 
 class CmsConfig {
@@ -499,6 +502,7 @@ class CmsConfig {
         // "eleventyImage",
         "imageShortcode",
         "partial",
+        "htmlPartial",
         "wrapper",
         "section",
         "links",
@@ -997,9 +1001,6 @@ class CmsConfig {
                     { name: "text__button--disabled", label: "Button Text Disabled Color", ...brandColorField }, // prettier-ignore
                     { name: "bg__button--disabled", label: "Button Background Disabled Color", ...brandColorField }, // prettier-ignore
                     { name: "border__button--disabled", label: "Button Border Disabled Color", ...brandColorField }, // prettier-ignore
-                    { name: "text__button--disabled", label: "Button Text Disabled Color", ...brandColorField }, // prettier-ignore
-                    { name: "bg__button--disabled", label: "Button Background Disabled Color", ...brandColorField }, // prettier-ignore
-                    { name: "border__button--disabled", label: "Button Border Disabled Color", ...brandColorField }, // prettier-ignore
                   ]
                 },
                 // prettier-ignore
@@ -1043,8 +1044,6 @@ class CmsConfig {
                     { name: "bg__button", label: "Button Background Color", ...brandColorField }, // prettier-ignore
                     { name: "text__button--hover", label: "Button Text Hover Color", ...brandColorField }, // prettier-ignore
                     { name: "bg__button--hover", label: "Button Background Hover Color", ...brandColorField }, // prettier-ignore
-                    { name: "text__button--disabled", label: "Button Text Disabled Color", ...brandColorField }, // prettier-ignore
-                    { name: "bg__button--disabled", label: "Button Background Disabled Color", ...brandColorField }, // prettier-ignore
                     { name: "text__button--disabled", label: "Button Text Disabled Color", ...brandColorField }, // prettier-ignore
                     { name: "bg__button--disabled", label: "Button Background Disabled Color", ...brandColorField }, // prettier-ignore
                     { name: "icon-fill", label: "Icon Fill Color", ...brandColorField }, // prettier-ignore
@@ -1101,7 +1100,7 @@ class CmsConfig {
       icon: "css",
       folder: `${CONTENT_DIR}/_styles`,
       extension: "css",
-      format: "yaml-frontmatter",
+      format: undefined,
       create: true,
       // MEDIAS
       media_folder: `/${CONTENT_DIR}/_images`,
@@ -1233,8 +1232,8 @@ class CmsConfig {
       slug: "{{fields._slug}}",
       icon: "edit_document",
       folder: `${CONTENT_DIR}/_layouts`,
+      format: undefined,
       extension: "njk",
-      format: "yaml-frontmatter",
       create: true,
       // MEDIAS
       media_folder: `/${CONTENT_DIR}/_images`,
@@ -1285,8 +1284,8 @@ class CmsConfig {
       slug: "{{fields._slug}}",
       icon: "slide_library",
       folder: `${CONTENT_DIR}/_partials`,
+      format: undefined,
       extension: "njk",
-      format: "yaml-frontmatter",
       create: true,
       // MEDIAS
       media_folder: `/${CONTENT_DIR}/_images`,
@@ -1365,7 +1364,8 @@ class CmsConfig {
       name: "htmlPartials",
       label: "Partials (HTML)",
       label_singular: "Partial (HTML)",
-      icon: "brick",
+      icon: "code_blocks",
+      format: undefined,
       extension: "njk",
       fields: [
         {
