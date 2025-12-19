@@ -16,7 +16,7 @@ export async function image(args) {
     wrapper,
     class: className,
     style,
-    // imgAttrs,
+    imgAttributes,
     ...opts
   } = args;
   let wrapperTag = wrapper ? wrapper.split(" ")[0] : "";
@@ -32,6 +32,7 @@ export async function image(args) {
         ...(width && { widths: [width, width * 2] }),
         htmlOptions: {
           imgAttributes: {
+            ...(imgAttributes || {}),
             "eleventy:ignore": "",
             ...(alt && { alt }),
             ...(title && { title }),
@@ -39,9 +40,12 @@ export async function image(args) {
             ...(decoding && { decoding }),
             ...(sizes && { sizes }),
             ...((aspectRatio && {
-              class: `${className || ""} aspect-ratio-${aspectRatio}`,
+              class: `${className || imgAttributes?.class || ""} aspect-ratio-${aspectRatio}`,
             }) ||
-              (className && { class: className })),
+              className ||
+              (imgAttributes?.class && {
+                class: className || imgAttributes?.class || "",
+              })),
             // ...((width && { style: `max-width:${width}px;${style || ""}` }) ||
             //   (style && { style })),
             ...(style && { style }),
