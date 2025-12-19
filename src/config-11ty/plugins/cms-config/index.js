@@ -1720,8 +1720,8 @@ class CmsConfig {
               raster_image: {
                 format: "webp",
                 quality: 98,
-                width: 2048,
-                height: 2048,
+                width: 5000,
+                height: 5000,
               },
               svg: {
                 optimize: true,

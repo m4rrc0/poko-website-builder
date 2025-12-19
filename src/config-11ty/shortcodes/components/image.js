@@ -14,11 +14,13 @@ export async function image(args) {
     decoding,
     sizes,
     wrapper,
+    class: className,
+    style,
     // imgAttrs,
     ...opts
   } = args;
   let wrapperTag = wrapper ? wrapper.split(" ")[0] : "";
-  wrapperTag = wrapperTag || (width ? "p" : "");
+  // wrapperTag = wrapperTag || (width ? "p" : "");
   // TODO: compute sizes from widths
   // TODO: Allow defining a wrapping tag??
   const options = deepmerge.all(
@@ -27,7 +29,7 @@ export async function image(args) {
       {
         returnType: "html",
         // ...(width && { width }),
-        ...(width && { widths: [width] }),
+        ...(width && { widths: [width, width * 2] }),
         htmlOptions: {
           imgAttributes: {
             "eleventy:ignore": "",
@@ -36,13 +38,19 @@ export async function image(args) {
             ...(loading && { loading }),
             ...(decoding && { decoding }),
             ...(sizes && { sizes }),
-            ...(aspectRatio && { class: `aspect-ratio-${aspectRatio}` }),
+            ...((aspectRatio && {
+              class: `${className || ""} aspect-ratio-${aspectRatio}`,
+            }) ||
+              (className && { class: className })),
+            // ...((width && { style: `max-width:${width}px;${style || ""}` }) ||
+            //   (style && { style })),
+            ...(style && { style }),
           },
         },
       },
       opts,
     ],
-    { arrayMerge: (destinationArray, sourceArray, options) => sourceArray }
+    { arrayMerge: (destinationArray, sourceArray, options) => sourceArray },
   );
 
   if (!srcRaw) {
@@ -51,7 +59,11 @@ export async function image(args) {
   const src = srcRaw.startsWith("/")
     ? `${WORKING_DIR}/${srcRaw}`.replace(/\/+/g, "/")
     : srcRaw;
-  const html = await Image(src, options);
+  let html = await Image(src, options);
+  html = width
+    ? html.replace(`${width}w`, "1x").replace(`${width * 2}w`, "2x")
+    : html;
+  // console.log({ html });
 
   // return `<p>${html}</p>`;
   return wrapperTag ? `<${wrapperTag}>${html}</${wrapperTag}>` : html;
