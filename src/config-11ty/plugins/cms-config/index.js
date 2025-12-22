@@ -1210,7 +1210,16 @@ class CmsConfig {
           file: `${CONTENT_DIR}/_data/none.yaml`,
           media_folder: `/${CONTENT_DIR}/_data`,
           public_folder: "/_data",
-          fields: [],
+          fields: [
+            {
+              label: "Notice",
+              name: "notice",
+              widget: "boolean",
+              default: false,
+              readonly: true,
+              before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_data) to manage and edit advanced data files.`,
+            },
+          ],
         },
         {
           name: "publicFiles",
@@ -1218,8 +1227,17 @@ class CmsConfig {
           icon: "attach_file",
           file: `${CONTENT_DIR}/_files/none.yaml`,
           media_folder: `/${CONTENT_DIR}/_files`,
-          public_folder: "/_files",
-          fields: [],
+          public_folder: "/assets/files",
+          fields: [
+            {
+              label: "Notice",
+              name: "notice",
+              widget: "boolean",
+              default: false,
+              readonly: true,
+              before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_files) to manage public files.`,
+            },
+          ],
         },
       ],
     };

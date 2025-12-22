@@ -26,8 +26,6 @@ export const CMS_IMPORT = processEnv.CMS_IMPORT || "npm";
 // DIRECTORIES
 // Output directory
 export const OUTPUT_DIR = processEnv.OUTPUT_DIR || "dist";
-// Cache directory
-export const CACHE_DIR = processEnv.CACHE_DIR || ".cache";
 // Files output directory
 export const FILES_OUTPUT_DIR = processEnv.FILES_OUTPUT_DIR || "assets/files";
 export const FILES_LIBRARY_OUTPUT_DIR =
@@ -70,6 +68,12 @@ export const VERCEL_BUILD = Boolean(processEnv.VERCEL_DEPLOYMENT_ID);
 export const LOCAL_BUILD = Boolean(
   !NETLIFY_BUILD && !CLOUDFLARE_BUILD && !VERCEL_BUILD,
 );
+
+// Cache directory
+export const CACHE_DIR =
+  processEnv.CACHE_DIR ||
+  (CLOUDFLARE_BUILD && ".bun/install/cache") ||
+  ".cache";
 
 // const GITHUB_REPO_INFERRED = processEnv.GIT_REMOTES?.split("\n")
 //   ?.find((remote) => remote.includes("github.com"))
@@ -314,6 +318,11 @@ export const brandStyles = [
   brandTypeScalesStyles || "",
   brandPalettesStyles || "",
 ].join("\n");
+
+const unoCssConfig = await import(
+  "./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js"
+);
+export const fontPreloadTags = unoCssConfig.fontPreloadTags;
 
 // TODO: Import ctx.css
 // Once ctx.css is a proper library, we can import layers individually from node_modules

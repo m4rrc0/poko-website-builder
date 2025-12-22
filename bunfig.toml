@@ -3,7 +3,7 @@
 # saveTextLockfile = false
 # The workaround is creating an empty bun.lockdb and make sure BUN_VERSION is > 1.2.1
 
-[install.cache]
+# [install.cache]
 # the directory to use for the cache
 # dir = ".bun/install/cache"
 

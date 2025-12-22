@@ -40,6 +40,8 @@
 {{ globalSettings.htmlHead | safe }}
 {# {% getBundle "html", "head" %} #}
 
+{{ fontPreloadTags | safe }}
+
 {# Internal CSS: E-mail obfuscation + CSS head injection (from globalSettings) + bundle #}
 
 {% if inlineAllStyles %}

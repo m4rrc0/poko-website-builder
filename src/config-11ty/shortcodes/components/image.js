@@ -12,6 +12,7 @@ export async function image(args) {
     title,
     loading,
     decoding,
+    fetchpriority,
     sizes,
     wrapper,
     class: className,
@@ -38,6 +39,9 @@ export async function image(args) {
             ...(title && { title }),
             ...(loading && { loading }),
             ...(decoding && { decoding }),
+            ...((fetchpriority || loading === "eager") && {
+              fetchpriority: fetchpriority || "high",
+            }),
             ...(sizes && { sizes }),
             ...((aspectRatio && {
               class: `${className || imgAttributes?.class || ""} aspect-ratio-${aspectRatio}`,

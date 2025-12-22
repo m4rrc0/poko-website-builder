@@ -64,6 +64,7 @@ import {
   brandConfig,
   inlineAllStyles,
   brandStyles,
+  fontPreloadTags,
 } from "./env.config.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
 
@@ -362,6 +363,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addGlobalData("brandConfig", brandConfig);
   eleventyConfig.addGlobalData("inlineAllStyles", inlineAllStyles);
   eleventyConfig.addGlobalData("brandStyles", brandStyles);
+  eleventyConfig.addGlobalData("fontPreloadTags", fontPreloadTags);
   // Computed Data
   eleventyConfig.addGlobalData("eleventyComputed", eleventyComputed);
 
