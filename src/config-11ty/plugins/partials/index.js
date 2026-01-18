@@ -20,6 +20,11 @@ export default async function (eleventyConfig, pluginOptions) {
   const shortcodeAliases = (Array.isArray(pluginOptions?.shortcodeAliases) &&
     pluginOptions?.shortcodeAliases.length > 0 &&
     pluginOptions.shortcodeAliases) || ["partial"];
+  const pairedShortcodeAliases = (Array.isArray(
+    pluginOptions?.pairedShortcodeAliases,
+  ) &&
+    pluginOptions?.pairedShortcodeAliases.length > 0 &&
+    pluginOptions.pairedShortcodeAliases) || ["partialWrapper"];
 
   // We use the renderFile shortcodes to render partials
   const renderFileShortcodeFn =
@@ -96,11 +101,32 @@ export default async function (eleventyConfig, pluginOptions) {
     return "";
   }
 
+  async function renderePairedPartial(
+    content,
+    filenameRaw,
+    dataManual,
+    templateEngineOverride,
+  ) {
+    return renderPartial.call(
+      this,
+      filenameRaw,
+      { content, ...dataManual },
+      templateEngineOverride,
+    );
+  }
+
   for (const alias of shortcodeAliases) {
     if (typeof alias !== "string") {
       console.warn(`Invalid shortcode alias: ${alias}`);
       continue;
     }
     await eleventyConfig.addAsyncShortcode(alias, renderPartial);
+  }
+  for (const alias of pairedShortcodeAliases) {
+    if (typeof alias !== "string") {
+      console.warn(`Invalid shortcode alias: ${alias}`);
+      continue;
+    }
+    await eleventyConfig.addPairedAsyncShortcode(alias, renderePairedPartial);
   }
 }

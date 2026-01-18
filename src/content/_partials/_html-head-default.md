@@ -57,8 +57,12 @@
 {% endif %}
 
 {# TODO: Avoid generating this tag if no content in the bundle #}
-
-<link rel="stylesheet" href="{% getBundleFileUrl 'css', 'external' %}">
+{% set externalBundleContent %}{% getBundle 'css', 'external' %}{% endset %}
+{% if externalBundleContent == '/*__EleventyBundle:get:css:external:EleventyBundle__*/' %}
+<!-- No forced external CSS bundle -->
+{% else %}
+<link rel="stylesheet" href="{% getBundleFileUrl 'css', 'external' %}" fetchpriority="low">
+{% endif %}
 
 <style>
 {{ globalSettings.cssHead | safe }}

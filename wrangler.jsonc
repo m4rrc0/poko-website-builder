@@ -6,8 +6,10 @@
   // "compatibility_flags": ["nodejs_compat"], // Was required for keystatic
   "send_metrics": true,
   "vars": {
-    "BUN_VERSION": "1.2.22"
-  }
+    "BUN_VERSION": "1.2.22",
+    "UNSTABLE_PRE_BUILD": "bun i",
+    "SKIP_DEPENDENCY_INSTALL": "true",
+  },
   // "env": {
   //   "staging": {
   //     "vars": {

@@ -46,8 +46,7 @@ export async function image(args) {
             ...((aspectRatio && {
               class: `${className || imgAttributes?.class || ""} aspect-ratio-${aspectRatio}`,
             }) ||
-              className ||
-              (imgAttributes?.class && {
+              ((className || imgAttributes?.class) && {
                 class: className || imgAttributes?.class || "",
               })),
             // ...((width && { style: `max-width:${width}px;${style || ""}` }) ||

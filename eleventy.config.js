@@ -566,6 +566,7 @@ export default async function (eleventyConfig) {
       "component",
       // "section"
     ],
+    pairedShortcodeAliases: ["partialWrapper"],
   });
   // Copy files (Keystatic)
   // Retrieve public files from the _files directory
