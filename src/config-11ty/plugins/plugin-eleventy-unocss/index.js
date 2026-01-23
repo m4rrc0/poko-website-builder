@@ -28,10 +28,12 @@ export default async function (eleventyConfig, pluginOptions) {
       }
       // console.log(`UnoCSS generated:\n${css}`);
       const contents = content.replace(
-        "</style>",
-        `/* UnoCSS */
+        "<style>",
+        `<style>
+/* UnoCSS */
 ${css}
-</style>`
+/* End UnoCSS */
+`,
       );
       return contents;
     }

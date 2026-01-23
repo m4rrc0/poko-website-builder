@@ -529,8 +529,8 @@ export default [
     (match, { symbols }) => {
       return {
         [symbols.selector]: () => `:where(.icon)`,
-        width: "var(--width-icon, 0.75em)",
-        height: "var(--height-icon, 0.75em)",
+        width: "var(--width-icon, var(--size-icon, 0.75em))",
+        height: "var(--height-icon, var(--size-icon, 0.75em))",
         "vertical-align": "var(--vertical-align-icon, -0.125em)",
       };
     },
@@ -570,8 +570,8 @@ export default [
       return [
         {
           [symbols.selector]: () => `:where(.icon.lowercase)`,
-          width: "var(--width-icon, 1ex)",
-          height: "var(--height-icon, 1ex)",
+          width: "var(--width-icon, var(--size-icon, 1ex))",
+          height: "var(--height-icon, var(--size-icon, 1ex))",
         },
 
         // With-icon lowercase modifier
@@ -590,8 +590,8 @@ export default [
       return [
         {
           [symbols.selector]: () => `:where(.icon.sub)`,
-          width: "var(--width-icon, 0.25em)",
-          height: "var(--height-icon, 0.25em)",
+          width: "var(--width-icon, var(--size-icon, 0.25em))",
+          height: "var(--height-icon, var(--size-icon, 0.25em))",
           "vertical-align": "var(--vertical-align-icon, sub)",
         },
       ];
@@ -605,8 +605,8 @@ export default [
       return [
         {
           [symbols.selector]: () => `:where(.icon.super)`,
-          width: "var(--width-icon, 0.25em)",
-          height: "var(--height-icon, 0.25em)",
+          width: "var(--width-icon, var(--size-icon, 0.25em))",
+          height: "var(--height-icon, var(--size-icon, 0.25em))",
           "vertical-align": "var(--vertical-align-icon, super)",
         },
       ];

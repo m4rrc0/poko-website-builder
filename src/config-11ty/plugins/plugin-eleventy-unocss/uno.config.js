@@ -5,7 +5,7 @@ import {
   // presetIcons,
   // presetTypography,
   // presetWebFonts,
-  // presetWind3,
+  presetWind4,
   // transformerDirectives,
   // transformerVariantGroup
   // presetWebFonts
@@ -18,6 +18,22 @@ import utilitiesRules from "./rules/ctx-utilities.js";
 import atomsRules from "./rules/ctx-atoms.js";
 
 import { CACHE_DIR, brandConfig, brandStyles } from "../../../../env.config.js";
+
+// Some Wind4 rules are colliding with our own rules
+const presetWind4mod = presetWind4({
+  preflights: {
+    reset: false,
+    // theme: false,
+  },
+});
+const hRegexCollides = /^(?:size-)?(min-|max-)?([wh])-?(.+)$/;
+// Force '-' between w or h and the number or attribute. E.g. h-10 not h10
+// To avoid collision with our own rules for heading styles .h1, .h6, .h000, .h8
+const hRegexReplacement = /^(?:size-)?(min-|max-)?([wh])-(.+)$/;
+const modRuleIndex = presetWind4mod.rules.findIndex(
+  (ruleArr) => ruleArr[0].source === hRegexCollides.source,
+);
+presetWind4mod.rules[modRuleIndex][0] = hRegexReplacement;
 
 const fontStacksContexts = brandConfig?.fontStacksContexts;
 let customFontsInUse = [];
@@ -110,7 +126,7 @@ const computedConfig = defineConfig({
         // }, // Custom fetch function to download the fonts
       }),
     }),
-    //   presetWind3(),
+    presetWind4mod,
     //   presetAttributify(),
     //   presetIcons(),
     //   presetTypography(),
