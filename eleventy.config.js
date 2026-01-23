@@ -279,6 +279,7 @@ export default async function (eleventyConfig) {
         .use(markdownItContainer, "ul", mRCTOptions("ul"))
         .use(markdownItContainer, "ol", mRCTOptions("ol"))
         .use(markdownItContainer, "div", mRCTOptions("div"))
+        .use(markdownItContainer, "hgroup", mRCTOptions("hgroup"))
         .use(markdownItContainer, "block")
         .use(markdownItContainer, "flow")
         .use(markdownItContainer, "grid-fluid")
@@ -556,8 +557,10 @@ export default async function (eleventyConfig) {
   });
   // Partials expand on the renderFile shortcode
   await eleventyConfig.addPlugin(partialsPlugin, {
+    defaultExt: ["njk", "md"],
     dirs: [
       path.join(WORKING_DIR, PARTIALS_DIR),
+      path.join("src/themes/default/_partials"),
       path.join("src/content/_partials"),
     ],
     shortcodeAliases: [
@@ -566,7 +569,11 @@ export default async function (eleventyConfig) {
       "component",
       // "section"
     ],
-    pairedShortcodeAliases: ["partialWrapper"],
+    pairedShortcodeAliases: [
+      "partialWrapper",
+      "htmlPartialWrapper",
+      "componentWrapper",
+    ],
   });
   // Copy files (Keystatic)
   // Retrieve public files from the _files directory
