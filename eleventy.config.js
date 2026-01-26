@@ -357,6 +357,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addGlobalData("baseUrl", BASE_URL);
   eleventyConfig.addGlobalData("prodUrl", PROD_URL);
   eleventyConfig.addGlobalData("layout", "base");
+  eleventyConfig.addGlobalData("year", new Date().getFullYear());
   // eleventyConfig.addGlobalData("globalSettings", globalSettings);
   eleventyConfig.addGlobalData("languages", languages);
   eleventyConfig.addGlobalData("defaultLanguage", defaultLanguage);
