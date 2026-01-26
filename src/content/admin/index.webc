@@ -271,6 +271,18 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
             collapsed: true,
             fields: [
               {
+                name: "class",
+                label: "Class",
+                widget: "string",
+                required: false
+              },
+              {
+                name: "id",
+                label: "Id",
+                widget: "string",
+                required: false
+              },
+              {
                 name: "title",
                 label: "Title",
                 widget: "string",
@@ -294,12 +306,12 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
                 required: false,
                 hint: "HTML tag to wrap the image in; Leave empty for none;",
               },
-              // {
-              //   name: "imgAttrs",
-              //   label: "Other raw image attributes",
-              //   widget: "string",
-              //   required: false,
-              // },
+              {
+                name: "imgAttrs",
+                label: "Other raw image attributes",
+                widget: "string",
+                required: false,
+              },
             ]
           },
         ],
@@ -314,10 +326,12 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
           const alt = extractQuotedString(argumentsString, 'alt') || "";
           const aspectRatio = extractQuotedString(argumentsString, 'aspectRatio') || "";
           const width = extractQuotedString(argumentsString, 'width') || "";
+          const className = extractQuotedString(argumentsString, 'class') || "";
+          const id = extractQuotedString(argumentsString, 'id') || "";
           const title = extractQuotedString(argumentsString, 'title') || "";
           const loading = extractQuotedString(argumentsString, 'loading') || "";
           const wrapper = extractQuotedString(argumentsString, 'wrapper') || "";
-          // const imgAttrs = extractQuotedString(argumentsString, 'imgAttrs') || "";
+          const imgAttrs = argumentsString.replace(/(src|alt|aspectRatio|width|class|id|title|loading|wrapper)="[^"]*"(?:\s*,)?/g, '').trim();
 
           return {
             src,
@@ -325,10 +339,12 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
             ...(aspectRatio && { aspectRatio }),
             ...(width && { width }),
             advanced: {
+              ...(className && { class: className }),
+              ...(id && { id }),
               ...(title && { title }),
               ...(loading && { loading }),
               ...(wrapper && { wrapper }),
-              // ...(imgAttrs && { imgAttrs }),
+              ...(imgAttrs && { imgAttrs }),
             }
           };
         },
@@ -341,10 +357,12 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
             advanced
           } = data;
           const {
+            class: className,
+            id,
             title,
             loading,
             wrapper,
-            // imgAttrs,
+            imgAttrs,
           } = advanced || {};
 
           const attrs = {
@@ -352,6 +370,8 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
             ...(alt && { alt }),
             ...(aspectRatio && { aspectRatio }),
             ...(width && { width }),
+            ...(className && { class: className }),
+            ...(id && { id }),
             ...(title && { title }),
             ...(loading && { loading }),
             ...(wrapper && { wrapper }),
@@ -359,10 +379,10 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
           }
           const attrsStr = Object.entries(attrs).map(([key, value]) => `${key}="${value}"`).join(", ");
 
-          return `{% image ${attrsStr} %}`;
+          return `{% image ${attrsStr}${imgAttrs ? ", " + imgAttrs : ""} %}`;
         },
         toPreview: function () {
-          return `<img src="{{src}}" alt="{{alt}}" />`;
+          return `<img src="{{src}}" alt="{{alt}}" width="300" />`;
         },
       });
 
