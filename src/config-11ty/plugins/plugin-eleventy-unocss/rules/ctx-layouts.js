@@ -98,7 +98,7 @@ export default [
         },
         {
           [symbols.selector]: () => `:where(.flow.horizontal) > * + *`,
-          "margin-inline-start": "var(--gap-stack)",
+          "margin-inline-start": "var(--flow-space, 1em)",
         },
         {
           [symbols.selector]: () => `:where(.flow.horizontal:only-child)`,

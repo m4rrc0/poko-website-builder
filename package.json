@@ -11,12 +11,13 @@
     "bun": ">=1.2.22"
   },
   "scripts": {
-    "build": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy",
+    "build-archive": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy",
+    "build": "bun --bun run eleventy",
     "cf-build": "bun i && bun run build",
-    "build:gh-pages": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy",
-    "dev": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun scripts/dev.ts",
-    "start": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy --serve",
-    "watch": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy --watch",
+    "build:gh-pages": "bun --bun run eleventy",
+    "dev": "bun --bun scripts/dev.ts",
+    "start": "bun --bun run eleventy --serve",
+    "watch": "bun --bun run eleventy --watch",
     "serve": "bun --bun eleventy-dev-server --dir=dist",
     "clean": "rm -rf dist",
     "clean:modules": "rm -rf dist node_modules"
@@ -44,7 +45,7 @@
     "@sveltia/cms": "0.110.2"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy": "^4.0.0-alpha.6",
     "@11ty/eleventy-fetch": "^5.1.0",
     "@11ty/eleventy-img": "^6.0.3",
     "@11ty/eleventy-navigation": "^1.0.4",

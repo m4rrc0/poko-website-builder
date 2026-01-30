@@ -1,20 +1,27 @@
 import { build as bunBuild, plugin as bunPlugin } from "bun";
 import fglob from "fast-glob";
-import { MINIFY } from "../../../../env.config.js";
+import { MINIFY, brandConfig } from "../../../../env.config.js";
+
+const mustImportCtxCss = !!brandConfig?.ctxCssImport;
+const ctxCssEntrypoint = `./src/styles/ctx/ctx.css`;
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
   const { dir } = eleventyConfig;
   const { inputGlob = "_styles/*.css", outputDir = "assets/styles" } =
     pluginOptions || {};
-  const outdir = `${dir.output}/${outputDir}`;
+  const outdir = `./${dir.output}/${outputDir}`;
 
   let externalStylesInline = null;
   let entrypoints = await fglob(`${dir.input}/${inputGlob}`);
   // Remove entrypoint files that start with an underscore
   entrypoints = entrypoints.filter(
-    (entrypoint) => !entrypoint.split("/").pop().startsWith("_")
+    (entrypoint) => !entrypoint.split("/").pop().startsWith("_"),
   );
+  if (mustImportCtxCss) {
+    entrypoints.unshift(ctxCssEntrypoint);
+  }
+
   const externalCssFiles = entrypoints.map((entrypoint) => {
     const filename = entrypoint.split("/").pop();
     const localUrl = `${outputDir}/${filename}`;
@@ -32,7 +39,7 @@ export default async function (eleventyConfig, pluginOptions) {
     await bunBuild({
       entrypoints,
       outdir,
-      // naming: '[name].css',
+      naming: "[name].css",
       // naming: "index.css",
       // plugins: [cssTransformPlugin],
       minify: MINIFY,
@@ -51,7 +58,7 @@ export default async function (eleventyConfig, pluginOptions) {
               path: output.path,
               content,
             };
-          })
+          }),
         );
 
         externalStylesInline = fileContents

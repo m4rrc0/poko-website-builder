@@ -2,6 +2,7 @@ import assert from "node:assert";
 import "dotenv/config";
 import { resolve, join, relative } from "path";
 import fs from "node:fs";
+import { $ } from "bun";
 import yaml from "js-yaml";
 import { transformLanguage } from "./src/utils/languages.js";
 import {
@@ -26,6 +27,7 @@ export const CMS_IMPORT = processEnv.CMS_IMPORT || "npm";
 // DIRECTORIES
 // Output directory
 export const OUTPUT_DIR = processEnv.OUTPUT_DIR || "dist";
+export const OUTPUT_DIR_ABSOLUTE = processEnv.OUTPUT_DIR_ABSOLUTE || resolve('.', OUTPUT_DIR);
 // Files output directory
 export const FILES_OUTPUT_DIR = processEnv.FILES_OUTPUT_DIR || "assets/files";
 export const FILES_LIBRARY_OUTPUT_DIR =
@@ -86,7 +88,9 @@ export const CACHE_DIR =
 // const remoteCFpages =
 //   "origin\thttps://x-a_c_c_e_s_s-t_o_k_e_n:g_h_s_11111111111111111111111111111111111@github.com/autre-ecole/poko-website-builder (fetch)\norigin\thttps://x-a_c_c_e_s_s-t_o_k_e_n:g_h_s_11111111111111111111111111111111111@github.com/autre-ecole/poko-website-builder (push)";
 
-const GITHUB_REPO_INFERRED = processEnv.GIT_REMOTES?.split("\n")
+const GIT_REMOTES =
+  processEnv.GIT_REMOTES || (await $`git remote -v`).text().replace(/\n$/, "");
+const GITHUB_REPO_INFERRED = GIT_REMOTES?.split("\n")
   ?.find((remote) => remote.includes("github.com"))
   ?.split(/@github.com(\/|:)/)
   ?.pop()
@@ -143,7 +147,8 @@ export const BRANCH =
   processEnv.BRANCH ||
   processEnv.CF_PAGES_BRANCH ||
   processEnv.VERCEL_GIT_COMMIT_REF ||
-  processEnv.GIT_BRANCH;
+  processEnv.GIT_BRANCH ||
+  (await $`git symbolic-ref --short HEAD`).text().replace(/\n$/, "");
 
 // TODO: Verify compat with supported hosts
 const HOST_SUBDOMAIN = BRANCH && BRANCH.replaceAll("/", "-");
