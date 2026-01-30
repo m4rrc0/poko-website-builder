@@ -72,6 +72,8 @@ function lookupTemplateTranslations(
 
 // input can be a url (with or without lang prefix) or ideally a translationKey
 // lang is optional and overwrites the current page's lang
+// Default signature should be: {{ pageRef | locale_url(lang, propName, collectionName) }}
+// But we can ommit `lang` if we only want to pass `propName`: {{ pageRef | locale_url(propName) }}
 export function locale_url(...args) {
   // const originalFilter = this.env.getFilter("locale_url_original");
   const input = args[0];

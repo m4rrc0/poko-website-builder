@@ -470,28 +470,31 @@ class CmsConfig {
     const fontsourceFonts = (data.fontServices?.fontsource?.fonts || []).map(
       ({ family: value }) => ({ value, label: value }),
     );
-    let defaultEditorComponents;
+
+    let defaultEditorComponentNames = [];
+    let userEditorComponentNames = [];
+
     try {
-      defaultEditorComponents = await import(
-        "../../../content-static/admin/defaultEditorComponents.js"
-      );
+      const path = "./src/content-static/admin/defaultEditorComponents.js";
+      const code = await Bun.file(path).text();
+      // Regex to find 'export const name', 'export function name', etc.
+      defaultEditorComponentNames = [...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/mg)]
+        .map(match => match[1]);
     } catch (error) {
-      console.error("Failed to import default Editor Components\n", error);
+      console.error("Failed to retrieve default Editor Components\n", error);
     }
-    let userEditorComponents;
     try {
-      userEditorComponents = await import(
-        `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`
-      );
+      const path = `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`;
+      const code = await Bun.file(path).text();
+      // Regex to find 'export const name', 'export function name', etc.
+      userEditorComponentNames = [...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/mg)]
+        .map(match => match[1]);
     } catch (error) {
       console.warn(
         `INFO: No user's Editor Components found at "${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js"`,
       );
     }
-    const defaultEditorComponentNames = Object.keys(
-      defaultEditorComponents || {},
-    );
-    const userEditorComponentNames = Object.keys(userEditorComponents || {});
+
     const bodyMarkdownField = {
       name: "body",
       label: "Content",
@@ -499,13 +502,13 @@ class CmsConfig {
       required: false,
       i18n: true,
       editor_components: [
-        // "eleventyImage",
-        "imageShortcode",
-        "partial",
-        "htmlPartial",
-        "wrapper",
-        "section",
-        "links",
+        // "eleventyImage", // Removed
+        // "imageShortcode",
+        // "partial",
+        // "htmlPartial",
+        // "wrapper",
+        // "section",
+        // "links",
         ...defaultEditorComponentNames,
         ...userEditorComponentNames,
       ],

@@ -1,4 +1,4 @@
-import { BUILD_LEVEL } from "../../env.config.js";
+// import { BUILD_LEVEL } from "../../env.config.js";
 
 export const transformLanguage = (lang, index, languages) => {
   const cmsDefault = inferCmsDefault(languages);
@@ -23,8 +23,9 @@ const inferCmsDefault = (languages) => {
   );
 };
 const inferWebsiteDefault = (languages) => {
-  const regex =
-    BUILD_LEVEL === "production" ? /^published/ : /^published|draft/;
+  // const regex =
+  //   BUILD_LEVEL === "production" ? /^published/ : /^published|draft/;
+  const regex = /^published|draft/; // Just assume the user will set that up properly...
   return (
     languages
       .filter((lang) => regex.test(lang.status))
