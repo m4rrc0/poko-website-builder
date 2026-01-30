@@ -1,0 +1,210 @@
+/* === COLOR SYSTEM SETUP === */
+/* NOTE: All selector specificities are max 0.1.1 */
+body,
+[class*="palette"] {
+    /* === ALL COLOR PROPERTIES === */
+    /* nuds color system - default rules and values */
+    /* -------------------------------------------- */
+    /* Default variable names and fallback values for every css color-related properties */
+    /* Note: We provide a fallback value in case custom properties are supported but the variable is not set */
+    --color-var-text: var(--color-text, #100c08);
+    --color-var-bg: var(--color-bg, #fdfdfe);
+}
+body,
+[class*="palette"] {
+    /* === ALL COLOR PROPERTIES === */
+    /* nuds color system - default rules and values */
+    /* -------------------------------------------- */
+    /* Default variable names and fallback values for every css color-related properties */
+    /* Note: We provide a fallback value in case custom properties are supported but the variable is not set */
+    color: var(--color-text, #100c08);
+    background-color: var(--color-bg, #fdfdfe);
+    /* other properties have a fallback of 'currentcolor' so we don't have to set a value if we are fine with the fallback */
+    border-color: var(--color-border, currentcolor);
+    outline-color: var(--color-outline, currentcolor);
+    text-decoration-color: var(--color-text-decoration, currentcolor);
+    text-emphasis-color: var(--color-text-emphasis, currentcolor);
+    caret-color: var(--color-caret, currentcolor);
+    column-rule-color: var(--color-column-rule, currentcolor);
+    fill: var(--color-fill, none);
+    stroke: var(--color-stroke, currentcolor);
+}
+
+.contrast,
+[class*="palette"].contrast,
+[class*="palette"] .contrast {
+    color: var(--color-var-bg, #fdfdfe);
+    background-color: var(--color-var-text, #100c08);
+}
+
+/* More variable names definitions and fallback values for css selectors */
+*:focus,
+:where([class*="palette"]):focus,
+:where([class*="palette"]) *:focus {
+    outline-color: var(
+        --color-outline--focus,
+        var(--color-outline, currentcolor)
+    );
+}
+*::selection,
+[class*="palette"]::selection,
+[class*="palette"] *::selection {
+    color: var(--color-text--selection, var(--color-bg, #fdfdfe));
+    background-color: var(--color-bg--selection, var(--color-text, #100c08));
+    border-color: var(--color-border--selection, currentcolor);
+}
+/* prettier-ignore */
+:is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9),
+:is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9)[class*='palette'],
+[class*='palette'] :is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9) {
+  color: var(--color-text__heading);
+  background-color: var(--color-bg__heading);
+  border-color: var(--color-border__heading, currentcolor);
+}
+/* a */
+a,
+a[class*="palette"],
+[class*="palette"] a {
+    color: var(--color-text__a, var(--color-text));
+    background-color: var(--color-bg__a, var(--color-bg));
+    border-color: var(--color-border__a, var(--color-border, currentcolor));
+}
+a:hover,
+:where(a[class*="palette"]):hover,
+:where([class*="palette"]) a:hover {
+    color: var(--color-text__a--hover);
+    background-color: var(--color-bg__a--hover);
+    border-color: var(--color-border__a, currentcolor);
+}
+/* Buttons */
+:is(
+    button,
+    .button,
+    input[type="submit"],
+    input[type="button"],
+    input[type="reset"],
+    [role="button"]
+),
+:where(
+    button,
+    .button,
+    input[type="submit"],
+    input[type="button"],
+    input[type="reset"],
+    [role="button"]
+)[class*="palette"],
+[class*="palette"]
+    :where(
+        button,
+        .button,
+        input[type="submit"],
+        input[type="button"],
+        input[type="reset"],
+        [role="button"]
+    ) {
+    color: var(--color-text__button, var(--color-text));
+    background-color: var(--color-bg__button, var(--color-bg));
+    border-color: var(
+        --color-border__button,
+        var(--color-border, currentcolor)
+    );
+
+    &:hover {
+        color: var(
+            --color-text__button--hover,
+            var(--color-bg__button, var(--color-bg))
+        );
+        background-color: var(
+            --color-bg__button--hover,
+            var(--color-text__button, var(--color-text))
+        );
+        /*background-color: red !important;*/
+        border-color: var(--color-border__button--hover);
+    }
+    &:focus {
+        color: var(--color-text__button--focus);
+        background-color: var(--color-bg__button--focus);
+        border-color: var(--color-border__button--focus, currentcolor);
+    }
+    &:disabled {
+        color: var(--color-text__button--disabled);
+        background-color: var(--color-bg__button--disabled);
+        border-color: var(--color-border__button--disabled, currentcolor);
+    }
+}
+:is(tt, code, kbd, pre, samp),
+:is(
+    tt,
+    code,
+    kbd,
+    pre,
+    samp,
+    tt *,
+    code *,
+    kbd *,
+    pre *,
+    samp *
+)[class*="palette"],
+[class*="palette"] :is(tt, code, kbd, pre, samp) {
+    color: var(--color-text__code, white);
+    background-color: var(--color-bg__code, GrayText);
+    border-color: var(--color-border__code, currentcolor);
+}
+:is(mark, .mark, .highlight, mark *, .mark *, .highlight *),
+:where(
+    mark,
+    .mark,
+    .highlight,
+    mark *,
+    .mark *,
+    .highlight *
+)[class*="palette"],
+[class*="palette"]
+    :where(mark, .mark, .highlight, mark *, .mark *, .highlight *) {
+    color: var(--color-text__mark, MarkText);
+    background-color: var(--color-bg__mark, Mark);
+    border-color: var(--color-border__mark, CurrentColor);
+}
+
+strong,
+strong[class*="palette"],
+[class*="palette"] strong {
+    color: var(--color-text__strong);
+    background-color: var(--color-bg__strong);
+}
+
+em,
+em[class*="palette"],
+[class*="palette"] em {
+    color: var(--color-text__em);
+    background-color: var(--color-bg__em);
+}
+
+b,
+b[class*="palette"],
+[class*="palette"] b {
+    color: var(--color-text__b);
+    background-color: var(--color-bg__b);
+}
+
+*::marker,
+[class*="palette"]::marker,
+[class*="palette"] *::marker {
+    color: var(--color-text--marker);
+}
+/* End of variables assignments and fallback values */
+
+/* Every element inherits colors for the closest defined parent */
+:where(body) *,
+:where([class*="palette"]) * {
+    color: inherit;
+    /* ... except for the background that should probably just remain transparent */
+    /* background-color: inherit; */
+    /* Note: if we want to enforce an inherited background, we can set a class of "color-palette-" on an element */
+    border-color: inherit;
+    outline-color: inherit;
+    text-decoration-color: inherit;
+    text-emphasis-color: inherit;
+    caret-color: inherit;
+    column-rule-color: inherit;
+}

@@ -1,0 +1,11 @@
+.flow > * + * {
+  margin-block-start: var(--flow-space, 1em);
+}
+
+.prose {
+  --flow-space: var(--space-m-l);
+}
+
+.prose :is(h2 + *, h3 + *, h4 + *) {
+  --flow-space: var(--space-s);
+}

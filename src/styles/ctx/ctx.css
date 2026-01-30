@@ -1,0 +1,39 @@
+@import './01_variables.css';
+@import './05_reset.css';
+@import './18_foundation.css';
+@import './28_classless.css';
+
+/* ---CLASSFULL LAYERS --- */
+/* LAYER LAYOUTS  */
+/* @import './32_layouts.css'; */
+
+/* LAYER COLORS  */
+@import './34_colors.css';
+
+/* LAYER UTILITIES  */
+/* @import './35_utilities.css'; */
+
+/* LAYER COMPONENTS  */
+/* @import "./36_components.css"; */
+/* complex utilities are more like components */
+
+/* LAYER PROJECT (custom project's css  */
+/* @import "./40_project.css"; */
+
+/* LAYER UTILITIES  */
+/* @import "./95_utilities.css"; */
+
+/* NOTE: Should not have anything below */
+/* Cutom CSS goes into project.css */
+
+/* @import './38_classfull.css'; */
+
+/* @import "./inspiration/water.css"; */
+/* @import "./inspiration/reset-andy-bell.css"; */
+/* @import "./inspiration/baseline-smol.css"; */
+/* @import "./inspiration/baseline-swyx.css"; */
+/* @import "./inspiration/ultimate-motherfucking-website.css"; */
+/* @import "./inspiration/simple-css.css"; */
+/* @import "./inspiration/sakura.css"; */
+/* @import "./inspiration/bahunya.css"; */
+/* @import "./inspiration/wing.css"; */

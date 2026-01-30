@@ -1,0 +1,109 @@
+/* 
+ * CTX CSS Classless Layer
+ * Provides sensible styling defaults that go beyond the reset
+ * These styles are more subjective but still maintain a clean, minimal approach
+ */
+
+body {
+  font-family: system-ui, sans-serif; /* System font stack as default */
+}
+
+/* Allow headings to have their natural top margin but normalize bottom margin */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-block-end: 0.5em;
+}
+
+/* Set reasonable margins for text elements */
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin-block-start: 0;
+  margin-block-end: 1em;
+}
+
+/* Links with sensible default color */
+a:not([class]) {
+  color: #0066cc; /* Accessible blue that works in both light and dark modes */
+}
+
+/* Table styling */
+table,
+th,
+td {
+  border: 1px solid #ddd;
+}
+
+th,
+td {
+  padding: 0.5em;
+}
+
+th {
+  text-align: start;
+}
+
+/* Form element visual styling */
+fieldset {
+  border: 1px solid #ddd;
+  padding: 0.5em 1em;
+}
+
+legend {
+  padding: 0 0.5em;
+}
+
+caption {
+  caption-side: top;
+  margin-block-end: 0.5em;
+}
+
+/* Blockquote styling */
+blockquote {
+  border-inline-start: 3px solid #ddd;
+  padding-inline-start: 1em;
+  font-style: italic;
+}
+
+details {
+  margin-block-end: 1em;
+}
+
+/* Interactive elements */
+summary {
+  cursor: pointer;
+}
+
+/* Horizontal rule styling */
+hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin-block: 1.5em;
+}
+
+/* Code blocks styling */
+pre {
+  padding: 0.5em;
+}
+
+/* Focus styles that go beyond basic outlines */
+:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 0.15em;
+}
+
+/* SVG size limits for aesthetics */
+:is(figure, div, section, header, footer, main, article, aside, nav) > svg:only-child {
+  max-height: 50vh; /* Prevent extremely tall SVGs */
+}
+
+/* Scrollbar styling */
+table {
+  scrollbar-width: thin; /* Slimmer scrollbar on Firefox */
+}
