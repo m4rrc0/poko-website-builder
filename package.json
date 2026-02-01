@@ -53,8 +53,6 @@
     "@11ty/eleventy-plugin-webc": "^0.11.2",
     "@code-blocks/charts": "^0.1.9",
     "@code-blocks/eleventy-plugin": "^0.1.8",
-    "@m4rrc0/eleventy-plugin-markdoc": "^0.1.6",
-    "@markdoc/markdoc": "^0.5.2",
     "@mdit/plugin-container": "^0.22.1",
     "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
     "@sindresorhus/slugify": "^2.2.1",
