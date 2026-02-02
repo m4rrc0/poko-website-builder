@@ -1,0 +1,10 @@
+name: "poko-website-builder"
+compatibility_date: "2025-03-10"
+pages_build_output_dir: "./dist" # Replaced on Workers by `assets.directory`
+preview_urls: true # Default
+# compatibility_flags: ["nodejs_compat"] # Was required for keystatic
+send_metrics: true
+vars:
+  BUN_VERSION: "1.3.7"
+  UNSTABLE_PRE_BUILD: "bun i"
+  SKIP_DEPENDENCY_INSTALL: "true"
