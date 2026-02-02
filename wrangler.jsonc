@@ -10,16 +10,4 @@
     "UNSTABLE_PRE_BUILD": "bun i",
     "SKIP_DEPENDENCY_INSTALL": "true",
   },
-  // "env": {
-  //   "staging": {
-  //     "vars": {
-  //       "API_HOST": "staging.example.com"
-  //     }
-  //   },
-  //   "production": {
-  //     "vars": {
-  //       "API_HOST": "production.example.com"
-  //     }
-  //   }
-  // }
 }
