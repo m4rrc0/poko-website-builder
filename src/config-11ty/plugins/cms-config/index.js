@@ -14,6 +14,7 @@ import {
   allLanguages,
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
+import { shortList as langCodesList } from "../../../utils/langCodesList.js";
 
 const isDev = NODE_ENV === "development";
 const mustSetup = !allLanguages?.length;
@@ -478,8 +479,11 @@ class CmsConfig {
       const path = "./src/content-static/admin/defaultEditorComponents.js";
       const code = await Bun.file(path).text();
       // Regex to find 'export const name', 'export function name', etc.
-      defaultEditorComponentNames = [...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/mg)]
-        .map(match => match[1]);
+      defaultEditorComponentNames = [
+        ...code.matchAll(
+          /^export\s+(?:const|let|var|function|class)\s+(\w+)/gm,
+        ),
+      ].map((match) => match[1]);
     } catch (error) {
       console.error("Failed to retrieve default Editor Components\n", error);
     }
@@ -487,8 +491,11 @@ class CmsConfig {
       const path = `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`;
       const code = await Bun.file(path).text();
       // Regex to find 'export const name', 'export function name', etc.
-      userEditorComponentNames = [...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/mg)]
-        .map(match => match[1]);
+      userEditorComponentNames = [
+        ...code.matchAll(
+          /^export\s+(?:const|let|var|function|class)\s+(\w+)/gm,
+        ),
+      ].map((match) => match[1]);
     } catch (error) {
       console.warn(
         `INFO: No user's Editor Components found at "${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js"`,
@@ -559,6 +566,11 @@ class CmsConfig {
           name: "productionUrl",
           label: "Production URL",
           widget: "string",
+          pattern: [
+            "^(http|https)://[\\w\\-._~:/?#[\\]@!$&'()*+,;=%]+$",
+            "Must be a URL starting with http:// or https://",
+          ],
+          hint: "e.g. `https://www.poko.eco`",
           // TODO: add pattern validation
           // prettier-ignore
           // pattern: [
@@ -599,37 +611,45 @@ class CmsConfig {
           required: true,
           collapsed: true,
           allow_reorder: true,
-          summary:
-            "{{status | capitalize}}: {{code | upper}} - {{name}} -- Default for: {{isCmsDefault | ternary('CMS', '')}} {{isWebsiteDefault | ternary('Website', '')}}",
+          summary: "{{status | capitalize}}: {{code}}",
           fields: [
             {
               name: "code",
               label: "Language Code",
-              widget: "string",
+              // widget: "string",
+              widget: "select",
+              options: langCodesList.map((lang) => ({
+                value: lang.code,
+                label: lang.name,
+              })),
               required: true,
             },
-            {
-              name: "name",
-              label: "Language Name",
-              widget: "string",
-              required: true,
-            },
-            {
-              name: "customUrlPrefix",
-              label: "Custom URL Prefix",
-              widget: "object",
-              collapsed: false,
-              required: false,
-              // summary: "Position: {{fields.order}} | Nav Title: {{fields.title}}",
-              fields: [
-                {
-                  name: "prefix",
-                  label: "URL Prefix",
-                  widget: "string",
-                  required: false,
-                },
-              ],
-            },
+            // {
+            //   name: "name",
+            //   label: "Language Name",
+            //   // widget: "string",
+            //   widget: "hidden",
+            //   required: false,
+            // },
+            // {
+            //   name: "customUrlPrefix",
+            //   label: "Custom URL Prefix",
+            //   widget: "object",
+            //   collapsed: false,
+            //   required: false,
+            //   // summary: "Position: {{fields.order}} | Nav Title: {{fields.title}}",
+            //   comment:
+            //     "By default, webpages URLs are prefixed with the language code. You can override this by providing a custom URL prefix",
+            //   fields: [
+            //     {
+            //       name: "prefix",
+            //       label: "URL Prefix",
+            //       widget: "string",
+            //       required: false,
+            //       hint: "Leave this field empty to remove the prefix entirely.",
+            //     },
+            //   ],
+            // },
             {
               name: "status",
               label: "Status",
@@ -643,21 +663,29 @@ class CmsConfig {
               ],
             },
             {
-              name: "isCmsDefault",
-              label: "Is CMS Default",
-              hint: "Defaults to the first language of the list",
+              name: "keepUrlPrefix",
+              label: "Always keep this language prefix in URL",
+              hint: "By default, URLs are prefixed with the language code (E.g. /en/about) except the first language of the list (E.g. /about). Force keeping this prefix by enabling this option.",
               widget: "boolean",
-              required: true,
               default: false,
+              required: false,
             },
-            {
-              name: "isWebsiteDefault",
-              label: "Is Website Default",
-              hint: "Defaults to the first language of the list",
-              widget: "boolean",
-              required: true,
-              default: false,
-            },
+            // {
+            //   name: "isCmsDefault",
+            //   label: "Is CMS Default",
+            //   hint: "Defaults to the first language of the list",
+            //   widget: "boolean",
+            //   required: true,
+            //   default: false,
+            // },
+            // {
+            //   name: "isWebsiteDefault",
+            //   label: "Is Website Default",
+            //   hint: "Defaults to the first language of the list",
+            //   widget: "boolean",
+            //   required: true,
+            //   default: false,
+            // },
           ],
         },
         {
@@ -1668,7 +1696,7 @@ class CmsConfig {
       },
       // TODO: configure data formating: https://github.com/sveltia/sveltia-cms?tab=readme-ov-file#controlling-data-output
       output: {
-        omit_empty_optional_fields: true,
+        omit_empty_optional_fields: false,
         encode_file_path: true, // true to URL-encode file paths for File/Image fields
         json: {
           indent_style: "space", // space or tab

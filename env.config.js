@@ -27,7 +27,8 @@ export const CMS_IMPORT = processEnv.CMS_IMPORT || "npm";
 // DIRECTORIES
 // Output directory
 export const OUTPUT_DIR = processEnv.OUTPUT_DIR || "dist";
-export const OUTPUT_DIR_ABSOLUTE = processEnv.OUTPUT_DIR_ABSOLUTE || resolve('.', OUTPUT_DIR);
+export const OUTPUT_DIR_ABSOLUTE =
+  processEnv.OUTPUT_DIR_ABSOLUTE || resolve(".", OUTPUT_DIR);
 // Files output directory
 export const FILES_OUTPUT_DIR = processEnv.FILES_OUTPUT_DIR || "assets/files";
 export const FILES_LIBRARY_OUTPUT_DIR =
@@ -229,6 +230,7 @@ export { globalSettings, brandConfig };
 export const collections = globalSettings?.collections || [];
 export const allLanguages =
   globalSettings?.languages?.map(transformLanguage) || [];
+
 export const languages = allLanguages.filter(
   (lang) => !statusesToUnrender.includes(lang.status),
 );
@@ -324,9 +326,8 @@ export const brandStyles = [
   brandPalettesStyles || "",
 ].join("\n");
 
-const unoCssConfig = await import(
-  "./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js"
-);
+const unoCssConfig =
+  await import("./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js");
 export const fontPreloadTags = unoCssConfig.fontPreloadTags;
 
 // TODO: Import ctx.css

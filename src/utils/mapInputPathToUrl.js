@@ -21,8 +21,8 @@ function stripPathSegment(path, segmentToStrip, allowedPrefixes = []) {
 
 const languagePrefixesMap = allLanguages
   .map((lang) => {
-    if (typeof lang.customPrefix === "string") {
-      return [lang.defaultPrefixRegex, lang.customPrefix];
+    if (typeof lang.prefix === "string") {
+      return [lang.defaultPrefixRegex, lang.prefix];
     }
   })
   .filter(Boolean);
@@ -48,7 +48,7 @@ export default function mapInputPathToUrl(filePathStem) {
   let unPrefixed = formatted;
   for (const [regex, prefix] of languagePrefixesMap) {
     if (regex.test(unPrefixed)) {
-      unPrefixed = unPrefixed.replace(regex, prefix);
+      unPrefixed = unPrefixed.replace(regex, `/${prefix}/`);
     }
   }
 
@@ -58,5 +58,13 @@ export default function mapInputPathToUrl(filePathStem) {
   url.pathname = url.href;
   url.permalink = url.href + "index";
 
+  console.log({
+    filePathStem,
+    unWrapped,
+    formatted,
+    unPrefixed,
+    url,
+    languagePrefixesMap,
+  });
   return url;
 }
