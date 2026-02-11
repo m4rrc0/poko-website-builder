@@ -17,9 +17,12 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
   } = optionalAttrsObj || unnamedAttrOrObj;
   const urlRef = typeof unnamedAttrOrObj === "string" ? unnamedAttrOrObj : url;
   // Boolean checks
-  const isEmail = isEmailPass || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(urlRef);
+  const isEmail =
+    isEmailPass ||
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(urlRef);
   const isFile = isFilePass || urlRef.startsWith("file:");
-  const isExternal = isExternalPass || urlRef.startsWith("http") || urlRef.startsWith("www.");
+  const isExternal =
+    isExternalPass || urlRef.startsWith("http") || urlRef.startsWith("www.");
   const isInternal = isInternalPass || (!isEmail && !isExternal && !isFile);
 
   // could be one of:
@@ -51,16 +54,18 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
 }
 
 function normalizeAttributes(unnamedAttrOrObj, optionalAttrsObj) {
-  return typeof unnamedAttrOrObj === "string" ? {
-    ...optionalAttrsObj,
-    url: optionalAttrsObj?.url || unnamedAttrOrObj,
-  } : unnamedAttrOrObj;
+  return typeof unnamedAttrOrObj === "string"
+    ? {
+        ...optionalAttrsObj,
+        url: optionalAttrsObj?.url || unnamedAttrOrObj,
+      }
+    : unnamedAttrOrObj;
 }
 
 export function button(unnamedAttrOrObj, optionalAttrsObj) {
   return link.call(this, {
     ...normalizeAttributes(unnamedAttrOrObj, optionalAttrsObj),
-    class: `button ${unnamedAttrOrObj?.class || optionalAttrsObj?.class || ""}`
+    class: `button ${unnamedAttrOrObj?.class || optionalAttrsObj?.class || ""}`,
   });
 }
 

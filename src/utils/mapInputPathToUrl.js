@@ -58,13 +58,5 @@ export default function mapInputPathToUrl(filePathStem) {
   url.pathname = url.href;
   url.permalink = url.href + "index";
 
-  console.log({
-    filePathStem,
-    unWrapped,
-    formatted,
-    unPrefixed,
-    url,
-    languagePrefixesMap,
-  });
   return url;
 }

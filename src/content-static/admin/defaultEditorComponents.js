@@ -5,9 +5,9 @@ import { env } from "./env.js";
 // let iconLists = {};
 // let iconLibs = [];
 
-const currentCollections = env?.collections || []
-const iconLists = env?.iconLists || {}
-const iconLibs = Object.keys(iconLists) || []
+const currentCollections = env?.collections || [];
+const iconLists = env?.iconLists || {};
+const iconLibs = Object.keys(iconLists) || [];
 
 // try {
 //   const envModule = await import("./env.js");
@@ -19,13 +19,9 @@ const iconLibs = Object.keys(iconLists) || []
 //   }
 // }
 
-
-console.log({ iconLists, iconLibs, env })
-
-
 // Helper function to extract property values with balanced brackets/braces
 const extractProperty = (argumentsString, propName) => {
-  const startIndex = argumentsString.indexOf(propName + '=');
+  const startIndex = argumentsString.indexOf(propName + "=");
   if (startIndex === -1) return null;
 
   const valueStart = startIndex + propName.length + 1;
@@ -33,12 +29,12 @@ const extractProperty = (argumentsString, propName) => {
 
   // Determine opening and closing delimiters
   let openChar, closeChar;
-  if (firstChar === '[') {
-    openChar = '[';
-    closeChar = ']';
-  } else if (firstChar === '{') {
-    openChar = '{';
-    closeChar = '}';
+  if (firstChar === "[") {
+    openChar = "[";
+    closeChar = "]";
+  } else if (firstChar === "{") {
+    openChar = "{";
+    closeChar = "}";
   } else {
     return null;
   }
@@ -54,7 +50,7 @@ const extractProperty = (argumentsString, propName) => {
       escape = false;
       continue;
     }
-    if (char === '\\') {
+    if (char === "\\") {
       escape = true;
       continue;
     }
@@ -77,7 +73,7 @@ const extractProperty = (argumentsString, propName) => {
 
 // Helper function to extract quoted string values
 const extractQuotedString = (argumentsString, propName) => {
-  const startIndex = argumentsString.indexOf(propName + '=');
+  const startIndex = argumentsString.indexOf(propName + "=");
   if (startIndex === -1) return null;
 
   const valueStart = startIndex + propName.length + 1;
@@ -96,7 +92,7 @@ const extractQuotedString = (argumentsString, propName) => {
       escape = false;
       continue;
     }
-    if (char === '\\') {
+    if (char === "\\") {
       escape = true;
       continue;
     }
@@ -109,38 +105,40 @@ const extractQuotedString = (argumentsString, propName) => {
 };
 
 const parsePartialSyntax = (match) => {
-    // Parse the arguments from the captured string
-    const partialSlug = match[1];
-    // argumentString is in the form of `, {some: "value"}, "njk,md"`
-    const argumentsString = match[2];
-    const trimmedArgsString = argumentsString.replace(/^\s*,\s*/, "");
+  // Parse the arguments from the captured string
+  const partialSlug = match[1];
+  // argumentString is in the form of `, {some: "value"}, "njk,md"`
+  const argumentsString = match[2];
+  const trimmedArgsString = argumentsString.replace(/^\s*,\s*/, "");
 
-    let data = undefined;
-    let templateEngineOverride = undefined;
+  let data = undefined;
+  let templateEngineOverride = undefined;
 
-    // Match object followed by optional string
-    // Object: starts with { and ends with } (handles nested structures)
-    // String: quoted string after the object
-    const objectMatch = trimmedArgsString.match(/^(\{[\s\S]*?\})(?:\s*,\s*["']([^"']+)["'])?$/);
+  // Match object followed by optional string
+  // Object: starts with { and ends with } (handles nested structures)
+  // String: quoted string after the object
+  const objectMatch = trimmedArgsString.match(
+    /^(\{[\s\S]*?\})(?:\s*,\s*["']([^"']+)["'])?$/,
+  );
 
-    if (objectMatch) {
-        try {
-          // Use Function constructor to safely evaluate JS object literal (not just JSON)
-          data = new Function("return " + objectMatch[1])();
-        } catch (e) {
-          console.log("Error parsing data object:", e);
-        }
-        if (objectMatch[2]) {
-          templateEngineOverride = objectMatch[2];
-        }
+  if (objectMatch) {
+    try {
+      // Use Function constructor to safely evaluate JS object literal (not just JSON)
+      data = new Function("return " + objectMatch[1])();
+    } catch (e) {
+      console.log("Error parsing data object:", e);
     }
+    if (objectMatch[2]) {
+      templateEngineOverride = objectMatch[2];
+    }
+  }
 
-    return {
-      partialSlug,
-      data,
-      templateEngineOverride,
-    };
-}
+  return {
+    partialSlug,
+    data,
+    templateEngineOverride,
+  };
+};
 
 const stringifyPartial = (data, ext = ".md", scName = "partial") => {
   const parts = [`"${data.partialSlug}${ext}"`];
@@ -149,17 +147,17 @@ const stringifyPartial = (data, ext = ".md", scName = "partial") => {
   const hasOverride = data.templateEngineOverride;
 
   if (hasData) {
-      parts.push(JSON.stringify(data.data));
+    parts.push(JSON.stringify(data.data));
   } else if (hasOverride) {
-      parts.push("{}");
+    parts.push("{}");
   }
 
   if (hasOverride) {
-      parts.push(`"${data.templateEngineOverride}"`);
+    parts.push(`"${data.templateEngineOverride}"`);
   }
 
   return `{% ${scName} ${parts.join(", ")} %}`;
-}
+};
 
 const imageFields = [
   {
@@ -262,13 +260,13 @@ export const imageShortcode = {
           name: "class",
           label: "Class",
           widget: "string",
-          required: false
+          required: false,
         },
         {
           name: "id",
           label: "Id",
           widget: "string",
-          required: false
+          required: false,
         },
         {
           name: "title",
@@ -300,7 +298,7 @@ export const imageShortcode = {
           widget: "string",
           required: false,
         },
-      ]
+      ],
     },
   ],
   pattern: /^{% image\s+(.*?)\s*%}$/ms,
@@ -310,16 +308,22 @@ export const imageShortcode = {
     // Currently in this form:
     // {% image src="path/to/image.jpg", alt="Description", width="800" %}
 
-    const src = extractQuotedString(argumentsString, 'src') || "";
-    const alt = extractQuotedString(argumentsString, 'alt') || "";
-    const aspectRatio = extractQuotedString(argumentsString, 'aspectRatio') || "";
-    const width = extractQuotedString(argumentsString, 'width') || "";
-    const className = extractQuotedString(argumentsString, 'class') || "";
-    const id = extractQuotedString(argumentsString, 'id') || "";
-    const title = extractQuotedString(argumentsString, 'title') || "";
-    const loading = extractQuotedString(argumentsString, 'loading') || "";
-    const wrapper = extractQuotedString(argumentsString, 'wrapper') || "";
-    const imgAttrs = argumentsString.replace(/(src|alt|aspectRatio|width|class|id|title|loading|wrapper)="[^"]*"(?:\s*,)?/g, '').trim();
+    const src = extractQuotedString(argumentsString, "src") || "";
+    const alt = extractQuotedString(argumentsString, "alt") || "";
+    const aspectRatio =
+      extractQuotedString(argumentsString, "aspectRatio") || "";
+    const width = extractQuotedString(argumentsString, "width") || "";
+    const className = extractQuotedString(argumentsString, "class") || "";
+    const id = extractQuotedString(argumentsString, "id") || "";
+    const title = extractQuotedString(argumentsString, "title") || "";
+    const loading = extractQuotedString(argumentsString, "loading") || "";
+    const wrapper = extractQuotedString(argumentsString, "wrapper") || "";
+    const imgAttrs = argumentsString
+      .replace(
+        /(src|alt|aspectRatio|width|class|id|title|loading|wrapper)="[^"]*"(?:\s*,)?/g,
+        "",
+      )
+      .trim();
 
     return {
       src,
@@ -333,17 +337,11 @@ export const imageShortcode = {
         ...(loading && { loading }),
         ...(wrapper && { wrapper }),
         ...(imgAttrs && { imgAttrs }),
-      }
+      },
     };
   },
   toBlock: function (data) {
-    const {
-      src,
-      alt,
-      aspectRatio,
-      width,
-      advanced
-    } = data;
+    const { src, alt, aspectRatio, width, advanced } = data;
     const {
       class: className,
       id,
@@ -364,15 +362,17 @@ export const imageShortcode = {
       ...(loading && { loading }),
       ...(wrapper && { wrapper }),
       // ...(imgAttrs && { imgAttrs }),
-    }
-    const attrsStr = Object.entries(attrs).map(([key, value]) => `${key}="${value}"`).join(", ");
+    };
+    const attrsStr = Object.entries(attrs)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(", ");
 
     return `{% image ${attrsStr}${imgAttrs ? ", " + imgAttrs : ""} %}`;
   },
   toPreview: function () {
     return `<img src="{{src}}" alt="{{alt}}" width="300" />`;
   },
-}
+};
 
 export const partial = {
   id: "partial",
@@ -431,7 +431,7 @@ export const partial = {
   toPreview: function (data) {
     return `TEST`;
   },
-}
+};
 
 export const htmlPartial = {
   id: "htmlPartial",
@@ -489,7 +489,7 @@ export const htmlPartial = {
   toPreview: function (data) {
     return `TEST`;
   },
-}
+};
 
 export const wrapper = {
   id: "wrapper",
@@ -555,16 +555,14 @@ export const wrapper = {
     // But we need to avoid splitting spaces in between quotes (like in `class`)
     const tagAttrs = wrapperAttrs;
 
-    return `{% wrapper tag="${wrapperTag}"${
-      tagAttrs ? `, ${tagAttrs}` : ""
-    } %}
+    return `{% wrapper tag="${wrapperTag}"${tagAttrs ? `, ${tagAttrs}` : ""} %}
 ${content}
 {% endwrapper %}`;
   },
   toPreview: function (data) {
     return `TEST`;
   },
-}
+};
 
 export const section = {
   id: "section",
@@ -777,7 +775,7 @@ export const section = {
           label: "Custom Variables",
           widget: "keyvalue",
           required: false,
-        }
+        },
       ],
     },
   ],
@@ -789,9 +787,9 @@ export const section = {
     // {% section type="grid", vars={}, blocks=[], advanced={ sectionSlug="", vars={}} %}
 
     const typeMatch = argumentsString.match(/type="(.*?)"/);
-    const varsString = extractProperty(argumentsString, 'vars') || "{}";
-    const blocksString = extractProperty(argumentsString, 'blocks') || "[]";
-    const advancedString = extractProperty(argumentsString, 'advanced') || "{}";
+    const varsString = extractProperty(argumentsString, "vars") || "{}";
+    const blocksString = extractProperty(argumentsString, "blocks") || "[]";
+    const advancedString = extractProperty(argumentsString, "advanced") || "{}";
 
     const type = typeMatch?.[1] || "";
 
@@ -805,7 +803,7 @@ export const section = {
         ...vars,
       },
       blocks,
-      advanced
+      advanced,
     };
   },
   toBlock: function (data) {
@@ -821,7 +819,7 @@ export const section = {
   toPreview: function (data) {
     return `TEST`;
   },
-}
+};
 
 export const links = {
   id: "links",
@@ -856,7 +854,7 @@ export const links = {
               label: "Text",
               widget: "string",
               required: false,
-              hint: "Display Text. Optional: Shows the URL if not defined"
+              hint: "Display Text. Optional: Shows the URL if not defined",
             },
             {
               name: "target",
@@ -905,8 +903,8 @@ export const links = {
                 { value: "pages", label: "Pages" },
                 ...(currentCollections || []).map((collection) => ({
                   value: collection,
-                  label: collection
-                }))
+                  label: collection,
+                })),
               ],
             },
           ],
@@ -1046,7 +1044,8 @@ export const links = {
               name: "value",
               widget: "markdown",
               required: false,
-              default: "<ul>{% for link in links %}<li>{{link.html | safe}}</li>{% endfor %}<ul>",
+              default:
+                "<ul>{% for link in links %}<li>{{link.html | safe}}</li>{% endfor %}<ul>",
             },
           ],
         },
@@ -1077,14 +1076,17 @@ export const links = {
     // Currently in this form:
     // {% links linksData=[{"type":"pages","slugs":["test","index"]}] %}
 
-    const linksDataString = extractProperty(argumentsString, 'linksData') || "[]";
-    const itemLayoutString = extractProperty(argumentsString, 'itemLayout') || "{}";
-    const wrapperLayoutString = extractProperty(argumentsString, 'wrapperLayout') || "{}";
+    const linksDataString =
+      extractProperty(argumentsString, "linksData") || "[]";
+    const itemLayoutString =
+      extractProperty(argumentsString, "itemLayout") || "{}";
+    const wrapperLayoutString =
+      extractProperty(argumentsString, "wrapperLayout") || "{}";
     const linksData = JSON.parse(linksDataString) || [];
     const itemLayout = JSON.parse(itemLayoutString) || {};
     const wrapperLayout = JSON.parse(wrapperLayoutString) || {};
 
-    console.log("From Block", { wrapperLayout })
+    console.log("From Block", { wrapperLayout });
 
     return {
       linksData,
@@ -1094,7 +1096,7 @@ export const links = {
   },
   toBlock: function (data) {
     const { linksData, itemLayout, wrapperLayout } = data;
-    console.log("To Block", { wrapperLayout })
+    console.log("To Block", { wrapperLayout });
     const linksDataString = JSON.stringify(linksData);
     const itemLayoutString = JSON.stringify(itemLayout);
     const wrapperLayoutString = JSON.stringify(wrapperLayout);
@@ -1103,18 +1105,19 @@ export const links = {
       `{% links linksData=${linksDataString}`,
       itemLayoutString ? `, itemLayout=${itemLayoutString}` : "",
       wrapperLayoutString ? `, wrapperLayout=${wrapperLayoutString}` : "",
-      ` %}`
+      ` %}`,
     ].join("");
   },
   toPreview: function (data) {
     return `TEST`;
   },
-}
+};
 
 export const icon = {
   id: "icon",
   label: "Icon",
   icon: "triangle_circle",
+  dialog: true,
   fields: [
     {
       name: "icon",
@@ -1122,7 +1125,8 @@ export const icon = {
       widget: "object",
       required: true,
       collapsed: true,
-      summary: "{{iconLib.type}} : {{iconLib.iconName}}  {{size}} {{class}} {{otherAttrs}}",
+      summary:
+        "{{iconLib.type}} : {{iconLib.iconName}}  {{size}} {{class}} {{otherAttrs}}",
       hint: "Choose between [Simple Icons](https://simpleicons.org/) or [Tabler Icons](https://tabler.io/icons)",
       fields: [
         {
@@ -1135,7 +1139,7 @@ export const icon = {
           //   "'{{name}}' ({{type}}): {{weights}} {{styles}} {{subsets}}",
           hint: "Choose between ",
           types: [
-            ...iconLibs.map(libName => ({
+            ...iconLibs.map((libName) => ({
               name: libName,
               label: libName,
               widget: "object",
@@ -1148,23 +1152,34 @@ export const icon = {
                   widget: "select",
                   required: true,
                   options: iconLists[libName],
-                  ...(libName === "simple" && { hint: "Select an icon from https://simpleicons.org/" }),
-                  ...((libName === "tablerOutline" || libName === "tablerFilled") && { hint: "Select an icon from https://tabler.io/icons" }),
+                  ...(libName === "simple" && {
+                    hint: "Select an icon from https://simpleicons.org/",
+                  }),
+                  ...((libName === "tablerOutline" ||
+                    libName === "tablerFilled") && {
+                    hint: "Select an icon from https://tabler.io/icons",
+                  }),
                 },
               ],
-            }))
+            })),
           ],
         },
         { name: "size", label: "Size", widget: "string", required: false },
         { name: "class", label: "Class", widget: "string", required: false },
-        { name: "otherAttrs", label: "Other raw attributes", widget: "string", required: false },
-    ]},
+        {
+          name: "otherAttrs",
+          label: "Other raw attributes",
+          widget: "string",
+          required: false,
+        },
+      ],
+    },
   ],
   // Match example: {% icon "tablerOutline:layout-bottombar", width="50", height="50", class="", ...other attrs %}
   pattern: /{% icon\s+"([^"]+)"(.*?)\s*%}/,
   fromBlock: function (match) {
     const iconId = match[1] || "";
-    let [iconLib = "", iconName = ""] = iconId.split(':');
+    let [iconLib = "", iconName = ""] = iconId.split(":");
     if (!iconName) {
       iconName = iconLib;
       for (const libName of iconLibs) {
@@ -1177,13 +1192,13 @@ export const icon = {
     const argumentsString = match[2] || "";
 
     // Extract named values from the remaining string
-    const size = extractQuotedString(argumentsString, 'width') || "";
-    const className = extractQuotedString(argumentsString, 'class') || "";
+    const size = extractQuotedString(argumentsString, "width") || "";
+    const className = extractQuotedString(argumentsString, "class") || "";
 
     // Clean up otherAttrs by removing a leading comma and the attributes we've already parsed
     const otherAttrs = argumentsString
       .replace(/^\s*,\s*/, "")
-      .replace(/(width|height|class)="[^"]*"(?:\s*,)?/g, '')
+      .replace(/(width|height|class)="[^"]*"(?:\s*,)?/g, "")
       .trim();
 
     return {
@@ -1193,7 +1208,7 @@ export const icon = {
         size,
         class: className,
         otherAttrs,
-      }
+      },
     };
   },
   toBlock: function (data) {
@@ -1219,7 +1234,7 @@ export const icon = {
   },
 
   toPreview: (data) => `<span>ICON</span>`,
-}
+};
 
 // Example for project specific component def
 //

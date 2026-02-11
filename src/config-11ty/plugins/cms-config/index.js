@@ -24,7 +24,7 @@ const locales = allLanguages
   .filter((lang) => /^published|draft/.test(lang.status))
   .map((lang) => lang.code);
 
-const keyField = {
+export const keyField = {
   name: "key",
   label: "Key",
   widget: "string",
@@ -32,7 +32,7 @@ const keyField = {
   hint: "Unique identifier for the data item",
   i18n: "duplicate",
 };
-const tagsListField = {
+export const tagsListField = {
   name: "tagsList",
   label: "Tags List (tagsList)",
   widget: "list",
@@ -58,14 +58,14 @@ const tagsListField = {
     },
   ],
 };
-const varsField = {
+export const varsField = {
   name: "vars",
   label: "Variables (vars)",
   widget: "keyvalue",
   i18n: true,
   required: false,
 };
-const imageFields = [
+export const imageFields = [
   {
     name: "src",
     label: "Image",
@@ -127,7 +127,7 @@ const imageFields = [
     i18n: "duplicate",
   },
 ];
-const dataListField = {
+export const dataListField = {
   name: "dataList",
   label: "Data List (dataList)",
   hint: "Custom data items freely usable across the website",
@@ -178,7 +178,7 @@ const dataListField = {
     },
   ],
 };
-const statusField = {
+export const statusField = {
   name: "status",
   label: "Status",
   widget: "select",
@@ -195,7 +195,7 @@ const statusField = {
   required: false,
   i18n: true,
 };
-const generatePageField = {
+export const generatePageField = {
   name: "generatePage",
   label: "Generate Page",
   widget: "select",
@@ -209,7 +209,7 @@ const generatePageField = {
   required: false,
   i18n: "duplicate",
 };
-const pageLayoutRelationField = {
+export const pageLayoutRelationField = {
   name: "pageLayout",
   label: "Page Layout",
   widget: "relation",
@@ -234,7 +234,7 @@ const pageLayoutRelationField = {
 //     ...defaultEditorComponentNames,
 //   ],
 // };
-const eleventyNavigationField = {
+export const eleventyNavigationField = {
   name: "eleventyNavigation",
   label: "Main Navigation",
   widget: "object",
@@ -272,7 +272,7 @@ const eleventyNavigationField = {
     },
   ],
 };
-const simpleMetadataField = {
+export const simpleMetadataField = {
   name: "metadata",
   label: "Metadata",
   widget: "object",
@@ -306,7 +306,7 @@ const simpleMetadataField = {
     },
   ],
 };
-const pagePreviewField = {
+export const pagePreviewField = {
   name: "preview",
   label: "Preview",
   widget: "object",
@@ -344,7 +344,7 @@ const pagePreviewField = {
     },
   ],
 };
-const tagsField = {
+export const tagsField = {
   name: "tags",
   label: "Tags",
   widget: "relation",
@@ -360,14 +360,14 @@ const tagsField = {
   required: false,
   i18n: "duplicate",
 };
-const brandColorField = {
+export const brandColorField = {
   widget: "relation",
   collection: "stylesConfig",
   file: "brand",
   value_field: "colors.*.name",
   required: false,
 };
-const nativeFontStackSelectField = {
+export const nativeFontStackSelectField = {
   widget: "select",
   required: false,
   options: Object.keys(nativeFontStacks).map((key) => ({
@@ -375,7 +375,7 @@ const nativeFontStackSelectField = {
     value: key,
   })),
 };
-const fontStackDefinitionField = (nativeDefault = "system-ui") => ({
+export const fontStackDefinitionField = (nativeDefault = "system-ui") => ({
   widget: "object",
   required: true,
   fields: [
@@ -399,7 +399,7 @@ const fontStackDefinitionField = (nativeDefault = "system-ui") => ({
     },
   ],
 });
-const styleContextRelationField = (valField) => ({
+export const styleContextRelationField = (valField) => ({
   widget: "relation",
   required: true,
   collection: "stylesConfig",
@@ -407,7 +407,7 @@ const styleContextRelationField = (valField) => ({
   value_field: `${valField}.*.name`,
 });
 
-const commonCollectionFields = [
+export const commonCollectionFields = [
   {
     name: "lang",
     label: "Language",
@@ -438,7 +438,7 @@ const commonCollectionFields = [
   },
 ];
 
-const mostCommonMarkdownCollectionConfig = {
+export const mostCommonMarkdownCollectionConfig = {
   i18n: true,
   folder: `${CONTENT_DIR}`,
   extension: "md",
@@ -458,6 +458,587 @@ const mostCommonMarkdownCollectionConfig = {
   },
 };
 
+export const stylesheetsCollection = {
+  name: "stylesheets",
+  label: "Stylesheets",
+  label_singular: "Stylesheet",
+  path: "{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "css",
+  folder: `${CONTENT_DIR}/_styles`,
+  extension: "css",
+  format: undefined,
+  create: true,
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  sortable_fields: {
+    fields: ["slug"],
+    default: {
+      field: "slug",
+      direction: "ascending",
+    },
+  },
+  fields: [
+    {
+      name: "body",
+      label: "Content",
+      widget: "code",
+      required: false,
+      output_code_only: true,
+      default_language: "css",
+      allow_language_selection: false,
+    },
+  ],
+};
+
+export const dataFilesCollection = {
+  // ...mostCommonMarkdownCollectionConfig,
+  // i18n: false,
+  icon: "table_edit",
+  name: "dataFiles",
+  label: "Data Files",
+  editor: { preview: false },
+  i18n: true,
+  files: [
+    {
+      name: "translatedData",
+      label: "Translated Data",
+      icon: "translate",
+      file: `${CONTENT_DIR}/{{locale}}/{{locale}}.yaml`,
+      // format: "yaml",
+      i18n: true,
+      fields: [tagsListField, varsField, dataListField],
+    },
+  ],
+};
+
+export const advancedDataFilesCollection = {
+  // ...mostCommonMarkdownCollectionConfig,
+  // i18n: false,
+  icon: "hardware",
+  name: "advancedDataFiles",
+  label: "Advanced Data Files",
+  editor: { preview: false },
+  i18n: true,
+  files: [
+    {
+      name: "metadata",
+      label: "Default Metadata",
+      icon: "page_info",
+      file: `${CONTENT_DIR}/_data/metadata.yaml`,
+      // format: "yaml",
+      fields: [
+        {
+          name: "image",
+          label: "Image",
+          widget: "image",
+        },
+      ],
+    },
+    {
+      name: "redirects",
+      label: "Global Redirects",
+      icon: "call_split",
+      file: `${CONTENT_DIR}/_files/_redirects`,
+      // format: "yaml",
+      fields: [
+        {
+          name: "body",
+          label: "Redirects",
+          widget: "code",
+          required: false,
+          output_code_only: true,
+          allow_language_selection: false,
+        },
+      ],
+    },
+    {
+      name: "headers",
+      label: "Headers",
+      icon: "contract",
+      file: `${CONTENT_DIR}/_files/_headers`,
+      // format: "yaml",
+      fields: [
+        {
+          name: "body",
+          label: "Headers",
+          widget: "code",
+          required: false,
+          output_code_only: true,
+          allow_language_selection: false,
+        },
+      ],
+    },
+    {
+      name: "dataFiles",
+      label: "Data Files",
+      icon: "code",
+      file: `${CONTENT_DIR}/_data/none.yaml`,
+      media_folder: `/${CONTENT_DIR}/_data`,
+      public_folder: "/_data",
+      fields: [
+        {
+          label: "Notice",
+          name: "notice",
+          widget: "boolean",
+          default: false,
+          readonly: true,
+          before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_data) to manage and edit advanced data files.`,
+        },
+      ],
+    },
+    {
+      name: "publicFiles",
+      label: "Public Files",
+      icon: "attach_file",
+      file: `${CONTENT_DIR}/_files/none.yaml`,
+      media_folder: `/${CONTENT_DIR}/_files`,
+      public_folder: "/assets/files",
+      fields: [
+        {
+          label: "Notice",
+          name: "notice",
+          widget: "boolean",
+          default: false,
+          readonly: true,
+          before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_files) to manage public files.`,
+        },
+      ],
+    },
+  ],
+};
+
+export const pageLayoutsCollection = {
+  name: "layouts",
+  label: "Page Layouts",
+  label_singular: "Page Layout",
+  path: "{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "edit_document",
+  folder: `${CONTENT_DIR}/_layouts`,
+  format: undefined,
+  extension: "njk",
+  create: true,
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  sortable_fields: {
+    fields: ["slug"],
+    default: {
+      field: "slug",
+      direction: "ascending",
+    },
+  },
+  fields: [
+    {
+      name: "body",
+      label: "Layout Markup",
+      hint: "Page layout markup as Nunjucks flavored HTML",
+      widget: "code",
+      language: "html",
+      required: false,
+      output_code_only: true,
+      allow_language_selection: false,
+      default: `<!DOCTYPE html>
+<html lang="{{lang or 'en'}}" class="no-js">
+<head>
+{% partial "_html-head-default.md" %}
+{% getBundle "html", "head" %}
+</head>
+<body>
+<!-- Navigation -->
+{% partial "_main-nav.md", {}, "njk" %}
+
+<!-- Content -->
+{% partial "_main-content.md" %}
+
+<!-- Footer -->
+{% partial '_footer.md' %}
+</body>
+</html>
+`,
+    },
+  ],
+};
+export const sectionLayoutsCollection = {
+  name: "sectionLayouts",
+  label: "Section Layouts",
+  label_singular: "Section Layout",
+  path: "{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "slide_library",
+  folder: `${CONTENT_DIR}/_partials`,
+  format: undefined,
+  extension: "njk",
+  create: true,
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  sortable_fields: {
+    fields: ["slug"],
+    default: {
+      field: "slug",
+      direction: "ascending",
+    },
+  },
+  fields: [
+    {
+      name: "body",
+      label: "Layout Markup",
+      hint: "Section layout markup as Nunjucks flavored HTML",
+      widget: "code",
+      language: "html",
+      required: false,
+      output_code_only: true,
+      allow_language_selection: false,
+      default: `<div
+class="switcher {{ class }}"
+style="--width-wrap: {{widthWrap or 'var(--width-prose)'}}; --gap-switcher: {{gap or '1em'}}"
+>
+{% for block in blocks %} {% if block.type == "markdown" %}
+<div class="block-markdown {{ block.class }}">
+{{ block.value | renderContent("njk,md", { languages: languages, collections: collections }) | safe }}
+</div>
+{% endif %} {% if block.type == "image" %}
+<img {{ block | htmlImgAttrs({ type: null, class: 'block-image ' + (block.class or '') }) }} />
+{% endif %} {% endfor %}
+</div>`,
+    },
+  ],
+};
+export const partialsCollection = {
+  identifier_field: "{{slug}}",
+  name: "partials",
+  label: "Partials",
+  label_singular: "Partial",
+  path: "{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "brick",
+  folder: `${CONTENT_DIR}/_partials`,
+  extension: "md",
+  format: "yaml-frontmatter",
+  create: true,
+  summary: "{{slug}}",
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  sortable_fields: {
+    fields: ["slug"],
+    default: {
+      field: "slug",
+      direction: "ascending",
+    },
+  },
+  fields: [
+    {
+      name: "body",
+      label: "Content",
+      widget: "markdown",
+      required: false,
+
+      // widget: "code",
+      // required: false,
+      // output_code_only: true,
+      // allow_language_selection: false,
+    },
+  ],
+};
+export const htmlPartialsCollection = {
+  ...partialsCollection,
+  name: "htmlPartials",
+  label: "Partials (HTML)",
+  label_singular: "Partial (HTML)",
+  icon: "code_blocks",
+  format: undefined,
+  extension: "njk",
+  fields: [
+    {
+      name: "body",
+      label: "Content",
+      required: false,
+      widget: "code",
+      output_code_only: true,
+      allow_language_selection: false,
+      language: "html",
+    },
+  ],
+};
+// const sectionFields = [
+//   ...commonCollectionFields,
+//   {
+//     name: "name",
+//     label: "Name",
+//     widget: "string",
+//     required: true,
+//     i18n: "duplicate",
+//   },
+//   {
+//     name: "blocks",
+//     label: "Blocks",
+//     widget: "list",
+//     required: false,
+//     i18n: true,
+//     types: [
+//       {
+//         name: "images",
+//         label: "Images",
+//         widget: "object",
+//         required: false,
+//         fields: [
+//           {
+//             name: "images",
+//             label: "Images",
+//             widget: "image",
+//             required: false,
+//             allow_multiple: true,
+//           },
+//         ],
+//       },
+//       {
+//         name: "markdown",
+//         label: "Markdown",
+//         widget: "object",
+//         required: false,
+//         fields: [
+//           {
+//             name: "value",
+//             label: "Value",
+//             widget: "markdown",
+//             required: false,
+//           },
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     name: "styles",
+//     label: "Styles",
+//     widget: "code",
+//     required: false,
+//     output_code_only: true,
+//     allow_language_selection: false,
+//     language: "css",
+//   },
+// ];
+// const sectionsCollection = {
+//   name: "sections",
+//   label: "Sections",
+//   label_singular: "Section",
+//   icon: "add_column_right",
+//   slug: "{{name}}", // This allows the slug to be localized
+//   folder: `${CONTENT_DIR}`,
+//   path: "sections/{{slug}}",
+//   i18n: { structure: "single_file" },
+//   extension: "yaml",
+//   create: true,
+//   identifier_field: "name",
+//   summary: "{{name}}",
+//   sortable_fields: {
+//     fields: ["name"],
+//     default: {
+//       field: "name",
+//       direction: "ascending",
+//     },
+//   },
+//   // MEDIAS
+//   media_folder: `/${CONTENT_DIR}/_images`,
+//   public_folder: "/_images",
+//   fields: sectionFields,
+// };
+
+let defaultEditorComponentNames = [];
+let userEditorComponentNames = [];
+
+try {
+  const path = "./src/content-static/admin/defaultEditorComponents.js";
+  const code = await Bun.file(path).text();
+  // Regex to find 'export const name', 'export function name', etc.
+  defaultEditorComponentNames = [
+    ...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/gm),
+  ].map((match) => match[1]);
+} catch (error) {
+  console.error("Failed to retrieve default Editor Components\n", error);
+}
+try {
+  const path = `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`;
+  const code = await Bun.file(path).text();
+  // Regex to find 'export const name', 'export function name', etc.
+  userEditorComponentNames = [
+    ...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/gm),
+  ].map((match) => match[1]);
+} catch (error) {
+  console.warn(
+    `INFO: No user's Editor Components found at "${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js"`,
+  );
+}
+
+export const bodyMarkdownField = {
+  name: "body",
+  label: "Content",
+  widget: "markdown",
+  required: false,
+  i18n: true,
+  editor_components: [
+    // "eleventyImage", // Removed
+    // "imageShortcode",
+    // "partial",
+    // "htmlPartial",
+    // "wrapper",
+    // "section",
+    // "links",
+    ...defaultEditorComponentNames,
+    ...userEditorComponentNames,
+  ],
+};
+export const commonPageFields = [
+  {
+    name: "name",
+    label: "Name",
+    widget: "string",
+    required: true,
+    i18n: true,
+    // PERSON had ...
+    // i18n: "duplicate",
+  },
+  // {
+  //   name: "currentSlug",
+  //   label: "Current slug",
+  //   widget: "compute",
+  //   value: "{{fields.name}}",
+  //   i18n: true,
+  // },
+  // { name: "path", label: "Page URL path", widget: "string", required: true, pattern: ['^(?![\s\/\-]*$)(?!\/)[a-z0-9\/\-]*[a-z0-9\-]$', "URL must contain only letters, numbers, dashes, and forward slashes (not starting or ending with a slash or dash), and at least one letter or number"], hint: "URL-friendly slug or path (may contain '/' and '-'). NOTE: The homepage must be called 'index'"},
+  bodyMarkdownField,
+  eleventyNavigationField,
+  simpleMetadataField,
+  pagePreviewField,
+  tagsField,
+  statusField,
+  pageLayoutRelationField,
+  generatePageField,
+  varsField,
+  dataListField,
+];
+
+export const pageFields = [...commonCollectionFields, ...commonPageFields];
+export const pages = {
+  ...mostCommonMarkdownCollectionConfig,
+  name: "pages",
+  label: "Pages",
+  label_singular: "Page",
+  icon: "description",
+  thumbnail: ["pagePreview.image.src", "metadata.image.src"],
+  // TODO: check if it works
+  slug: "{{name | localize}}", // This allows the slug to be localized
+  // slug: "{{fields._slug | localize}}",
+
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  fields: pageFields,
+};
+export const pagesCollection = {
+  ...pages,
+  path: "pages/{{slug}}",
+  summary:
+    "{{name}} {{eleventyNavigation.order | ternary(' (nav ', '')}}{{eleventyNavigation.order}}{{eleventyNavigation.order | ternary(')', '')}}",
+  sortable_fields: {
+    fields: [
+      "eleventyNavigation.parent",
+      "name",
+      // "eleventyNavigation.add",
+      "eleventyNavigation.order",
+    ],
+    default: {
+      field: "eleventyNavigation.order",
+      direction: "ascending",
+    },
+  },
+  // view_filters: [
+  //   {
+  //     label: "Navigation",
+  //     field: "eleventyNavigation.add",
+  //     pattern: true,
+  //   },
+  // ],
+  index_file: {
+    name: "_index",
+    label: "Page Data",
+    // path: "pages.yaml",
+    path: "_index",
+    extension: "md",
+    // file: `${CONTENT_DIR}/_data/brand.yaml`,
+    // format: "yaml",
+    icon: "home",
+    editor: { preview: false },
+    i18n: false,
+    fields: [
+      {
+        name: "layout",
+        label: "Layout",
+        widget: "string",
+        default: "base",
+        required: false,
+      },
+    ],
+  },
+};
+export function spreadPageSetup(collectionNameRaw) {
+  // Make sure the collection name is camelCase (not space separated or hyphenized or snake_case or kebab-case)
+  const collectionName = collectionNameRaw
+    .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : "")) // Handle separators
+    .replace(/^[A-Z]/, (c) => c.toLowerCase()); // Ensure first char is lowercase
+
+  // replace camelCase to space-separated capitalized words
+  const label = collectionName
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase());
+  const label_singular = label.endsWith("s") ? label.slice(0, -1) : label;
+  return {
+    ...pages,
+    name: collectionName,
+    label,
+    label_singular,
+    path: `${collectionName}/{{slug}}`,
+  };
+}
+// ARTICLES
+export const articleFields = [...commonCollectionFields, ...commonPageFields];
+export const articles = {
+  ...spreadPageSetup("articles"),
+  icon: "ink_pen",
+  fields: articleFields,
+};
+export const articlesCollection = { ...articles };
+// PEOPLE
+export const personFields = [...commonCollectionFields, ...commonPageFields];
+export const people = {
+  ...spreadPageSetup("people"),
+  label_singular: "Person",
+  icon: "person",
+  fields: personFields,
+};
+export const peopleCollection = { ...people };
+// EVENTS
+export const eventFields = [...commonCollectionFields, ...commonPageFields];
+export const events = {
+  ...spreadPageSetup("events"),
+  icon: "event",
+  fields: eventFields,
+};
+export const eventsCollection = { ...events };
+
+const optionalCollections = {
+  articles: articlesCollection,
+  people: peopleCollection,
+  events: eventsCollection,
+  // projects: projectsCollection,
+};
+const selectedOptionalCollections = (selectedCollections || [])
+  .map((collectionName) => optionalCollections[collectionName])
+  .filter(Boolean);
+
 class CmsConfig {
   data() {
     return {
@@ -471,84 +1052,6 @@ class CmsConfig {
     const fontsourceFonts = (data.fontServices?.fontsource?.fonts || []).map(
       ({ family: value }) => ({ value, label: value }),
     );
-
-    let defaultEditorComponentNames = [];
-    let userEditorComponentNames = [];
-
-    try {
-      const path = "./src/content-static/admin/defaultEditorComponents.js";
-      const code = await Bun.file(path).text();
-      // Regex to find 'export const name', 'export function name', etc.
-      defaultEditorComponentNames = [
-        ...code.matchAll(
-          /^export\s+(?:const|let|var|function|class)\s+(\w+)/gm,
-        ),
-      ].map((match) => match[1]);
-    } catch (error) {
-      console.error("Failed to retrieve default Editor Components\n", error);
-    }
-    try {
-      const path = `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`;
-      const code = await Bun.file(path).text();
-      // Regex to find 'export const name', 'export function name', etc.
-      userEditorComponentNames = [
-        ...code.matchAll(
-          /^export\s+(?:const|let|var|function|class)\s+(\w+)/gm,
-        ),
-      ].map((match) => match[1]);
-    } catch (error) {
-      console.warn(
-        `INFO: No user's Editor Components found at "${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js"`,
-      );
-    }
-
-    const bodyMarkdownField = {
-      name: "body",
-      label: "Content",
-      widget: "markdown",
-      required: false,
-      i18n: true,
-      editor_components: [
-        // "eleventyImage", // Removed
-        // "imageShortcode",
-        // "partial",
-        // "htmlPartial",
-        // "wrapper",
-        // "section",
-        // "links",
-        ...defaultEditorComponentNames,
-        ...userEditorComponentNames,
-      ],
-    };
-    const commonPageFields = [
-      {
-        name: "name",
-        label: "Name",
-        widget: "string",
-        required: true,
-        i18n: true,
-        // PERSON had ...
-        // i18n: "duplicate",
-      },
-      // {
-      //   name: "currentSlug",
-      //   label: "Current slug",
-      //   widget: "compute",
-      //   value: "{{fields.name}}",
-      //   i18n: true,
-      // },
-      // { name: "path", label: "Page URL path", widget: "string", required: true, pattern: ['^(?![\s\/\-]*$)(?!\/)[a-z0-9\/\-]*[a-z0-9\-]$', "URL must contain only letters, numbers, dashes, and forward slashes (not starting or ending with a slash or dash), and at least one letter or number"], hint: "URL-friendly slug or path (may contain '/' and '-'). NOTE: The homepage must be called 'index'"},
-      bodyMarkdownField,
-      eleventyNavigationField,
-      simpleMetadataField,
-      pagePreviewField,
-      tagsField,
-      statusField,
-      pageLayoutRelationField,
-      generatePageField,
-      varsField,
-      dataListField,
-    ];
 
     const globalSettingsSingleton = {
       name: "globalSettings",
@@ -696,7 +1199,7 @@ class CmsConfig {
           required: false,
           // TODO: populate this from existing collection definitions
           // TODO: more customization on collections
-          options: ["articles", "people"],
+          options: Object.keys(optionalCollections),
         },
       ],
     };
@@ -720,23 +1223,30 @@ class CmsConfig {
           fields: [
             {
               name: "ctxCssImport",
-              label: "Auto ctx.css Import",
-              widget: "object",
+              label: "Apply default styles",
+              widget: "boolean",
               required: false,
-              collapsed: true,
-              default: {
-                filename: "ctx.css",
-              },
-              fields: [
-                {
-                  name: "filename",
-                  label: "Output Filename",
-                  widget: "string",
-                  required: true,
-                  default: "ctx.css",
-                },
-              ],
+              default: true,
             },
+            // {
+            //   name: "ctxCssImport",
+            //   label: "Auto ctx.css Import",
+            //   widget: "object",
+            //   required: false,
+            //   collapsed: true,
+            //   default: {
+            //     filename: "ctx.css",
+            //   },
+            //   fields: [
+            //     {
+            //       name: "filename",
+            //       label: "Output Filename",
+            //       widget: "string",
+            //       required: true,
+            //       default: "ctx.css",
+            //     },
+            //   ],
+            // },
             {
               name: "inlineAllStyles",
               label: "Inline All Styles",
@@ -1151,475 +1661,6 @@ class CmsConfig {
         },
       ],
     };
-    const stylesheetsCollection = {
-      name: "stylesheets",
-      label: "Stylesheets",
-      label_singular: "Stylesheet",
-      path: "{{slug}}",
-      slug: "{{fields._slug}}",
-      icon: "css",
-      folder: `${CONTENT_DIR}/_styles`,
-      extension: "css",
-      format: undefined,
-      create: true,
-      // MEDIAS
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      sortable_fields: {
-        fields: ["slug"],
-        default: {
-          field: "slug",
-          direction: "ascending",
-        },
-      },
-      fields: [
-        {
-          name: "body",
-          label: "Content",
-          widget: "code",
-          required: false,
-          output_code_only: true,
-          default_language: "css",
-          allow_language_selection: false,
-        },
-      ],
-    };
-
-    const dataFilesCollection = {
-      // ...mostCommonMarkdownCollectionConfig,
-      // i18n: false,
-      icon: "table_edit",
-      name: "dataFiles",
-      label: "Data Files",
-      editor: { preview: false },
-      i18n: true,
-      files: [
-        {
-          name: "translatedData",
-          label: "Translated Data",
-          icon: "translate",
-          file: `${CONTENT_DIR}/{{locale}}/{{locale}}.yaml`,
-          // format: "yaml",
-          i18n: true,
-          fields: [tagsListField, varsField, dataListField],
-        },
-      ],
-    };
-
-    const advancedDataFilesCollection = {
-      // ...mostCommonMarkdownCollectionConfig,
-      // i18n: false,
-      icon: "hardware",
-      name: "advancedDataFiles",
-      label: "Advanced Data Files",
-      editor: { preview: false },
-      i18n: true,
-      files: [
-        {
-          name: "metadata",
-          label: "Default Metadata",
-          icon: "page_info",
-          file: `${CONTENT_DIR}/_data/metadata.yaml`,
-          // format: "yaml",
-          fields: [
-            {
-              name: "image",
-              label: "Image",
-              widget: "image",
-            },
-          ],
-        },
-        {
-          name: "redirects",
-          label: "Global Redirects",
-          icon: "call_split",
-          file: `${CONTENT_DIR}/_files/_redirects`,
-          // format: "yaml",
-          fields: [
-            {
-              name: "body",
-              label: "Redirects",
-              widget: "code",
-              required: false,
-              output_code_only: true,
-              allow_language_selection: false,
-            },
-          ],
-        },
-        {
-          name: "headers",
-          label: "Headers",
-          icon: "contract",
-          file: `${CONTENT_DIR}/_files/_headers`,
-          // format: "yaml",
-          fields: [
-            {
-              name: "body",
-              label: "Headers",
-              widget: "code",
-              required: false,
-              output_code_only: true,
-              allow_language_selection: false,
-            },
-          ],
-        },
-        {
-          name: "dataFiles",
-          label: "Data Files",
-          icon: "code",
-          file: `${CONTENT_DIR}/_data/none.yaml`,
-          media_folder: `/${CONTENT_DIR}/_data`,
-          public_folder: "/_data",
-          fields: [
-            {
-              label: "Notice",
-              name: "notice",
-              widget: "boolean",
-              default: false,
-              readonly: true,
-              before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_data) to manage and edit advanced data files.`,
-            },
-          ],
-        },
-        {
-          name: "publicFiles",
-          label: "Public Files",
-          icon: "attach_file",
-          file: `${CONTENT_DIR}/_files/none.yaml`,
-          media_folder: `/${CONTENT_DIR}/_files`,
-          public_folder: "/assets/files",
-          fields: [
-            {
-              label: "Notice",
-              name: "notice",
-              widget: "boolean",
-              default: false,
-              readonly: true,
-              before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_files) to manage public files.`,
-            },
-          ],
-        },
-      ],
-    };
-
-    const pageLayoutsCollection = {
-      name: "layouts",
-      label: "Page Layouts",
-      label_singular: "Page Layout",
-      path: "{{slug}}",
-      slug: "{{fields._slug}}",
-      icon: "edit_document",
-      folder: `${CONTENT_DIR}/_layouts`,
-      format: undefined,
-      extension: "njk",
-      create: true,
-      // MEDIAS
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      sortable_fields: {
-        fields: ["slug"],
-        default: {
-          field: "slug",
-          direction: "ascending",
-        },
-      },
-      fields: [
-        {
-          name: "body",
-          label: "Layout Markup",
-          hint: "Page layout markup as Nunjucks flavored HTML",
-          widget: "code",
-          language: "html",
-          required: false,
-          output_code_only: true,
-          allow_language_selection: false,
-          default: `<!DOCTYPE html>
-<html lang="{{lang or 'en'}}" class="no-js">
-  <head>
-    {% partial "_html-head-default.md" %}
-    {% getBundle "html", "head" %}
-  </head>
-  <body>
-    <!-- Navigation -->
-    {% partial "_main-nav.md", {}, "njk" %}
-
-    <!-- Content -->
-    {% partial "_main-content.md" %}
-
-    <!-- Footer -->
-    {% partial '_footer.md' %}
-  </body>
-</html>
-`,
-        },
-      ],
-    };
-    const sectionLayoutsCollection = {
-      name: "sectionLayouts",
-      label: "Section Layouts",
-      label_singular: "Section Layout",
-      path: "{{slug}}",
-      slug: "{{fields._slug}}",
-      icon: "slide_library",
-      folder: `${CONTENT_DIR}/_partials`,
-      format: undefined,
-      extension: "njk",
-      create: true,
-      // MEDIAS
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      sortable_fields: {
-        fields: ["slug"],
-        default: {
-          field: "slug",
-          direction: "ascending",
-        },
-      },
-      fields: [
-        {
-          name: "body",
-          label: "Layout Markup",
-          hint: "Section layout markup as Nunjucks flavored HTML",
-          widget: "code",
-          language: "html",
-          required: false,
-          output_code_only: true,
-          allow_language_selection: false,
-          default: `<div
-  class="switcher {{ class }}"
-  style="--width-wrap: {{widthWrap or 'var(--width-prose)'}}; --gap-switcher: {{gap or '1em'}}"
->
-{% for block in blocks %} {% if block.type == "markdown" %}
-<div class="block-markdown {{ block.class }}">
-{{ block.value | renderContent("njk,md", { languages: languages, collections: collections }) | safe }}
-</div>
-{% endif %} {% if block.type == "image" %}
-<img {{ block | htmlImgAttrs({ type: null, class: 'block-image ' + (block.class or '') }) }} />
-{% endif %} {% endfor %}
-</div>`,
-        },
-      ],
-    };
-    const partialsCollection = {
-      identifier_field: "{{slug}}",
-      name: "partials",
-      label: "Partials",
-      label_singular: "Partial",
-      path: "{{slug}}",
-      slug: "{{fields._slug}}",
-      icon: "brick",
-      folder: `${CONTENT_DIR}/_partials`,
-      extension: "md",
-      format: "yaml-frontmatter",
-      create: true,
-      summary: "{{slug}}",
-      // MEDIAS
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      sortable_fields: {
-        fields: ["slug"],
-        default: {
-          field: "slug",
-          direction: "ascending",
-        },
-      },
-      fields: [
-        {
-          name: "body",
-          label: "Content",
-          widget: "markdown",
-          required: false,
-
-          // widget: "code",
-          // required: false,
-          // output_code_only: true,
-          // allow_language_selection: false,
-        },
-      ],
-    };
-    const htmlPartialsCollection = {
-      ...partialsCollection,
-      name: "htmlPartials",
-      label: "Partials (HTML)",
-      label_singular: "Partial (HTML)",
-      icon: "code_blocks",
-      format: undefined,
-      extension: "njk",
-      fields: [
-        {
-          name: "body",
-          label: "Content",
-          required: false,
-          widget: "code",
-          output_code_only: true,
-          allow_language_selection: false,
-          language: "html",
-        },
-      ],
-    };
-    // const sectionFields = [
-    //   ...commonCollectionFields,
-    //   {
-    //     name: "name",
-    //     label: "Name",
-    //     widget: "string",
-    //     required: true,
-    //     i18n: "duplicate",
-    //   },
-    //   {
-    //     name: "blocks",
-    //     label: "Blocks",
-    //     widget: "list",
-    //     required: false,
-    //     i18n: true,
-    //     types: [
-    //       {
-    //         name: "images",
-    //         label: "Images",
-    //         widget: "object",
-    //         required: false,
-    //         fields: [
-    //           {
-    //             name: "images",
-    //             label: "Images",
-    //             widget: "image",
-    //             required: false,
-    //             allow_multiple: true,
-    //           },
-    //         ],
-    //       },
-    //       {
-    //         name: "markdown",
-    //         label: "Markdown",
-    //         widget: "object",
-    //         required: false,
-    //         fields: [
-    //           {
-    //             name: "value",
-    //             label: "Value",
-    //             widget: "markdown",
-    //             required: false,
-    //           },
-    //         ],
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     name: "styles",
-    //     label: "Styles",
-    //     widget: "code",
-    //     required: false,
-    //     output_code_only: true,
-    //     allow_language_selection: false,
-    //     language: "css",
-    //   },
-    // ];
-    // const sectionsCollection = {
-    //   name: "sections",
-    //   label: "Sections",
-    //   label_singular: "Section",
-    //   icon: "add_column_right",
-    //   slug: "{{name}}", // This allows the slug to be localized
-    //   folder: `${CONTENT_DIR}`,
-    //   path: "sections/{{slug}}",
-    //   i18n: { structure: "single_file" },
-    //   extension: "yaml",
-    //   create: true,
-    //   identifier_field: "name",
-    //   summary: "{{name}}",
-    //   sortable_fields: {
-    //     fields: ["name"],
-    //     default: {
-    //       field: "name",
-    //       direction: "ascending",
-    //     },
-    //   },
-    //   // MEDIAS
-    //   media_folder: `/${CONTENT_DIR}/_images`,
-    //   public_folder: "/_images",
-    //   fields: sectionFields,
-    // };
-    const pageFields = [...commonCollectionFields, ...commonPageFields];
-    const pagesCollection = {
-      ...mostCommonMarkdownCollectionConfig,
-      name: "pages",
-      label: "Pages",
-      label_singular: "Page",
-      icon: "description",
-      thumbnail: ["pagePreview.image.src", "metadata.image.src"],
-      path: "pages/{{slug}}",
-      // TODO: check if it works
-      slug: "{{name | localize}}", // This allows the slug to be localized
-      // slug: "{{fields._slug | localize}}",
-      summary:
-        "{{name}} {{eleventyNavigation.order | ternary(' (nav ', '')}}{{eleventyNavigation.order}}{{eleventyNavigation.order | ternary(')', '')}}",
-      sortable_fields: {
-        fields: [
-          "eleventyNavigation.parent",
-          "name",
-          // "eleventyNavigation.add",
-          "eleventyNavigation.order",
-        ],
-        default: {
-          field: "eleventyNavigation.order",
-          direction: "ascending",
-        },
-      },
-      // view_filters: [
-      //   {
-      //     label: "Navigation",
-      //     field: "eleventyNavigation.add",
-      //     pattern: true,
-      //   },
-      // ],
-      // MEDIAS
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      fields: pageFields,
-      index_file: {
-        name: "pages",
-        label: "Page Data",
-        format: "yaml",
-        icon: "home",
-        editor: { preview: false },
-        fields: [
-          {
-            name: "layout",
-            label: "Layout",
-            widget: "string",
-            default: "base",
-            required: false,
-          },
-        ],
-      },
-    };
-    const articleFields = [...commonCollectionFields, ...commonPageFields];
-    const articlesCollection = {
-      ...mostCommonMarkdownCollectionConfig,
-      // icon: "article",
-      icon: "ink_pen",
-      name: "articles",
-      label: "Articles",
-      label_singular: "Article",
-      // description: "Articles of the website",
-      path: "articles/{{slug}}",
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      fields: articleFields,
-    };
-    const personFields = [...commonCollectionFields, ...commonPageFields];
-    const peopleCollection = {
-      ...mostCommonMarkdownCollectionConfig,
-      // icon: "article",
-      icon: "person",
-      name: "people",
-      label: "People",
-      label_singular: "Person",
-      path: "people/{{slug}}",
-      media_folder: `/${CONTENT_DIR}/_images`,
-      public_folder: "/_images",
-      fields: personFields,
-    };
 
     // const rawFilesCollection = {
     //   // ...mostCommonMarkdownCollectionConfig,
@@ -1676,14 +1717,6 @@ class CmsConfig {
     //   public_folder: "/_data",
     //   fields: [...commonCollectionFields],
     // };
-
-    const optionalCollections = {
-      articles: articlesCollection,
-      people: peopleCollection,
-    };
-    const selectedOptionalCollections = (selectedCollections || [])
-      .map((collectionName) => optionalCollections[collectionName])
-      .filter(Boolean);
 
     const generalConfig = {
       backend: {
@@ -1757,6 +1790,12 @@ class CmsConfig {
           : [
               pagesCollection,
               ...selectedOptionalCollections,
+              {
+                divider: Boolean(
+                  !mustSetup && data.userConfig.collections?.length,
+                ),
+              },
+              ...data.userConfig.collections,
               { divider: true },
               partialsCollection,
               htmlPartialsCollection,
@@ -1768,12 +1807,6 @@ class CmsConfig {
               { divider: true },
               dataFilesCollection,
               advancedDataFilesCollection,
-              {
-                divider: Boolean(
-                  !mustSetup && data.userConfig.collections?.length,
-                ),
-              },
-              ...data.userConfig.collections,
             ]),
       ],
       singletons: [
@@ -1796,8 +1829,10 @@ export default async function (eleventyConfig, pluginOptions) {
     singletons: [],
   };
 
+  // TODO: HERE !!!
+  const uc = await import(`${WORKING_DIR_ABSOLUTE}/_config/index.js`);
+  console.log({ uc });
   try {
-    const uc = await import(`${WORKING_DIR_ABSOLUTE}/_config/index.js`);
     userConfig = {
       ...userConfig,
       ...uc,
