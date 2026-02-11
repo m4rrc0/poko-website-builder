@@ -1,48 +1,18 @@
 {
   "name": "poko-website-builder",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
   "version": "0.0.1",
-  "description": "A low cost, high power website builder you trully own",
-  "homepage": "https://github.com/m4rrc0/poko-website-builder#readme",
-  "license": "",
-  "engines": {
-    "bun": ">=1.2.22"
-  },
-  "scripts": {
-    "build-archive": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy",
-    "build": "bun --bun run eleventy",
-    "cf-build": "bun i && bun run build",
-    "build:gh-pages": "bun --bun run eleventy",
-    "dev": "bun --bun scripts/dev.ts",
-    "start": "bunx --bun @11ty/eleventy@canary --serve",
-    "watch": "bun --bun run eleventy --watch",
-    "serve": "bun --bun eleventy-dev-server --dir=dist",
-    "clean": "rm -rf dist",
-    "clean:modules": "rm -rf dist node_modules"
-  },
-  "keywords": [
-    "website-builder",
-    "cms",
-    "headless-cms",
-    "eleventy",
-    "11ty",
-    "svelte"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/m4rrc0/poko-website-builder.git"
-  },
-  "bugs": {
-    "url": "https://github.com/m4rrc0/poko-website-builder/issues"
-  },
   "author": {
     "name": "Marc Coët",
     "url": "https://www.m4rr.co/"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m4rrc0/poko-website-builder.git"
+  },
+  "type": "module",
+  "module": "index.ts",
   "dependencies": {
-    "@sveltia/cms": "0.110.2"
+    "@sveltia/cms": "git+https://github.com/m4rrc0/sveltia-cms.git#feat/inline-editor-components"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",
@@ -82,5 +52,35 @@
     "unocss": "^66.4.2",
     "utopia-core": "^1.6.0",
     "wrangler": "^4.61.1"
+  },
+  "bugs": {
+    "url": "https://github.com/m4rrc0/poko-website-builder/issues"
+  },
+  "description": "A low cost, high power website builder you trully own",
+  "engines": {
+    "bun": ">=1.2.22"
+  },
+  "homepage": "https://github.com/m4rrc0/poko-website-builder#readme",
+  "keywords": [
+    "website-builder",
+    "cms",
+    "headless-cms",
+    "eleventy",
+    "11ty",
+    "svelte"
+  ],
+  "license": "",
+  "private": true,
+  "scripts": {
+    "build-archive": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy",
+    "build": "bun --bun run eleventy",
+    "cf-build": "bun i && bun run build",
+    "build:gh-pages": "bun --bun run eleventy",
+    "dev": "bun --bun scripts/dev.ts",
+    "start": "bunx --bun @11ty/eleventy@canary --serve",
+    "watch": "bun --bun run eleventy --watch",
+    "serve": "bun --bun eleventy-dev-server --dir=dist",
+    "clean": "rm -rf dist",
+    "clean:modules": "rm -rf dist node_modules"
   }
 }
