@@ -154,7 +154,7 @@ export function transformTypeScale(typeScaleDef) {
     maxFontSize: typeScaleDef?.maxFontSize || 20,
     minTypeScale: typeScaleDef?.minTypeScale || 1.2,
     maxTypeScale: typeScaleDef?.maxTypeScale || 1.25,
-    positiveSteps: typeScaleDef?.advanced?.positiveSteps || 6,
+    positiveSteps: typeScaleDef?.advanced?.positiveSteps || 9,
     negativeSteps: typeScaleDef?.advanced?.negativeSteps || 2,
     relativeTo: typeScaleDef?.advanced?.relativeTo || "viewport-width",
     labelStyle: typeScaleDef?.advanced?.labelStyle || "utopia",

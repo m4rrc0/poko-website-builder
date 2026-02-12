@@ -1459,8 +1459,8 @@ class CmsConfig {
                   widget: "string",
                   required: true,
                   pattern: [
-                    "^[a-zA-Z0-9-]+$",
-                    "Only letters, numbers, and hyphens are allowed",
+                    "^[a-z0-9-]+$",
+                    "Only lowercase letters, numbers, and hyphens are allowed",
                   ],
                 },
                 {
@@ -1468,6 +1468,7 @@ class CmsConfig {
                   label: "Color",
                   widget: "color",
                   required: true,
+                  default: "#000001",
                 },
               ],
             },

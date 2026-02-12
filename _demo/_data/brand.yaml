@@ -1,0 +1,26 @@
+ctxCssImport: true
+inlineAllStyles: true
+widthsContexts:
+  - name: main
+    max: 80rem
+    prose: 50rem
+fontStacksContexts:
+  - name: main
+    body:
+      native: system-ui
+    heading:
+      native: system-ui
+    code:
+      native: monospace-code
+customFontsImport: []
+typeScales:
+  - name: main
+    minFontSize: 18
+    maxFontSize: 20
+    minTypeScale: 1.2
+    maxTypeScale: 1.25
+colors: []
+palettes: []
+styleContexts:
+  - name: main
+    value: ctx
