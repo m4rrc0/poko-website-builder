@@ -112,15 +112,6 @@ import {
 } from "./src/config-11ty/shortcodes/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
 
-// import * as simpleIcons from 'simple-icons'
-// import tablerIcons from '@tabler/icons/tabler-nodes-filled.json'
-
-// const iconLists = {
-//   simple: Object.values(simpleIcons).map(({ slug }) => slug)
-// }
-
-// console.log({ iconLists, tablerIcons })
-
 if (DEBUG) {
   console.log("---------ENV-----------\n", env, "\n---------/ENV---------");
 }

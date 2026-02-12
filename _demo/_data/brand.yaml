@@ -19,8 +19,56 @@ typeScales:
     maxFontSize: 20
     minTypeScale: 1.2
     maxTypeScale: 1.25
-colors: []
-palettes: []
+colors:
+  - name: black
+    value: '#000001'
+  - name: white
+    value: '#ffffff'
+palettes:
+  - name: main
+    text: black
+    bg: white
+    accent: ''
+    border: ''
+    text-decoration: ''
+    text--marker: ''
+    advancedDefaults: null
+    selection: null
+    strong: null
+    em: null
+    mark: null
+    b: null
+    heading: null
+    a:
+      text__a: black
+      bg__a: ''
+      text__a--hover: ''
+      bg__a--hover: ''
+    button: null
+    code: null
+    svg: null
+    scrollbar: null
+    advanced: null
+  - name: contrast
+    text: white
+    bg: black
+    accent: ''
+    border: ''
+    text-decoration: ''
+    text--marker: ''
+    advancedDefaults: null
+    selection: null
+    strong: null
+    em: null
+    mark: null
+    b: null
+    heading: null
+    a: null
+    button: null
+    code: null
+    svg: null
+    scrollbar: null
+    advanced: null
 styleContexts:
   - name: main
     value: ctx
