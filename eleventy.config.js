@@ -1,14 +1,19 @@
 import path from "node:path";
 import fs from "node:fs";
 import yaml from "js-yaml";
-import fglob from 'fast-glob'
+import fglob from "fast-glob";
 // import { fileURLToPath } from "node:url";
 // import Nunjucks from "nunjucks";
 import { transform as lightningTransform } from "lightningcss";
 
 // -------- Plugins External
 import directoryOutputPlugin from "@11ty/eleventy-plugin-directory-output";
-import { RenderPlugin, IdAttributePlugin, I18nPlugin } from "@11ty/eleventy";
+import {
+  RenderPlugin,
+  IdAttributePlugin,
+  I18nPlugin,
+  HtmlBasePlugin,
+} from "@11ty/eleventy";
 import Fetch from "@11ty/eleventy-fetch";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import pluginWebc from "@11ty/eleventy-plugin-webc";
@@ -57,6 +62,7 @@ import {
   FILES_OUTPUT_DIR,
   BASE_URL,
   PROD_URL,
+  WEBSITE_PATH_PREFIX,
   statusesToUnrender,
   allLanguages,
   languages,
@@ -174,16 +180,26 @@ const iconSources = [
     name: "tablerFilled",
     path: "node_modules/@tabler/icons/icons/filled",
   },
-]
+];
 
 const simple = fglob.globSync("node_modules/simple-icons/icons/*.svg");
-const tablerOutline = fglob.globSync("node_modules/@tabler/icons/icons/outline/*.svg");
-const tablerFilled = fglob.globSync("node_modules/@tabler/icons/icons/filled/*.svg");
+const tablerOutline = fglob.globSync(
+  "node_modules/@tabler/icons/icons/outline/*.svg",
+);
+const tablerFilled = fglob.globSync(
+  "node_modules/@tabler/icons/icons/filled/*.svg",
+);
 
 const iconLists = {
-  simple: simple.map((filePath) => filePath.split('/').pop().replace('.svg', '')),
-  tablerOutline: tablerOutline.map((filePath) => filePath.split('/').pop().replace('.svg', '')),
-  tablerFilled: tablerFilled.map((filePath) => filePath.split('/').pop().replace('.svg', '')),
+  simple: simple.map((filePath) =>
+    filePath.split("/").pop().replace(".svg", ""),
+  ),
+  tablerOutline: tablerOutline.map((filePath) =>
+    filePath.split("/").pop().replace(".svg", ""),
+  ),
+  tablerFilled: tablerFilled.map((filePath) =>
+    filePath.split("/").pop().replace(".svg", ""),
+  ),
 };
 
 /**
@@ -207,6 +223,7 @@ export const config = {
   markdownTemplateEngine: "njk",
   htmlTemplateEngine: "njk",
   // htmlTemplateEngine: "mdoc",
+  pathPrefix: WEBSITE_PATH_PREFIX,
 };
 
 export default async function (eleventyConfig) {
@@ -221,7 +238,9 @@ export default async function (eleventyConfig) {
   // eleventyConfig.addWatchTarget("./src/**/*");
   eleventyConfig.addWatchTarget("./env.config.js", { resetConfig: true });
   eleventyConfig.addWatchTarget("./eleventy.config.js", { resetConfig: true });
-  eleventyConfig.addWatchTarget(`${WORKING_DIR}/**/*.css`, { resetConfig: true });
+  eleventyConfig.addWatchTarget(`${WORKING_DIR}/**/*.css`, {
+    resetConfig: true,
+  });
   // eleventyConfig.addWatchTarget(`${WORKING_DIR}/**/*`, { resetConfig: true });
   // eleventyConfig.watchIgnores.add(`${WORKING_DIR}/_styles/_ctx.css`);
   // eleventyConfig.setUseGitIgnore(false);
@@ -409,7 +428,7 @@ export default async function (eleventyConfig) {
       fontsource: { fonts: fontsource },
     };
   });
-  eleventyConfig.addGlobalData("iconLists", iconLists)
+  eleventyConfig.addGlobalData("iconLists", iconLists);
   eleventyConfig.addGlobalData("baseUrl", BASE_URL);
   eleventyConfig.addGlobalData("prodUrl", PROD_URL);
   eleventyConfig.addGlobalData("layout", "base");
@@ -464,6 +483,7 @@ export default async function (eleventyConfig) {
 
   // --------------------- Plugins Early
   eleventyConfig.addPlugin(directoryOutputPlugin);
+  eleventyConfig.addPlugin(HtmlBasePlugin);
   eleventyConfig.addPlugin(RenderPlugin);
   eleventyConfig.addPlugin(IdAttributePlugin, {
     selector: "h1,h2,h3,h4,h5,h6,.id", // default: "h1,h2,h3,h4,h5,h6"
@@ -587,19 +607,23 @@ export default async function (eleventyConfig) {
     });
   }
 
-  eleventyConfig.addTemplate("env.11ty.js", function(data) {
-    const collections = data?.globalSettings?.collections
-    const icons = {}
+  eleventyConfig.addTemplate(
+    "env.11ty.js",
+    function (data) {
+      const collections = data?.globalSettings?.collections;
+      const icons = {};
 
-    return `export const env = ${JSON.stringify({
-         collections,
-         iconLists
-       })};`;
- 	}, {
-     	permalink: '/admin/env.js',
+      return `export const env = ${JSON.stringify({
+        collections,
+        iconLists,
+      })};`;
+    },
+    {
+      permalink: "/admin/env.js",
       eleventyExcludeFromCollections: true,
-      layout: null
-	});
+      layout: null,
+    },
+  );
 
   // Populate Default Content with virtual templates
   await eleventyConfig.addPlugin(populateInputDir, {

@@ -60,7 +60,8 @@ export const POKO_THEME = processEnv.POKO_THEME || "default";
 export const USER_DIR = processEnv.USER_DIR || `_user-content`;
 
 // Detect the current hosting provider used
-export const GITHUB_PAGES_BUILD = processEnv.GITHUB_PAGES === "true";
+export const GITHUB_PAGES_BUILD =
+  processEnv.GITHUB_PAGES === "true" || processEnv.GITHUB_ACTIONS === "true";
 export const NETLIFY_BUILD = Boolean(
   processEnv.NETLIFY || processEnv.NETLIFY_DEPLOYMENT_ID,
 );
@@ -139,6 +140,8 @@ export const REPO =
   REPOSITORY_URL ||
   (REPO_OWNER && REPO_NAME && `${REPO_OWNER}/${REPO_NAME}`) ||
   GITHUB_REPO_INFERRED;
+
+export const WEBSITE_PATH_PREFIX = GITHUB_PAGES_BUILD ? `/${REPO_NAME}/` : "";
 
 export const PROD_BRANCH = processEnv.PROD_BRANCH || "main";
 // BRANCH inferrence
