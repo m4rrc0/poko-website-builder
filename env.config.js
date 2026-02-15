@@ -21,8 +21,8 @@ const processEnv = typeof process !== "undefined" ? process.env : {};
 export const DEBUG = processEnv.DEBUG === "false" ? false : true;
 export const NODE_ENV = processEnv.NODE_ENV || "production";
 export const ELEVENTY_RUN_MODE = processEnv.ELEVENTY_RUN_MODE;
-// Can be "cdn", "npm", "<relative-path>"
-export const CMS_IMPORT = processEnv.CMS_IMPORT || "npm";
+// Can be "cdn", "npm", "<relative-path>", local // Default should be npm
+export const CMS_IMPORT = processEnv.CMS_IMPORT || "local";
 
 // DIRECTORIES
 // Output directory
@@ -91,7 +91,10 @@ export const CACHE_DIR =
 //   "origin\thttps://x-a_c_c_e_s_s-t_o_k_e_n:g_h_s_11111111111111111111111111111111111@github.com/autre-ecole/poko-website-builder (fetch)\norigin\thttps://x-a_c_c_e_s_s-t_o_k_e_n:g_h_s_11111111111111111111111111111111111@github.com/autre-ecole/poko-website-builder (push)";
 
 const GIT_REMOTES =
-  processEnv.GIT_REMOTES || (await $`git remote -v`).text().replace(/\n$/, "");
+  processEnv.GIT_REMOTES ||
+  (await $`cd ${WORKING_DIR_ABSOLUTE}/../ && git remote -v`)
+    .text()
+    .replace(/\n$/, "");
 const GITHUB_REPO_INFERRED = GIT_REMOTES?.split("\n")
   ?.find((remote) => remote.includes("github.com"))
   ?.split(/@github.com(\/|:)/)
@@ -152,7 +155,9 @@ export const BRANCH =
   processEnv.CF_PAGES_BRANCH ||
   processEnv.VERCEL_GIT_COMMIT_REF ||
   processEnv.GIT_BRANCH ||
-  (await $`git symbolic-ref --short HEAD`).text().replace(/\n$/, "");
+  (await $`cd ${WORKING_DIR_ABSOLUTE}/../ && git symbolic-ref --short HEAD`)
+    .text()
+    .replace(/\n$/, "");
 
 // TODO: Verify compat with supported hosts
 const HOST_SUBDOMAIN = BRANCH && BRANCH.replaceAll("/", "-");

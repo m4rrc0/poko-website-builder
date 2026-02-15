@@ -10,6 +10,8 @@ metadata:
   title: ''
   description: ''
   image: ''
+tags:
+  - featured
 status: published
 vars: null
 ---

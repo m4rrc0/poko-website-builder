@@ -199,7 +199,7 @@ export const fullList = [
 ];
 
 export const shortList = fullList
-  .filter((lang) => lang.code.length < 3)
+  .filter((lang) => lang.code.length < 4)
   .map((lang) => ({
     code: lang.code,
     name: lang.name.replace(/ \([^)]*\)/, ""), // remove variants in parenthesis

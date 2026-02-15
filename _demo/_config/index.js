@@ -20,6 +20,7 @@ export const collections = [
   {
     ...pages,
     ...spreadPageSetup("custom-pages"),
+    // Icon names can be found here: https://material.io/resources/icons/?style=baseline
     icon: "exercise",
   },
 ];

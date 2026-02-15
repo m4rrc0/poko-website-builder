@@ -591,10 +591,15 @@ export default async function (eleventyConfig) {
       "node_modules/@sveltia/cms/dist/sveltia-cms.mjs":
         "assets/js/sveltia-cms.mjs",
     });
-  } else if (CMS_IMPORT !== "cdn") {
+  } else if (CMS_IMPORT.startsWith("../../")) {
     eleventyConfig.addPassthroughCopy({
       [CMS_IMPORT + "sveltia-cms.js"]: "assets/js/sveltia-cms.js",
       [CMS_IMPORT + "sveltia-cms.mjs"]: "assets/js/sveltia-cms.mjs",
+    });
+  } else if (CMS_IMPORT === "local") {
+    eleventyConfig.addPassthroughCopy({
+      "assets/js/sveltia-cms.js": "assets/js/sveltia-cms.js",
+      "assets/js/sveltia-cms.mjs": "assets/js/sveltia-cms.mjs",
     });
   }
 
@@ -602,12 +607,13 @@ export default async function (eleventyConfig) {
     "env.11ty.js",
     function (data) {
       const collections = data?.globalSettings?.collections;
-      const icons = {};
+      const envVars = { CONTENT_DIR };
 
-      return `export const env = ${JSON.stringify({
-        collections,
-        iconLists,
-      })};`;
+      return `
+export const env = ${JSON.stringify(envVars)};
+export const collections = ${JSON.stringify(collections)};
+export const iconLists = ${JSON.stringify(iconLists)};
+`;
     },
     {
       permalink: "/admin/env.js",

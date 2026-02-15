@@ -1,12 +1,8 @@
-import { env } from "./env.js";
+import { env, collections, iconLists } from "./env.js";
 
-// let env;
-// let currentCollections = [];
-// let iconLists = {};
-// let iconLibs = [];
-
-const currentCollections = env?.collections || [];
-const iconLists = env?.iconLists || {};
+const { CONTENT_DIR } = env;
+const currentCollections = collections || [];
+// const iconLists = env?.iconLists || {};
 const iconLibs = Object.keys(iconLists) || [];
 
 // try {
@@ -1118,6 +1114,7 @@ export const icon = {
   label: "Icon",
   icon: "triangle_circle",
   dialog: true,
+  summary: "🔅 {{icon.iconLib.iconName}}",
   fields: [
     {
       name: "icon",
@@ -1234,6 +1231,169 @@ export const icon = {
   },
 
   toPreview: (data) => `<span>ICON</span>`,
+};
+
+export const link = {
+  id: "link",
+  label: "Link",
+  icon: "link",
+  dialog: true,
+  summary:
+    "🔗 {{text | truncate(20)}}{{text | ternary(': ', '')}}{{linkType.url | truncate(30)}}",
+  fields: [
+    {
+      name: "text",
+      label: "Text",
+      widget: "string",
+      required: false,
+      hint: "Optional text to display for the link",
+    },
+    {
+      name: "linkType",
+      label: "Link Type",
+      widget: "object",
+      required: true,
+      types: [
+        {
+          name: "external",
+          label: "External Link",
+          fields: [
+            {
+              name: "url",
+              label: "URL",
+              widget: "string",
+              required: true,
+              default: "https://",
+            },
+          ],
+        },
+        {
+          name: "email",
+          label: "Email",
+          fields: [
+            {
+              name: "url",
+              label: "Email address",
+              widget: "string",
+              required: true,
+            },
+          ],
+        },
+        {
+          name: "file",
+          label: "File",
+          fields: [
+            {
+              name: "url",
+              label: "Select File",
+              widget: "file",
+              required: true,
+              // TODO: ⚠️ Overriding media_folder and public_folder does not work!
+              media_folder: `/${CONTENT_DIR}/_files`,
+              public_folder: "/_files",
+            },
+          ],
+        },
+        {
+          name: "pages",
+          label: "Page",
+          fields: [
+            {
+              name: "url",
+              label: "Select Page",
+              widget: "relation",
+              collection: "pages",
+              required: true,
+            },
+          ],
+        },
+        // TODO: Use currentCollections to populate the collection options
+        {
+          name: "articles",
+          label: "Article",
+          fields: [
+            {
+              name: "url",
+              label: "Select Article",
+              widget: "relation",
+              collection: "articles",
+              required: true,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  pattern: /{% link\s+(.*?)\s*%}/,
+  fromBlock: function (match) {
+    const argumentsString = match[1] || "";
+    const text = extractQuotedString(argumentsString, "text") || "";
+    const url = extractQuotedString(argumentsString, "url") || "";
+    let linkType = extractQuotedString(argumentsString, "linkType") || "";
+    const collection = extractQuotedString(argumentsString, "collection") || "";
+
+    function isFileUrl(urlString) {
+      try {
+        // Use a dummy base for relative URLs
+        const url = new URL(urlString, "http://x");
+        const pathname = url.pathname;
+
+        if (pathname.endsWith("/")) return false;
+
+        return /\.\w{2,5}$/i.test(pathname);
+      } catch {
+        return false;
+      }
+    }
+
+    switch (true) {
+      case !!linkType:
+        break;
+      case url.startsWith("http") || url.startsWith("www."):
+        linkType = "external";
+        break;
+      case /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(url):
+        linkType = "email";
+        break;
+      case isFileUrl(url):
+        linkType = "file";
+        break;
+      default:
+        linkType = "external";
+    }
+
+    if (linkType == "internal") {
+      linkType = collection || "all";
+    }
+
+    return {
+      text: text || "",
+      linkType: {
+        type: linkType,
+        url,
+      },
+    };
+  },
+  toBlock: function (data) {
+    const text = data?.text || "";
+    let linkType = data?.linkType?.type;
+    const url = data?.linkType?.url;
+
+    if (
+      linkType === "external" ||
+      linkType === "email" ||
+      linkType === "file"
+    ) {
+      return `{% link url="${url}", text="${text}", linkType="${linkType}" %}`;
+    } else {
+      const collection = linkType;
+      linkType = "internal";
+      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}" %}`;
+    }
+    return ``;
+  },
+
+  toPreview: (data) => `<span>LINK</span>`,
 };
 
 // Example for project specific component def

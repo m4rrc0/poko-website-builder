@@ -4,7 +4,7 @@ lang: fr
 createdAt: 2026-02-10T13:46:00.000Z
 uuid: 1f9853b2cc42
 localizationKey: d46ca7dbba01
-name: Mon article
+name: My article
 eleventyNavigation: null
 metadata: null
 preview: null
@@ -17,4 +17,4 @@ vars: null
 dataList: []
 ---
 
-# Mon article
+# My article

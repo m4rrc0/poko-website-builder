@@ -10,10 +10,12 @@ metadata:
   title: ''
   description: ''
   image: ''
+tags:
+  - featured
 status: published
-vars: {}
+vars: null
 ---
 
-# poko demo FR {% icon "simple:celery", width="50", height="50" %}
+# poko demo FR
 
-{% section type="grid-fluid", vars={"columns":null,"gap":"","class":""}, blocks=[], advanced={} %}
+{% icon "tablerOutline:device-ipad-horizontal-up" %}
