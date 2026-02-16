@@ -20,6 +20,6 @@ vars: null
 
 {% icon "tablerOutline:device-ipad-horizontal-up" %}
 
-{% link url="mon-article", text="article", linkType="internal", collection="articles"%}
+{% link url="mon-article", text="article", linkType="internal", collection="articles" %}
 
-{% link url="aliyardmr@gmail.com", text="bcjkqsncsqlkn", linkType="email" %}
+{% link url="aliyardmr@gmail.com", text="bcjkqsncsqlkn", linkType="email", cc="", bcc="", subject="Hello", body="Hello\n\nWorld", class="button" %}

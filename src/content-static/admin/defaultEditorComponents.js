@@ -15,6 +15,31 @@ const iconLibs = Object.keys(iconLists) || [];
 //   }
 // }
 
+const multilineToInline = (multi) => {
+  return multi?.replace(/\n/g, "\\n")?.replace(/"/g, '\\"');
+};
+const inlineToMultiline = (inline) => {
+  return inline?.replace(/\\n/g, "\n")?.replace(/\\"/g, '"');
+};
+
+function toQuotableString(text) {
+  return text
+    .replace(/\\/g, "\\\\") // escape backslashes first
+    .replace(/"/g, '\\"') // escape double quotes
+    .replace(/\n/g, "\\n") // escape newlines
+    .replace(/\r/g, "\\r") // escape carriage returns
+    .replace(/\t/g, "\\t"); // escape tabs
+}
+
+function fromQuotableString(text) {
+  return text
+    .replace(/\\t/g, "\t") // unescape tabs
+    .replace(/\\r/g, "\r") // unescape carriage returns
+    .replace(/\\n/g, "\n") // unescape newlines
+    .replace(/\\"/g, '"') // unescape double quotes
+    .replace(/\\\\/g, "\\"); // unescape backslashes last
+}
+
 // Helper function to extract property values with balanced brackets/braces
 const extractProperty = (argumentsString, propName) => {
   const startIndex = argumentsString.indexOf(propName + "=");
@@ -1339,8 +1364,6 @@ export const link = {
             },
           ],
         },
-        // TODO: Use currentCollections to populate the collection options
-
         ...currentCollections.map((collection) => ({
           name: collection,
           label: collection,
@@ -1356,6 +1379,12 @@ export const link = {
         })),
       ],
     },
+    {
+      name: "otherAttrs",
+      label: "Other raw attributes",
+      widget: "hidden",
+      required: false,
+    },
   ],
   pattern: /{% link\s+(.*?)\s*%}/,
   fromBlock: function (match) {
@@ -1367,7 +1396,17 @@ export const link = {
     const cc = extractQuotedString(argumentsString, "cc") || "";
     const bcc = extractQuotedString(argumentsString, "bcc") || "";
     const subject = extractQuotedString(argumentsString, "subject") || "";
-    const body = extractQuotedString(argumentsString, "body") || "";
+    let body = extractQuotedString(argumentsString, "body") || "";
+    body = fromQuotableString(body);
+
+    // Clean up otherAttrs by removing a leading comma and the attributes we've already parsed
+    const otherAttrs = argumentsString
+      .replace(/^\s*,\s*/, "")
+      .replace(
+        /(text|url|linkType|collection|cc|bcc|subject|body)="[^"]*"(?:\s*,)?/g,
+        "",
+      )
+      .trim();
 
     function isFileUrl(urlString) {
       try {
@@ -1421,6 +1460,7 @@ export const link = {
         url,
         ...(linkType === "email" && advanced ? { advanced } : {}),
       },
+      otherAttrs,
     };
   },
 
@@ -1430,37 +1470,36 @@ export const link = {
     const url = data?.linkType?.url;
     const advanced = data?.linkType?.advanced || {};
     const { cc, bcc, subject, body } = advanced;
+    const otherAttrs = data?.otherAttrs;
+    const otherAttrsString = otherAttrs?.trim() ? `, ${otherAttrs}` : "";
 
     if (linkType === "external" || linkType === "file") {
-      return `{% link url="${url}", text="${text}", linkType="${linkType}" %}`;
+      return `{% link url="${url}", text="${text}", linkType="${linkType}"${otherAttrsString} %}`;
     } else if (linkType === "email") {
-      let emailArgs = `url="${url}", text="${text}", linkType="${linkType}"`;
+      const attrsStr = Object.entries({
+        url,
+        text,
+        linkType,
+        cc,
+        bcc,
+        subject,
+        body: toQuotableString(body),
+      })
+        .map(([key, value]) => `${key}="${value}"`)
+        .join(", ");
 
-      if (cc) emailArgs += `, cc="${cc}"`;
-      if (bcc) emailArgs += `, bcc="${bcc}"`;
-      if (subject) emailArgs += `, subject="${subject}"`;
-      if (body) emailArgs += `, body="${body}"`;
-
-      return `{% link ${emailArgs} %}`;
+      return `{% link ${attrsStr}${otherAttrsString} %}`;
     } else {
       const collection = linkType;
       linkType = "internal";
-      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}"%}`;
+      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}"${otherAttrsString} %}`;
     }
-    return ``;
   },
 
   toPreview: (data) => `<span>LINK</span>`,
 };
 
 // Example for project specific component def
-//
-// const multilineToInline = (multi) => {
-//   return multi?.replace(/\n/g, "\\n")?.replace(/"/g, '\\"');
-// };
-// const inlineToMultiline = (inline) => {
-//   return inline?.replace(/\\n/g, "\n")?.replace(/\\"/g, '"');
-// };
 
 // export const homeHeader = {
 //   id: "homeHeader",

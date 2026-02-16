@@ -25,6 +25,11 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
     prop,
     collection,
     linkType,
+    // Email fields
+    subject,
+    body,
+    cc,
+    bcc,
     // TODO: implement the following?
     // download,
     // target,
@@ -44,7 +49,6 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
     urlRef.startsWith("www.");
   const isInternal =
     linkType === "internal" || (!isEmail && !isExternal && !isFile);
-  // TODO: more precise types (page, article ...)
 
   // could be one of:
   // - [ ] translationKey
@@ -81,7 +85,14 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
   }
 
   if (isEmail) {
-    return emailLink.call(this, urlRef, { text, ...attrs });
+    return emailLink.call(this, urlRef, {
+      text,
+      subject,
+      body,
+      cc,
+      bcc,
+      ...attrs,
+    });
   }
 
   if (isFile) {
@@ -110,5 +121,3 @@ export function button(unnamedAttrOrObj, optionalAttrsObj) {
     class: `button ${unnamedAttrOrObj?.class || optionalAttrsObj?.class || ""}`,
   });
 }
-
-// TODO: Email, tel, files, external, ...
