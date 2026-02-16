@@ -627,7 +627,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
     // logLevel: 'debug',
     sources: [
       // TODO: Make this selectable from the CMS
-      "src/themes/default",
+      "src/themes/default/templates",
       "src/content",
     ],
   });
