@@ -19,3 +19,7 @@ vars: null
 # poko demo FR
 
 {% icon "tablerOutline:device-ipad-horizontal-up" %}
+
+{% link url="mon-article", text="article", linkType="internal", collection="articles"%}
+
+{% link url="aliyardmr@gmail.com", text="bcjkqsncsqlkn", linkType="email" %}

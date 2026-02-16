@@ -1277,6 +1277,38 @@ export const link = {
               widget: "string",
               required: true,
             },
+            {
+              name: "advanced",
+              label: "Advanced options",
+              widget: "object",
+              required: false,
+              fields: [
+                {
+                  name: "cc",
+                  label: "CC",
+                  widget: "string",
+                  required: false,
+                },
+                {
+                  name: "bcc",
+                  label: "BCC",
+                  widget: "string",
+                  required: false,
+                },
+                {
+                  name: "subject",
+                  label: "Email subject",
+                  widget: "string",
+                  required: false,
+                },
+                {
+                  name: "body",
+                  label: "Body",
+                  widget: "text",
+                  required: false,
+                },
+              ],
+            },
           ],
         },
         {
@@ -1308,19 +1340,20 @@ export const link = {
           ],
         },
         // TODO: Use currentCollections to populate the collection options
-        {
-          name: "articles",
-          label: "Article",
+
+        ...currentCollections.map((collection) => ({
+          name: collection,
+          label: collection,
           fields: [
             {
               name: "url",
-              label: "Select Article",
+              label: "Select " + collection,
               widget: "relation",
-              collection: "articles",
+              collection: collection,
               required: true,
             },
           ],
-        },
+        })),
       ],
     },
   ],
@@ -1331,6 +1364,10 @@ export const link = {
     const url = extractQuotedString(argumentsString, "url") || "";
     let linkType = extractQuotedString(argumentsString, "linkType") || "";
     const collection = extractQuotedString(argumentsString, "collection") || "";
+    const cc = extractQuotedString(argumentsString, "cc") || "";
+    const bcc = extractQuotedString(argumentsString, "bcc") || "";
+    const subject = extractQuotedString(argumentsString, "subject") || "";
+    const body = extractQuotedString(argumentsString, "body") || "";
 
     function isFileUrl(urlString) {
       try {
@@ -1366,29 +1403,49 @@ export const link = {
       linkType = collection || "all";
     }
 
+    let advanced;
+
+    if (cc || bcc || subject || body) {
+      advanced = {
+        cc,
+        bcc,
+        subject,
+        body,
+      };
+    }
+
     return {
       text: text || "",
       linkType: {
         type: linkType,
         url,
+        ...(linkType === "email" && advanced ? { advanced } : {}),
       },
     };
   },
+
   toBlock: function (data) {
     const text = data?.text || "";
     let linkType = data?.linkType?.type;
     const url = data?.linkType?.url;
+    const advanced = data?.linkType?.advanced || {};
+    const { cc, bcc, subject, body } = advanced;
 
-    if (
-      linkType === "external" ||
-      linkType === "email" ||
-      linkType === "file"
-    ) {
+    if (linkType === "external" || linkType === "file") {
       return `{% link url="${url}", text="${text}", linkType="${linkType}" %}`;
+    } else if (linkType === "email") {
+      let emailArgs = `url="${url}", text="${text}", linkType="${linkType}"`;
+
+      if (cc) emailArgs += `, cc="${cc}"`;
+      if (bcc) emailArgs += `, bcc="${bcc}"`;
+      if (subject) emailArgs += `, subject="${subject}"`;
+      if (body) emailArgs += `, body="${body}"`;
+
+      return `{% link ${emailArgs} %}`;
     } else {
       const collection = linkType;
       linkType = "internal";
-      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}" %}`;
+      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}"%}`;
     }
     return ``;
   },

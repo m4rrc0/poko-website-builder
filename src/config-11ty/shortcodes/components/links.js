@@ -1,5 +1,6 @@
 // import obfuscateEmail from "../../utils/emailObfuscate.js";
 import { locale_url } from "../../filters/i18n.js";
+import { emailLink } from "../../filters/email.js";
 
 function isFileUrl(urlString) {
   try {
@@ -80,11 +81,7 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
   }
 
   if (isEmail) {
-    const attrsStr = Object.entries(attrs)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(" ");
-
-    return `<a href="mailto:${urlRef}" ${attrsStr}>${text || urlRef}</a>`;
+    return emailLink.call(this, urlRef, { text, ...attrs });
   }
 
   if (isFile) {
