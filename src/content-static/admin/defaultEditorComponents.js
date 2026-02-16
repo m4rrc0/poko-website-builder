@@ -1499,6 +1499,83 @@ export const link = {
   toPreview: (data) => `<span>LINK</span>`,
 };
 
+export const gridFluid = {
+  id: "gridfluid",
+  label: "Grid Fluid",
+  icon: "brick",
+  fields: [
+    {
+      name: "list",
+      label: "block",
+      widget: "list",
+      required: true,
+      default: [{ markdown: "" }],
+      fields: [
+        {
+          name: "markdown",
+          label: "Markdown ",
+          widget: "markdown",
+          required: false,
+          summary: "{{value | truncate(50)}}",
+        },
+      ],
+    },
+    {
+      name: "options",
+      label: "Options",
+      widget: "object",
+      required: true,
+      fields: [
+        {
+          name: "gap",
+          label: "Gap between blocks",
+          widget: "string",
+          required: false,
+        },
+        {
+          name: "columns",
+          label: "Columns number",
+          widget: "string",
+          required: false,
+        },
+        {
+          name: "minColumnWidth",
+          label: "Min column width",
+          widget: "string",
+          required: false,
+        },
+        {
+          name: "maxColumnWidth",
+          label: "Max column width",
+          widget: "string",
+          required: false,
+        },
+        {
+          name: "class",
+          label: "Class names",
+          widget: "string",
+          required: false,
+        },
+      ],
+    },
+  ],
+  // TODO: envelopper dans un wrapper (voir ligne 580) pour pouvoir ajouter des classes et autres attributs, et éviter d'avoir une syntaxe trop compliquée à gérer dans le markdown lui même
+  pattern: /{% gridfluid\s+(.*?)\s*%}/,
+  fromBlock: function (match) {
+    return {
+      columns: match?.groups?.columns,
+      gap: match?.groups?.gap,
+      widthColumnMin: match?.groups?.widthColumnMin,
+      widthColumnMax: match?.groups?.widthColumnMax,
+      blocks: match?.groups?.blocks,
+    };
+  },
+  toBlock: function (data) {
+    return `{% gridfluid columns="${data?.columns}" gap="${data?.gap}" widthColumnMin="${data?.widthColumnMin}" widthColumnMax="${data?.widthColumnMax}" blocks="${data?.blocks}" %}`;
+  },
+  toPreview: (data) => `<span>GRID FLUID</span>`,
+};
+
 // Example for project specific component def
 
 // export const homeHeader = {
