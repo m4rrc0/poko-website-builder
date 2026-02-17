@@ -938,6 +938,166 @@ export const pages = {
   public_folder: "/_images",
   fields: pageFields,
 };
+const navLink = {
+  name: "items",
+  label: "Items",
+  label_singular: "Item",
+  widget: "list",
+  i18n: "duplicate",
+  required: true,
+  fields: [
+    {
+      name: "linkTo",
+      label: "Link to",
+      widget: "object",
+      required: true,
+    },
+  ],
+};
+const linkToField = {
+  name: "linkTo",
+  label: "Link to",
+  widget: "object",
+  required: false,
+  types: [
+    {
+      name: "page",
+      label: "Page",
+      fields: [
+        {
+          name: "label",
+          label: "Label",
+          widget: "string",
+          required: false,
+          hint: "Override the page title",
+          i18n: true,
+        },
+        {
+          name: "slug",
+          label: "Which page?",
+          widget: "relation",
+          collection: "pages",
+          search_fields: ["name"],
+          value_field: "uuid",
+          display_fields: ["name"],
+          required: false,
+        },
+        ...createNavLevels(1, 4), // Adjust the second argument to set max levels
+      ],
+    },
+
+    {
+      name: "url",
+      label: "Custom URL",
+      fields: [
+        {
+          name: "url",
+          label: "Custom URL",
+          widget: "string",
+          required: false,
+          hint: "Use this for external links or if you want to override the page link.",
+          i18n: true,
+        },
+      ],
+    },
+    {
+      name: "article",
+      label: "articles",
+      fields: [
+        {
+          name: "articleName",
+          label: "Which article?",
+          widget: "relation",
+          collection: "articles",
+          search_fields: ["name"],
+          value_field: "uuid",
+          display_fields: ["name"],
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "event",
+      label: "events",
+      fields: [
+        {
+          name: "eventName",
+          label: "Which event?",
+          widget: "relation",
+          collection: "events",
+          search_fields: ["name"],
+          value_field: "uuid",
+          display_fields: ["name"],
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "label",
+      label: "Label",
+      widget: "string",
+      required: false,
+    },
+  ],
+};
+
+function createNavLevels(currentLevel, maxLevels) {
+  if (currentLevel > maxLevels) return [];
+
+  const subItemsField = {
+    name: "subItems",
+    label: `Sub Items (Level ${currentLevel + 1})`,
+    label_singular: "Sub Item",
+    widget: "list",
+    required: false,
+    i18n: "duplicate",
+    fields: [
+      {
+        name: "label",
+        label: "Label",
+        widget: "string",
+        required: false,
+        i18n: true,
+      },
+      // linkToField,
+      ...createNavLevels(currentLevel + 1, maxLevels),
+    ],
+  };
+
+  return [subItemsField];
+}
+
+export const navCollection = {
+  ...mostCommonMarkdownCollectionConfig,
+  identifier_field: "{{slug}}",
+  name: "nav",
+  label: "Navigation",
+  label_singular: "Navigation",
+  path: "nav/{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "description",
+  folder: `${CONTENT_DIR}/_data`,
+  format: "yaml",
+  extension: "yaml",
+  thumbnail: ["pagePreview.image.src", "metadata.image.src"],
+  summary: "{{slug}}",
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  fields: [
+    {
+      name: "items",
+      label: "Items",
+      label_singular: "Item (Level 1)",
+      widget: "list",
+      i18n: "duplicate",
+      required: true,
+      fields: [
+        linkToField,
+        // ...createNavLevels(1, 4), // Adjust the second argument to set max levels
+      ],
+    },
+  ],
+};
 export const pagesCollection = {
   ...pages,
   path: "pages/{{slug}}",
@@ -1789,8 +1949,10 @@ class CmsConfig {
         ...(mustSetup
           ? []
           : [
+              navCollection,
               pagesCollection,
               ...selectedOptionalCollections,
+              footerCollection,
               {
                 divider: Boolean(
                   !mustSetup && data.userConfig.collections?.length,
@@ -1821,6 +1983,39 @@ class CmsConfig {
     return JSON.stringify(generalConfig, null, isDev ? 2 : 0);
   }
 }
+
+export const footerCollection = {
+  identifier_field: "{{slug}}",
+  name: "footers",
+  label: "Footers",
+  label_singular: "Footer",
+  path: "{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "bottom_navigation",
+  folder: `${CONTENT_DIR}/_partials/footer`,
+  extension: "md",
+  format: "yaml-frontmatter",
+  create: true,
+  summary: "{{slug}}",
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  sortable_fields: {
+    fields: ["slug"],
+    default: {
+      field: "slug",
+      direction: "ascending",
+    },
+  },
+  fields: [
+    {
+      name: "body",
+      label: "Content",
+      widget: "markdown",
+      required: false,
+    },
+  ],
+};
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
