@@ -23,3 +23,13 @@ vars: null
 {% link url="mon-article", text="article", linkType="internal", collection="articles" %}
 
 {% link url="aliyardmr@gmail.com", text="bcjkqsncsqlkn", linkType="email", cc="", bcc="", subject="Hello", body="Hello\n\nWorld", class="button" %}
+
+{% grid %}
+# Hello inside grid fluid
+
+{% comp %}
+# Hello inside comp
+{% endcomp %}
+
+
+{% endgrid %}

@@ -1505,15 +1505,15 @@ export const gridFluid = {
   icon: "brick",
   fields: [
     {
-      name: "list",
-      label: "block",
+      name: "blocks",
+      label: "Blocks",
       widget: "list",
       required: true,
-      default: [{ markdown: "" }],
+      default: [{ block: "" }],
       fields: [
         {
-          name: "markdown",
-          label: "Markdown ",
+          name: "block",
+          label: "Block ",
           widget: "markdown",
           required: false,
           summary: "{{value | truncate(50)}}",
