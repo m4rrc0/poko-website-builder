@@ -1079,6 +1079,23 @@ export const faqs = {
   fields: faqFields,
 };
 export const faqsCollection = { ...faqs };
+// PROJECTS
+export const projectFields = [...commonCollectionFields, ...commonPageFields];
+export const projects = {
+  ...spreadPageSetup("projects"),
+  icon: "folder_open",
+  fields: projectFields,
+};
+export const projectsCollection = { ...projects };
+// DOCUMENTATION -- HowTo in schema.org
+export const documentationFields = [...commonCollectionFields, ...commonPageFields];
+export const documentations = {
+  ...spreadPageSetup("documentations"),
+  icon: "menu_book",
+  fields: projectFields,
+};
+export const documentationCollection = { ...documentations };
+
 
 
 const optionalCollections = {
@@ -1091,7 +1108,8 @@ const optionalCollections = {
   products: productsCollection,
   reviews: reviewsCollection,
   faqs: faqsCollection,
-  // projects: projectsCollection,
+  projects: projectsCollection,
+  documentations: documentationCollection, //HowTo in schema.org
 };
 const selectedOptionalCollections = (selectedCollections || [])
   .map((collectionName) => optionalCollections[collectionName])
