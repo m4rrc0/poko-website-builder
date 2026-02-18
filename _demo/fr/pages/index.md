@@ -27,26 +27,19 @@ vars: null
 {% sectionGrid %}
 {% sectionHeader %}
 ## My section Header
+
+And a paragraph
 {% endsectionHeader %}
-
-{% grid %}
-
+{% grid type="switcher" %}
 {% gridItem %}
 #### Hello inside gridItem 1
 {% endgridItem %}
-
 {% gridItem %}
 #### Hello inside gridItem 2
 {% endgridItem %}
-
 {% gridItem %}
 #### Hello inside gridItem 3
 {% endgridItem %}
-
 {% endgrid %}
-
-{% sectionFooter %}
-<small>This is a footer</small>
-{% endsectionFooter %}
 
 {% endsectionGrid %}

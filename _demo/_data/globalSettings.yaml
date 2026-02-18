@@ -1,24 +1,22 @@
 siteName: poko demo
 productionUrl: https://m4rrc0.github.io/poko-website-builder
 logo: /_images/POKO-logo-RVB-01.jpg
-htmlHead: |-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/m4rrc0/ctx-css@c/una-scelta/dist/index.css">
-  <link rel="stylesheet" href="/local.css">
+htmlHead: ''
 cssHead: ''
 languages:
-  - code: fr
-    status: published
-    name: Français
-    customUrlPrefix:
-      prefix: ''
-    isCmsDefault: true
-    isWebsiteDefault: true
   - code: en
     status: published
     name: English
-    customUrlPrefix: null
     isCmsDefault: false
     isWebsiteDefault: false
+    customUrlPrefix: null
+  - code: fr
+    status: published
+    name: Français
+    isCmsDefault: true
+    isWebsiteDefault: true
+    customUrlPrefix:
+      prefix: ''
 collections:
   - articles
   - events

@@ -15,8 +15,9 @@ export default async function (eleventyConfig, pluginOptions) {
     dataManual,
     templateEngineOverride,
   ) {
-    const contentRendered = content
-      ? await renderContentFilterFn.call(this, content, "njk,md", dataManual)
+    const contentTrimmed = content.trim();
+    const contentRendered = contentTrimmed
+      ? await renderContentFilterFn.call(this, contentTrimmed, "njk,md", dataManual)
       : "";
 
     return partialShortcodeFn.call(

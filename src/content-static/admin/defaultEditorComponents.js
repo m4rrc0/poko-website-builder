@@ -126,6 +126,84 @@ const extractQuotedString = (argumentsString, propName) => {
 };
 
 /**
+ * Extracts specified attributes from a string (quoted or unquoted)
+ * Works with both Nunjucks (comma-separated) and HTML (space-separated) attributes
+ * @param {string} attributesString - The string containing attributes
+ * @param {string[]} propNames - Array of attribute names to extract
+ * @returns {{ extracted: Object<string, string|boolean|number|null>, remaining: string }}
+ */
+const extractAttributes = (attributesString, propNames) => {
+  const extracted = {};
+  let remaining = attributesString;
+
+  for (const propName of propNames) {
+    // Pattern handles:
+    // - Double quoted: attr="value" (with escape support)
+    // - Single quoted: attr='value' (with escape support)
+    // - Unquoted: attr=value (ends at comma, space, or end)
+    const pattern = new RegExp(
+      `(^|[,\\s])\\s*(${propName}\\s*=\\s*(?:` +
+        `"(?:[^"\\\\]|\\\\.)*"|` + // double quoted
+        `'(?:[^'\\\\]|\\\\.)*'|` + // single quoted
+        `[^,\\s"']+` + // unquoted (no spaces, commas, or quotes)
+        `))\\s*([,\\s]|$)`,
+    );
+
+    const match = remaining.match(pattern);
+    if (match) {
+      // Extract value - handle all three formats
+      const attrPart = match[2];
+      const eqIndex = attrPart.indexOf("=");
+      let value = attrPart.slice(eqIndex + 1).trim();
+
+      // Remove surrounding quotes and unescape if quoted
+      const isQuoted =
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"));
+
+      if (isQuoted) {
+        const quote = value[0];
+        value = value
+          .slice(1, -1)
+          .replace(new RegExp(`\\\\${quote}`, "g"), quote);
+      } else {
+        // Coerce unquoted values to native types
+        if (value === "true") value = true;
+        else if (value === "false") value = false;
+        else if (value === "null") value = null;
+        else if (value === "undefined") value = undefined;
+        else if (!isNaN(value) && value !== "") value = Number(value);
+      }
+      extracted[propName] = value;
+
+      // Remove the attribute, preserving one separator if between other attrs
+      const leadingSep = match[1];
+      const trailingSep = match[3];
+      let replacement = "";
+      if (
+        leadingSep &&
+        trailingSep &&
+        !/^$/.test(leadingSep) &&
+        !/^$/.test(trailingSep)
+      ) {
+        replacement = leadingSep === "," || trailingSep === "," ? ", " : " ";
+      }
+      remaining = remaining.replace(match[0], replacement);
+    } else {
+      extracted[propName] = null;
+    }
+  }
+
+  // Clean up separators and whitespace
+  remaining = remaining
+    .replace(/^[,\s]+|[,\s]+$/g, "")
+    .replace(/\s*,\s*,\s*/g, ", ")
+    .trim();
+
+  return { extracted, remaining };
+};
+
+/**
  * Extracts attributes and content from a paired Nunjucks tag
  * @param {string} contentString - The string to search in
  * @param {string} tagName - The tag name (e.g., 'sectionHeader', 'gridItem')
@@ -137,14 +215,14 @@ const extractWithNunjucksTag = (contentString, tagName) => {
   // Matches: {% tagName [attributes] %} content {% endtagName %}
   const regex = new RegExp(
     `{%\\s*${tagName}(?:\\s+([^%]*?))?\\s*%}\\s*([\\s\\S]*?)\\s*{%\\s*end${tagName}\\s*%}`,
-    'ms'
+    "ms",
   );
 
   const match = contentString.match(regex);
   if (!match) return null;
 
   return {
-    attributes: match[1]?.trim() || null,  // null if no attributes
+    attributes: match[1]?.trim() || null, // null if no attributes
     content: match[2].trim(),
   };
 };
@@ -155,7 +233,7 @@ const extractAllWithNunjucksTag = (contentString, tagName) => {
 
   const regex = new RegExp(
     `{%\\s*${tagName}(?:\\s+([^%]*?))?\\s*%}\\s*([\\s\\S]*?)\\s*{%\\s*end${tagName}\\s*%}`,
-    'gms'
+    "gms",
   );
 
   const results = [];
@@ -1553,14 +1631,27 @@ export const sectionGrid = {
       label: "Section Header",
       widget: "object",
       required: false,
+      summary: "{{content | truncate(50)}}",
+      collapsed: "auto",
       fields: [
         {
           name: "content",
           label: "Header Content",
           widget: "markdown",
           required: false,
-        }
-      ]
+          editor_components: [
+            // "eleventyImage", // Removed
+            // "imageShortcode",
+            // "partial",
+            // "htmlPartial",
+            "wrapper",
+            // "section",
+            // "links",
+            // ...defaultEditorComponentNames,
+            // ...userEditorComponentNames,
+          ],
+        },
+      ],
     },
     {
       name: "items",
@@ -1568,13 +1659,14 @@ export const sectionGrid = {
       widget: "list",
       required: true,
       default: [{ item: "" }, { item: "" }, { item: "" }],
+      summary: "{{item | truncate(50)}}",
+      collapsed: "auto",
       fields: [
         {
           name: "item",
           label: "Grid Item",
           widget: "markdown",
           required: false,
-          summary: "{{value | truncate(50)}}",
         },
       ],
     },
@@ -1583,22 +1675,25 @@ export const sectionGrid = {
       label: "Section Footer",
       widget: "object",
       required: false,
+      summary: "{{content | truncate(50)}}",
+      collapsed: "auto",
       fields: [
         {
           name: "content",
           label: "Footer Content",
           widget: "markdown",
           required: false,
-        }
-      ]
+        },
+      ],
     },
     {
       name: "options",
-      label: "Options",
+      label: "Layout and Options",
+      hint: "Manually select a layout and related options",
+      comment: "Elements in a 'Fluid Grid' will wrap automatically one by one when there is not enough space while the 'Switcher' layout switches between horizontal and vertical layout at once at a specified width.",
       widget: "object",
       required: false,
       collapsed: "auto",
-      // hint: "Select a pre-defined section type or use one of your custom section layouts (selectable in 'Advanced' bellow)",
       types: [
         {
           name: "grid-fluid",
@@ -1665,55 +1760,89 @@ export const sectionGrid = {
     },
   ],
   // pattern: /{% sectionGrid\s+(.*?)\s*%}/,
-  pattern: /^{%\s*sectionGrid\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsectionGrid\s*%}$/ms,
+  pattern:
+    /^{%\s*sectionGrid\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsectionGrid\s*%}$/ms,
   fromBlock: function (match) {
     const sectionInner = match[2];
 
-    const header = extractWithNunjucksTag(sectionInner, 'sectionHeader');
-    const footer = extractWithNunjucksTag(sectionInner, 'sectionFooter');
-    const grid = extractWithNunjucksTag(sectionInner, 'grid');
+    const header = extractWithNunjucksTag(sectionInner, "sectionHeader");
+    const footer = extractWithNunjucksTag(sectionInner, "sectionFooter");
+    const grid = extractWithNunjucksTag(sectionInner, "grid");
+    const { extracted: gridAttributes } = extractAttributes(grid.attributes, [
+      "type",
+      "columns",
+      "gap",
+      "class",
+      "widthWrap",
+    ]);
 
     // Extract all gridItems with their attributes
-    const gridItems = extractAllWithNunjucksTag(grid?.content || '', 'gridItem');
+    const gridItems = extractAllWithNunjucksTag(
+      grid?.content || "",
+      "gridItem",
+    );
 
     // If gridItems have attributes, parse them:
     // gridItems.forEach(item => {
     //   const columns = extractAttributeValue(item.attributes, 'columns');
     // });
-    //
-    console.log({header, footer, grid, gridItems})
 
     return {
       header: header ? { content: header.content } : undefined,
       footer: footer ? { content: footer.content } : undefined,
-      items: gridItems.map(item => ({ item: item.content })),
+      items: gridItems.map((item) => ({ item: item.content })),
+      options: gridAttributes,
     };
   },
   toBlock: function (data) {
-    const headerContent = data?.header?.content ? `{% sectionHeader %}
-    ${data?.header?.content}
-{% endsectionHeader %}` : "";
+    const {
+      type,
+      columns,
+      gap,
+      class: className,
+      widthWrap,
+    } = data?.options || {};
 
-    const footerContent = data?.footer?.content ? `{% sectionFooter %}
-    ${data?.footer?.content}
-{% endsectionFooter %}` : "";
+    const headerContent = data?.header?.content
+      ? `{% sectionHeader %}
+${data?.header?.content}
+{% endsectionHeader %}`
+      : "";
 
-    const gridItemsStr = data?.items?.length ? data.items.map(({ item }, index) => {
-      return item ? `{% gridItem %}
-    ${item}
-{% endgridItem %}` : "";
-    }).filter(Boolean).join("\n") : "";
+    const footerContent = data?.footer?.content
+      ? `{% sectionFooter %}
+${data?.footer?.content}
+{% endsectionFooter %}`
+      : "";
 
-    const gridContent = data?.items?.length ? `{% grid %}
+    const gridItemsStr = data?.items?.length
+      ? data.items
+          .map(({ item }, index) => {
+            return item
+              ? `{% gridItem %}
+${item}
+{% endgridItem %}`
+              : "";
+          })
+          .filter(Boolean)
+          .join("\n")
+      : "";
 
-    ${gridItemsStr}
-
-{% endgrid %}` : "";
+    const gridAttrs = { type, columns, gap, class: className, widthWrap };
+    const gridAttrsStr = Object.entries(gridAttrs)
+      .filter(([key, value]) => !!value)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(", ");
+    const gridContent = data?.items?.length
+      ? `{% grid ${gridAttrsStr} %}
+${gridItemsStr}
+{% endgrid %}`
+      : "";
 
     return `{% sectionGrid %}
-    ${headerContent}
-    ${gridContent}
-    ${footerContent}
+${headerContent}
+${gridContent}
+${footerContent}
 {% endsectionGrid %}`;
   },
   toPreview: (data) => `<span>GRID SECTION</span>`,

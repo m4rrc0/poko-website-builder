@@ -11,8 +11,7 @@ class Grid {
 
   async render({ content }) {
     // const contentRendered = await this.renderTemplate(content, "njk,md");
-    return `
-<section class="section section-grid">
+    return `<section class="section section-grid">
 ${content}
 </section>`;
   }

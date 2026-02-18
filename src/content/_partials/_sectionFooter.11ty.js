@@ -12,8 +12,7 @@ class Grid {
   async render({ content }) {
     // const contentRendered = await this.renderTemplate(content, "njk,md");
 
-    return `
-<footer class="section-footer">
+    return `<footer class="section-footer">
 ${content}
 </footer>`;
   }

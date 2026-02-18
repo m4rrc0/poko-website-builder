@@ -11,8 +11,7 @@ class Grid {
 
   async render({ content }) {
     // const contentRendered = await this.renderTemplate(content, "njk,md");
-    return `
-<div class="grid-item">
+    return `<div class="grid-item">
 ${content}
 </div>`;
   }

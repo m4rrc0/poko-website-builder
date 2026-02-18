@@ -67,12 +67,12 @@ export default async function (eleventyConfig, pluginOptions) {
     // const data = deepmerge(this.ctx, dataManual);
     const data = { ...this.ctx, ...dataManual };
     const filename = path.join(filenameRaw);
-    const cacheKey = hashSum({
-      filename,
-      data: cleanupExpensiveData(data),
-      // data: { page: data.page, data: data.data, ...dataManual },
-      templateEngineOverride,
-    });
+    // const cacheKey = hashSum({
+    //   filename,
+    //   data: cleanupExpensiveData(data),
+    //   // data: { page: data.page, data: data.data, ...dataManual },
+    //   templateEngineOverride,
+    // });
     const shouldKeepMdFormating =
       /\.md$/.test(filename) || /md/.test(templateEngineOverride);
 
