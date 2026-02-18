@@ -24,12 +24,29 @@ vars: null
 
 {% link url="aliyardmr@gmail.com", text="bcjkqsncsqlkn", linkType="email", cc="", bcc="", subject="Hello", body="Hello\n\nWorld", class="button" %}
 
+{% sectionGrid %}
+{% sectionHeader %}
+## My section Header
+{% endsectionHeader %}
+
 {% grid %}
-# Hello inside grid fluid
 
-{% comp %}
-# Hello inside comp
-{% endcomp %}
+{% gridItem %}
+#### Hello inside gridItem 1
+{% endgridItem %}
 
+{% gridItem %}
+#### Hello inside gridItem 2
+{% endgridItem %}
+
+{% gridItem %}
+#### Hello inside gridItem 3
+{% endgridItem %}
 
 {% endgrid %}
+
+{% sectionFooter %}
+<small>This is a footer</small>
+{% endsectionFooter %}
+
+{% endsectionGrid %}

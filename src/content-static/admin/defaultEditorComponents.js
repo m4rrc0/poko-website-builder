@@ -125,6 +125,50 @@ const extractQuotedString = (argumentsString, propName) => {
   return null;
 };
 
+/**
+ * Extracts attributes and content from a paired Nunjucks tag
+ * @param {string} contentString - The string to search in
+ * @param {string} tagName - The tag name (e.g., 'sectionHeader', 'gridItem')
+ * @returns {{ attributes: string|null, content: string } | null}
+ */
+const extractWithNunjucksTag = (contentString, tagName) => {
+  if (!contentString) return null;
+
+  // Matches: {% tagName [attributes] %} content {% endtagName %}
+  const regex = new RegExp(
+    `{%\\s*${tagName}(?:\\s+([^%]*?))?\\s*%}\\s*([\\s\\S]*?)\\s*{%\\s*end${tagName}\\s*%}`,
+    'ms'
+  );
+
+  const match = contentString.match(regex);
+  if (!match) return null;
+
+  return {
+    attributes: match[1]?.trim() || null,  // null if no attributes
+    content: match[2].trim(),
+  };
+};
+
+// Variant for extracting ALL occurrences
+const extractAllWithNunjucksTag = (contentString, tagName) => {
+  if (!contentString) return [];
+
+  const regex = new RegExp(
+    `{%\\s*${tagName}(?:\\s+([^%]*?))?\\s*%}\\s*([\\s\\S]*?)\\s*{%\\s*end${tagName}\\s*%}`,
+    'gms'
+  );
+
+  const results = [];
+  let match;
+  while ((match = regex.exec(contentString)) !== null) {
+    results.push({
+      attributes: match[1]?.trim() || null,
+      content: match[2].trim(),
+    });
+  }
+  return results;
+};
+
 const parsePartialSyntax = (match) => {
   // Parse the arguments from the captured string
   const partialSlug = match[1];
@@ -1499,21 +1543,35 @@ export const link = {
   toPreview: (data) => `<span>LINK</span>`,
 };
 
-export const gridFluid = {
-  id: "gridfluid",
-  label: "Grid Fluid",
+export const sectionGrid = {
+  id: "sectionGrid",
+  label: "Grid Section",
   icon: "brick",
   fields: [
     {
-      name: "blocks",
-      label: "Blocks",
-      widget: "list",
-      required: true,
-      default: [{ block: "" }],
+      name: "header",
+      label: "Section Header",
+      widget: "object",
+      required: false,
       fields: [
         {
-          name: "block",
-          label: "Block ",
+          name: "content",
+          label: "Header Content",
+          widget: "markdown",
+          required: false,
+        }
+      ]
+    },
+    {
+      name: "items",
+      label: "Grid Items",
+      widget: "list",
+      required: true,
+      default: [{ item: "" }, { item: "" }, { item: "" }],
+      fields: [
+        {
+          name: "item",
+          label: "Grid Item",
           widget: "markdown",
           required: false,
           summary: "{{value | truncate(50)}}",
@@ -1521,59 +1579,144 @@ export const gridFluid = {
       ],
     },
     {
+      name: "footer",
+      label: "Section Footer",
+      widget: "object",
+      required: false,
+      fields: [
+        {
+          name: "content",
+          label: "Footer Content",
+          widget: "markdown",
+          required: false,
+        }
+      ]
+    },
+    {
       name: "options",
       label: "Options",
       widget: "object",
-      required: true,
-      fields: [
+      required: false,
+      collapsed: "auto",
+      // hint: "Select a pre-defined section type or use one of your custom section layouts (selectable in 'Advanced' bellow)",
+      types: [
         {
-          name: "gap",
-          label: "Gap between blocks",
-          widget: "string",
+          name: "grid-fluid",
+          // label: "Fluid Grid: Fluid sized blocks wrap automatically",
+          label: "Fluid Grid",
+          widget: "object",
           required: false,
+          fields: [
+            {
+              name: "columns",
+              label: "Columns",
+              widget: "number",
+              hint: "The number of columns on large screens [note: can be overwritten with a custom variable widthColumnMin defining a min column size in CSS units]",
+              required: false,
+            },
+            {
+              name: "gap",
+              label: "Gap",
+              widget: "string",
+              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+              required: false,
+            },
+            {
+              name: "class",
+              label: "Class Names",
+              widget: "string",
+              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+              required: false,
+            },
+          ],
         },
         {
-          name: "columns",
-          label: "Columns number",
-          widget: "string",
+          name: "switcher",
+          // label: "Switcher: Switch from side by side to vertical display",
+          label: "Switcher",
+          widget: "object",
           required: false,
-        },
-        {
-          name: "minColumnWidth",
-          label: "Min column width",
-          widget: "string",
-          required: false,
-        },
-        {
-          name: "maxColumnWidth",
-          label: "Max column width",
-          widget: "string",
-          required: false,
-        },
-        {
-          name: "class",
-          label: "Class names",
-          widget: "string",
-          required: false,
+          hint: "Switch between side by side and vertical display based on section width",
+          fields: [
+            {
+              name: "widthWrap",
+              label: "Width Wrap",
+              widget: "string",
+              hint: "Section width to switch from side by side to vertical display. (e.g. var(--width-prose) [default], 30rem, 800px, 0px [no wrap])",
+              required: false,
+            },
+            {
+              name: "gap",
+              label: "Gap",
+              widget: "string",
+              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+              required: false,
+            },
+            {
+              name: "class",
+              label: "Class Names",
+              widget: "string",
+              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+              required: false,
+            },
+          ],
         },
       ],
     },
   ],
-  // TODO: envelopper dans un wrapper (voir ligne 580) pour pouvoir ajouter des classes et autres attributs, et éviter d'avoir une syntaxe trop compliquée à gérer dans le markdown lui même
-  pattern: /{% gridfluid\s+(.*?)\s*%}/,
+  // pattern: /{% sectionGrid\s+(.*?)\s*%}/,
+  pattern: /^{%\s*sectionGrid\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsectionGrid\s*%}$/ms,
   fromBlock: function (match) {
+    const sectionInner = match[2];
+
+    const header = extractWithNunjucksTag(sectionInner, 'sectionHeader');
+    const footer = extractWithNunjucksTag(sectionInner, 'sectionFooter');
+    const grid = extractWithNunjucksTag(sectionInner, 'grid');
+
+    // Extract all gridItems with their attributes
+    const gridItems = extractAllWithNunjucksTag(grid?.content || '', 'gridItem');
+
+    // If gridItems have attributes, parse them:
+    // gridItems.forEach(item => {
+    //   const columns = extractAttributeValue(item.attributes, 'columns');
+    // });
+    //
+    console.log({header, footer, grid, gridItems})
+
     return {
-      columns: match?.groups?.columns,
-      gap: match?.groups?.gap,
-      widthColumnMin: match?.groups?.widthColumnMin,
-      widthColumnMax: match?.groups?.widthColumnMax,
-      blocks: match?.groups?.blocks,
+      header: header ? { content: header.content } : undefined,
+      footer: footer ? { content: footer.content } : undefined,
+      items: gridItems.map(item => ({ item: item.content })),
     };
   },
   toBlock: function (data) {
-    return `{% gridfluid columns="${data?.columns}" gap="${data?.gap}" widthColumnMin="${data?.widthColumnMin}" widthColumnMax="${data?.widthColumnMax}" blocks="${data?.blocks}" %}`;
+    const headerContent = data?.header?.content ? `{% sectionHeader %}
+    ${data?.header?.content}
+{% endsectionHeader %}` : "";
+
+    const footerContent = data?.footer?.content ? `{% sectionFooter %}
+    ${data?.footer?.content}
+{% endsectionFooter %}` : "";
+
+    const gridItemsStr = data?.items?.length ? data.items.map(({ item }, index) => {
+      return item ? `{% gridItem %}
+    ${item}
+{% endgridItem %}` : "";
+    }).filter(Boolean).join("\n") : "";
+
+    const gridContent = data?.items?.length ? `{% grid %}
+
+    ${gridItemsStr}
+
+{% endgrid %}` : "";
+
+    return `{% sectionGrid %}
+    ${headerContent}
+    ${gridContent}
+    ${footerContent}
+{% endsectionGrid %}`;
   },
-  toPreview: (data) => `<span>GRID FLUID</span>`,
+  toPreview: (data) => `<span>GRID SECTION</span>`,
 };
 
 // Example for project specific component def

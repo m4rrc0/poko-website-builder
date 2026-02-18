@@ -13,9 +13,3 @@ body:data: null
 # Page Test
 
 Avec contenu
-
-{% partial "test.md" %}
-
-{% wrapper tag="section", class="box", id="awesome" %}
-Some content !{% n %}{% n %}{% wrapper tag="footer", class="box" %}My section footer{% endwrapper %}
-{% endwrapper %}

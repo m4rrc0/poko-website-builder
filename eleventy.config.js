@@ -742,6 +742,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
 
   // Deferred Config
   await eleventyConfig.addPlugin(customRenderersPlugin);
+  await eleventyConfig.addPlugin(partialShortcodesPlugin);
 
   await eleventyConfig.addPlugin(async function (eleventyConf) {
     eleventyConf.versionCheck(">=3.0.0-alpha.1");
