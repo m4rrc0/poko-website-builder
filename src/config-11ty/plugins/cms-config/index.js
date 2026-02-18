@@ -938,6 +938,90 @@ export const pages = {
   public_folder: "/_images",
   fields: pageFields,
 };
+export function spreadPageSetup(collectionNameRaw) {
+  // Make sure the collection name is camelCase (not space separated or hyphenized or snake_case or kebab-case)
+  const collectionName = collectionNameRaw
+    .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : "")) // Handle separators
+    .replace(/^[A-Z]/, (c) => c.toLowerCase()); // Ensure first char is lowercase
+
+  // replace camelCase to space-separated capitalized words
+  const label = collectionName
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase());
+  const label_singular = label.endsWith("s") ? label.slice(0, -1) : label;
+  return {
+    ...pages,
+    name: collectionName,
+    label,
+    label_singular,
+    path: `${collectionName}/{{slug}}`,
+    i18n: true,
+  };
+}
+// ARTICLES
+export const articleFields = [...commonCollectionFields, ...commonPageFields];
+export const articles = {
+  ...spreadPageSetup("articles"),
+  icon: "ink_pen",
+  fields: articleFields,
+};
+export const articlesCollection = { ...articles };
+// PEOPLE
+export const personFields = [...commonCollectionFields, ...commonPageFields];
+export const people = {
+  ...spreadPageSetup("people"),
+  label_singular: "Person",
+  icon: "person",
+  fields: personFields,
+};
+export const peopleCollection = { ...people };
+// EVENTS
+export const eventFields = [...commonCollectionFields, ...commonPageFields];
+export const events = {
+  ...spreadPageSetup("events"),
+  icon: "event",
+  fields: eventFields,
+};
+export const eventsCollection = { ...events };
+
+const optionalCollections = {
+  articles: articlesCollection,
+  people: peopleCollection,
+  events: eventsCollection,
+  // projects: projectsCollection,
+};
+const selectedOptionalCollections = (selectedCollections || [])
+  .map((collectionName) => optionalCollections[collectionName])
+  .filter(Boolean);
+
+const getMiscLinkTypes = (currentLevel, maxLevels) =>
+  selectedOptionalCollections.map((collection) => ({
+    name: collection.label_singular.toLowerCase(),
+    label: collection.label_singular,
+    fields: [
+      {
+        name: "label",
+        label: "Label",
+        widget: "string",
+        required: false,
+        hint: "Override the page title",
+        i18n: true,
+      },
+      {
+        name: collection.label_singular.toLowerCase() + "Name",
+        label: "Which " + collection.label_singular.toLowerCase() + "?",
+        widget: "relation",
+        collection: collection.name,
+        search_fields: ["name"],
+        value_field: "uuid",
+        display_fields: ["name"],
+        required: false,
+        i18n: "duplicate",
+      },
+      ...createNavLevels(currentLevel + 1, maxLevels), // Adjust the second argument to set max levels
+    ],
+  }));
+
 const navLink = {
   name: "items",
   label: "Items",
@@ -951,27 +1035,113 @@ const navLink = {
       label: "Link to",
       widget: "object",
       required: true,
+      i18n: "duplicate",
     },
   ],
 };
+
+function createNavLevels(currentLevel, maxLevels) {
+  if (currentLevel > maxLevels) return [];
+
+  return [
+    {
+      name: "subItems",
+      label: "Sub Items",
+      label_singular: "Sub Item",
+      widget: "list",
+      i18n: "duplicate",
+      required: false,
+      fields: [
+        {
+          name: "linkTo",
+          label: "Link to",
+          widget: "object",
+          required: true,
+          i18n: "duplicate",
+          types: [
+            {
+              name: "page",
+              label: "Page",
+              fields: [
+                {
+                  name: "slug",
+                  label: "Which page?",
+                  widget: "relation",
+                  collection: "pages",
+                  search_fields: ["name"],
+                  value_field: "uuid",
+                  display_fields: ["name"],
+                  required: false,
+                  i18n: "duplicate",
+                },
+                {
+                  name: "label",
+                  label: "Label",
+                  widget: "string",
+                  required: false,
+                  hint: "Override the page title",
+                  i18n: true,
+                },
+                ...createNavLevels(currentLevel + 1, maxLevels),
+              ],
+            },
+            {
+              name: "url",
+              label: "Custom URL",
+              fields: [
+                {
+                  name: "url",
+                  label: "Custom URL",
+                  widget: "string",
+                  required: false,
+                  hint: "Use this for external links or if you want to override the page link.",
+                  i18n: true,
+                },
+                {
+                  name: "label",
+                  label: "Label",
+                  widget: "string",
+                  required: false,
+                  hint: "Override the page title",
+                  i18n: true,
+                },
+                ...createNavLevels(currentLevel + 1, maxLevels), // Adjust the second argument to set max levels
+              ],
+            },
+            {
+              name: "label",
+              label: "Label",
+              fields: [
+                {
+                  name: "label",
+                  label: "Label",
+                  widget: "string",
+                  required: false,
+                  hint: "Override the page title",
+                  i18n: true,
+                },
+                ...createNavLevels(currentLevel + 1, maxLevels), // Adjust the second argument to set max levels
+              ],
+            },
+            ...getMiscLinkTypes(currentLevel, maxLevels),
+          ],
+        },
+      ],
+    },
+  ];
+}
+
 const linkToField = {
   name: "linkTo",
   label: "Link to",
   widget: "object",
   required: false,
+  i18n: "duplicate",
   types: [
     {
       name: "page",
       label: "Page",
       fields: [
-        {
-          name: "label",
-          label: "Label",
-          widget: "string",
-          required: false,
-          hint: "Override the page title",
-          i18n: true,
-        },
         {
           name: "slug",
           label: "Which page?",
@@ -981,6 +1151,15 @@ const linkToField = {
           value_field: "uuid",
           display_fields: ["name"],
           required: false,
+          i18n: "duplicate",
+        },
+        {
+          name: "label",
+          label: "Label",
+          widget: "string",
+          required: false,
+          hint: "Override the page title",
+          i18n: true,
         },
         ...createNavLevels(1, 4), // Adjust the second argument to set max levels
       ],
@@ -998,74 +1177,35 @@ const linkToField = {
           hint: "Use this for external links or if you want to override the page link.",
           i18n: true,
         },
-      ],
-    },
-    {
-      name: "article",
-      label: "articles",
-      fields: [
         {
-          name: "articleName",
-          label: "Which article?",
-          widget: "relation",
-          collection: "articles",
-          search_fields: ["name"],
-          value_field: "uuid",
-          display_fields: ["name"],
+          name: "label",
+          label: "Label",
+          widget: "string",
           required: false,
+          hint: "Override the page title",
+          i18n: true,
         },
-      ],
-    },
-    {
-      name: "event",
-      label: "events",
-      fields: [
-        {
-          name: "eventName",
-          label: "Which event?",
-          widget: "relation",
-          collection: "events",
-          search_fields: ["name"],
-          value_field: "uuid",
-          display_fields: ["name"],
-          required: false,
-        },
+        ...createNavLevels(1, 4), // Adjust the second argument to set max levels
       ],
     },
     {
       name: "label",
       label: "Label",
-      widget: "string",
-      required: false,
+      fields: [
+        {
+          name: "label",
+          label: "Label",
+          widget: "string",
+          required: false,
+          hint: "Override the page title",
+          i18n: true,
+        },
+        ...createNavLevels(1, 4), // Adjust the second argument to set max levels
+      ],
     },
+    ...getMiscLinkTypes(1, 4),
   ],
 };
-
-function createNavLevels(currentLevel, maxLevels) {
-  if (currentLevel > maxLevels) return [];
-
-  const subItemsField = {
-    name: "subItems",
-    label: `Sub Items (Level ${currentLevel + 1})`,
-    label_singular: "Sub Item",
-    widget: "list",
-    required: false,
-    i18n: "duplicate",
-    fields: [
-      {
-        name: "label",
-        label: "Label",
-        widget: "string",
-        required: false,
-        i18n: true,
-      },
-      // linkToField,
-      ...createNavLevels(currentLevel + 1, maxLevels),
-    ],
-  };
-
-  return [subItemsField];
-}
 
 export const navCollection = {
   ...mostCommonMarkdownCollectionConfig,
@@ -1091,10 +1231,7 @@ export const navCollection = {
       widget: "list",
       i18n: "duplicate",
       required: true,
-      fields: [
-        linkToField,
-        // ...createNavLevels(1, 4), // Adjust the second argument to set max levels
-      ],
+      fields: [linkToField],
     },
   ],
 };
@@ -1144,60 +1281,7 @@ export const pagesCollection = {
     ],
   },
 };
-export function spreadPageSetup(collectionNameRaw) {
-  // Make sure the collection name is camelCase (not space separated or hyphenized or snake_case or kebab-case)
-  const collectionName = collectionNameRaw
-    .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : "")) // Handle separators
-    .replace(/^[A-Z]/, (c) => c.toLowerCase()); // Ensure first char is lowercase
-
-  // replace camelCase to space-separated capitalized words
-  const label = collectionName
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase());
-  const label_singular = label.endsWith("s") ? label.slice(0, -1) : label;
-  return {
-    ...pages,
-    name: collectionName,
-    label,
-    label_singular,
-    path: `${collectionName}/{{slug}}`,
-  };
-}
-// ARTICLES
-export const articleFields = [...commonCollectionFields, ...commonPageFields];
-export const articles = {
-  ...spreadPageSetup("articles"),
-  icon: "ink_pen",
-  fields: articleFields,
-};
-export const articlesCollection = { ...articles };
-// PEOPLE
-export const personFields = [...commonCollectionFields, ...commonPageFields];
-export const people = {
-  ...spreadPageSetup("people"),
-  label_singular: "Person",
-  icon: "person",
-  fields: personFields,
-};
-export const peopleCollection = { ...people };
-// EVENTS
-export const eventFields = [...commonCollectionFields, ...commonPageFields];
-export const events = {
-  ...spreadPageSetup("events"),
-  icon: "event",
-  fields: eventFields,
-};
-export const eventsCollection = { ...events };
-
-const optionalCollections = {
-  articles: articlesCollection,
-  people: peopleCollection,
-  events: eventsCollection,
-  // projects: projectsCollection,
-};
-const selectedOptionalCollections = (selectedCollections || [])
-  .map((collectionName) => optionalCollections[collectionName])
-  .filter(Boolean);
+// Definitions moved up
 
 class CmsConfig {
   data() {
