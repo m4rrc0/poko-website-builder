@@ -15,6 +15,7 @@ import {
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
+import { icon } from "dist/admin/defaultEditorComponents.js";
 
 const isDev = NODE_ENV === "development";
 const mustSetup = !allLanguages?.length;
@@ -512,6 +513,8 @@ export const dataFilesCollection = {
     },
   ],
 };
+
+
 
 export const advancedDataFilesCollection = {
   // ...mostCommonMarkdownCollectionConfig,
@@ -1028,11 +1031,66 @@ export const events = {
   fields: eventFields,
 };
 export const eventsCollection = { ...events };
+// ORGANIZATIONS
+export const organizationFields = [...commonCollectionFields, ...commonPageFields];
+export const organizations = {
+  ...spreadPageSetup("organizations"),
+  icon: "add_home_work",
+  fields: organizationFields,
+};
+export const organizationsCollection = { ...organizations };
+// COURSES
+export const courseFields = [...commonCollectionFields, ...commonPageFields];
+export const courses = {
+  ...spreadPageSetup("courses"),
+  icon: "school",
+  fields: courseFields,
+};
+export const coursesCollection = { ...courses };
+// PLACES
+export const placeFields = [...commonCollectionFields, ...commonPageFields];
+export const places = {
+  ...spreadPageSetup("places"),
+  icon: "deployed_code",
+  fields: placeFields,
+};
+export const placesCollection = { ...places };
+// PRODUCTS
+export const productFields = [...commonCollectionFields, ...commonPageFields];
+export const products = {
+  ...spreadPageSetup("products"),
+  icon: "add_shopping_cart",
+  fields: productFields,
+};
+export const productsCollection = { ...products };
+// REVIEWS
+export const reviewFields = [...commonCollectionFields, ...commonPageFields];
+export const reviews = {
+  ...spreadPageSetup("reviews"),
+  icon: "reviews",
+  fields: reviewFields,
+};
+export const reviewsCollection = { ...reviews };
+// FAQs
+export const faqFields = [...commonCollectionFields, ...commonPageFields];
+export const faqs = {
+  ...spreadPageSetup("faqs"),
+  icon: "indeterminate_question_box",
+  fields: faqFields,
+};
+export const faqsCollection = { ...faqs };
+
 
 const optionalCollections = {
   articles: articlesCollection,
   people: peopleCollection,
   events: eventsCollection,
+  organizations: organizationsCollection,
+  courses: coursesCollection,
+  places: placesCollection,
+  products: productsCollection,
+  reviews: reviewsCollection,
+  faqs: faqsCollection,
   // projects: projectsCollection,
 };
 const selectedOptionalCollections = (selectedCollections || [])
@@ -1791,6 +1849,7 @@ class CmsConfig {
           : [
               pagesCollection,
               ...selectedOptionalCollections,
+              footerCollection,
               {
                 divider: Boolean(
                   !mustSetup && data.userConfig.collections?.length,
@@ -1821,6 +1880,39 @@ class CmsConfig {
     return JSON.stringify(generalConfig, null, isDev ? 2 : 0);
   }
 }
+
+export const footerCollection = {
+  identifier_field: "{{slug}}",
+  name: "footers",
+  label: "Footers",
+  label_singular: "Footer",
+  path: "{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "bottom_navigation",
+  folder: `${CONTENT_DIR}/_partials/footer`,
+  extension: "md",
+  format: "yaml-frontmatter",
+  create: true,
+  summary: "{{slug}}",
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  sortable_fields: {
+    fields: ["slug"],
+    default: {
+      field: "slug",
+      direction: "ascending",
+    },
+  },
+  fields: [
+    {
+      name: "body",
+      label: "Content",
+      widget: "markdown",
+      required: false,
+    },
+  ],
+};
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
