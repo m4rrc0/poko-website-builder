@@ -15,6 +15,7 @@ import {
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
+import { icon } from "dist/admin/defaultEditorComponents.js";
 
 const isDev = NODE_ENV === "development";
 const mustSetup = !allLanguages?.length;
@@ -512,6 +513,8 @@ export const dataFilesCollection = {
     },
   ],
 };
+
+
 
 export const advancedDataFilesCollection = {
   // ...mostCommonMarkdownCollectionConfig,
@@ -1281,7 +1284,133 @@ export const pagesCollection = {
     ],
   },
 };
-// Definitions moved up
+export function spreadPageSetup(collectionNameRaw) {
+  // Make sure the collection name is camelCase (not space separated or hyphenized or snake_case or kebab-case)
+  const collectionName = collectionNameRaw
+    .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : "")) // Handle separators
+    .replace(/^[A-Z]/, (c) => c.toLowerCase()); // Ensure first char is lowercase
+
+  // replace camelCase to space-separated capitalized words
+  const label = collectionName
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase());
+  const label_singular = label.endsWith("s") ? label.slice(0, -1) : label;
+  return {
+    ...pages,
+    name: collectionName,
+    label,
+    label_singular,
+    path: `${collectionName}/{{slug}}`,
+  };
+}
+// ARTICLES
+export const articleFields = [...commonCollectionFields, ...commonPageFields];
+export const articles = {
+  ...spreadPageSetup("articles"),
+  icon: "ink_pen",
+  fields: articleFields,
+};
+export const articlesCollection = { ...articles };
+// PEOPLE
+export const personFields = [...commonCollectionFields, ...commonPageFields];
+export const people = {
+  ...spreadPageSetup("people"),
+  label_singular: "Person",
+  icon: "person",
+  fields: personFields,
+};
+export const peopleCollection = { ...people };
+// EVENTS
+export const eventFields = [...commonCollectionFields, ...commonPageFields];
+export const events = {
+  ...spreadPageSetup("events"),
+  icon: "event",
+  fields: eventFields,
+};
+export const eventsCollection = { ...events };
+// ORGANIZATIONS
+export const organizationFields = [...commonCollectionFields, ...commonPageFields];
+export const organizations = {
+  ...spreadPageSetup("organizations"),
+  icon: "add_home_work",
+  fields: organizationFields,
+};
+export const organizationsCollection = { ...organizations };
+// COURSES
+export const courseFields = [...commonCollectionFields, ...commonPageFields];
+export const courses = {
+  ...spreadPageSetup("courses"),
+  icon: "school",
+  fields: courseFields,
+};
+export const coursesCollection = { ...courses };
+// PLACES
+export const placeFields = [...commonCollectionFields, ...commonPageFields];
+export const places = {
+  ...spreadPageSetup("places"),
+  icon: "deployed_code",
+  fields: placeFields,
+};
+export const placesCollection = { ...places };
+// PRODUCTS
+export const productFields = [...commonCollectionFields, ...commonPageFields];
+export const products = {
+  ...spreadPageSetup("products"),
+  icon: "add_shopping_cart",
+  fields: productFields,
+};
+export const productsCollection = { ...products };
+// REVIEWS
+export const reviewFields = [...commonCollectionFields, ...commonPageFields];
+export const reviews = {
+  ...spreadPageSetup("reviews"),
+  icon: "reviews",
+  fields: reviewFields,
+};
+export const reviewsCollection = { ...reviews };
+// FAQs
+export const faqFields = [...commonCollectionFields, ...commonPageFields];
+export const faqs = {
+  ...spreadPageSetup("faqs"),
+  icon: "indeterminate_question_box",
+  fields: faqFields,
+};
+export const faqsCollection = { ...faqs };
+// PROJECTS
+export const projectFields = [...commonCollectionFields, ...commonPageFields];
+export const projects = {
+  ...spreadPageSetup("projects"),
+  icon: "folder_open",
+  fields: projectFields,
+};
+export const projectsCollection = { ...projects };
+// DOCUMENTATION -- HowTo in schema.org
+export const documentationFields = [...commonCollectionFields, ...commonPageFields];
+export const documentations = {
+  ...spreadPageSetup("documentations"),
+  icon: "menu_book",
+  fields: projectFields,
+};
+export const documentationCollection = { ...documentations };
+
+
+
+const optionalCollections = {
+  articles: articlesCollection,
+  people: peopleCollection,
+  events: eventsCollection,
+  organizations: organizationsCollection,
+  courses: coursesCollection,
+  places: placesCollection,
+  products: productsCollection,
+  reviews: reviewsCollection,
+  faqs: faqsCollection,
+  projects: projectsCollection,
+  documentations: documentationCollection, //HowTo in schema.org
+};
+const selectedOptionalCollections = (selectedCollections || [])
+  .map((collectionName) => optionalCollections[collectionName])
+  .filter(Boolean);
 
 class CmsConfig {
   data() {
