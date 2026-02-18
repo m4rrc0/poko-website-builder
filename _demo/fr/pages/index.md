@@ -22,13 +22,17 @@ vars: null
 
 {% link url="mon-article", text="article", linkType="internal", collection="articles" %}
 
-{% link url="aliyardmr@gmail.com", text="bcjkqsncsqlkn", linkType="email", cc="", bcc="", subject="Hello", body="Hello\n\nWorld", class="button" %}
+{% link url="test@mail.com", text="bcjkqsncsqlkn", linkType="email", cc="", bcc="", subject="Hello", body="Hello\n\nWorld", class="button" %}
+
+{% image src="/_images/POKO-logo-RVB-01.jpg", alt="poko logo square" %}
 
 {% sectionGrid %}
 {% sectionHeader %}
 ## My section Header
 
 And a paragraph
+
+{% image src="/_images/POKO-logo-RVB-01.jpg" %}
 {% endsectionHeader %}
 {% grid type="switcher" %}
 {% gridItem %}

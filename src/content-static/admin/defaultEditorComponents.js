@@ -149,7 +149,7 @@ const extractAttributes = (attributesString, propNames) => {
         `))\\s*([,\\s]|$)`,
     );
 
-    const match = remaining.match(pattern);
+    const match = remaining?.match(pattern);
     if (match) {
       // Extract value - handle all three formats
       const attrPart = match[2];
@@ -196,7 +196,7 @@ const extractAttributes = (attributesString, propNames) => {
 
   // Clean up separators and whitespace
   remaining = remaining
-    .replace(/^[,\s]+|[,\s]+$/g, "")
+    ?.replace(/^[,\s]+|[,\s]+$/g, "")
     .replace(/\s*,\s*,\s*/g, ", ")
     .trim();
 
@@ -362,7 +362,6 @@ export const imageShortcode = {
   id: "imageShortcode",
   label: "Image",
   icon: "image",
-  summary: "{{alt}} {{src}}",
   fields: [
     {
       name: "src",
@@ -371,75 +370,85 @@ export const imageShortcode = {
       required: true,
     },
     {
-      name: "alt",
-      label: "Alt Text",
-      widget: "string",
-      required: false,
-    },
-    {
-      name: "aspectRatio",
-      label: "Aspect Ratio",
-      widget: "number",
-      value_type: "float",
-      hint: "Width / Height => square = 1; 16:9 = 1.78; 4:3 = 1.33; Extra wide = 4;",
-      required: false,
-    },
-    {
-      name: "width",
-      label: "Width (px)",
-      widget: "number",
-      value_type: "int",
-      required: false,
-      hint: "Leave empty for auto; Useful for image optimization when not full width.",
-    },
-    {
-      name: "advanced",
-      label: "Advanced Attributes",
+      name: "attributes",
+      label: "Attributes",
       widget: "object",
-      required: false,
+      required: true,
       collapsed: true,
+      summary: "{{alt}}",
       fields: [
         {
-          name: "class",
-          label: "Class",
+          name: "alt",
+          label: "Alt Text",
           widget: "string",
           required: false,
         },
         {
-          name: "id",
-          label: "Id",
-          widget: "string",
+          name: "aspectRatio",
+          label: "Aspect Ratio",
+          widget: "number",
+          value_type: "float",
+          hint: "Width / Height => square = 1; 16:9 = 1.78; 4:3 = 1.33; Extra wide = 4;",
           required: false,
         },
         {
-          name: "title",
-          label: "Title",
-          widget: "string",
+          name: "width",
+          label: "Width (px)",
+          widget: "number",
+          value_type: "int",
           required: false,
+          hint: "Leave empty for auto; Useful for image optimization when not full width.",
         },
         {
-          name: "loading",
-          label: "Loading",
-          widget: "select",
-          options: [
-            { value: "", label: "Default" },
-            { value: "lazy", label: "Lazy" },
-            { value: "eager", label: "Eager" },
+          name: "advanced",
+          label: "Advanced Attributes",
+          widget: "object",
+          required: false,
+          collapsed: true,
+          fields: [
+            {
+              name: "class",
+              label: "Class",
+              widget: "string",
+              required: false,
+            },
+            {
+              name: "id",
+              label: "Id",
+              widget: "string",
+              required: false,
+            },
+            {
+              name: "title",
+              label: "Title",
+              widget: "string",
+              required: false,
+            },
+            {
+              name: "loading",
+              label: "Loading",
+              widget: "select",
+              options: [
+                { value: "", label: "Default" },
+                { value: "lazy", label: "Lazy" },
+                { value: "eager", label: "Eager" },
+              ],
+              required: false,
+            },
+            {
+              name: "wrapper",
+              label: "Wrapper",
+              widget: "string",
+              required: false,
+              hint: "HTML tag to wrap the image in; Leave empty for none;",
+            },
+            {
+              name: "imgAttrs",
+              label: "Other raw image attributes",
+              widget: "string",
+              required: false,
+            },
           ],
-          required: false,
-        },
-        {
-          name: "wrapper",
-          label: "Wrapper",
-          widget: "string",
-          required: false,
-          hint: "HTML tag to wrap the image in; Leave empty for none;",
-        },
-        {
-          name: "imgAttrs",
-          label: "Other raw image attributes",
-          widget: "string",
-          required: false,
         },
       ],
     },
@@ -470,21 +479,24 @@ export const imageShortcode = {
 
     return {
       src,
-      ...(alt && { alt }),
-      ...(aspectRatio && { aspectRatio }),
-      ...(width && { width }),
-      advanced: {
-        ...(className && { class: className }),
-        ...(id && { id }),
-        ...(title && { title }),
-        ...(loading && { loading }),
-        ...(wrapper && { wrapper }),
-        ...(imgAttrs && { imgAttrs }),
+      attributes: {
+        ...(alt && { alt }),
+        ...(aspectRatio && { aspectRatio }),
+        ...(width && { width }),
+        advanced: {
+          ...(className && { class: className }),
+          ...(id && { id }),
+          ...(title && { title }),
+          ...(loading && { loading }),
+          ...(wrapper && { wrapper }),
+          ...(imgAttrs && { imgAttrs }),
+        },
       },
     };
   },
   toBlock: function (data) {
-    const { src, alt, aspectRatio, width, advanced } = data;
+    const { src, attributes } = data;
+    const { alt, aspectRatio, width, advanced } = attributes || {};
     const {
       class: className,
       id,
@@ -1624,7 +1636,7 @@ export const link = {
 export const sectionGrid = {
   id: "sectionGrid",
   label: "Grid Section",
-  icon: "brick",
+  icon: "grid_view",
   fields: [
     {
       name: "header",
@@ -1632,24 +1644,13 @@ export const sectionGrid = {
       widget: "object",
       required: false,
       summary: "{{content | truncate(50)}}",
-      collapsed: "auto",
+      collapsed: true,
       fields: [
         {
           name: "content",
           label: "Header Content",
           widget: "markdown",
           required: false,
-          editor_components: [
-            // "eleventyImage", // Removed
-            // "imageShortcode",
-            // "partial",
-            // "htmlPartial",
-            "wrapper",
-            // "section",
-            // "links",
-            // ...defaultEditorComponentNames,
-            // ...userEditorComponentNames,
-          ],
         },
       ],
     },
@@ -1660,7 +1661,7 @@ export const sectionGrid = {
       required: true,
       default: [{ item: "" }, { item: "" }, { item: "" }],
       summary: "{{item | truncate(50)}}",
-      collapsed: "auto",
+      collapsed: true,
       fields: [
         {
           name: "item",
@@ -1676,7 +1677,7 @@ export const sectionGrid = {
       widget: "object",
       required: false,
       summary: "{{content | truncate(50)}}",
-      collapsed: "auto",
+      collapsed: true,
       fields: [
         {
           name: "content",
@@ -1690,10 +1691,11 @@ export const sectionGrid = {
       name: "options",
       label: "Layout and Options",
       hint: "Manually select a layout and related options",
-      comment: "Elements in a 'Fluid Grid' will wrap automatically one by one when there is not enough space while the 'Switcher' layout switches between horizontal and vertical layout at once at a specified width.",
+      comment:
+        "Elements in a 'Fluid Grid' will wrap automatically one by one when there is not enough space while the 'Switcher' layout switches between horizontal and vertical layout at once at a specified width.",
       widget: "object",
       required: false,
-      collapsed: "auto",
+      collapsed: true,
       types: [
         {
           name: "grid-fluid",
@@ -1759,9 +1761,12 @@ export const sectionGrid = {
       ],
     },
   ],
-  // pattern: /{% sectionGrid\s+(.*?)\s*%}/,
+  // Suggested mod by Claude because...
+  // The ^ and $ anchors combined with the m (multiline) flag cause problems when there are multiple sectionGrid components - the pattern can match incorrectly across component boundaries.
+  // pattern:
+  //   /{%\s*sectionGrid\s*([^%]*?)\s*%}([\s\S]*?){%\s*endsectionGrid\s*%}/g,
   pattern:
-    /^{%\s*sectionGrid\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsectionGrid\s*%}$/ms,
+    /^{%\s*sectionGrid\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsectionGrid\s*%}$/gm,
   fromBlock: function (match) {
     const sectionInner = match[2];
 
