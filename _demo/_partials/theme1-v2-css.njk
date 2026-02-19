@@ -1,0 +1,178 @@
+{% css %}
+body{
+    color: var(--color-typo);
+    background-color: var(--color-contrast);
+}
+
+
+/* Components */
+img {
+    border-radius: var(--radius-max);
+    max-width: 100%;
+}
+
+
+/* -- Header -- */
+#menu {
+    padding-block: 2rem;
+    color: var(--color-typo);
+}
+
+#menu nav {
+    /* Utility classes handle layout */
+}
+
+.logo {
+    font-size: var(--step-4);
+}
+
+#menu a {
+    text-decoration: none;
+    letter-spacing: 0.05em;
+}
+
+main, section, article {
+    margin-block: 0;
+}
+
+/* -- Button -- */
+.cta-button {
+    background-color: var(--color-alt);
+    color: var(--color-typo); 
+    padding: 0.75em 1.5em;
+    border-radius: var(--radius-prose);
+    display: inline-flex;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: ease 0.2s ease;
+}
+
+.cta-button:hover {
+    opacity: 0.9;
+    background-color: var(--color-accent);
+}
+
+/* -- Section -> Hero -- */
+#hero {
+    padding-block: 8rem;
+    
+    /* TODO :  METTRE UNE IMAGE EN FOND POUR LA SECTION HERO 
+    + RESTRUCTURER LES MARGINS ET PADDINGS */
+}
+
+#hero h1 {
+    font-size: var(--step-6);
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+}
+
+#hero p {
+    font-size: var(--step-2);
+    margin-bottom: 2rem;
+}
+
+#hero a{
+    background-color: var(--color-typo);
+    color: var(--color-contrast);
+    border-radius: var(--border-radius-btn);
+}
+
+/* -- Section -> Problem Statement -- */
+#problem-statement {
+    padding-block: 6rem;
+}
+
+#problem-statement h2 {
+    font-size: var(--step-2);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+}
+
+#problem-statement p {
+    line-height: 1.6;
+}
+
+/* -- Section -> About -- */
+#about {
+    padding-block: 6rem;
+}
+
+#about h3 {
+    text-transform: uppercase;
+    font-size: var(--step-2);
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.image-container {
+    flex: 0 0 300px; 
+    overflow: hidden; /* Important si l'image dépasse les coins arrondis */
+    border-radius: var(--border-radius-btn);
+}
+
+/* -- Section -> Services -- */
+#services {
+    padding-block: 6rem;
+    color: var(--color-typo);
+}
+
+.service-item h4 {
+    margin-top: 1.5rem;
+    font-size: var(--step-2);
+}
+
+/* -- Section -> Conclusion -- */
+#conclusion {
+    padding-block: 6rem;
+    color: var(--color-typo);
+}
+
+/* Footer */
+#footer {
+    --color-bg: var(--color-alt);
+    background-color: var(--color-bg);
+    padding-block: 4rem;
+    font-size: 0.9rem;
+}
+
+#footer h2 {
+    font-size: var(--step-3);
+    margin-bottom: 0.5rem;
+}
+
+#footer p {
+    font-size: var(--step-2);
+}
+
+.footer-links a {
+    font-size: var(--step-1);
+}
+
+
+
+.social-icons {
+    gap: 1rem;
+    margin-top: 6rem;
+}
+
+.social-icons a {
+    font-weight: bold;
+}
+
+#footer input {
+    border: none;
+    padding: 0.75rem;
+    background-color: var(--color-contrast);
+}
+
+.footer-contact flow a{
+    background-color: var(--color-typo);
+    color: var(--color-contrast);
+    border-radius: var(--radius-prose);
+}
+
+{% endcss %}
