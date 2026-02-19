@@ -79,33 +79,29 @@ export const CACHE_DIR =
   (CLOUDFLARE_BUILD && ".bun/install/cache") ||
   ".cache";
 
-// const GITHUB_REPO_INFERRED = processEnv.GIT_REMOTES?.split("\n")
-//   ?.find((remote) => remote.includes("github.com"))
-//   ?.split(":")
-//   ?.pop()
-//   ?.split(".")?.[0];
-
-// const remoteLocalGit =
-//   "origin\tgit@github.com:m4rrc0/poko-website-builder.git (fetch)\norigin\tgit@github.com:m4rrc0/poko-website-builder.git (push)";
-// const remoteCFpages =
-//   "origin\thttps://x-a_c_c_e_s_s-t_o_k_e_n:g_h_s_11111111111111111111111111111111111@github.com/autre-ecole/poko-website-builder (fetch)\norigin\thttps://x-a_c_c_e_s_s-t_o_k_e_n:g_h_s_11111111111111111111111111111111111@github.com/autre-ecole/poko-website-builder (push)";
-
-const GIT_REMOTES =
-  processEnv.GIT_REMOTES ||
-  (await $`cd ${WORKING_DIR_ABSOLUTE}/../ && git remote -v`)
-    .text()
-    .replace(/\n$/, "");
-const GITHUB_REPO_INFERRED = GIT_REMOTES?.split("\n")
-  ?.find((remote) => remote.includes("github.com"))
-  ?.split(/@github.com(\/|:)/)
-  ?.pop()
-  ?.split(/\.git\s|\s/)?.[0];
-
 // GITHUB Pages REPO inferrence
 export const GITHUB_GIT_REPO_OWNER = processEnv.GITHUB_REPOSITORY_OWNER;
 export const GITHUB_GIT_REPO_NAME =
   processEnv.GITHUB_REPOSITORY?.split("/")?.pop();
 export const GITHUB_GIT_REPO = processEnv.GITHUB_REPOSITORY;
+// NETLIFY REPO inferrence
+export const REPOSITORY_URL = processEnv.REPOSITORY_URL;
+
+const REPO_EARLY = processEnv.REPO || GITHUB_GIT_REPO || REPOSITORY_URL;
+
+const GIT_REMOTES = REPO_EARLY
+  ? ""
+  : processEnv.GIT_REMOTES ||
+    (await $`cd ${WORKING_DIR_ABSOLUTE}/../ && git remote -v`)
+      .text()
+      .replace(/\n$/, "");
+const GITHUB_REPO_INFERRED = GIT_REMOTES
+  ? GIT_REMOTES?.split("\n")
+      ?.find((remote) => remote.includes("github.com"))
+      ?.split(/@github.com(\/|:)/)
+      ?.pop()
+      ?.split(/\.git\s|\s/)?.[0]
+  : "";
 
 // VERCEL REPO inferrence
 export const VERCEL_GIT_REPO_OWNER =
@@ -114,7 +110,6 @@ export const VERCEL_GIT_REPO_SLUG =
   processEnv.VERCEL_GIT_REPO_SLUG || processEnv.VERCEL_GIT_REPO_SLUG;
 
 // NETLIFY REPO inferrence
-export const REPOSITORY_URL = processEnv.REPOSITORY_URL;
 const repoUrlParts = REPOSITORY_URL?.split(":")?.pop()?.split("/");
 export const NETLIFY_REPO_NAME = repoUrlParts?.pop();
 export const NETLIFY_REPO_OWNER = repoUrlParts?.pop();
@@ -125,6 +120,7 @@ export const NETLIFY_REPO =
 
 // CLOUDFLARE REPO inferrence
 // NOTE: Doesn't look like Cloudflare export these env variables...?
+// So we need to infer from GIT_REMOTES and GITHUB_REPO_INFERRED
 
 // REPO inferrence
 export const REPO_OWNER =
@@ -138,9 +134,7 @@ export const REPO_NAME =
   VERCEL_GIT_REPO_SLUG ||
   NETLIFY_REPO_NAME;
 export const REPO =
-  processEnv.REPO ||
-  GITHUB_GIT_REPO ||
-  REPOSITORY_URL ||
+  REPO_EARLY ||
   (REPO_OWNER && REPO_NAME && `${REPO_OWNER}/${REPO_NAME}`) ||
   GITHUB_REPO_INFERRED;
 
@@ -159,13 +153,30 @@ export const BRANCH =
     .text()
     .replace(/\n$/, "");
 
+function getGithubPagesUrl(repo) {
+  // repo = "owner/repo"
+  if (!repo) return null;
+
+  const [owner, name] = repo.split("/");
+
+  // User/Org site: <owner>.github.io
+  if (name === `${owner}.github.io`) {
+    return `https://${owner}.github.io`;
+  }
+
+  // Project site: <owner>.github.io/<repo>
+  return `https://${owner}.github.io/${name}`;
+}
+const GITHUB_DEFAULT_URL = getGithubPagesUrl(REPO_EARLY);
+
 // TODO: Verify compat with supported hosts
 const HOST_SUBDOMAIN = BRANCH && BRANCH.replaceAll("/", "-");
 const HOST_PREVIEW_URL =
   processEnv.HOST_PREVIEW_URL ||
   processEnv.CF_PAGES_URL ||
   (processEnv.VERCEL_BRANCH_URL && `https://${processEnv.VERCEL_BRANCH_URL}`) ||
-  processEnv.DEPLOY_URL; // Netlify
+  processEnv.DEPLOY_URL || // Netlify
+  GITHUB_DEFAULT_URL; // GitHub Pages
 const HOST_BRANCH_URL =
   processEnv.HOST_BRANCH_URL ||
   (processEnv.CF_PAGES_URL &&
@@ -201,11 +212,6 @@ export const CMS_BRANCH = processEnv.CMS_BRANCH || BRANCH;
 
 // Fallback hosting service for local dev
 export const PREFERRED_HOSTING = processEnv.PREFERRED_HOSTING || "node";
-
-assert(BRANCH, "[env] BRANCH is required");
-// assert(CMS_AUTH_URL, "[env] CMS_AUTH_URL is required"); // Not required anymore with github personal token
-// TODO: reinstate this !
-// assert(BASE_URL, "[env] BASE_URL is required");
 
 // User Config from CMS
 // Read file in ${WORKING_DIR_ABSOLUTE}/_data/globalSettings.yaml
@@ -359,7 +365,8 @@ export const BASE_URL = (
   HOST_BRANCH_URL ||
   // Probably not that bad to fall back to production url
   // TODO: Verify that it is not that bad to fall back to prod url
-  PROD_URL
+  PROD_URL ||
+  "http://localhost:8080"
 )?.replace(/\/+$/, "");
 // DISPLAY_URL is for the CMS button to the deployed site (prefer current deploy against production)
 export const DISPLAY_URL =
@@ -379,3 +386,7 @@ if (DEBUG) {
     REPO,
   });
 }
+
+assert(BRANCH, "[env] BRANCH is required");
+// assert(CMS_AUTH_URL, "[env] CMS_AUTH_URL is required"); // Not required anymore with github personal token
+assert(BASE_URL, "[env] BASE_URL is required");
