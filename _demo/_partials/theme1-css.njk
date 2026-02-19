@@ -37,63 +37,50 @@ main, section, article {
     margin-block: 0;
 }
 
+section {
+    padding-block: 6rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase;
+}
+
 /* Button */
 .cta-button {
     background-color: var(--color-typo);
-    color: var(--color-accent); /* White text */
-    padding: 0.75em 1.5em;
-    border-radius: 4px; /* Matches mockup button style better than pill? Mockup looks slightly rounded */
+    color: var(--color-accent);
+    padding-block: 0.75em;
+    padding-inline: 1.5em;
+    border-radius: 4px;
     display: inline-flex;
     text-decoration: none;
-    font-weight: 600;
-    font-size: 0.8em;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
     transition: opacity 0.2s ease;
-}
-
-.cta-button:hover {
-    opacity: 0.9;
 }
 
 /* Hero */
 #hero {
     /* Using border-image to create the bleed effect with a gradient */
     /* Overrides the default .bleed-bg conic-gradient */
-    border-image: linear-gradient(to bottom, var(--color-contrast), var(--color-alt)) fill 0/0/0 100vw;
+    border-image: linear-gradient(to bottom, var(--color-alt), var(--color-typo)) fill 0/0/0 100vw;
     padding-block: 8rem;
 }
 
 #hero h1 {
-    font-size: clamp(2rem, 5vw, 4rem);
-    line-height: 1.1;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
     margin-bottom: 1rem;
 }
 
 #hero p {
-    font-size: 1.125rem;
     max-width: 40ch;
-    margin-inline: auto;
     margin-bottom: 2rem;
 }
 
 /* Problem Statement */
-#problem-statement {
-    padding-block: 6rem;
-}
-
 #problem-statement h2 {
-    text-transform: uppercase;
-    font-size: 1.25rem;
-    letter-spacing: 0.05em;
     margin-bottom: 1.5rem;
 }
 
 #problem-statement p {
-    font-size: 0.9rem;
-    line-height: 1.6;
     max-width: 60ch;
     margin-inline: auto;
 }
@@ -103,13 +90,9 @@ main, section, article {
     /* Set --color-bg to enable the .bleed-bg utility class */
     --color-bg: var(--color-alt);
     background-color: var(--color-bg);
-    padding-block: 6rem;
 }
 
 #about h3 {
-    text-transform: uppercase;
-    font-size: 1.25rem;
-    letter-spacing: 0.05em;
     margin-bottom: 1rem;
 }
 
@@ -131,19 +114,14 @@ main, section, article {
 
 /* Services */
 #services {
-    padding-block: 6rem;
 }
 
 .service-item h4 {
     margin-top: 1.5rem;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
 }
 
 /* Conclusion */
 #conclusion {
-    padding-block: 6rem;
 }
 
 /* Footer */
@@ -151,13 +129,10 @@ main, section, article {
     --color-bg: var(--color-alt);
     background-color: var(--color-bg);
     padding-block: 4rem;
-    font-size: 0.9rem;
 }
 
 #footer h2 {
-    font-size: 1.5rem;
     margin-bottom: 0.5rem;
-    text-transform: uppercase;
 }
 
 .social-icons {

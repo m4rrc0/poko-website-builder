@@ -16,42 +16,73 @@ vars: {}
 
 {% partial "theme1" %}
 {% partial "demo-page" %}
-{% partial "theme1-css" %}
 
 {% css %}
 :root {
---color-typo: var(--theme1-v1-light-typo);
---color-alt: var(--theme1-v1-light-alt);
---color-accent: var(--theme1-v1-light-accent);
---color-contrast: var(--theme1-v1-light-contrast);
 
---width-featured: ;
---width-card: 300px;
+--radius-token: 0.25rem;
+--radius-pill: 9999px;
+--radius-round: 50%;
+--radius-card: 0rem;
+--radius-featured: 0rem;
+--radius-prose: 0.0rem;
+--radius-max: 0rem;
 
---border: ;
---radius-max: ;
---radius-prose: ;
---radius-featured: ;
---radius-card: ;
---radius-token: ;
+    /* Width Defaults */
+    --width-card: 320px;
+    --width-featured: 60rem;
 
---radius-pill: ;
---radius-round: ;
+    /* 2. THEME CONFIGURATION */
+
+    /* Typography Mapping */
+    --font-family-heading: var(--font-stack-heading, system-ui, sans-serif);
+    --font-family-body: var(--font-stack-body, system-ui, sans-serif);
+    --font-family-code: var(--font-stack-code, monospace);
+
+
+    --font-weight-heading: 700;
+    --letter-spacing-heading: -0.02em;
+    --text-transform-heading: uppercase;
+    --line-height-heading: 1.1;
+
+    /* Colors Mapping */
+    --theme-color-primary: var(--theme1-v1-light-typo, #000);
+    --theme-color-secondary: var(--theme1-v1-light-alt, #f0f0f0);
+    --theme-color-accent: var(--theme1-v1-light-accent, #fff);
+    --theme-color-bg: var(--theme1-v1-light-contrast, #fff);
+
+    /* Layout Mapping */
+    --section-padding-block: var(--step-6);
+    --hero-padding-block: var(--step-7);
+    --content-max-width-text: var(--width-prose, 60ch);
+    --gutter: var(--space-s-m, 1.5rem);
+    --card-width: var(--width-card);
+
+    /* Decoration Mapping */
+    --image-radius: var(--radius-max);
+    --card-aspect-ratio: 1/1;
+    --btn-radius: var(--radius-token);
+
+    /* 3. CUSTOM OVERRIDES (Example) */
+    /* Uncomment or add here to override the defaults above */
+    /* --font-size-h1: var(--step-7); */
+    /* --radius-max: 2rem; */
+
 }
 
 #backToTop {
 position: fixed;
 bottom: 1rem;
 right: 1rem;
-background-color: rgba(0, 0, 0, 0.5);
-color: white;
+background-color: var(--theme-color-primary);
+color: var(--theme-color-accent);
 padding: 0.5rem 1rem;
 border-radius: 0.25rem;
+opacity: 0.8;
 }
 #backToTop a {
-color: white;
+color: inherit;
 text-decoration: none;
-background: none;
 }
 
 {% endcss %}
