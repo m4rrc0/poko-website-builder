@@ -1846,6 +1846,282 @@ ${footerContent}
   toPreview: (data) => `<span>GRID SECTION</span>`,
 };
 
+export const sectionTwoColumns = {
+  id: "sectionTwoColumns",
+  label: "Two Columns Section",
+  icon: "grid_view",
+  fields: [
+    {
+      name: "header",
+      label: "Section Header",
+      widget: "object",
+      required: false,
+      summary: "{{content | truncate(50)}}",
+      collapsed: true,
+      fields: [
+        {
+          name: "content",
+          label: "Header Content",
+          widget: "markdown",
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "items",
+      label: "Column Items",
+      widget: "object",
+      required: true,
+      default: [{ itemLeft: "", itemRight: "" }],
+      summary: "{{item | truncate(50)}}",
+      collapsed: "auto",
+      fields: [
+        {
+          name: "itemLeft",
+          label: "Column Left",
+          widget: "markdown",
+          required: false,
+        },
+        {
+          name: "itemRight",
+          label: "Column Right",
+          widget: "markdown",
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "footer",
+      label: "Section Footer",
+      widget: "object",
+      required: false,
+      summary: "{{content | truncate(50)}}",
+      collapsed: true,
+      fields: [
+        {
+          name: "content",
+          label: "Footer Content",
+          widget: "markdown",
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "options",
+      label: "Layout and Options",
+      hint: "Manually select a layout and related options",
+      widget: "object",
+      required: false,
+      collapsed: "auto",
+      types: [
+        {
+          name: "switcher",
+          label: "Symmetrical",
+          widget: "object",
+          required: false,
+          fields: [
+            {
+              name: "widthWrap",
+              label: "Width Wrap",
+              widget: "string",
+              hint: "Section width to switch from side by side to vertical display. (e.g. var(--width-prose) [default], 30rem, 800px, 0px [no wrap])",
+              required: false,
+            },
+            {
+              name: "gap",
+              label: "Gap",
+              widget: "string",
+              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+              required: false,
+            },
+            {
+              name: "class",
+              label: "Class Names",
+              widget: "string",
+              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+              required: false,
+            },
+          ],
+        },
+        {
+          name: "fixedFluid",
+          label: "Asymmetrical",
+          widget: "object",
+          required: false,
+          collapsed: true,
+          fields: [
+            {
+              name: "fixedSide",
+              label: "Small Column Side",
+              widget: "select",
+              hint: "The position of the small column.",
+              required: true,
+              options: [
+                { value: "fixedLeft", label: "Left" },
+                { value: "fixedRight", label: "Right" },
+              ],
+            },
+            {
+              name: "widthFixed",
+              label: "Small Column Width",
+              widget: "string",
+              hint: "The width of the small column. (e.g. 20rem, 800px, 0px [no wrap])",
+              required: false,
+            },
+            {
+              name: "widthFluidMin",
+              label: "Big Column Min Width",
+              widget: "string",
+              hint: "The minimum width of the big column. (e.g. 50% [default], 30rem, 800px, 0px [no wrap])",
+              required: false,
+            },
+            {
+              name: "gap",
+              label: "Gap",
+              widget: "string",
+              hint: "The gap between columns (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+              required: false,
+            },
+            {
+              name: "class",
+              label: "Class Names",
+              widget: "string",
+              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+              required: false,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  pattern:
+    /^{%\s*sectionTwoColumns\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsectionTwoColumns\s*%}$/gm,
+  fromBlock: function (match) {
+    const sectionInner = match[2];
+
+    const header = extractWithNunjucksTag(sectionInner, "sectionHeader");
+    const footer = extractWithNunjucksTag(sectionInner, "sectionFooter");
+    const twoColumns = extractWithNunjucksTag(sectionInner, "twoColumns");
+    const { extracted: twoColumnsAttributes } = extractAttributes(
+      twoColumns?.attributes || "",
+      [
+        "type",
+        "gap",
+        "class",
+        "widthWrap",
+        "widthFixed",
+        "widthFluidMin",
+        "fixedSide",
+      ],
+    );
+
+    // Extract the two column items (left = first, right = second)
+    const columnItems = extractAllWithNunjucksTag(
+      twoColumns?.content || "",
+      "twoColumnsItem",
+    );
+
+    const itemLeft = columnItems[0]?.content || "";
+    const itemRight = columnItems[1]?.content || "";
+
+    // Map the type to the options structure
+    const optionsType = twoColumnsAttributes?.type || "switcher";
+    let options;
+    if (optionsType === "fixedFluid") {
+      options = {
+        type: "fixedFluid",
+        fixedSide: twoColumnsAttributes?.fixedSide,
+        widthFixed: twoColumnsAttributes?.widthFixed,
+        widthFluidMin: twoColumnsAttributes?.widthFluidMin,
+        gap: twoColumnsAttributes?.gap,
+        class: twoColumnsAttributes?.class,
+      };
+    } else {
+      options = {
+        type: "switcher",
+        widthWrap: twoColumnsAttributes?.widthWrap,
+        gap: twoColumnsAttributes?.gap,
+        class: twoColumnsAttributes?.class,
+      };
+    }
+
+    return {
+      header: header ? { content: header.content } : undefined,
+      footer: footer ? { content: footer.content } : undefined,
+      items: { itemLeft, itemRight },
+      options,
+    };
+  },
+  toBlock: function (data) {
+    const options = data?.options || {};
+    const optionsType = options?.type || "switcher";
+    const { gap, class: className } = options;
+
+    const headerContent = data?.header?.content
+      ? `{% sectionHeader %}
+${data?.header?.content}
+{% endsectionHeader %}`
+      : "";
+
+    const footerContent = data?.footer?.content
+      ? `{% sectionFooter %}
+${data?.footer?.content}
+{% endsectionFooter %}`
+      : "";
+
+    const itemLeftStr = data?.items?.itemLeft
+      ? `{% twoColumnsItem %}
+${data.items.itemLeft}
+{% endtwoColumnsItem %}`
+      : "";
+
+    const itemRightStr = data?.items?.itemRight
+      ? `{% twoColumnsItem %}
+${data.items.itemRight}
+{% endtwoColumnsItem %}`
+      : "";
+
+    const columnItemsStr = [itemLeftStr, itemRightStr]
+      .filter(Boolean)
+      .join("\n");
+
+    // Build twoColumns attributes based on layout type
+    let colAttrs;
+    if (optionsType === "fixedFluid") {
+      const { fixedSide, widthFixed, widthFluidMin } = options;
+      colAttrs = {
+        type: "fixedFluid",
+        fixedSide,
+        widthFixed,
+        widthFluidMin,
+        gap,
+        class: className,
+      };
+    } else {
+      const { widthWrap } = options;
+      colAttrs = { type: "switcher", widthWrap, gap, class: className };
+    }
+
+    const colAttrsStr = Object.entries(colAttrs)
+      .filter(([key, value]) => !!value)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(", ");
+
+    const twoColumnsContent = columnItemsStr
+      ? `{% twoColumns ${colAttrsStr} %}
+${columnItemsStr}
+{% endtwoColumns %}`
+      : "";
+
+    return `{% sectionTwoColumns %}
+${headerContent}
+${twoColumnsContent}
+${footerContent}
+{% endsectionTwoColumns %}`;
+  },
+  toPreview: (data) => `<span>TWO COLUMNS SECTION</span>`,
+};
+
 // Example for project specific component def
 
 // export const homeHeader = {
