@@ -16,6 +16,7 @@ vars: {}
 
 {% partial "theme1" %}
 {% partial "demo-page" %}
+{% partial "theme1-css-test" %}
 
 {% css %}
 :root {
@@ -23,7 +24,7 @@ vars: {}
 --radius-token: 0.25rem;
 --radius-pill: 9999px;
 --radius-round: 50%;
---radius-card: 0rem;
+--radius-card: Orem;
 --radius-featured: 0rem;
 --radius-prose: 0.0rem;
 --radius-max: 0rem;
@@ -46,16 +47,16 @@ vars: {}
     --line-height-heading: 1.1;
 
     /* Colors Mapping */
-    --theme-color-primary: var(--theme1-v1-light-typo, #000);
-    --theme-color-secondary: var(--theme1-v1-light-alt, #f0f0f0);
-    --theme-color-accent: var(--theme1-v1-light-accent, #fff);
-    --theme-color-bg: var(--theme1-v1-light-contrast, #fff);
+    --theme-color-primary: var(--theme1-v1-dark-typo, #000);
+    --theme-color-secondary: var(--theme1-v1-dark-alt, #f0f0f0);
+    --theme-color-accent: var(--theme1-v1-dark-accent, #fff);
+    --theme-color-bg: var(--theme1-v1-dark-contrast, #fff);
 
     /* Layout Mapping */
     --section-padding-block: var(--step-6);
     --hero-padding-block: var(--step-7);
     --content-max-width-text: var(--width-prose, 60ch);
-    --gutter: var(--space-s-m, 1.5rem);
+    --gutter: var(--step-4, 1.5rem);
     --card-width: var(--width-card);
 
     /* Decoration Mapping */
@@ -74,15 +75,16 @@ vars: {}
 position: fixed;
 bottom: 1rem;
 right: 1rem;
-background-color: var(--theme-color-primary);
-color: var(--theme-color-accent);
+background-color: var(--theme1-v1-light-typo);
+color: var(--theme1-v1-light-accent);
 padding: 0.5rem 1rem;
 border-radius: 0.25rem;
-opacity: 0.8;
 }
 #backToTop a {
 color: inherit;
 text-decoration: none;
+background-color: var(--theme1-v1-light-typo);
+color: var(--theme1-v1-light-accent);
 }
 
 {% endcss %}
