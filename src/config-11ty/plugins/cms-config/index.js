@@ -1,3 +1,4 @@
+import slugify from "@sindresorhus/slugify";
 // NOTE: I need to work on a Sveltia fork: https://github.com/sveltia/sveltia-cms/issues/180#issuecomment-2256112119
 import {
   NODE_ENV,
@@ -985,15 +986,15 @@ export const pagesCollection = {
   },
 };
 export function spreadPageSetup(collectionNameRaw) {
-  // Make sure the collection name is camelCase (not space separated or hyphenized or snake_case or kebab-case)
-  const collectionName = collectionNameRaw
-    .replace(/[-_\s]+(.)?/g, (_, c) => (c ? c.toUpperCase() : "")) // Handle separators
-    .replace(/^[A-Z]/, (c) => c.toLowerCase()); // Ensure first char is lowercase
+  // Make sure the collection name is hyphenized/slugified (kebab-case)
+  const collectionName = slugify(collectionNameRaw);
+  console.log({ collectionNameRaw, collectionName });
 
-  // replace camelCase to space-separated capitalized words
+  // replace kebab-case to space-separated capitalized words
   const label = collectionName
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase());
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
   const label_singular = label.endsWith("s") ? label.slice(0, -1) : label;
   return {
     ...pages,
@@ -1011,6 +1012,22 @@ export const articles = {
   fields: articleFields,
 };
 export const articlesCollection = { ...articles };
+// SERVICES
+export const serviceFields = [...commonCollectionFields, ...commonPageFields];
+export const services = {
+  ...spreadPageSetup("services"),
+  icon: "hand_meal",
+  fields: serviceFields,
+};
+export const servicesCollection = { ...services };
+// EVENTS
+export const eventFields = [...commonCollectionFields, ...commonPageFields];
+export const events = {
+  ...spreadPageSetup("events"),
+  icon: "event",
+  fields: eventFields,
+};
+export const eventsCollection = { ...events };
 // PEOPLE
 export const personFields = [...commonCollectionFields, ...commonPageFields];
 export const people = {
@@ -1020,14 +1037,6 @@ export const people = {
   fields: personFields,
 };
 export const peopleCollection = { ...people };
-// EVENTS
-export const eventFields = [...commonCollectionFields, ...commonPageFields];
-export const events = {
-  ...spreadPageSetup("events"),
-  icon: "event",
-  fields: eventFields,
-};
-export const eventsCollection = { ...events };
 // ORGANIZATIONS
 export const organizationFields = [
   ...commonCollectionFields,
@@ -1101,15 +1110,16 @@ export const documentationCollection = { ...documentations };
 
 const optionalCollections = {
   articles: articlesCollection,
-  people: peopleCollection,
+  services: servicesCollection,
   events: eventsCollection,
+  products: productsCollection,
+  projects: projectsCollection,
+  people: peopleCollection,
   organizations: organizationsCollection,
   courses: coursesCollection,
   places: placesCollection,
-  products: productsCollection,
   reviews: reviewsCollection,
   faqs: faqsCollection,
-  projects: projectsCollection,
   documentations: documentationCollection, //HowTo in schema.org
 };
 export function getSelectedCollections() {
