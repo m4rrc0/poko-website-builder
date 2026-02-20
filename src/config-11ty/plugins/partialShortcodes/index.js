@@ -38,7 +38,7 @@ export default async function (eleventyConfig, pluginOptions) {
   }
 
   // prettier-ignore
-  for (const partialName of ["sectionGrid", "grid", "sectionHeader", "gridItem", "sectionFooter"]) {
+  for (const partialName of ["sectionGrid", "grid", "sectionHeader", "gridItem", "sectionFooter", "sectionTwoColumns", "twoColumns", "twoColumnsItem"]) {
     await eleventyConfig.addPairedAsyncShortcode(partialName, async function(content, dataManual, templateEngineOverride) {
       return renderNamedPartial.call(this, `_${partialName}`, content, dataManual, templateEngineOverride);
     });
