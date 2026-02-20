@@ -9,6 +9,7 @@ export function filterCollection(collection, filtersRaw) {
     const arr = Array.isArray(value) ? value : [value];
     return arr.map((v) => v.toString());
   };
+  const toString = (value) => (!!value ? value.toString() : "");
 
   const filters = Array.isArray(filtersRaw) ? filtersRaw : [filtersRaw];
 
@@ -16,58 +17,64 @@ export function filterCollection(collection, filtersRaw) {
     switch (by) {
       // NOTE: Match some special keywords first
       case "last":
-        return collection.slice(-toInt(value));
+        return acc.slice(-toInt(value));
       case "first":
-        return collection.slice(0, toInt(value));
+        return acc.slice(0, toInt(value));
       case "random":
         // Randomly pick 'value' items from the collection while keeping the items in the same sort order
         const itemIndexes = Array.from(
           {
-            length:
-              toInt(value) > collection.length
-                ? collection.length
-                : toInt(value),
+            length: toInt(value) > acc.length ? acc.length : toInt(value),
           },
-          () => Math.floor(Math.random() * collection.length)
+          () => Math.floor(Math.random() * acc.length),
         ).sort((a, b) => a - b);
         return itemIndexes.map((index) => collection[index]);
       case "tags":
         const tagsToMatch = toArrayOfStrings(value);
-        return collection.filter((item) =>
-          item.data.tags?.some((tag) => tagsToMatch.includes(tag))
+        return acc.filter((item) =>
+          item.data.tags?.some((tag) => tagsToMatch.includes(tag)),
         );
       case "lang":
-        return collection.filter((item) => item.data.lang === value);
+        return acc.filter((item) => {
+          return (item.data.lang || item.data?.page?.lang) === value;
+        });
       case "parent":
-        return collection.filter(
+        // If we provide a nullish value, we want no parent so we need an && operator
+        if (!value) {
+          return acc.filter(
+            (item) =>
+              toString(item.data.parent) === toString(value) &&
+              toString(item.data.eleventyNavigation?.parent) ===
+                toString(value),
+          );
+        }
+        return acc.filter(
           (item) =>
-            item.data.parent === value ||
-            item.data.eleventyNavigation?.parent === value
+            toString(item.data.parent) === toString(value) ||
+            toString(item.data.eleventyNavigation?.parent) === toString(value),
         );
       // NOTE: If no keyword is matched, suppose it is a nested property to be filtered by
       // TODO: Debug: This does not seem to work
       default:
         if (typeof by === "string") {
           if (Array.isArray(value)) {
-            return collection.filter((item) =>
-              value.some((v) => tryMatchNestedVariable(item, by) === v)
+            return acc.filter((item) =>
+              value.some((v) => tryMatchNestedVariable(item, by) === v),
             );
           } else if (typeof value === "string" || typeof value === "number") {
-            return collection.filter(
-              (item) => tryMatchNestedVariable(item, by) === value
+            return acc.filter(
+              (item) => tryMatchNestedVariable(item, by) === value,
             );
           } else if (typeof value === "boolean") {
-            return collection.filter((item) =>
-              tryMatchNestedVariable(item, by)
-            );
+            return acc.filter((item) => tryMatchNestedVariable(item, by));
           } else if (!value) {
-            return collection.filter((item) => {
+            return acc.filter((item) => {
               const val = tryMatchNestedVariable(item, by);
               return val === undefined || val === null || val === false;
             });
           }
         }
-        return collection;
+        return acc;
     }
   }, collection);
 
@@ -85,7 +92,7 @@ export function sortCollection(collection, sortCriteriasRaw) {
   const sortedCollection = sort(collection).by(
     sortCriterias.map(({ direction, by }) => ({
       [direction]: (collectionItem) => sortCb(collectionItem, by),
-    }))
+    })),
   );
 
   return sortedCollection;

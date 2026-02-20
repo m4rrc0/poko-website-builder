@@ -7,8 +7,9 @@ import {
 export const join = (array = [], separator = ", ") => array.join(separator);
 
 /** Filters the given array based on the given options. */
-export const filterCollection = (array, by, value) =>
-  filterCollectionUtil(array, by, value);
+export const filterCollection = (array, filtersRaw) => {
+  return filterCollectionUtil(array, filtersRaw);
+};
 
 /** Returns the first x elements of the given array. */
 export const first = (array, x = 1) => array.slice(0, x);
