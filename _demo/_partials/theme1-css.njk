@@ -1,0 +1,153 @@
+{% css %}
+
+/* Global Theme Colors */
+.theme1-v1-light {
+    color: var(--color-typo);
+    background-color: var(--color-contrast);
+}
+
+/* Components */
+img {
+    border-radius: var(--radius-max);
+    max-width: 100%;
+}
+
+a {
+    color: currentColor;
+}
+
+/* Header */
+#menu {
+    padding-block: 2rem;
+}
+
+#menu nav {
+    /* Utility classes handle layout */
+}
+
+#menu a {
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+main, section, article {
+    margin-block: 0;
+}
+
+section {
+    padding-block: 6rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-transform: uppercase;
+}
+
+/* Button */
+.cta-button {
+    background-color: var(--color-typo);
+    color: var(--color-accent);
+    padding-block: 0.75em;
+    padding-inline: 1.5em;
+    border-radius: 4px;
+    display: inline-flex;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: opacity 0.2s ease;
+}
+
+/* Hero */
+#hero {
+    /* Using border-image to create the bleed effect with a gradient */
+    /* Overrides the default .bleed-bg conic-gradient */
+    border-image: linear-gradient(to bottom, var(--color-alt), var(--color-typo)) fill 0/0/0 100vw;
+    padding-block: 8rem;
+}
+
+#hero h1 {
+    margin-bottom: 1rem;
+}
+
+#hero p {
+    max-width: 40ch;
+    margin-bottom: 2rem;
+}
+
+/* Problem Statement */
+#problem-statement h2 {
+    margin-bottom: 1.5rem;
+}
+
+#problem-statement p {
+    max-width: 60ch;
+    margin-inline: auto;
+}
+
+/* About */
+#about {
+    /* Set --color-bg to enable the .bleed-bg utility class */
+    --color-bg: var(--color-alt);
+    background-color: var(--color-bg);
+}
+
+#about h3 {
+    margin-bottom: 1rem;
+}
+
+.image-container {
+    width: 300px;
+    height: 300px;
+    /* Empêche le switcher de changer la taille de cet élément */
+    flex: 0 0 300px; 
+    border-radius: var(--radius-max);
+    overflow: hidden; /* Important si l'image dépasse les coins arrondis */
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; /* Évite les espaces fantômes sous l'image */
+}
+
+/* Services */
+#services {
+}
+
+.service-item h4 {
+    margin-top: 1.5rem;
+}
+
+/* Conclusion */
+#conclusion {
+}
+
+/* Footer */
+#footer {
+    --color-bg: var(--color-alt);
+    background-color: var(--color-bg);
+    padding-block: 4rem;
+}
+
+#footer h2 {
+    margin-bottom: 0.5rem;
+}
+
+.social-icons {
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-icons a {
+    font-weight: bold;
+}
+
+#footer input {
+    border: none;
+    padding: 0.75rem;
+    background-color: var(--color-accent); /* White input */
+}
+
+{% endcss %}

@@ -1,0 +1,184 @@
+{% css %}
+/* =========================================
+   Theme Structure
+   Variables are defined in the specific page 
+   (e.g., demo.md) or global CSS.
+   ========================================= */ 
+:root {
+    /* 
+       NOTE: This theme relies on variables defined in the consuming page/layout.
+       See _demo/fr/pages/demo.md for the "Control Panel" configuration.
+    */
+    
+    /* Hero Gradient Defaults (can be overridden) */
+    --hero-gradient-direction: to bottom;
+}
+
+/* =========================================
+   Component Styles
+   ========================================= */
+
+/* --- Global Resets & Utils for Theme --- */
+.theme1-v1-light {
+    color: var(--theme-color-primary, #000);
+    background-color: var(--theme-color-bg, #fff);
+    font-family: var(--font-family-body, inherit);
+}
+
+img {
+    border-radius: var(--radius-card, 0);
+    max-width: 100%;
+}
+
+a {
+    color: currentColor;
+    text-decoration-skip-ink: auto;
+}
+
+main, section, article {
+    margin-block: 0;
+}
+
+section {
+    padding-block: var(--section-padding-block, 4rem);
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading, inherit);
+    font-weight: var(--font-weight-heading, 700);
+    letter-spacing: var(--letter-spacing-heading, normal);
+    text-transform: var(--text-transform-heading, none);
+    line-height: var(--line-height-heading, 1.2);
+}
+
+h1 { font-size: var(--font-size-h1, 2.5rem); }
+h2 { font-size: var(--font-size-h2, 2rem); }
+h3 { font-size: var(--font-size-h3, 1.75rem); }
+
+/* --- Buttons --- */
+.cta-button {
+    background-color: var(--btn-bg, var(--theme-color-primary));
+    color: var(--btn-text-color, var(--theme-color-accent));
+    padding-block: var(--btn-padding-block, 0.5em);
+    padding-inline: var(--btn-padding-inline, 1em);
+    border-radius: var(--btn-radius, 4px);
+    display: inline-flex;
+    text-decoration: none;
+    font-weight: var(--btn-font-weight, bold);
+    text-transform: var(--btn-text-transform, none);
+    letter-spacing: var(--btn-letter-spacing, normal);
+    transition: opacity 0.2s ease;
+}
+
+.cta-button:hover {
+    opacity: var(--btn-hover-opacity, 0.8);
+}
+
+/* --- Header --- */
+#menu {
+    padding-block: var(--step-2); /* Relies on global step vars if not defined locally */
+}
+
+#menu a {
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* --- Hero Section --- */
+#hero {
+    background-color: var(--theme-color-bg);
+    border-image: linear-gradient(
+        var(--hero-gradient-direction), 
+        var(--hero-gradient-start, var(--theme-color-bg)), 
+        var(--hero-gradient-end, var(--theme-color-secondary))
+    ) fill 0/0/0 100vw;
+    
+    padding-block: var(--hero-padding-block, 6rem);
+}
+
+#hero h1 {
+    margin-bottom: var(--step-0);
+}
+
+#hero p {
+    max-width: 40ch;
+    margin-bottom: var(--step-2);
+    font-size: var(--step-0);
+}
+
+/* --- Problem Statement --- */
+#problem-statement h2 {
+    margin-bottom: var(--step-1);
+}
+
+#problem-statement p {
+    max-width: var(--content-max-width-text, 60ch);
+    margin-inline: auto;
+}
+
+/* --- About Section --- */
+#about {
+    --color-bg: var(--theme-color-secondary);
+    background-color: var(--color-bg);
+}
+
+#about h3 {
+    margin-bottom: var(--step-0);
+}
+
+.image-container {
+    width: var(--width-card, 300px);
+    height: var(--width-card, 300px);
+    flex: 0 0 var(--width-card, 300px);
+    border-radius: var(--radius-card, 0);
+    overflow: hidden;
+    aspect-ratio: var(--card-aspect-ratio, 1/1);
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* --- Services Section --- */
+.service-item h4 {
+    margin-top: var(--step-1);
+    font-size: var(--step--1);
+    letter-spacing: 0.1em;
+}
+
+/* --- Footer --- */
+#footer {
+    --color-bg: var(--theme-color-secondary);
+    background-color: var(--color-bg);
+    padding-block: var(--step-4);
+}
+
+#footer h2 {
+    margin-bottom: 0.5rem;
+    font-size: var(--step-2);
+}
+
+.social-icons {
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-icons a {
+    font-weight: bold;
+}
+
+#footer input {
+    background-color: var(--input-bg, #fff);
+    padding: var(--input-padding, 0.5em);
+    border-radius: var(--input-radius, 0);
+    border: var(--input-border, 1px solid #ccc);
+}
+
+{% endcss %}
