@@ -96,8 +96,6 @@ export default async function (eleventyConfig, pluginOptions) {
           ? match11tyFile[0].slice(1) // e.g., "11tydata.js"
           : transposedFilePath.split(".").pop(); // e.g., "js"
 
-        console.log({ transposedFilePath, templateFormat });
-
         // Check that:
         // - The file path has not yet been added
         // - The file format is supported

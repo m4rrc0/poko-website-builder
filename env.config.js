@@ -240,8 +240,32 @@ try {
   };
 }
 export { globalSettings, brandConfig };
+
+export const userCmsConfig = async function () {
+  let userCmsConfigTemp = {
+    collections: [],
+    singletons: [],
+  };
+  try {
+    const uc = await import(`${WORKING_DIR_ABSOLUTE}/_config/index.js`);
+
+    userCmsConfigTemp = {
+      ...userCmsConfigTemp,
+      ...uc,
+    };
+  } catch (error) {
+    console.warn(
+      `WARN: Could not import user config from "${WORKING_DIR_ABSOLUTE}/_config/index.js"`,
+    );
+  }
+  return userCmsConfigTemp;
+};
+
+// export const userCmsConfig = userCmsConfigTemp;
+
 // More specific useful global settings
-export const collections = globalSettings?.collections || [];
+export const selectedCollections = globalSettings?.collections || [];
+
 export const allLanguages =
   globalSettings?.languages?.map(transformLanguage) || [];
 

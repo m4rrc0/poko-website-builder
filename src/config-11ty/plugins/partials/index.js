@@ -3,8 +3,8 @@ import fglob from "fast-glob";
 // import deepmerge from "deepmerge";
 import { DEBUG } from "../../../../env.config.js";
 // import { createKeyFromData } from "../../../utils/hash.js";
-import hashSum from "hash-sum";
-import { cleanupExpensiveData } from "../../../utils/eleventyData.js";
+// import hashSum from "hash-sum";
+// import { cleanupExpensiveData } from "../../../utils/eleventyData.js";
 
 // let cachedPartials = new Map();
 

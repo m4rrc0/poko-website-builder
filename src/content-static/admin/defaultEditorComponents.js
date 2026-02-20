@@ -1,19 +1,8 @@
-import { env, collections, iconLists } from "./env.js";
+import { env, allCollections, iconLists } from "./env.js";
 
 const { CONTENT_DIR } = env;
-const currentCollections = collections || [];
 // const iconLists = env?.iconLists || {};
 const iconLibs = Object.keys(iconLists) || [];
-
-// try {
-//   const envModule = await import("./env.js");
-//   env = envModule.env;
-
-// } catch (error) {
-//   if (typeof window !== 'undefined') {
-//     console.error("Failed to import env\n", error);
-//   }
-// }
 
 const multilineToInline = (multi) => {
   return multi?.replace(/\n/g, "\\n")?.replace(/"/g, '\\"');
@@ -1056,9 +1045,9 @@ export const links = {
               options: [
                 { value: "all", label: "All Collections" },
                 { value: "pages", label: "Pages" },
-                ...(currentCollections || []).map((collection) => ({
-                  value: collection,
-                  label: collection,
+                ...(allCollections || []).map((collection) => ({
+                  value: collection.name,
+                  label: collection.label || collection.name,
                 })),
               ],
             },
@@ -1414,6 +1403,36 @@ export const link = {
       required: true,
       types: [
         {
+          name: "pages",
+          label: "Page",
+          fields: [
+            {
+              name: "url",
+              label: "Select Page",
+              widget: "relation",
+              collection: "pages",
+              required: true,
+            },
+          ],
+        },
+        ...allCollections.map((collection) => ({
+          name: collection.name,
+          label:
+            collection.label_singular || collection.label || collection.name,
+          fields: [
+            {
+              name: "url",
+              label:
+                "Select " + collection.label_singular ||
+                collection.label ||
+                collection.name,
+              widget: "relation",
+              collection: collection.name,
+              required: true,
+            },
+          ],
+        })),
+        {
           name: "external",
           label: "External Link",
           fields: [
@@ -1485,32 +1504,6 @@ export const link = {
             },
           ],
         },
-        {
-          name: "pages",
-          label: "Page",
-          fields: [
-            {
-              name: "url",
-              label: "Select Page",
-              widget: "relation",
-              collection: "pages",
-              required: true,
-            },
-          ],
-        },
-        ...currentCollections.map((collection) => ({
-          name: collection,
-          label: collection,
-          fields: [
-            {
-              name: "url",
-              label: "Select " + collection,
-              widget: "relation",
-              collection: collection,
-              required: true,
-            },
-          ],
-        })),
       ],
     },
     {
