@@ -1138,23 +1138,22 @@ const getMiscLinkTypes = (allSelectedCollections, currentLevel, maxLevels) =>
     label: collection.label_singular,
     fields: [
       {
+        name: "slug",
+        label: "Select " + collection.label_singular,
+        widget: "relation",
+        collection: collection.name,
+        search_fields: ["name"],
+        display_fields: ["name"],
+        required: false,
+        i18n: "duplicate",
+      },
+      {
         name: "label",
         label: "Label",
         widget: "string",
         required: false,
-        hint: "Override the page title",
+        hint: "Override the page name",
         i18n: true,
-      },
-      {
-        name: collection.name + "Name",
-        label: "Which " + collection.label_singular.toLowerCase() + "?",
-        widget: "relation",
-        collection: collection.name,
-        search_fields: ["name"],
-        value_field: "uuid",
-        display_fields: ["name"],
-        required: false,
-        i18n: "duplicate",
       },
       ...createNavLevels(allSelectedCollections, currentLevel + 1, maxLevels), // Adjust the second argument to set max levels
     ],
@@ -1181,16 +1180,15 @@ function createNavLevels(allSelectedCollections, currentLevel, maxLevels) {
           collapsed: "auto",
           types: [
             {
-              name: "page",
+              name: "pages",
               label: "Page",
               fields: [
                 {
                   name: "slug",
-                  label: "Which page?",
+                  label: "Select Page",
                   widget: "relation",
                   collection: "pages",
                   search_fields: ["name"],
-                  value_field: "uuid",
                   display_fields: ["name"],
                   required: false,
                   i18n: "duplicate",
@@ -1220,19 +1218,19 @@ function createNavLevels(allSelectedCollections, currentLevel, maxLevels) {
               label: "Custom URL",
               fields: [
                 {
-                  name: "url",
-                  label: "Custom URL",
-                  widget: "string",
-                  required: false,
-                  hint: "Use this for external links or if you want to override the page link.",
-                  i18n: true,
-                },
-                {
                   name: "label",
                   label: "Label",
                   widget: "string",
                   required: false,
                   hint: "Override the page title",
+                  i18n: true,
+                },
+                {
+                  name: "url",
+                  label: "Custom URL",
+                  widget: "string",
+                  required: false,
+                  hint: "Use this for external links or if you want to override the page link.",
                   i18n: true,
                 },
                 ...createNavLevels(
@@ -1244,7 +1242,7 @@ function createNavLevels(allSelectedCollections, currentLevel, maxLevels) {
             },
             {
               name: "label",
-              label: "Label",
+              label: "Label Only",
               fields: [
                 {
                   name: "label",
@@ -1272,15 +1270,14 @@ export const navCollection = (allSelectedCollections) => ({
   ...mostCommonMarkdownCollectionConfig,
   identifier_field: "{{slug}}",
   name: "nav",
-  label: "Navigation",
+  label: "Navigations",
   label_singular: "Navigation",
   path: "nav/{{slug}}",
   slug: "{{fields._slug}}",
-  icon: "description",
+  icon: "manu_open",
   folder: `${CONTENT_DIR}/_data`,
   format: "yaml",
   extension: "yaml",
-  thumbnail: ["pagePreview.image.src", "metadata.image.src"],
   summary: "{{slug}}",
   media_folder: `/${CONTENT_DIR}/_images`,
   public_folder: "/_images",
@@ -1295,23 +1292,22 @@ export const navCollection = (allSelectedCollections) => ({
       fields: [
         {
           name: "linkTo",
-          label: "Link to",
+          label: "Link to ...",
           widget: "object",
           required: false,
           i18n: "duplicate",
           collapsed: "auto",
           types: [
             {
-              name: "page",
+              name: "pages",
               label: "Page",
               fields: [
                 {
                   name: "slug",
-                  label: "Which page?",
+                  label: "Select Page",
                   widget: "relation",
                   collection: "pages",
                   search_fields: ["name"],
-                  value_field: "uuid",
                   display_fields: ["name"],
                   required: false,
                   i18n: "duplicate",
@@ -1333,14 +1329,6 @@ export const navCollection = (allSelectedCollections) => ({
               label: "Custom URL",
               fields: [
                 {
-                  name: "url",
-                  label: "Custom URL",
-                  widget: "string",
-                  required: false,
-                  hint: "Use this for external links or if you want to override the page link.",
-                  i18n: true,
-                },
-                {
                   name: "label",
                   label: "Label",
                   widget: "string",
@@ -1348,12 +1336,20 @@ export const navCollection = (allSelectedCollections) => ({
                   hint: "Override the page title",
                   i18n: true,
                 },
+                {
+                  name: "url",
+                  label: "Custom URL",
+                  widget: "string",
+                  required: false,
+                  hint: "Use this for external links or if you want to override the page link.",
+                  i18n: true,
+                },
                 ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
               ],
             },
             {
               name: "label",
-              label: "Label",
+              label: "Label Only",
               fields: [
                 {
                   name: "label",
