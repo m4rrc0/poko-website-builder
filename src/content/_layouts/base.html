@@ -1,3 +1,8 @@
+---
+pageNav: ""
+pageFooter: ""
+---
+
 <!doctype html>
 <html lang="{{lang or 'en'}}" class="no-js">
     <head>
@@ -5,15 +10,12 @@
     </head>
     <body>
         <!-- Navigation -->
-        {% partial "_main-nav", {}, "njk" %}
+        {% partial "headless/page-nav.11ty.js" %}
 
         <!-- Content -->
         {% partial "_main-content.md" %}
 
         <!-- Footer -->
-        {% if '_footer.njk' | partialExists %} {% partial '_footer.njk' %} {%
-        elif '_footer.md' | partialExists %}
-        <footer>{% partial '_footer.md' %}</footer>
-        {% else %} {% partial '_footer' %} {% endif %}
+        {% partial "headless/page-footer.11ty.js" %}
     </body>
 </html>

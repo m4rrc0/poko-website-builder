@@ -663,52 +663,53 @@ export const pageLayoutsCollection = {
     },
   ],
 };
-export const sectionLayoutsCollection = {
-  name: "sectionLayouts",
-  label: "Section Layouts",
-  label_singular: "Section Layout",
-  path: "{{slug}}",
-  slug: "{{fields._slug}}",
-  icon: "slide_library",
-  folder: `${CONTENT_DIR}/_partials`,
-  format: undefined,
-  extension: "njk",
-  create: true,
-  // MEDIAS
-  media_folder: `/${CONTENT_DIR}/_images`,
-  public_folder: "/_images",
-  sortable_fields: {
-    fields: ["slug"],
-    default: {
-      field: "slug",
-      direction: "ascending",
-    },
-  },
-  fields: [
-    {
-      name: "body",
-      label: "Layout Markup",
-      hint: "Section layout markup as Nunjucks flavored HTML",
-      widget: "code",
-      language: "html",
-      required: false,
-      output_code_only: true,
-      allow_language_selection: false,
-      default: `<div
-class="switcher {{ class }}"
-style="--width-wrap: {{widthWrap or 'var(--width-prose)'}}; --gap-switcher: {{gap or '1em'}}"
->
-{% for block in blocks %} {% if block.type == "markdown" %}
-<div class="block-markdown {{ block.class }}">
-{{ block.value | renderContent("njk,md", { languages: languages, collections: collections }) | safe }}
-</div>
-{% endif %} {% if block.type == "image" %}
-<img {{ block | htmlImgAttrs({ type: null, class: 'block-image ' + (block.class or '') }) }} />
-{% endif %} {% endfor %}
-</div>`,
-    },
-  ],
-};
+// ?? Should we keep this kind of logic ?? Currently overlap htmlPartials
+// export const sectionLayoutsCollection = {
+//   name: "sectionLayouts",
+//   label: "Section Layouts",
+//   label_singular: "Section Layout",
+//   path: "{{slug}}",
+//   slug: "{{fields._slug}}",
+//   icon: "slide_library",
+//   folder: `${CONTENT_DIR}/_partials`,
+//   format: undefined,
+//   extension: "njk",
+//   create: true,
+//   // MEDIAS
+//   media_folder: `/${CONTENT_DIR}/_images`,
+//   public_folder: "/_images",
+//   sortable_fields: {
+//     fields: ["slug"],
+//     default: {
+//       field: "slug",
+//       direction: "ascending",
+//     },
+//   },
+//   fields: [
+//     {
+//       name: "body",
+//       label: "Layout Markup",
+//       hint: "Section layout markup as Nunjucks flavored HTML",
+//       widget: "code",
+//       language: "html",
+//       required: false,
+//       output_code_only: true,
+//       allow_language_selection: false,
+//       default: `<div
+// class="switcher {{ class }}"
+// style="--width-wrap: {{widthWrap or 'var(--width-prose)'}}; --gap-switcher: {{gap or '1em'}}"
+// >
+// {% for block in blocks %} {% if block.type == "markdown" %}
+// <div class="block-markdown {{ block.class }}">
+// {{ block.value | renderContent("njk,md", { languages: languages, collections: collections }) | safe }}
+// </div>
+// {% endif %} {% if block.type == "image" %}
+// <img {{ block | htmlImgAttrs({ type: null, class: 'block-image ' + (block.class or '') }) }} />
+// {% endif %} {% endfor %}
+// </div>`,
+//     },
+//   ],
+// };
 export const partialsCollection = {
   identifier_field: "{{slug}}",
   name: "partials",
@@ -988,7 +989,6 @@ export const pagesCollection = {
 export function spreadPageSetup(collectionNameRaw) {
   // Make sure the collection name is hyphenized/slugified (kebab-case)
   const collectionName = slugify(collectionNameRaw);
-  console.log({ collectionNameRaw, collectionName });
 
   // replace kebab-case to space-separated capitalized words
   const label = collectionName
@@ -1274,7 +1274,7 @@ export const navCollection = (allSelectedCollections) => ({
   label_singular: "Navigation",
   path: "nav/{{slug}}",
   slug: "{{fields._slug}}",
-  icon: "manu_open",
+  icon: "menu_open",
   folder: `${CONTENT_DIR}/_data`,
   format: "yaml",
   extension: "yaml",
@@ -2081,11 +2081,11 @@ class CmsConfig {
               },
               navCollection(allSelectedCollections),
               footerCollection,
+              pageLayoutsCollection,
               { divider: true },
               partialsCollection,
               htmlPartialsCollection,
-              pageLayoutsCollection,
-              sectionLayoutsCollection,
+              // sectionLayoutsCollection,
               { divider: true },
               stylesConfigCollection(fontsourceFonts),
               stylesheetsCollection,

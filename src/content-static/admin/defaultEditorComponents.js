@@ -708,554 +708,554 @@ ${content}
   },
 };
 
-export const section = {
-  id: "section",
-  label: "Section",
-  icon: "brick",
-  fields: [
-    {
-      name: "type",
-      label: "Type",
-      widget: "object",
-      required: true,
-      collapsed: true,
-      hint: "Select a pre-defined section type or use one of your custom section layouts (selectable in 'Advanced' bellow)",
-      types: [
-        {
-          name: "grid-fluid",
-          label: "Fluid Grid: Fluid sized blocks wrap automatically",
-          widget: "object",
-          required: false,
-          fields: [
-            {
-              name: "columns",
-              label: "Columns",
-              widget: "number",
-              hint: "The number of columns on large screens [note: can be overwritten with a custom variable widthColumnMin defining a min column size in CSS units]",
-              required: false,
-            },
-            {
-              name: "gap",
-              label: "Gap",
-              widget: "string",
-              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
-              required: false,
-            },
-            {
-              name: "class",
-              label: "Class Names",
-              widget: "string",
-              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
-              required: false,
-            },
-          ],
-        },
-        {
-          name: "switcher",
-          label: "Switcher: Switch from side by side to vertical display",
-          widget: "object",
-          required: false,
-          hint: "Switch between side by side and vertical display based on section width",
-          fields: [
-            {
-              name: "widthWrap",
-              label: "Width Wrap",
-              widget: "string",
-              hint: "Section width to switch from side by side to vertical display. (e.g. var(--width-prose) [default], 30rem, 800px, 0px [no wrap])",
-              required: false,
-            },
-            {
-              name: "gap",
-              label: "Gap",
-              widget: "string",
-              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
-              required: false,
-            },
-            {
-              name: "class",
-              label: "Class Names",
-              widget: "string",
-              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
-              required: false,
-            },
-          ],
-        },
-        {
-          name: "fixed-fluid",
-          label: "Fixed-Fluid: 2 columns, fixed width on one side",
-          widget: "object",
-          required: false,
-          hint: "2 blocks side by side, fixed width on one side",
-          fields: [
-            {
-              name: "widthFixed",
-              label: "Fixed column width",
-              widget: "string",
-              hint: "The width of the fixed sized column (e.g. 'calc(var(--width-prose) / 2.5)' [default], 20rem, 300px, ...)",
-              required: false,
-            },
-            {
-              name: "widthFluidMin",
-              label: "Fluid column min width",
-              widget: "string",
-              hint: "The minimum width of the fluid column (e.g. '50%' [default], 20rem, 300px, ...)",
-              required: false,
-            },
-            {
-              name: "fixedRight",
-              label: "Fixed column on the right",
-              widget: "boolean",
-              hint: "Place the fixed column on the right instead of left (default: false)",
-              required: false,
-            },
-            {
-              name: "gap",
-              label: "Gap",
-              widget: "string",
-              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
-              required: false,
-            },
-            {
-              name: "class",
-              label: "Class Names",
-              widget: "string",
-              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
-              required: false,
-            },
-          ],
-        },
-        {
-          name: "cover",
-          label: "Cover: Fixed height section with optional padding",
-          widget: "object",
-          required: false,
-          fields: [
-            {
-              name: "minHeight",
-              label: "Min Height",
-              widget: "string",
-              hint: "The minimum height of the cover (e.g. 100svh [default], 30rem, 800px)",
-              required: false,
-            },
-            {
-              name: "noPadding",
-              label: "Remove Default Padding",
-              widget: "boolean",
-              required: false,
-            },
-            {
-              name: "gap",
-              label: "Gap",
-              widget: "string",
-              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
-              required: false,
-            },
-            {
-              name: "class",
-              label: "Class Names",
-              widget: "string",
-              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
-              required: false,
-            },
-          ],
-        },
-        {
-          name: "custom",
-          label: "Custom: Use your own Section Layout",
-          widget: "object",
-          required: false,
-          fields: [],
-        },
-      ],
-    },
-    {
-      name: "blocks",
-      label: "Blocks",
-      widget: "list",
-      required: false,
-      i18n: true,
-      collapsed: true,
-      allow_reorder: true,
-      types: [
-        {
-          name: "image",
-          label: "Image",
-          widget: "object",
-          required: false,
-          summary: "{{src}}",
-          fields: imageFields,
-        },
-        {
-          name: "markdown",
-          label: "Markdown",
-          widget: "object",
-          required: false,
-          summary: "{{value | truncate(50)}}",
-          fields: [
-            {
-              name: "value",
-              widget: "markdown",
-              required: false,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "advanced",
-      label: "Advanced",
-      widget: "object",
-      required: false,
-      fields: [
-        {
-          name: "sectionSlug",
-          label: "Overwrite Section Layout",
-          widget: "relation",
-          collection: "sectionLayouts",
-          required: false,
-        },
-        {
-          name: "vars",
-          label: "Custom Variables",
-          widget: "keyvalue",
-          required: false,
-        },
-      ],
-    },
-  ],
-  pattern: /^{% section\s+(.*?)\s*%}$/ms,
-  fromBlock: function (match) {
-    // Parse the arguments from the captured string
-    const argumentsString = match[1];
-    // Currently in this form:
-    // {% section type="grid", vars={}, blocks=[], advanced={ sectionSlug="", vars={}} %}
+// export const section = {
+//   id: "section",
+//   label: "Section",
+//   icon: "brick",
+//   fields: [
+//     {
+//       name: "type",
+//       label: "Type",
+//       widget: "object",
+//       required: true,
+//       collapsed: true,
+//       hint: "Select a pre-defined section type or use one of your custom section layouts (selectable in 'Advanced' bellow)",
+//       types: [
+//         {
+//           name: "grid-fluid",
+//           label: "Fluid Grid: Fluid sized blocks wrap automatically",
+//           widget: "object",
+//           required: false,
+//           fields: [
+//             {
+//               name: "columns",
+//               label: "Columns",
+//               widget: "number",
+//               hint: "The number of columns on large screens [note: can be overwritten with a custom variable widthColumnMin defining a min column size in CSS units]",
+//               required: false,
+//             },
+//             {
+//               name: "gap",
+//               label: "Gap",
+//               widget: "string",
+//               hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+//               required: false,
+//             },
+//             {
+//               name: "class",
+//               label: "Class Names",
+//               widget: "string",
+//               hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+//               required: false,
+//             },
+//           ],
+//         },
+//         {
+//           name: "switcher",
+//           label: "Switcher: Switch from side by side to vertical display",
+//           widget: "object",
+//           required: false,
+//           hint: "Switch between side by side and vertical display based on section width",
+//           fields: [
+//             {
+//               name: "widthWrap",
+//               label: "Width Wrap",
+//               widget: "string",
+//               hint: "Section width to switch from side by side to vertical display. (e.g. var(--width-prose) [default], 30rem, 800px, 0px [no wrap])",
+//               required: false,
+//             },
+//             {
+//               name: "gap",
+//               label: "Gap",
+//               widget: "string",
+//               hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+//               required: false,
+//             },
+//             {
+//               name: "class",
+//               label: "Class Names",
+//               widget: "string",
+//               hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+//               required: false,
+//             },
+//           ],
+//         },
+//         {
+//           name: "fixed-fluid",
+//           label: "Fixed-Fluid: 2 columns, fixed width on one side",
+//           widget: "object",
+//           required: false,
+//           hint: "2 blocks side by side, fixed width on one side",
+//           fields: [
+//             {
+//               name: "widthFixed",
+//               label: "Fixed column width",
+//               widget: "string",
+//               hint: "The width of the fixed sized column (e.g. 'calc(var(--width-prose) / 2.5)' [default], 20rem, 300px, ...)",
+//               required: false,
+//             },
+//             {
+//               name: "widthFluidMin",
+//               label: "Fluid column min width",
+//               widget: "string",
+//               hint: "The minimum width of the fluid column (e.g. '50%' [default], 20rem, 300px, ...)",
+//               required: false,
+//             },
+//             {
+//               name: "fixedRight",
+//               label: "Fixed column on the right",
+//               widget: "boolean",
+//               hint: "Place the fixed column on the right instead of left (default: false)",
+//               required: false,
+//             },
+//             {
+//               name: "gap",
+//               label: "Gap",
+//               widget: "string",
+//               hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+//               required: false,
+//             },
+//             {
+//               name: "class",
+//               label: "Class Names",
+//               widget: "string",
+//               hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+//               required: false,
+//             },
+//           ],
+//         },
+//         {
+//           name: "cover",
+//           label: "Cover: Fixed height section with optional padding",
+//           widget: "object",
+//           required: false,
+//           fields: [
+//             {
+//               name: "minHeight",
+//               label: "Min Height",
+//               widget: "string",
+//               hint: "The minimum height of the cover (e.g. 100svh [default], 30rem, 800px)",
+//               required: false,
+//             },
+//             {
+//               name: "noPadding",
+//               label: "Remove Default Padding",
+//               widget: "boolean",
+//               required: false,
+//             },
+//             {
+//               name: "gap",
+//               label: "Gap",
+//               widget: "string",
+//               hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+//               required: false,
+//             },
+//             {
+//               name: "class",
+//               label: "Class Names",
+//               widget: "string",
+//               hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+//               required: false,
+//             },
+//           ],
+//         },
+//         {
+//           name: "custom",
+//           label: "Custom: Use your own Section Layout",
+//           widget: "object",
+//           required: false,
+//           fields: [],
+//         },
+//       ],
+//     },
+//     {
+//       name: "blocks",
+//       label: "Blocks",
+//       widget: "list",
+//       required: false,
+//       i18n: true,
+//       collapsed: true,
+//       allow_reorder: true,
+//       types: [
+//         {
+//           name: "image",
+//           label: "Image",
+//           widget: "object",
+//           required: false,
+//           summary: "{{src}}",
+//           fields: imageFields,
+//         },
+//         {
+//           name: "markdown",
+//           label: "Markdown",
+//           widget: "object",
+//           required: false,
+//           summary: "{{value | truncate(50)}}",
+//           fields: [
+//             {
+//               name: "value",
+//               widget: "markdown",
+//               required: false,
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//     {
+//       name: "advanced",
+//       label: "Advanced",
+//       widget: "object",
+//       required: false,
+//       fields: [
+//         {
+//           name: "sectionSlug",
+//           label: "Overwrite Section Layout",
+//           widget: "relation",
+//           collection: "sectionLayouts",
+//           required: false,
+//         },
+//         {
+//           name: "vars",
+//           label: "Custom Variables",
+//           widget: "keyvalue",
+//           required: false,
+//         },
+//       ],
+//     },
+//   ],
+//   pattern: /^{% section\s+(.*?)\s*%}$/ms,
+//   fromBlock: function (match) {
+//     // Parse the arguments from the captured string
+//     const argumentsString = match[1];
+//     // Currently in this form:
+//     // {% section type="grid", vars={}, blocks=[], advanced={ sectionSlug="", vars={}} %}
 
-    const typeMatch = argumentsString.match(/type="(.*?)"/);
-    const varsString = extractProperty(argumentsString, "vars") || "{}";
-    const blocksString = extractProperty(argumentsString, "blocks") || "[]";
-    const advancedString = extractProperty(argumentsString, "advanced") || "{}";
+//     const typeMatch = argumentsString.match(/type="(.*?)"/);
+//     const varsString = extractProperty(argumentsString, "vars") || "{}";
+//     const blocksString = extractProperty(argumentsString, "blocks") || "[]";
+//     const advancedString = extractProperty(argumentsString, "advanced") || "{}";
 
-    const type = typeMatch?.[1] || "";
+//     const type = typeMatch?.[1] || "";
 
-    const vars = JSON.parse(varsString) || {};
-    const blocks = JSON.parse(blocksString) || [];
-    const advanced = JSON.parse(advancedString) || {};
+//     const vars = JSON.parse(varsString) || {};
+//     const blocks = JSON.parse(blocksString) || [];
+//     const advanced = JSON.parse(advancedString) || {};
 
-    return {
-      type: {
-        type,
-        ...vars,
-      },
-      blocks,
-      advanced,
-    };
-  },
-  toBlock: function (data) {
-    const { type: typeField, blocks, advanced } = data;
-    const { type, ...vars } = typeField || {};
+//     return {
+//       type: {
+//         type,
+//         ...vars,
+//       },
+//       blocks,
+//       advanced,
+//     };
+//   },
+//   toBlock: function (data) {
+//     const { type: typeField, blocks, advanced } = data;
+//     const { type, ...vars } = typeField || {};
 
-    const varsString = JSON.stringify(vars);
-    const blocksString = JSON.stringify(blocks);
-    const advancedString = JSON.stringify(advanced);
+//     const varsString = JSON.stringify(vars);
+//     const blocksString = JSON.stringify(blocks);
+//     const advancedString = JSON.stringify(advanced);
 
-    return `{% section type="${type}", vars=${varsString}, blocks=${blocksString}, advanced=${advancedString} %}`;
-  },
-  toPreview: function (data) {
-    return `TEST`;
-  },
-};
+//     return `{% section type="${type}", vars=${varsString}, blocks=${blocksString}, advanced=${advancedString} %}`;
+//   },
+//   toPreview: function (data) {
+//     return `TEST`;
+//   },
+// };
 
-export const links = {
-  id: "links",
-  label: "Links",
-  icon: "link",
-  fields: [
-    {
-      name: "linksData",
-      label: "Links References",
-      label_singular: "Link Reference",
-      widget: "list",
-      required: true,
-      collapsed: true,
-      hint: "",
-      types: [
-        {
-          name: "external",
-          label: "External link",
-          widget: "object",
-          required: false,
-          collapsed: true,
-          summary: "{{href}}",
-          fields: [
-            {
-              name: "href",
-              label: "URL",
-              widget: "string",
-              required: true,
-            },
-            {
-              name: "text",
-              label: "Text",
-              widget: "string",
-              required: false,
-              hint: "Display Text. Optional: Shows the URL if not defined",
-            },
-            {
-              name: "target",
-              label: "Target",
-              widget: "select",
-              required: false,
-              options: [
-                { value: "_blank", label: "_blank" },
-                { value: "_self", label: "_self" },
-                { value: "_parent", label: "_parent" },
-                { value: "_top", label: "_top" },
-              ],
-            },
-            {
-              name: "rel",
-              label: "Rel",
-              widget: "select",
-              required: false,
-              multiple: true,
-              default: ["noopener"],
-              options: [
-                { value: "noopener", label: "noopener" },
-                { value: "noreferrer", label: "noreferrer" },
-                { value: "nofollow", label: "nofollow" },
-                { value: "alternate", label: "alternate" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "collections",
-          label: "Collections",
-          widget: "object",
-          required: false,
-          collapsed: false,
-          summary: "{{collectionNames}}",
-          fields: [
-            {
-              name: "collectionNames",
-              label: "Select whole collections",
-              widget: "select",
-              required: true,
-              multiple: true,
-              options: [
-                { value: "all", label: "All Collections" },
-                { value: "pages", label: "Pages" },
-                ...(allCollections || []).map((collection) => ({
-                  value: collection.name,
-                  label: collection.label || collection.name,
-                })),
-              ],
-            },
-          ],
-        },
-        {
-          name: "tags",
-          label: "Tags",
-          widget: "object",
-          required: false,
-          collapsed: false,
-          summary: "{{collectionNames}}",
-          fields: [
-            {
-              name: "collectionNames",
-              label: "Select Tags",
-              widget: "relation",
-              collection: "dataFiles",
-              file: "translatedData",
-              value_field: "tagsList.*.slug",
-              // display_fields: ["tagsList.*.name"],
-              required: true,
-              multiple: true,
-            },
-          ],
-        },
-        {
-          name: "pages",
-          label: "Pages",
-          widget: "object",
-          required: false,
-          collapsed: false,
-          summary: "{{slugs}}",
-          fields: [
-            {
-              name: "slugs",
-              label: "Select pages",
-              widget: "relation",
-              collection: "pages",
-              required: true,
-              multiple: true,
-            },
-          ],
-        },
-        {
-          name: "articles",
-          label: "Articles",
-          widget: "object",
-          required: false,
-          collapsed: false,
-          summary: "{{slugs}}",
-          fields: [
-            {
-              name: "slugs",
-              label: "Select articles",
-              widget: "relation",
-              collection: "articles",
-              required: true,
-              multiple: true,
-            },
-          ],
-        },
-        {
-          name: "articles",
-          label: "Articles",
-          widget: "object",
-          required: false,
-          collapsed: false,
-          summary: "{{slugs}}",
-          fields: [
-            {
-              name: "slugs",
-              label: "Select articles",
-              widget: "relation",
-              collection: "articles",
-              required: true,
-              multiple: true,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "itemLayout",
-      label: "Item Layout",
-      widget: "object",
-      required: false,
-      collapsed: true,
-      types: [
-        {
-          name: "markdown",
-          label: "Markdown",
-          widget: "object",
-          required: false,
-          summary: "{{value | truncate(50)}}",
-          fields: [
-            {
-              name: "value",
-              widget: "markdown",
-              required: false,
-            },
-          ],
-        },
-        {
-          name: "partial",
-          label: "Partial",
-          widget: "object",
-          summary: "{{slug}}",
-          fields: [
-            {
-              name: "slug",
-              label: "Partial Slug",
-              widget: "relation",
-              collection: "partials",
-              required: false,
-              value_field: "{{slug}}",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "wrapperLayout",
-      label: "Wrapper Layout",
-      widget: "object",
-      required: false,
-      collapsed: true,
-      hint: "Warning: If using a Wrapper Layout AND an Item Layout, you will have to use your Item Layout manually in the Wrapper.",
-      types: [
-        {
-          name: "markdown",
-          label: "Markdown",
-          widget: "object",
-          required: false,
-          summary: "{{value | truncate(50)}}",
-          fields: [
-            {
-              name: "value",
-              widget: "markdown",
-              required: false,
-              default:
-                "<ul>{% for link in links %}<li>{{link.html | safe}}</li>{% endfor %}<ul>",
-            },
-          ],
-        },
-        {
-          name: "partial",
-          label: "Partial",
-          widget: "object",
-          summary: "{{slug}}",
-          fields: [
-            {
-              name: "slug",
-              label: "Partial Slug",
-              widget: "relation",
-              collection: "partials",
-              required: false,
-              value_field: "{{slug}}",
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  pattern: /^{% links\s+(.*?)\s*%}$/ms,
-  // pattern: /{% links\s+(.*?)\s*%}/,
-  fromBlock: function (match) {
-    // Parse the arguments from the captured string
-    const argumentsString = match[1];
-    // Currently in this form:
-    // {% links linksData=[{"type":"pages","slugs":["test","index"]}] %}
+// export const links = {
+//   id: "links",
+//   label: "Links",
+//   icon: "link",
+//   fields: [
+//     {
+//       name: "linksData",
+//       label: "Links References",
+//       label_singular: "Link Reference",
+//       widget: "list",
+//       required: true,
+//       collapsed: true,
+//       hint: "",
+//       types: [
+//         {
+//           name: "external",
+//           label: "External link",
+//           widget: "object",
+//           required: false,
+//           collapsed: true,
+//           summary: "{{href}}",
+//           fields: [
+//             {
+//               name: "href",
+//               label: "URL",
+//               widget: "string",
+//               required: true,
+//             },
+//             {
+//               name: "text",
+//               label: "Text",
+//               widget: "string",
+//               required: false,
+//               hint: "Display Text. Optional: Shows the URL if not defined",
+//             },
+//             {
+//               name: "target",
+//               label: "Target",
+//               widget: "select",
+//               required: false,
+//               options: [
+//                 { value: "_blank", label: "_blank" },
+//                 { value: "_self", label: "_self" },
+//                 { value: "_parent", label: "_parent" },
+//                 { value: "_top", label: "_top" },
+//               ],
+//             },
+//             {
+//               name: "rel",
+//               label: "Rel",
+//               widget: "select",
+//               required: false,
+//               multiple: true,
+//               default: ["noopener"],
+//               options: [
+//                 { value: "noopener", label: "noopener" },
+//                 { value: "noreferrer", label: "noreferrer" },
+//                 { value: "nofollow", label: "nofollow" },
+//                 { value: "alternate", label: "alternate" },
+//               ],
+//             },
+//           ],
+//         },
+//         {
+//           name: "collections",
+//           label: "Collections",
+//           widget: "object",
+//           required: false,
+//           collapsed: false,
+//           summary: "{{collectionNames}}",
+//           fields: [
+//             {
+//               name: "collectionNames",
+//               label: "Select whole collections",
+//               widget: "select",
+//               required: true,
+//               multiple: true,
+//               options: [
+//                 { value: "all", label: "All Collections" },
+//                 { value: "pages", label: "Pages" },
+//                 ...(allCollections || []).map((collection) => ({
+//                   value: collection.name,
+//                   label: collection.label || collection.name,
+//                 })),
+//               ],
+//             },
+//           ],
+//         },
+//         {
+//           name: "tags",
+//           label: "Tags",
+//           widget: "object",
+//           required: false,
+//           collapsed: false,
+//           summary: "{{collectionNames}}",
+//           fields: [
+//             {
+//               name: "collectionNames",
+//               label: "Select Tags",
+//               widget: "relation",
+//               collection: "dataFiles",
+//               file: "translatedData",
+//               value_field: "tagsList.*.slug",
+//               // display_fields: ["tagsList.*.name"],
+//               required: true,
+//               multiple: true,
+//             },
+//           ],
+//         },
+//         {
+//           name: "pages",
+//           label: "Pages",
+//           widget: "object",
+//           required: false,
+//           collapsed: false,
+//           summary: "{{slugs}}",
+//           fields: [
+//             {
+//               name: "slugs",
+//               label: "Select pages",
+//               widget: "relation",
+//               collection: "pages",
+//               required: true,
+//               multiple: true,
+//             },
+//           ],
+//         },
+//         {
+//           name: "articles",
+//           label: "Articles",
+//           widget: "object",
+//           required: false,
+//           collapsed: false,
+//           summary: "{{slugs}}",
+//           fields: [
+//             {
+//               name: "slugs",
+//               label: "Select articles",
+//               widget: "relation",
+//               collection: "articles",
+//               required: true,
+//               multiple: true,
+//             },
+//           ],
+//         },
+//         {
+//           name: "articles",
+//           label: "Articles",
+//           widget: "object",
+//           required: false,
+//           collapsed: false,
+//           summary: "{{slugs}}",
+//           fields: [
+//             {
+//               name: "slugs",
+//               label: "Select articles",
+//               widget: "relation",
+//               collection: "articles",
+//               required: true,
+//               multiple: true,
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//     {
+//       name: "itemLayout",
+//       label: "Item Layout",
+//       widget: "object",
+//       required: false,
+//       collapsed: true,
+//       types: [
+//         {
+//           name: "markdown",
+//           label: "Markdown",
+//           widget: "object",
+//           required: false,
+//           summary: "{{value | truncate(50)}}",
+//           fields: [
+//             {
+//               name: "value",
+//               widget: "markdown",
+//               required: false,
+//             },
+//           ],
+//         },
+//         {
+//           name: "partial",
+//           label: "Partial",
+//           widget: "object",
+//           summary: "{{slug}}",
+//           fields: [
+//             {
+//               name: "slug",
+//               label: "Partial Slug",
+//               widget: "relation",
+//               collection: "partials",
+//               required: false,
+//               value_field: "{{slug}}",
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//     {
+//       name: "wrapperLayout",
+//       label: "Wrapper Layout",
+//       widget: "object",
+//       required: false,
+//       collapsed: true,
+//       hint: "Warning: If using a Wrapper Layout AND an Item Layout, you will have to use your Item Layout manually in the Wrapper.",
+//       types: [
+//         {
+//           name: "markdown",
+//           label: "Markdown",
+//           widget: "object",
+//           required: false,
+//           summary: "{{value | truncate(50)}}",
+//           fields: [
+//             {
+//               name: "value",
+//               widget: "markdown",
+//               required: false,
+//               default:
+//                 "<ul>{% for link in links %}<li>{{link.html | safe}}</li>{% endfor %}<ul>",
+//             },
+//           ],
+//         },
+//         {
+//           name: "partial",
+//           label: "Partial",
+//           widget: "object",
+//           summary: "{{slug}}",
+//           fields: [
+//             {
+//               name: "slug",
+//               label: "Partial Slug",
+//               widget: "relation",
+//               collection: "partials",
+//               required: false,
+//               value_field: "{{slug}}",
+//             },
+//           ],
+//         },
+//       ],
+//     },
+//   ],
+//   pattern: /^{% links\s+(.*?)\s*%}$/ms,
+//   // pattern: /{% links\s+(.*?)\s*%}/,
+//   fromBlock: function (match) {
+//     // Parse the arguments from the captured string
+//     const argumentsString = match[1];
+//     // Currently in this form:
+//     // {% links linksData=[{"type":"pages","slugs":["test","index"]}] %}
 
-    const linksDataString =
-      extractProperty(argumentsString, "linksData") || "[]";
-    const itemLayoutString =
-      extractProperty(argumentsString, "itemLayout") || "{}";
-    const wrapperLayoutString =
-      extractProperty(argumentsString, "wrapperLayout") || "{}";
-    const linksData = JSON.parse(linksDataString) || [];
-    const itemLayout = JSON.parse(itemLayoutString) || {};
-    const wrapperLayout = JSON.parse(wrapperLayoutString) || {};
+//     const linksDataString =
+//       extractProperty(argumentsString, "linksData") || "[]";
+//     const itemLayoutString =
+//       extractProperty(argumentsString, "itemLayout") || "{}";
+//     const wrapperLayoutString =
+//       extractProperty(argumentsString, "wrapperLayout") || "{}";
+//     const linksData = JSON.parse(linksDataString) || [];
+//     const itemLayout = JSON.parse(itemLayoutString) || {};
+//     const wrapperLayout = JSON.parse(wrapperLayoutString) || {};
 
-    console.log("From Block", { wrapperLayout });
+//     console.log("From Block", { wrapperLayout });
 
-    return {
-      linksData,
-      itemLayout,
-      wrapperLayout,
-    };
-  },
-  toBlock: function (data) {
-    const { linksData, itemLayout, wrapperLayout } = data;
-    console.log("To Block", { wrapperLayout });
-    const linksDataString = JSON.stringify(linksData);
-    const itemLayoutString = JSON.stringify(itemLayout);
-    const wrapperLayoutString = JSON.stringify(wrapperLayout);
+//     return {
+//       linksData,
+//       itemLayout,
+//       wrapperLayout,
+//     };
+//   },
+//   toBlock: function (data) {
+//     const { linksData, itemLayout, wrapperLayout } = data;
+//     console.log("To Block", { wrapperLayout });
+//     const linksDataString = JSON.stringify(linksData);
+//     const itemLayoutString = JSON.stringify(itemLayout);
+//     const wrapperLayoutString = JSON.stringify(wrapperLayout);
 
-    return [
-      `{% links linksData=${linksDataString}`,
-      itemLayoutString ? `, itemLayout=${itemLayoutString}` : "",
-      wrapperLayoutString ? `, wrapperLayout=${wrapperLayoutString}` : "",
-      ` %}`,
-    ].join("");
-  },
-  toPreview: function (data) {
-    return `TEST`;
-  },
-};
+//     return [
+//       `{% links linksData=${linksDataString}`,
+//       itemLayoutString ? `, itemLayout=${itemLayoutString}` : "",
+//       wrapperLayoutString ? `, wrapperLayout=${wrapperLayoutString}` : "",
+//       ` %}`,
+//     ].join("");
+//   },
+//   toPreview: function (data) {
+//     return `TEST`;
+//   },
+// };
 
 export const icon = {
   id: "icon",

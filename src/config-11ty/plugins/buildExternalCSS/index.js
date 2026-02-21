@@ -1,6 +1,6 @@
 import { build as bunBuild, plugin as bunPlugin } from "bun";
 import fglob from "fast-glob";
-import { MINIFY, brandConfig } from "../../../../env.config.js";
+import { MINIFY, brandConfig, POKO_THEME } from "../../../../env.config.js";
 
 const mustImportCtxCss = !!brandConfig?.ctxCssImport;
 const ctxCssEntrypoint = `./src/styles/ctx/ctx.css`;
@@ -12,8 +12,12 @@ export default async function (eleventyConfig, pluginOptions) {
     pluginOptions || {};
   const outdir = `./${dir.output}/${outputDir}`;
 
+  console.log(dir.input);
   let externalStylesInline = null;
-  let entrypoints = await fglob(`${dir.input}/${inputGlob}`);
+  let entrypoints = await fglob([
+    `${dir.input}/${inputGlob}`,
+    `src/themes/${POKO_THEME}/_styles/*.css`,
+  ]);
   // Remove entrypoint files that start with an underscore
   entrypoints = entrypoints.filter(
     (entrypoint) => !entrypoint.split("/").pop().startsWith("_"),

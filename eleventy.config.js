@@ -64,6 +64,7 @@ import {
   BASE_URL,
   PROD_URL,
   WEBSITE_PATH_PREFIX,
+  POKO_THEME,
   statusesToUnrender,
   allLanguages,
   languages,
@@ -640,7 +641,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
     // logLevel: 'debug',
     sources: [
       // TODO: Make this selectable from the CMS
-      "src/themes/default/templates",
+      `src/themes/${POKO_THEME}`,
       "src/content",
     ],
   });
@@ -649,7 +650,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
     defaultExt: ["11ty.js", "njk", "md"],
     dirs: [
       path.join(WORKING_DIR, PARTIALS_DIR),
-      path.join("src/themes/default/_partials"),
+      path.join(`src/themes/${POKO_THEME}/_partials`),
       path.join("src/content/_partials"),
     ],
     shortcodeAliases: [
