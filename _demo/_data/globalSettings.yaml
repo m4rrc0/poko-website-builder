@@ -20,5 +20,8 @@ languages:
 collections:
   - articles
   - events
+  - organizations
+  - products
+  - projects
 metadata:
   image: ''

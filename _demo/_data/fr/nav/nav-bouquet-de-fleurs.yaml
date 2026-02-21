@@ -1,0 +1,11 @@
+items:
+  - linkTo:
+      type: page
+      slug: 2530cfdfddec
+      label: Accueil
+      subItems: []
+  - linkTo:
+      type: products
+      label: Catalogues
+      subItems: []
+      productsName: 1443cb810287
