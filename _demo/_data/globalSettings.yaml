@@ -3,6 +3,10 @@ productionUrl: https://m4rrc0.github.io/poko-website-builder
 logo: /_images/POKO-logo-RVB-01.jpg
 htmlHead: ''
 cssHead: ''
+pageFooter: footer-1
+collectionFooters:
+  - collection: articles
+    footer: footer-1
 languages:
   - code: en
     status: published
