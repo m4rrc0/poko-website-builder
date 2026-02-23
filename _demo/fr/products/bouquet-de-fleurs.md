@@ -30,7 +30,8 @@ Acheter chez FleursDeco.com ! Réduction sur tout les articles.
 {% gridItem %}
 {% image src="/_images/pexels-ella-wei-10655130.webp", alt="Bouquet de fleurs rouge", aspectRatio="1", class=" center" %}
 
-{% image src="/_images/pexels-ella-wei-10655130.webp", alt="Bouquet de fleurs rouge", aspectRatio="1", class=" center" %}
+
+Bouquet de fleurs rouge
 {% endgridItem %}
 {% gridItem %}
 {% image src="/_images/pexels-mathilde-langevin-12032340.webp", alt="Bouquet de fleurs blanc", aspectRatio="1", class="center", wrapper="div" %}
@@ -43,7 +44,7 @@ Bouquet de fleurs blanche
 
 {% sectionGrid %}
 
-{% grid  %}
+{% grid type="grid-fluid" %}
 {% gridItem %}
 {% image src="/_images/pexels-secret-garden-931150.webp", alt="Bouquet de fleurs - orange ", aspectRatio="1", class="center" %}
 
