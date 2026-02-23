@@ -54,9 +54,9 @@ body,
     border-color: var(--color-border--selection, currentcolor);
 }
 /* prettier-ignore */
-:is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9),
-:is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9)[class*='palette'],
-[class*='palette'] :is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9) {
+:is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4),
+:is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4)[class*='palette'],
+[class*='palette'] :is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4) {
   color: var(--color-text__heading);
   background-color: var(--color-bg__heading);
   border-color: var(--color-border__heading, currentcolor);
@@ -208,3 +208,75 @@ b[class*="palette"],
     caret-color: inherit;
     column-rule-color: inherit;
 }
+
+/* WIP: color palette interface */
+/*
+var(--color-text, #100c08);
+var(--color-bg, #fdfdfe);
+var(--color-text, #100c08);
+var(--color-bg, #fdfdfe);
+var(--color-border, currentcolor);
+var(--color-outline, currentcolor);
+var(--color-text-decoration, currentcolor
+var(--color-text-emphasis, currentcolor
+var(--color-caret, currentcolor);
+var(--color-column-rule, currentcolor
+var(--color-fill, none);
+var(--color-stroke, currentcolor);
+var(--color-var-bg, #fdfdfe
+var(--color-var-text, #100c08
+var(--color-outline, currentcolor)
+var(--color-text--selection
+var(--color-bg, #fdfdfe));
+var(--color-bg--selection
+var(--color-text, #100c08));
+var(--color-border--selection
+var(--color-text__heading);
+background
+var(--color-bg__heading);
+border
+var(--color-border__heading, currentcolor);
+var(--color-text__a, var(--color-text));
+background
+var(--color-bg__a, var(--color-bg));
+border
+var(--color-border__a, var(--color-border, currentcolor));
+var(--color-text__a--hover
+var(--color-bg__a--hover
+var(--color-border__a, currentcolor);
+var(--color-text__button, var(--color-text));
+background
+var(--color-bg__button, var(--color-bg));
+border
+var(--color-border, currentcolor)
+var(--color-bg__button, var(--color-bg))
+    );
+var(--color-text__button, var(--color-text))
+    );
+var(--color-border__button--hover
+var(--color-text__button--focus
+var(--color-bg__button--focus
+var(--color-border__button--focus
+var(--color-text__button--disabled
+var(--color-bg__button--disabled
+var(--color-border__button--disabled
+var(--color-text__code, white);
+var(--color-bg__code, GrayText);
+var(--color-border__code, currentcolor);
+var(--color-text__mark, MarkText);
+var(--color-bg__mark, Mark);
+var(--color-border__mark, CurrentColor);
+var(--color-text__strong);
+background
+var(--color-bg__strong);
+}
+var(--color-text__em);
+background
+var(--color-bg__em);
+}
+var(--color-text__b);
+background
+var(--color-bg__b);
+}
+var(--color-text--marker
+*/

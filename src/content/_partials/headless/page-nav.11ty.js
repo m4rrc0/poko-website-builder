@@ -7,6 +7,6 @@ export default async function (data) {
   // Also embed a {% css %} partial so themes can override styles without touching semantics
 
   return pageNav
-    ? await partialSc(pageNav, { ...data })
-    : await partialSc("_main-nav", { ...data });
+    ? await partialSc.call({ ...data }, pageNav, { ...data })
+    : await partialSc.call({ ...data }, "_page-nav", { ...data });
 }

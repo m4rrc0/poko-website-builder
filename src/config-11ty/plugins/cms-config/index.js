@@ -2030,6 +2030,7 @@ class CmsConfig {
       // logo_url:
       //   "https://raw.githubusercontent.com/m4rrc0/poko-website-builder/3fbe32b2f8a00e5e2b1a8fff60d7772ace8e1820/assets/assets/POKO-favicon-RVB-light_dark.svg",
       logo_url: `https://raw.githubusercontent.com/m4rrc0/poko-website-builder/8357dd9cbcedcf179d03212531b2df941c068840/assets/POKO-favicon-RVB-light_dark.svg`,
+      app_title: "poko CMS",
       // MEDIAS
       media_folder: `/${CONTENT_DIR}/_images`,
       public_folder: "/_images",

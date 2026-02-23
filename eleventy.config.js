@@ -230,6 +230,9 @@ export default async function (eleventyConfig) {
   eleventyConfig.addWatchTarget("./src/config-11ty/**/*", {
     resetConfig: true,
   });
+  eleventyConfig.addWatchTarget("./src/styles/**/*.css", {
+    resetConfig: true,
+  });
   // eleventyConfig.addWatchTarget("./src/**/*");
   eleventyConfig.addWatchTarget("./env.config.js", { resetConfig: true });
   eleventyConfig.addWatchTarget("./eleventy.config.js", { resetConfig: true });

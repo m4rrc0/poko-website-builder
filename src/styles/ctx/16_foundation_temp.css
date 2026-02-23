@@ -98,9 +98,7 @@
     --rhythm-4: var(--step-3, 4rem);*/
 
     --width-prose: 50rem;
-    /*--width-max: (alias for width-body) ;*/
-    --width-body: calc(var(--width-prose) * 1.618); /* 80,98 */
-    --width-section: var(--width-body);
+    --width-max: calc(var(--width-prose) * 1.618); /* 80,98 */
     --width-featured: calc(var(--width-prose) / 1.618); /* 30.90 */
     --width-column: calc(var(--width-prose) / 2.618); /* 19 */
     /*--width-token: 30rem;*/
@@ -114,8 +112,7 @@
     --radius-6: 8rem;*/
 
     --radius-round: 1e5px;
-    --radius-body: 0rem;
-    --radius-section: 8rem;
+    --radius-max: 8rem;
     --radius-prose: 4rem;
     --radius-featured: 2rem;
     --radius-column: 1rem;
@@ -128,33 +125,31 @@
     --border-size-4: 10px;
     --border-size-5: 25px;*/
 
-    --thick-body: 5px;
-    --thick-section: 5px;
+    --thick-max: 5px;
     --thick-prose: 5px;
     --thick-featured: 2px;
     --thick-column: 2px;
     --thick-token: 2px;
 
     --px-body: var(--step--2, 0.8rem);
-    --px-section: var(--step--1, 1rem);
+    --px-max: var(--step--1, 1rem);
     --px-prose: var(--step--1, 1rem);
     --px-featured: var(--step--1, 1rem);
     --px-column: var(--step--1, 1rem);
     --px-token: var(--step--1, 1rem);
 
-    --py-body: var(--step-2, 0.8rem);
-    --py-section: var(--step-4, 3rem);
+    --py-body: var(--step--2, 0.8rem);
+    --py-max: var(--step-4, 3rem);
     --py-prose: var(--step--1, 1rem);
     --py-featured: var(--step--1, 1rem);
     --py-column: var(--step--1, 1rem);
     --py-token: var(--step--1, 1rem);
 
-    /*--gap-body: var(--step-0, 1.25rem);
-    --gap-section: var(--step-0, 1.25rem);
+    --gap-max: var(--step-0, 1.25rem);
     --gap-prose: var(--step--1, 1rem);
     --gap-featured: var(--step--1, 1rem);
     --gap-column: var(--step--1, 1rem);
-    --gap-token: var(--step--1, 1rem);*/
+    --gap-token: var(--step--1, 1rem);
 
     --flow-p: var(--step-0); /* Chrome: 1em | for ul, menu, dir, ol, dl, p */
     --flow-h1: var(--step-0); /* Chrome: 0.67em */
@@ -163,8 +158,7 @@
     --flow-h4: var(--step-0); /* Chrome: 1.33em */
     --flow-h5: var(--step-0); /* Chrome: 1.67em */
     --flow-h6: var(--step-0); /* Chrome: 2.33em */
-    --flow-hr: var(--step-0);
-    --flow-prose: var(--step-1); /* Chrome: 1em | for blockquote, figure */
+    --flow-component: var(--step-1); /* Chrome: 1em | for blockquote, figure */
     --flow-section: var(--step-2);
 
     --offset-list: 2rem; /* ul and ol left padding */
@@ -177,8 +171,6 @@
 :where(body) {
     font-size: var(--step-0);
     font-family: var(--font-stack-body, system-ui, sans-serif);
-    color: #100c08;
-    background-color: #fdfdfe;
 }
 
 /* 1.2 Headings */
@@ -273,6 +265,128 @@
 /* ==========================================================================
    #2 LAYOUT & SPACING
    ========================================================================== */
+
+/* 2.1 Page layout, max-widths, section spacing */
+:where(body) {
+    color: #100c08;
+    background-color: #fdfdfe;
+    /*padding-inline: var(--pi-body, 0.68rem);*/
+    /*padding-block: var(--pb-body, 1.68rem);*/
+    min-block-size: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Section spacing levels */
+/* Level 1: Top level -> sections between them */ /* prettier-ignore */
+:where(body > :where(section, .section)),
+:where(body > :where(header, nav, main, footer, article, aside) > :where(section, .section)) {
+    padding-block: var(--py-max);
+}
+/* Vertical page padding */
+:where(body > :first-child) {
+    padding-block-start: var(--py-body);
+}
+:where(body > :last-child) {
+    padding-block-end: var(--py-body);
+}
+/* Default basic vertical padding on level 1 containers */
+:where(body > :where(header, nav, main, footer, article, aside)) {
+    padding-block: var(--py-body);
+}
+/* TARGET TOP LEVEL ELEMENTS */
+/* Lateral page padding should be on any direct child of body OR direct children of the main page containers */ /* prettier-ignore */
+:where(body > *) {
+    padding-inline: var(--px-body, 0.8rem);
+    /* All top level elements (those where lateral paddings apply) should be centered */
+    max-inline-size: min(100%, var(--width-max, 80rem));
+    margin-inline: auto;
+    /* Do not htink this is needed... */
+    /*inline-size: auto;*/
+} /* Exception for full bleed images */ /* prettier-ignore */
+:where(body > :where(img, picture, video)) { box-sizing: content-box; }
+/* prettier-ignore */
+:where(body > :where(header, nav, main, footer, article, aside)) {
+    padding-inline: 0;
+} /* prettier-ignore */
+:where(body > :where(header, nav, main, footer, article, aside) > *) {
+    padding-inline: var(--px-body, 0.8rem);
+}
+/* Special case for ul and ol */ /* prettier-ignore */
+:where(body > :where(ul, ol)),
+:where(body > :where(header, nav, main, footer, article, aside) > :where(ul, ol)) {
+    padding-inline-start: calc(var(--px-body, 0.8rem) + var(--offset-list, 2rem));
+}
+/* Special case for blockquotes */ /* prettier-ignore */
+:where(body > blockquote),
+:where(body > :where(header, nav, main, footer, article, aside) > blockquote) {
+    padding-inline: var(--offset-blockquote, 1rem);
+}
+/* End of page padding setting */
+
+/* Push page footer at the bottom without the need for a grid or flex body */
+:where(body > footer) {
+    position: sticky;
+    top: calc(100vh - 1px);
+}
+
+/* Manage vertical flow */
+/* h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure */
+/* prettier-ignore */
+/*:where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure) {
+    margin-block-start: var(--flow-p, 1em);
+}*/
+/*:where(label + :where(input, select, textarea, button)) {
+    margin-block-start: 0.4em;
+}*/
+/* No top margin on the first typographic element of a container */ /* prettier-ignore */
+:where(:where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure):first-child),
+:where(hgroup > *) {
+    margin-block-start: 0;
+}
+/* Space out sectioning elements after typographic elements */ /* prettier-ignore */
+:where(:where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure) + :where(section, .section, header, footer, article, aside, img)) {
+    margin-block-start: var(--flow-section);
+}
+/* Flow between sectioning elements inside sectioning elements */ /* prettier-ignore */
+:where(:where(section, .section, header, footer, article, aside) > :where(section, .section, header, footer, article, aside, div, .layout):not(:first-child)) {
+    /* TODO: Should this be margin or padding? Maybe padding all around like on sub-body sectioning elements */
+    margin-block-start: var(--flow-section);
+}
+/* Escape hatch to reset top margins on elements */ /* prettier-ignore */
+:where(:where(.reset, .layout) > :where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure)) {
+    margin-block-start: 0;
+}
+
+/* Max Widths */
+
+/* prettier-ignore */
+/*:where(.prose),
+:where(:where(main, header, footer, article, section, aside, form, fieldset, body):not([class])) {
+    max-inline-size: var(--width-max, 80rem);
+    margin-inline: auto;
+}*/
+/* prettier-ignore */
+/*:where(.prose,article,aside,form,fieldset,body:not(:has(:where(main, article)))) {
+    max-inline-size: var(--width-prose, 50rem);
+}*/
+
+/* TODO: group prose elements here */
+/* prettier-ignore */
+:where(.prose,p,h1,h2,h3,h4,h5,h6,dl,dt,dd,quote,blockquote,figure,figcaption,details, address),
+:where(),
+:where(),
+:where(:not(nav)) > :where(ul, ol) {
+    max-inline-size: var(--width-prose, 50rem);
+    inline-size: auto;
+    margin-inline: auto;
+}
+/* Exception for blockquotes */
+/*:where(blockquote) {
+    margin-inline-start: var(--px-body, 0.8rem);
+}*/
+
+/* End of Max Widths setting */
 
 /* Try an nuke browser extensions added at the end of the body */
 /* TODO: Find a better way */

@@ -1,0 +1,219 @@
+/*:where(html) {
+    --width-typography: var(--width-prose);
+    --width-media: var(--width-prose);
+     ...
+
+    --flow-
+}*/
+
+/* Reset body */
+:where(body) {
+  min-block-size: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Push page footer at the bottom without the need for a grid or flex body */
+:where(body > footer) {
+  position: sticky;
+  top: calc(100vh - 1px);
+}
+
+/* 2.2 Sectioning elements */
+/* body */
+/* main article */
+/* section */
+/* aside */
+/* nav */
+/* footer */
+/* header */
+
+/* Typographic elements and */
+/* p, h?, hgroup, address, :where(ul, ol):not([role="list"]):not(.reset), figure, menu, search */
+/* hr */
+/* code: pre */
+/* blockquote */
+
+/* Manage the following in context */
+/* - Max Width + centering */
+/*   - body */
+/*   - prose: p, h?, .prose,article,aside,form,fieldset , .prose,p,h1,h2,h3,h4,h5,h6,dl,dt,dd,quote,blockquote,figure,figcaption,details, address */
+/*   - featured */
+/*   - col */
+/* - Flow = margin-block-start */
+/* - px = Lateral Padding */
+/*   -  */
+/*   -  */
+/*   -  */
+/* - py = Vertical Padding */
+/*   - Should be used on any block element that may get a contrasted background */
+
+/* ----- Max Width ----- */
+
+:where(body) {
+  max-inline-size: min(100%, var(--width-body));
+  margin-inline: auto;
+}
+/*:where(img, picture, video) {
+    max-inline-size: min(100%, var(--width-prose));
+    margin-inline: auto;
+}*/
+/* We might want to define each line separately like we do with colors */ /* prettier-ignore */
+:where(.prose, p, h1, h2, h3, h4, h5, h6, hgroup, address, :where(ul, ol):not([role="list"]):not(.reset), menu, search),
+:where(figure,figcaption,form,fieldset),
+:where(dl,dt,dd,blockquote,details),
+:where() {
+    max-inline-size: min(100%, var(--width-prose));
+    margin-inline: auto;
+
+    /* Reset Flow */
+    margin-block-start: 0;
+}
+
+/* ----- Flow ----- */
+
+/* Reset User agent default Flow */
+:where(h1, h2, h3, h4, h5, h6, p, ul, ol, menu, dir, dl, blockquote, figure) {
+  margin-block-start: 0;
+}
+:where(p:not(:first-child)),
+:where(:where(ul, ol, menu, dir, dl):not(:first-child)) {
+  margin-block-start: var(--flow-p);
+}
+:where(li :where(ul, ol, menu, dir, dl)) {
+  margin-block-start: 0;
+}
+:where(h1:not(:first-child)) {
+  margin-block-start: var(--flow-h1);
+}
+:where(h2:not(:first-child)) {
+  margin-block-start: var(--flow-h2);
+}
+:where(h3:not(:first-child)) {
+  margin-block-start: var(--flow-h3);
+}
+:where(h4:not(:first-child)) {
+  margin-block-start: var(--flow-h4);
+}
+:where(h5:not(:first-child)) {
+  margin-block-start: var(--flow-h5);
+}
+:where(h6:not(:first-child)) {
+  margin-block-start: var(--flow-h6);
+}
+:where(hr) {
+  margin-block: var(--flow-hr);
+} /* prettier-ignore */
+:where(:where(blockquote, figure, hgroup, address, menu, search, form, fieldset, details, img, picture, video, pre):not(:first-child)) {
+    margin-block-start: var(--flow-prose);
+} /* prettier-ignore */
+:where(:where(section, .section, table):not(:first-child)) {
+    margin-block-start: var(--flow-section);
+} /* prettier-ignore */
+:where(:where(section, .section) + :where(section, .section)) {
+    margin-block-start: 0;
+}
+
+/* prettier-ignore */
+:where(:where(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel) > *),
+:where(hgroup > *) {
+    margin-block-start: 0;
+}
+
+/* ----- Padding ----- */
+/* -- Horizontal Padding -- */
+
+/* METHOD 1: Recursive check to apply on first 'content' element found */
+/* The 'div' here causes some complications */
+/* prettier-ignore */
+/* :where(body > :not(:where(main, section, .section, header, footer, aside))),
+:where(body > :where(main, section, .section, header, footer, aside) > :not(:where(section, .section, header, footer, aside, article))),
+:where(body > :where(main, section, .section, header, footer, aside) > :where(section, .section, header, footer, aside, article) > :not(header, footer, aside, article, div:not(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel))),
+:where(body > :where(main, section, .section, header, footer, aside) > :where(section, .section, header, footer, aside, article) > :where(header, footer, aside, article, div:not(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel)) > :not(header, footer, aside, article, div:not(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel))),
+:where(body > :where(main, section, .section, header, footer, aside) > :where(section, .section, header, footer, aside, article) > :where(header, footer, aside, article, div:not(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel)) > :where(header, footer, aside, article, div:not(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel)) > *) {
+    padding-inline: var(--px-body, 0.8rem);
+} */
+/* METHOD 2: Un-apply px-body on structural elements */
+/* :where(body *) {
+  padding-inline: var(--px-body, 0.8rem);
+} */
+/* prettier-ignore */
+/* :where(main, section, .section, header, footer, aside, article, :where(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel) *),
+:where(li, a, strong, em, img, button, input, select, textarea, label) {
+    padding-inline: 0;
+} */
+
+/* METHOD 3: Tracking depth and apply only the first time we encounter non structural elements */
+/* Initialize the flag */
+:where(body) {
+  --px-applied: 0;
+}
+
+/* Content elements: apply padding only if flag is 0, then set flag to 1 */
+/* :where(p, h1, h2, h3, h4, h5, h6, hgroup, address, blockquote, figure, figcaption, ul, ol, dl, menu, pre, form, table, details, search), */
+/* prettier-ignore */
+:where(*:not(html, body, main, section, .section, header, footer, aside, article, hgroup, div:not(.layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel))) {
+  padding-inline: calc(var(--px-body, 0.8rem) * (1 - var(--px-applied)));
+
+  & > * {
+      --px-applied: 1;
+  }
+}
+
+/* Structural elements: reset the flag so their content children can get padding */
+/* prettier-ignore */
+/* :where(main, section, .section, header, footer, aside, article, nav, .layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, cover, reel) {
+  --px-applied: 0;
+} */
+
+/* prettier-ignore */
+/* Special case for ul and ol: base setup */ /* prettier-ignore */
+:where(:where(ul, ol):not([role="list"]):not(.reset)) {
+    padding-inline-start: var(--offset-list, 2rem);
+} /* Special case for ul and ol: nested */ /* prettier-ignore */
+:where(body > :where(ul, ol):not([role="list"]):not(.reset)),
+:where(body > main > :where(ul, ol):not([role="list"]):not(.reset)){
+    padding-inline-start: calc(var(--px-body, 0.8rem) + var(--offset-list, 2rem));
+} /* prettier-ignore */
+
+/* Special case for ul and ol: base setup */ /* prettier-ignore */
+:where(blockquote) {
+    padding-inline-start: var(--offset-blockquote, 1rem);
+} /* Special case for ul and ol: nested */ /* prettier-ignore */
+/* TODO: find a way to display the blockquote indent bar without margin because this breaks the general prose centering */
+/*:where(body > blockquote),
+:where(body > main > blockquote){
+    padding-inline-start: calc(var(--px-body, 0.8rem) + var(--offset-blockquote, 1rem));
+}*/
+
+/* -- Vertical Padding -- */
+
+:where(body > :first-child) {
+  padding-block-start: var(--py-body);
+}
+:where(body > :last-child) {
+  padding-block-end: var(--py-body);
+}
+:where(body > :where(header, footer, main, aside)),
+:where(body > main > :where(header, footer, aside)) {
+  --py: var(--py-body);
+  padding-block: var(--py-body);
+}
+:where(section, .section) {
+  --py: var(--py-section);
+  padding-block: var(--py-section);
+}
+:where(body > main:has(& > :where(header, footer, aside):first-child)) {
+  padding-block-start: 0;
+}
+:where(body > main:has(& > :where(header, footer, aside):last-child)) {
+  padding-block-end: 0;
+}
+:where(:where(section, .section) :where(section, .section, header, footer)),
+:where(:where(section, .section) > div) {
+  --py: var(--py-prose);
+  padding-block: var(--py-prose);
+} /* prettier-ignore */
+:where([class*="palette--contrast"], [class*="palette--dark"], [class*="palette--light"]) {
+    padding: var(--py);
+}

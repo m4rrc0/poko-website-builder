@@ -11,6 +11,12 @@ const inlineToMultiline = (inline) => {
   return inline?.replace(/\\n/g, "\n")?.replace(/\\"/g, '"');
 };
 
+const njkAttrsStringFromObj = (obj) =>
+  Object.entries(obj)
+    .filter(([key, value]) => !!value)
+    .map(([key, value]) => `${key}="${value}"`)
+    .join(", ");
+
 function toQuotableString(text) {
   return text
     .replace(/\\/g, "\\\\") // escape backslashes first
@@ -507,9 +513,7 @@ export const imageShortcode = {
       ...(wrapper && { wrapper }),
       // ...(imgAttrs && { imgAttrs }),
     };
-    const attrsStr = Object.entries(attrs)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(", ");
+    const attrsStr = njkAttrsStringFromObj(attrs);
 
     return `{% image ${attrsStr}${imgAttrs ? ", " + imgAttrs : ""} %}`;
   },
@@ -1603,7 +1607,7 @@ export const link = {
     if (linkType === "external" || linkType === "file") {
       return `{% link url="${url}", text="${text}", linkType="${linkType}"${otherAttrsString} %}`;
     } else if (linkType === "email") {
-      const attrsStr = Object.entries({
+      const attrsStr = njkAttrsStringFromObj({
         url,
         text,
         linkType,
@@ -1611,9 +1615,7 @@ export const link = {
         bcc,
         subject,
         body: toQuotableString(body),
-      })
-        .map(([key, value]) => `${key}="${value}"`)
-        .join(", ");
+      });
 
       return `{% link ${attrsStr}${otherAttrsString} %}`;
     } else {
@@ -1768,10 +1770,10 @@ export const sectionGrid = {
     const grid = extractWithNunjucksTag(sectionInner, "grid");
     const { extracted: gridAttributes } = extractAttributes(grid.attributes, [
       "type",
-      "columns",
       "gap",
       "class",
       "widthWrap",
+      "columns",
     ]);
 
     // Extract all gridItems with their attributes
@@ -1795,10 +1797,10 @@ export const sectionGrid = {
   toBlock: function (data) {
     const {
       type,
-      columns,
       gap,
       class: className,
       widthWrap,
+      columns,
     } = data?.options || {};
 
     const headerContent = data?.header?.content
@@ -1827,10 +1829,7 @@ ${item}
       : "";
 
     const gridAttrs = { type, columns, gap, class: className, widthWrap };
-    const gridAttrsStr = Object.entries(gridAttrs)
-      .filter(([key, value]) => !!value)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(", ");
+    const gridAttrsStr = njkAttrsStringFromObj(gridAttrs);
     const gridContent = data?.items?.length
       ? `{% grid ${gridAttrsStr} %}
 ${gridItemsStr}
@@ -1912,11 +1911,11 @@ export const sectionTwoColumns = {
       hint: "Manually select a layout and related options",
       widget: "object",
       required: false,
-      collapsed: "auto",
+      collapsed: true,
       types: [
         {
           name: "switcher",
-          label: "Symmetrical",
+          label: "Symmetrical Columns",
           widget: "object",
           required: false,
           fields: [
@@ -1945,7 +1944,7 @@ export const sectionTwoColumns = {
         },
         {
           name: "fixedFluid",
-          label: "Asymmetrical",
+          label: "Asymmetrical Columns",
           widget: "object",
           required: false,
           collapsed: true,
@@ -1956,6 +1955,7 @@ export const sectionTwoColumns = {
               widget: "select",
               hint: "The position of the small column.",
               required: true,
+              default: "fixedLeft",
               options: [
                 { value: "fixedLeft", label: "Left" },
                 { value: "fixedRight", label: "Right" },
@@ -1970,9 +1970,9 @@ export const sectionTwoColumns = {
             },
             {
               name: "widthFluidMin",
-              label: "Big Column Min Width",
+              label: "Wide Column Min Width",
               widget: "string",
-              hint: "The minimum width of the big column. (e.g. 50% [default], 30rem, 800px, 0px [no wrap])",
+              hint: "The minimum width of the wide column. (e.g. 50% [default], 30rem, 800px, 0px [no wrap])",
               required: false,
             },
             {
@@ -2003,7 +2003,7 @@ export const sectionTwoColumns = {
     const footer = extractWithNunjucksTag(sectionInner, "sectionFooter");
     const twoColumns = extractWithNunjucksTag(sectionInner, "twoColumns");
     const { extracted: twoColumnsAttributes } = extractAttributes(
-      twoColumns?.attributes || "",
+      twoColumns?.attributes,
       [
         "type",
         "gap",
@@ -2024,38 +2024,23 @@ export const sectionTwoColumns = {
     const itemLeft = columnItems[0]?.content || "";
     const itemRight = columnItems[1]?.content || "";
 
-    // Map the type to the options structure
-    const optionsType = twoColumnsAttributes?.type || "switcher";
-    let options;
-    if (optionsType === "fixedFluid") {
-      options = {
-        type: "fixedFluid",
-        fixedSide: twoColumnsAttributes?.fixedSide,
-        widthFixed: twoColumnsAttributes?.widthFixed,
-        widthFluidMin: twoColumnsAttributes?.widthFluidMin,
-        gap: twoColumnsAttributes?.gap,
-        class: twoColumnsAttributes?.class,
-      };
-    } else {
-      options = {
-        type: "switcher",
-        widthWrap: twoColumnsAttributes?.widthWrap,
-        gap: twoColumnsAttributes?.gap,
-        class: twoColumnsAttributes?.class,
-      };
-    }
-
     return {
       header: header ? { content: header.content } : undefined,
       footer: footer ? { content: footer.content } : undefined,
       items: { itemLeft, itemRight },
-      options,
+      options: twoColumnsAttributes,
     };
   },
   toBlock: function (data) {
-    const options = data?.options || {};
-    const optionsType = options?.type || "switcher";
-    const { gap, class: className } = options;
+    const {
+      type,
+      gap,
+      class: className,
+      widthWrap,
+      widthFixed,
+      widthFluidMin,
+      fixedSide,
+    } = data?.options || {};
 
     const headerContent = data?.header?.content
       ? `{% sectionHeader %}
@@ -2081,34 +2066,26 @@ ${data.items.itemRight}
 {% endtwoColumnsItem %}`
       : "";
 
+    // TODO: Check what happens when one of the items is empty
     const columnItemsStr = [itemLeftStr, itemRightStr]
       .filter(Boolean)
       .join("\n");
 
     // Build twoColumns attributes based on layout type
-    let colAttrs;
-    if (optionsType === "fixedFluid") {
-      const { fixedSide, widthFixed, widthFluidMin } = options;
-      colAttrs = {
-        type: "fixedFluid",
-        fixedSide,
-        widthFixed,
-        widthFluidMin,
-        gap,
-        class: className,
-      };
-    } else {
-      const { widthWrap } = options;
-      colAttrs = { type: "switcher", widthWrap, gap, class: className };
-    }
+    const twoColumnsAttrs = {
+      type,
+      gap,
+      class: className,
+      widthWrap,
+      widthFixed,
+      widthFluidMin,
+      fixedSide,
+    };
 
-    const colAttrsStr = Object.entries(colAttrs)
-      .filter(([key, value]) => !!value)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(", ");
+    const twoColumnsAttrsStr = njkAttrsStringFromObj(twoColumnsAttrs);
 
     const twoColumnsContent = columnItemsStr
-      ? `{% twoColumns ${colAttrsStr} %}
+      ? `{% twoColumns ${twoColumnsAttrsStr} %}
 ${columnItemsStr}
 {% endtwoColumns %}`
       : "";
