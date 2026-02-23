@@ -28,14 +28,14 @@ Acheter chez FleursDeco.com ! Réduction sur tout les articles.
 {% endsectionHeader %}
 {% grid  %}
 {% gridItem %}
-{% image src="/_images/pexels-ella-wei-10655130.webp", alt="Bouquet de fleurs - roses", aspectRatio="1", class=" center" %}
+{% image src="/_images/pexels-ella-wei-10655130.webp", alt="Bouquet de fleurs rouge", aspectRatio="1", class=" center" %}
 
-Bouquet de fleurs - roses
+{% image src="/_images/pexels-ella-wei-10655130.webp", alt="Bouquet de fleurs rouge", aspectRatio="1", class=" center" %}
 {% endgridItem %}
 {% gridItem %}
-{% image src="/_images/pexels-mathilde-langevin-12032340.webp", alt="Bouquet de fleurs - blanc", aspectRatio="1", class="center", wrapper="div" %}
+{% image src="/_images/pexels-mathilde-langevin-12032340.webp", alt="Bouquet de fleurs blanc", aspectRatio="1", class="center", wrapper="div" %}
 
-Bouquet de fleurs - blanc
+Bouquet de fleurs blanche
 {% endgridItem %}
 {% endgrid %}
 
@@ -45,24 +45,24 @@ Bouquet de fleurs - blanc
 
 {% grid  %}
 {% gridItem %}
-{% image src="/_images/pexels-secret-garden-931150.webp", alt="Bouquet de fleurs - orange n1", aspectRatio="1", class="center" %}
+{% image src="/_images/pexels-secret-garden-931150.webp", alt="Bouquet de fleurs - orange ", aspectRatio="1", class="center" %}
 
-Bouquet de fleur orange n1
+Bouquet de fleurs orange
 {% endgridItem %}
 {% gridItem %}
-{% image src="/_images/pexels-secret-garden-931150.webp", alt="Bouquet de fleur orange n2", aspectRatio="1", class="center" %}
+{% image src="/_images/pexels-valeriia-miller-3392982.webp", alt="Bouquet de fleur rose", aspectRatio="1", class="center" %}
 
-Bouquet de fleur orange n2
+Bouquet de fleurs rose
 {% endgridItem %}
 {% gridItem %}
-{% image src="/_images/pexels-secret-garden-931150.webp", alt="Bouquet de fleur orange n3", aspectRatio="1", class="center" %}
+{% image src="/_images/pexels-dimitri-kuliuk-1488310.webp", alt="Bouquet de fleur mauve", aspectRatio="1", class="center" %}
 
-Bouquet de fleur orange n3
+Bouquet de fleurs mauve
 {% endgridItem %}
 {% gridItem %}
-{% image src="/_images/pexels-secret-garden-931150.webp", alt="Bouquet de fleur orange n4", aspectRatio="1", class="center" %}
+{% image src="/_images/pexels-terje-sollie-289519.webp", alt="Bouquet de fleurs pèche", aspectRatio="1", class="center" %}
 
-Bouquet de fleur orange n4
+Bouquet de fleurs pèche
 {% endgridItem %}
 {% endgrid %}
 
