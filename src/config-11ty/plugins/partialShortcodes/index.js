@@ -15,7 +15,7 @@ export default async function (eleventyConfig, pluginOptions) {
     dataManual,
     templateEngineOverride,
   ) {
-    const contentTrimmed = content.trim();
+    const contentTrimmed = typeof content === "string" ? content.trim() : "";
     const contentRendered = contentTrimmed
       ? await renderContentFilterFn.call(
           this,
@@ -38,7 +38,7 @@ export default async function (eleventyConfig, pluginOptions) {
   }
 
   // prettier-ignore
-  for (const partialName of ["sectionGrid", "grid", "sectionHeader", "gridItem", "sectionFooter", "sectionTwoColumns", "twoColumns", "twoColumnsItem"]) {
+  for (const partialName of ["sectionGrid", "grid", "sectionHeader", "gridItem", "sectionFooter", "sectionTwoColumns", "twoColumns", "twoColumnsItem", "collection", "collectionItem", "sectionCollection"]) {
     await eleventyConfig.addPairedAsyncShortcode(partialName, async function(content, dataManual, templateEngineOverride) {
       return renderNamedPartial.call(this, `_${partialName}`, content, dataManual, templateEngineOverride);
     });

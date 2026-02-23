@@ -1,8 +1,8 @@
 siteName: poko demo
 productionUrl: https://m4rrc0.github.io/poko-website-builder
 logo: /_images/POKO-logo-RVB-01.jpg
-htmlHead: ''
-cssHead: ''
+htmlHead: ""
+cssHead: ""
 languages:
   - code: en
     status: published
@@ -16,9 +16,13 @@ languages:
     isCmsDefault: true
     isWebsiteDefault: true
     customUrlPrefix:
-      prefix: ''
+      prefix: ""
 collections:
   - articles
   - events
+  - courses
+  - places
+  - products
+  - reviews
 metadata:
-  image: ''
+  image: ""

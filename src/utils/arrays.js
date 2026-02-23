@@ -81,8 +81,11 @@ export function filterCollection(collection, filtersRaw) {
   return filteredCollection;
 }
 
-const sortCb = (collectionItem, by) =>
-  tryMatchNestedVariable(collectionItem, by);
+const sortCb = (collectionItem, by) => {
+  const value = tryMatchNestedVariable(collectionItem, by);
+  // Normalize strings to lowercase for case-insensitive sorting
+  return typeof value === "string" ? value.toLowerCase() : value;
+};
 
 export function sortCollection(collection, sortCriteriasRaw) {
   const sortCriterias = Array.isArray(sortCriteriasRaw)
