@@ -16,6 +16,10 @@ vars: null
 dataList: []
 ---
 
+<div class="palette-bouquet-de-fleurs-palette">
+
+:::flow
+
 # Les fleurs : beauté, langage et merveilles de la nature
 
 > 10 minutes de lecture .
@@ -43,4 +47,17 @@ La présence de fleurs dans notre environnement a un effet positif sur le moral.
 
 ## Bienfaits pour le bien-être
 
-{% section type="grid-fluid", vars={"columns":null,"gap":"","class":"prose"}, blocks=[{"src":"/_images/pexels-andrea-devillier-32709984.webp","alt":"","title":"","width":null,"aspectRatio":null,"loading":"","rawAttrs":"","type":"image"},{"value":"La présence de fleurs dans notre environnement a un effet positif sur le moral. Elles apportent une sensation de calme, stimulent la créativité et favorisent une atmosphère apaisante. Jardiner ou simplement observer des fleurs peut réduire le stress et renforcer le sentiment de connexion avec la nature.","type":"markdown"}], advanced={} %}
+{% sectionGrid %}
+
+{% grid type="switcher", class="prose" %}
+{% gridItem %}
+{% image src="/_images/pexels-andrea-devillier-32709984.webp" %}
+{% endgridItem %}
+{% gridItem %}
+La présence de fleurs dans notre environnement a un effet positif sur le moral. Elles apportent une sensation de calme, stimulent la créativité et favorisent une atmosphère apaisante. Jardiner ou simplement observer des fleurs peut réduire le stress et renforcer le sentiment de connexion avec la nature.
+{% endgridItem %}
+{% endgrid %}
+
+{% endsectionGrid %}
+
+:::

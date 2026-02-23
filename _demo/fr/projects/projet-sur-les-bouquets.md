@@ -16,6 +16,10 @@ vars: null
 dataList: []
 ---
 
+<div class="palette-bouquet-de-fleurs-palette">
+
+:::flow
+
 ## Navigation rapide
 
 - {% link url="article-les-fleurs", text="Article: Les fleurs", linkType="internal", collection="articles" %}
@@ -64,3 +68,5 @@ inspiration, pédagogie, organisation et mise en valeur des produits.
 - {% link url="article-les-fleurs", text="Article : Les fleurs", linkType="internal", collection="articles" %}
 - {% link url="organisations-de-bouquet-de-fleurs", text="Organisation : Parcours pédagogique", linkType="internal", collection="organizations" %}
 - {% link url="bouquet-de-fleurs", text="Produit : Bouquet de fleurs", linkType="internal", collection="products" %}
+
+:::

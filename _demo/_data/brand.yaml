@@ -21,50 +21,57 @@ typeScales:
     maxTypeScale: 1.25
 colors:
   - name: black
-    value: "#000001"
+    value: '#000001'
   - name: white
-    value: "#ffffff"
-  - name: theme1-v1-light-typo #typo and button
-    value: "#544A40"
-  - name: theme1-v1-light-alt #section bg, footer, form
-    value: "#F3EDE7"
-  - name: theme1-v1-light-accent #input, button text, hero text
-    value: "#FFFFFF"
-  - name: theme1-v1-light-contrast #bg
-    value: "#FCFCF9"
-  - name: theme1-v1-dark-typo #typo and button
-    value: "#F3EDE7"
-  - name: theme1-v1-dark-alt #section bg, footer, form
-    value: "#544A40"
-  - name: theme1-v1-dark-accent #input, button text, hero text
-    value: "#FFFFFF"
-  - name: theme1-v1-dark-contrast #bg
-    value: "#2B2621"
-  - name: theme1-v2-light-typo #typo, btn bg: hero + form + footer
-    value: "#253E51"
-  - name: theme1-v2-light-alt #footer bg + form bg + btn nav bg
-    value: "#DEE5ED"
-  - name: theme1-v2-light-accent #cards bg
-    value: "#F8F9FB"
-  - name: theme1-v2-light-contrast #bg
-    value: "#ffffff"
-  - name: theme1-v2-dark-typo #typo and logo
-    value: "#FFFFFF"
-  - name: theme1-v2-dark-alt #footer bg, form bg, cards bg
-    value: "#9CB1C9"
-  - name: theme1-v2-dark-accent # ??
-    value: "#F8F9FB"
-  - name: theme1-v2-dark-contrast #bg + btn bg: footer + form + cards
-    value: "#253E51"
-
+    value: '#ffffff'
+  - name: theme1-v1-light-typo
+    value: '#544A40'
+  - name: theme1-v1-light-alt
+    value: '#F3EDE7'
+  - name: theme1-v1-light-accent
+    value: '#FFFFFF'
+  - name: theme1-v1-light-contrast
+    value: '#FCFCF9'
+  - name: theme1-v1-dark-typo
+    value: '#F3EDE7'
+  - name: theme1-v1-dark-alt
+    value: '#544A40'
+  - name: theme1-v1-dark-accent
+    value: '#FFFFFF'
+  - name: theme1-v1-dark-contrast
+    value: '#2B2621'
+  - name: theme1-v2-light-typo
+    value: '#253E51'
+  - name: theme1-v2-light-alt
+    value: '#DEE5ED'
+  - name: theme1-v2-light-accent
+    value: '#F8F9FB'
+  - name: theme1-v2-light-contrast
+    value: '#ffffff'
+  - name: theme1-v2-dark-typo
+    value: '#FFFFFF'
+  - name: theme1-v2-dark-alt
+    value: '#9CB1C9'
+  - name: theme1-v2-dark-accent
+    value: '#F8F9FB'
+  - name: theme1-v2-dark-contrast
+    value: '#253E51'
+  - name: light-pink
+    value: '#f7b2bd'
+  - name: beige
+    value: '#f2d1c0'
+  - name: sage-green
+    value: '#60a561'
+  - name: dark-green
+    value: '#0a2e23'
 palettes:
   - name: main
     text: black
     bg: white
-    accent: ""
-    border: ""
-    text-decoration: ""
-    text--marker: ""
+    accent: light-pink
+    border: ''
+    text-decoration: ''
+    text--marker: ''
     advancedDefaults: null
     selection: null
     strong: null
@@ -74,9 +81,9 @@ palettes:
     heading: null
     a:
       text__a: black
-      bg__a: ""
-      text__a--hover: ""
-      bg__a--hover: ""
+      bg__a: ''
+      text__a--hover: ''
+      bg__a--hover: ''
     button: null
     code: null
     svg: null
@@ -85,10 +92,10 @@ palettes:
   - name: contrast
     text: white
     bg: black
-    accent: ""
-    border: ""
-    text-decoration: ""
-    text--marker: ""
+    accent: ''
+    border: ''
+    text-decoration: ''
+    text--marker: ''
     advancedDefaults: null
     selection: null
     strong: null
@@ -105,10 +112,10 @@ palettes:
   - name: theme1-v1-light
     text: theme1-v1-light-typo
     bg: theme1-v1-light-contrast
-    accent: ""
-    border: ""
-    text-decoration: ""
-    text--marker: ""
+    accent: ''
+    border: ''
+    text-decoration: ''
+    text--marker: ''
     advancedDefaults: null
     selection: null
     strong: null
@@ -125,10 +132,10 @@ palettes:
   - name: theme1-v1-dark
     text: theme1-v1-dark-typo
     bg: theme1-v1-dark-contrast
-    accent: ""
-    border: ""
-    text-decoration: ""
-    text--marker: ""
+    accent: ''
+    border: ''
+    text-decoration: ''
+    text--marker: ''
     advancedDefaults: null
     selection: null
     strong: null
@@ -146,9 +153,9 @@ palettes:
     text: theme1-v2-light-typo
     bg: theme1-v2-light-contrast
     accent: theme1-v2-light-accent
-    border: ""
-    text-decoration: ""
-    text--marker: ""
+    border: ''
+    text-decoration: ''
+    text--marker: ''
     advancedDefaults: null
     selection: null
     strong: null
@@ -166,9 +173,29 @@ palettes:
     text: theme1-v2-dark-typo
     bg: theme1-v2-dark-contrast
     accent: theme1-v2-dark-accent
-    border: ""
-    text-decoration: ""
-    text--marker: ""
+    border: ''
+    text-decoration: ''
+    text--marker: ''
+    advancedDefaults: null
+    selection: null
+    strong: null
+    em: null
+    mark: null
+    b: null
+    heading: null
+    a: null
+    button: null
+    code: null
+    svg: null
+    scrollbar: null
+    advanced: null
+  - name: bouquet-de-fleurs-palette
+    text: dark-green
+    bg: beige
+    accent: light-pink
+    border: sage-green
+    text-decoration: sage-green
+    text--marker: sage-green
     advancedDefaults: null
     selection: null
     strong: null
