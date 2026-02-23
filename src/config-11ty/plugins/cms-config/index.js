@@ -220,6 +220,21 @@ export const pageLayoutRelationField = {
   required: false,
   i18n: "duplicate",
 };
+
+// footer défini page par page (dans le CMS)
+export const pageFooterRelationField = {
+  name: "pageFooter",
+  label: "Footer",
+  widget: "relation",
+  collection: "footers",
+  hint:
+    "Select a footer for this entry. Leave empty to use default footer set in global settings.",
+  required: false,
+  i18n: "duplicate",
+  search_fields: ["slug"],
+  display_fields: ["slug"],
+  value_field: "{{slug}}",
+};
 // const bodyMarkdownField = {
 //   name: "body",
 //   label: "Content",
@@ -919,6 +934,7 @@ export const commonPageFields = [
   tagsField,
   statusField,
   pageLayoutRelationField,
+  pageFooterRelationField,
   generatePageField,
   varsField,
   dataListField,
@@ -1421,6 +1437,47 @@ const globalSettingsSingleton = {
       default_language: "css",
       output_code_only: true,
       allow_language_selection: false,
+    },
+    {
+      // footer défini choisit par défaut dans global settings (dans le CMS)
+      name: "pageFooter",
+      label: "Default Footer",
+      widget: "relation",
+      collection: "footers",
+      hint:
+        "Footer used for all pages and collections that don't have a specific footer set.",
+      required: false,
+      search_fields: ["slug"],
+      display_fields: ["slug"],
+      value_field: "{{slug}}",
+    },
+    {
+      // footer défini par collection (page, articles, events, etc.)
+      name: "collectionFooters",
+      label: "Collection Footers",
+      widget: "list",
+      required: false,
+      collapsed: true,
+      summary: "{{fields.collection}} → {{fields.footer}}",
+      fields: [
+        {
+          name: "collection",
+          label: "Collection",
+          widget: "select",
+          required: true,
+          options: ["pages", ...Object.keys(optionalCollections)],
+        },
+        {
+          name: "footer",
+          label: "Footer",
+          widget: "relation",
+          collection: "footers",
+          required: false,
+          search_fields: ["slug"],
+          display_fields: ["slug"],
+          value_field: "{{slug}}",
+        },
+      ],
     },
     {
       name: "languages",
