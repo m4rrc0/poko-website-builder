@@ -18,6 +18,8 @@ dataList: []
 
 <div class="palette-bouquet-de-fleurs-palette product-bouquet-de-fleurs">
 
+:::flow
+
 {% sectionGrid %}
 {% sectionHeader %}
 ### Catalogue - Bouquet de fleurs
