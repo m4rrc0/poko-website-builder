@@ -1,5 +1,0 @@
----
-slug: footer-en
----
-
-saasas

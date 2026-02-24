@@ -11,7 +11,7 @@ preview: null
 tags: []
 status: ''
 pageLayout: ''
-pageFooter: ''
+pageFooter: '2'
 generatePage: ''
 vars: null
 dataList: []
