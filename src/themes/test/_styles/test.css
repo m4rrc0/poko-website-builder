@@ -1,0 +1,244 @@
+:root {
+    /* Size Scale */
+    /* @link https://utopia.fyi/type/calculator?c=360,18,1.2,1240,20,1.25,9,4,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+    /* Step -4: 8.6806px → 8.192px */
+    --step--4: clamp(0.512rem, 0.555rem + -0.0555vw, 0.5425rem);
+    /* Step -3: 10.4167px → 10.24px */
+    --step--3: clamp(0.64rem, 0.6556rem + -0.0201vw, 0.651rem);
+    /* Step -2: 12.5px → 12.8px */
+    --step--2: clamp(0.7813rem, 0.7736rem + 0.0341vw, 0.8rem);
+    /* Step -1: 15px → 16px */
+    --step--1: clamp(0.9375rem, 0.9119rem + 0.1136vw, 1rem);
+    /* Step 0: 18px → 20px */
+    --step-0: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem);
+    /* Step 1: 21.6px → 25px */
+    --step-1: clamp(1.35rem, 1.2631rem + 0.3864vw, 1.5625rem);
+    /* Step 2: 25.92px → 31.25px */
+    --step-2: clamp(1.62rem, 1.4837rem + 0.6057vw, 1.9531rem);
+    /* Step 3: 31.104px → 39.0625px */
+    --step-3: clamp(1.944rem, 1.7405rem + 0.9044vw, 2.4414rem);
+    /* Step 4: 37.3248px → 48.8281px */
+    --step-4: clamp(2.3328rem, 2.0387rem + 1.3072vw, 3.0518rem);
+    /* Step 5: 44.7898px → 61.0352px */
+    --step-5: clamp(2.7994rem, 2.384rem + 1.8461vw, 3.8147rem);
+    /* Step 6: 53.7477px → 76.2939px */
+    --step-6: clamp(3.3592rem, 2.7828rem + 2.5621vw, 4.7684rem);
+    /* Step 7: 64.4973px → 95.3674px */
+    --step-7: clamp(4.0311rem, 3.2418rem + 3.508vw, 5.9605rem);
+    /* Step 8: 77.3967px → 119.2093px */
+    --step-8: clamp(4.8373rem, 3.7682rem + 4.7514vw, 7.4506rem);
+    /* Step 9: 92.876px → 149.0116px */
+    --step-9: clamp(5.8048rem, 4.3695rem + 6.379vw, 9.3132rem);
+
+    /*--rhythm-1: var(--step-0, 1rem);
+    --rhythm-2: var(--step-1, 2rem);
+    --rhythm-3: var(--step-2, 3rem);
+    --rhythm-4: var(--step-3, 4rem);*/
+
+    --width-prose: 50rem;
+    /*--width-max: (alias for width-body) ;*/
+    --width-body: calc(var(--width-prose) * 1.618); /* 80,98 */
+    --width-section: var(--width-body);
+    --width-featured: calc(var(--width-prose) / 1.618); /* 30.90 */
+    --width-card: calc(var(--width-prose) / 2.618); /* 19 */
+    /*--width-token: 30rem;*/
+
+    /* Open Props */
+    /*--radius-1: 2px;
+    --radius-2: 5px;
+    --radius-3: 1rem;
+    --radius-4: 2rem;
+    --radius-5: 4rem;
+    --radius-6: 8rem;*/
+
+    --radius-round: 1e5px;
+    --radius-body: 0rem;
+    --radius-section: 2rem;
+    --radius-prose: 2rem;
+    --radius-featured: 2rem;
+    --radius-card: 1rem;
+    --radius-token: 5px;
+
+    /* Open Props */
+    /*--border-size-1: 1px;
+    --border-size-2: 2px;
+    --border-size-3: 5px;
+    --border-size-4: 10px;
+    --border-size-5: 25px;*/
+
+    --thick-body: 5px;
+    --thick-section: 5px;
+    --thick-prose: 5px;
+    --thick-featured: 2px;
+    --thick-card: 2px;
+    --thick-token: 2px;
+
+    /*--border-style-body: solid;
+    --border-style-section: solid;
+    --border-style-prose: solid;
+    --border-style-featured: solid;
+    --border-style-card: solid;
+    --border-style-token: solid;*/
+
+    --px-body: var(--step--2, 0.8rem);
+    --px-section: var(--step--1, 1rem);
+    --px-prose: var(--step--1, 1rem);
+    --px-featured: var(--step--1, 1rem);
+    --px-card: var(--step--1, 1rem);
+    --px-token: var(--step--1, 1rem);
+
+    --py-body: var(--step-2, 0.8rem);
+    --py-section: var(--step-4, 3rem);
+    --py-prose: var(--step--1, 1rem);
+    --py-featured: var(--step--1, 1rem);
+    --py-card: var(--step--1, 1rem);
+    --py-token: var(--step--1, 1rem);
+
+    /*--gap-body: var(--step-0, 1.25rem);
+    --gap-section: var(--step-0, 1.25rem);
+    --gap-prose: var(--step--1, 1rem);
+    --gap-featured: var(--step--1, 1rem);
+    --gap-card: var(--step--1, 1rem);
+    --gap-token: var(--step--1, 1rem);*/
+
+    --flow-p: var(--step-0); /* Chrome: 1em | for ul, menu, dir, ol, dl, p */
+    --flow-h1: var(--step-0); /* Chrome: 0.67em */
+    --flow-h2: var(--step-0); /* Chrome: 0.83em */
+    --flow-h3: var(--step-0); /* Chrome: 1em */
+    --flow-h4: var(--step-0); /* Chrome: 1.33em */
+    --flow-h5: var(--step-0); /* Chrome: 1.67em */
+    --flow-h6: var(--step-0); /* Chrome: 2.33em */
+    --flow-hr: var(--step-0);
+    --flow-prose: var(--step-1); /* Chrome: 1em | for blockquote, figure */
+    --flow-section: var(--step-2);
+
+    --offset-list: 2rem; /* ul and ol left padding */
+    --offset-blockquote: 1rem;
+    --text-underline-offset: 0.15em;
+    --fit: cover;
+}
+
+/* The theme choses how to apply colors */
+body,
+[class*="palette"] {
+    /* --- DEFAULTS --- */
+    --color-text: var(--color-type-theme);
+    --color-bg: var(--color-neutral-theme);
+    /* --color-border: var(); */
+    --color-border: var(--color-text);
+    /* --color-outline: var(); */
+    /*--color-text-decoration: var(--color-accent-theme);*/
+    /* --color-text-emphasis: var(); */
+    /* --color-shadow has to be used manually in box-shadow definitions */
+    /*--color-shadow: var(--color-front-muted-theme);*/
+    /* --color-caret: var(); */
+    /* --color-column-rule: var(); */
+    /* --color-fill: var(); */
+    /* --color-stroke: var(); */
+
+    /* --- FOCUS --- */
+    /* --color-outline--focus: var(); */
+
+    /* --- SELECTION --- */
+    /*--color-text--selection: var(--color-back-theme);
+    --color-bg--selection: var(--color-front-accent-theme);*/
+
+    /* --- A --- */
+    /* --color-text__a: var(--color-text); */
+    /* --color-bg__a: transparent; */
+    --color-text__a--hover: var(--color-type-theme);
+    /* --color-bg__a--hover: var(--color-back-theme); */
+
+    /* --- BUTTON --- */
+    /*--color-text__button: var(--color-front-theme);*/
+    /*--color-bg__button: var(--color-back-theme);*/
+    /*--color-border__button: var(--color-front-theme);*/
+    /*--color-text__button--hover: var(--color-back-theme);*/
+    /*--color-bg__button--hover: var(--color-front-theme);*/
+    /*--color-border__button--hover: var(--color-front-theme);*/
+    /* --color-text__button--disabled: var(--color-front-accent-theme); */
+    /* --color-bg__button--disabled: var(--color-bg); */
+
+    /* --- CODE --- */
+    /* --color-text__code: var(--color-bg); */
+    /* --color-bg__code: var(--color-front-accent-theme); */
+    /* --color-border__code: var(--color-front-theme); */
+
+    /* --- MARK --- */
+    /* --color-text__mark: var(--color-bg); */
+    /*--color-bg__mark: var(--color-back-muted-theme);*/
+    /* --color-border__mark: var(--color-front-theme); */
+
+    /* --- SCROLLBAR --- */
+    /* TODO: this is for the Reel Layout Component */
+    /* --track-color */
+    /* --thumb-color */
+    /*  */
+
+    /*
+    --color-text
+    --color-bg
+    --color-text
+    --color-border
+    --color-outline
+    --color-text-decoration
+    --color-text-emphasis
+    --color-caret
+    --color-column-rule
+    --color-fill
+    --color-stroke
+    --color-var-bg
+    --color-var-text
+    --color-outline
+    --color-text--selection
+    --color-bg--selection
+    --color-border--selection
+    --color-text__heading
+    --color-bg__heading
+    --color-border__heading
+    --color-text__a
+    --color-bg__a
+    --color-border__a
+    --color-border
+    --color-text__a--hover
+    --color-bg__a--hover
+    --color-border__a
+    --color-text__button
+    --color-bg__button
+    --color-border
+    --color-bg__button
+    --color-text__button
+    --color-border__button--hover
+    --color-text__button--focus
+    --color-bg__button--focus
+    --color-border__button--focus
+    --color-text__button--disabled
+    --color-bg__button--disabled
+    --color-border__button--disabled
+    --color-text__code
+    --color-bg__code
+    --color-border__code
+    --color-text__mark
+    --color-bg__mark
+    --color-border__mark
+    --color-text__strong
+    --color-bg__strong
+    --color-text__em
+    --color-bg__em
+    --color-text__b
+    --color-bg__b
+    --color-text--marker
+    */
+}
+
+body,
+.palette-main {
+    /*--color-type: darkblue;
+    --color-alt: blue;
+    --color-accent: orange;
+    --color-neutral: lightblue;*/
+    --color-type: #544a40;
+    --color-alt: #f3ede7;
+    --color-accent: #ffffff;
+    --color-neutral: #fcfcf9;
+}

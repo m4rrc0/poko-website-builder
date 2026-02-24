@@ -410,7 +410,7 @@ A flower
 {% endsectionGrid %}
 
 
-{% sectionGrid %}
+{% sectionGrid class="palette--contrast" %}
 {% sectionHeader %}
 ## Préserver la beauté florale
 {% endsectionHeader %}
@@ -426,6 +426,81 @@ A flower
 A flower
 {% endgridItem %}
 {% gridItem %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% endgrid %}
+
+{% endsectionGrid %}
+
+
+{% sectionGrid class="palette--alt" %}
+{% sectionHeader %}
+## Préserver la beauté florale
+{% endsectionHeader %}
+{% grid type="switcher", class="prose" %}
+{% gridItem %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% gridItem %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% gridItem %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% endgrid %}
+
+{% endsectionGrid %}
+
+
+{% sectionGrid class="palette--accent" %}
+{% sectionHeader %}
+## Préserver la beauté florale
+{% endsectionHeader %}
+{% grid type="switcher" %}
+{% gridItem %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% gridItem %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% gridItem %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% endgrid %}
+
+{% endsectionGrid %}
+
+
+{% sectionGrid class="" %}
+{% sectionHeader %}
+## Préserver la beauté florale
+{% endsectionHeader %}
+{% grid type="switcher" %}
+{% gridItem class="palette--alt palette--contrast" %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% gridItem class="palette--accent palette--contrast" %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+
+A flower
+{% endgridItem %}
+{% gridItem class="palette--contrast" %}
 {% image src="/_images/pexels-amine-photographe-14559000.webp" %}
 
 A flower

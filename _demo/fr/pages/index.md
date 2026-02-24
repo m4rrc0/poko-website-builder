@@ -5,7 +5,10 @@ createdAt: 2025-07-19T20:12:00.000Z
 uuid: 2530cfdfddec
 localizationKey: fa748ce625bb
 name: Accueil
-eleventyNavigation: null
+eleventyNavigation:
+  title: ''
+  parent: ''
+  order: 1
 metadata:
   title: ''
   description: ''
@@ -22,7 +25,7 @@ vars: null
 
 {% link url="mon-article", text="article", linkType="internal", collection="articles" %}
 
-{% link url="test@mail.com", text="bcjkqsncsqlkn", linkType="email", cc="", bcc="", subject="Hello", body="Hello\n\nWorld", class="button" %}
+{% link url="test@mail.com", text="bcjkqsncsqlkn", linkType="email", subject="Hello", body="Hello\n\nWorld", class="button" %}
 
 {% image src="/_images/POKO-logo-RVB-01.jpg", alt="poko logo square" %}
 

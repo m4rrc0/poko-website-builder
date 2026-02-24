@@ -1,11 +1,14 @@
 ---
 translationKey: index
-lang: fr
+lang: en
 createdAt: 2025-07-19T20:12:00.000Z
 uuid: 2530cfdfddec
 localizationKey: fa748ce625bb
 name: Home
-eleventyNavigation: null
+eleventyNavigation:
+  title: ''
+  parent: ''
+  order: 1
 metadata:
   title: ''
   description: ''

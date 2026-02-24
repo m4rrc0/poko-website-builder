@@ -30,12 +30,12 @@ body,
     stroke: var(--color-stroke, currentcolor);
 }
 
-.contrast,
+/*.contrast,
 [class*="palette"].contrast,
 [class*="palette"] .contrast {
     color: var(--color-var-bg, #fdfdfe);
     background-color: var(--color-var-text, #100c08);
-}
+}*/
 
 /* More variable names definitions and fallback values for css selectors */
 *:focus,
@@ -209,74 +209,83 @@ b[class*="palette"],
     column-rule-color: inherit;
 }
 
+/* Create color palette variations */
+body,
+.palette--reset,
+.palette--type,
+.palette--alt,
+.palette--accent,
+.palette--contrast {
+    --color-type-theme: var(--color-type); /* prettier-ignore */
+    --color-alt-theme: var(--color-alt); /* prettier-ignore */
+    --color-accent-theme: var(--color-accent); /* prettier-ignore */
+    --color-neutral-theme: var(--color-neutral); /* prettier-ignore */
+}
+.palette--contrast {
+    --color-type-theme: var(--color-neutral); /* prettier-ignore */
+    --color-neutral-theme: var(--color-type); /* prettier-ignore */
+}
+.palette--accent {
+    --color-type-theme: var(--color-accent); /* prettier-ignore */
+    --color-accent-theme: var(--color-type); /* prettier-ignore */
+}
+.palette--alt {
+    --color-type-theme: var(--color-alt); /* prettier-ignore */
+    --color-alt-theme: var(--color-type); /* prettier-ignore */
+}
+
 /* WIP: color palette interface */
 /*
-var(--color-text, #100c08);
-var(--color-bg, #fdfdfe);
-var(--color-text, #100c08);
-var(--color-bg, #fdfdfe);
-var(--color-border, currentcolor);
-var(--color-outline, currentcolor);
-var(--color-text-decoration, currentcolor
-var(--color-text-emphasis, currentcolor
-var(--color-caret, currentcolor);
-var(--color-column-rule, currentcolor
-var(--color-fill, none);
-var(--color-stroke, currentcolor);
-var(--color-var-bg, #fdfdfe
-var(--color-var-text, #100c08
-var(--color-outline, currentcolor)
-var(--color-text--selection
-var(--color-bg, #fdfdfe));
-var(--color-bg--selection
-var(--color-text, #100c08));
-var(--color-border--selection
-var(--color-text__heading);
-background
-var(--color-bg__heading);
-border
-var(--color-border__heading, currentcolor);
-var(--color-text__a, var(--color-text));
-background
-var(--color-bg__a, var(--color-bg));
-border
-var(--color-border__a, var(--color-border, currentcolor));
-var(--color-text__a--hover
-var(--color-bg__a--hover
-var(--color-border__a, currentcolor);
-var(--color-text__button, var(--color-text));
-background
-var(--color-bg__button, var(--color-bg));
-border
-var(--color-border, currentcolor)
-var(--color-bg__button, var(--color-bg))
-    );
-var(--color-text__button, var(--color-text))
-    );
-var(--color-border__button--hover
-var(--color-text__button--focus
-var(--color-bg__button--focus
-var(--color-border__button--focus
-var(--color-text__button--disabled
-var(--color-bg__button--disabled
-var(--color-border__button--disabled
-var(--color-text__code, white);
-var(--color-bg__code, GrayText);
-var(--color-border__code, currentcolor);
-var(--color-text__mark, MarkText);
-var(--color-bg__mark, Mark);
-var(--color-border__mark, CurrentColor);
-var(--color-text__strong);
-background
-var(--color-bg__strong);
-}
-var(--color-text__em);
-background
-var(--color-bg__em);
-}
-var(--color-text__b);
-background
-var(--color-bg__b);
-}
-var(--color-text--marker
+--color-text
+--color-bg
+--color-text
+--color-border
+--color-outline
+--color-text-decoration
+--color-text-emphasis
+--color-caret
+--color-column-rule
+--color-fill
+--color-stroke
+--color-var-bg
+--color-var-text
+--color-outline
+--color-text--selection
+--color-bg--selection
+--color-border--selection
+--color-text__heading
+--color-bg__heading
+--color-border__heading
+--color-text__a
+--color-bg__a
+--color-border__a
+--color-border
+--color-text__a--hover
+--color-bg__a--hover
+--color-border__a
+--color-text__button
+--color-bg__button
+--color-border
+--color-bg__button
+--color-text__button
+--color-border__button--hover
+--color-text__button--focus
+--color-bg__button--focus
+--color-border__button--focus
+--color-text__button--disabled
+--color-bg__button--disabled
+--color-border__button--disabled
+--color-text__code
+--color-bg__code
+--color-border__code
+--color-text__mark
+--color-bg__mark
+--color-border__mark
+--color-text__strong
+--color-bg__strong
+--color-text__em
+--color-bg__em
+--color-text__b
+--color-bg__b
+--color-text--marker
 */

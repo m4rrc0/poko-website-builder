@@ -8,15 +8,15 @@
 
 /* Reset body */
 :where(body) {
-  min-block-size: 100vh;
-  margin: 0;
-  padding: 0;
+    min-block-size: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 /* Push page footer at the bottom without the need for a grid or flex body */
 :where(body > footer) {
-  position: sticky;
-  top: calc(100vh - 1px);
+    position: sticky;
+    top: calc(100vh - 1px);
 }
 
 /* 2.2 Sectioning elements */
@@ -51,8 +51,8 @@
 /* ----- Max Width ----- */
 
 :where(body) {
-  max-inline-size: min(100%, var(--width-body));
-  margin-inline: auto;
+    max-inline-size: min(100%, var(--width-body));
+    margin-inline: auto;
 }
 /*:where(img, picture, video) {
     max-inline-size: min(100%, var(--width-prose));
@@ -74,35 +74,35 @@
 
 /* Reset User agent default Flow */
 :where(h1, h2, h3, h4, h5, h6, p, ul, ol, menu, dir, dl, blockquote, figure) {
-  margin-block-start: 0;
+    margin-block-start: 0;
 }
 :where(p:not(:first-child)),
 :where(:where(ul, ol, menu, dir, dl):not(:first-child)) {
-  margin-block-start: var(--flow-p);
+    margin-block-start: var(--flow-p);
 }
 :where(li :where(ul, ol, menu, dir, dl)) {
-  margin-block-start: 0;
+    margin-block-start: 0;
 }
 :where(h1:not(:first-child)) {
-  margin-block-start: var(--flow-h1);
+    margin-block-start: var(--flow-h1);
 }
 :where(h2:not(:first-child)) {
-  margin-block-start: var(--flow-h2);
+    margin-block-start: var(--flow-h2);
 }
 :where(h3:not(:first-child)) {
-  margin-block-start: var(--flow-h3);
+    margin-block-start: var(--flow-h3);
 }
 :where(h4:not(:first-child)) {
-  margin-block-start: var(--flow-h4);
+    margin-block-start: var(--flow-h4);
 }
 :where(h5:not(:first-child)) {
-  margin-block-start: var(--flow-h5);
+    margin-block-start: var(--flow-h5);
 }
 :where(h6:not(:first-child)) {
-  margin-block-start: var(--flow-h6);
+    margin-block-start: var(--flow-h6);
 }
 :where(hr) {
-  margin-block: var(--flow-hr);
+    margin-block: var(--flow-hr);
 } /* prettier-ignore */
 :where(:where(blockquote, figure, hgroup, address, menu, search, form, fieldset, details, img, picture, video, pre):not(:first-child)) {
     margin-block-start: var(--flow-prose);
@@ -146,7 +146,7 @@
 /* METHOD 3: Tracking depth and apply only the first time we encounter non structural elements */
 /* Initialize the flag */
 :where(body) {
-  --px-applied: 0;
+    --px-applied: 0;
 }
 
 /* Content elements: apply padding only if flag is 0, then set flag to 1 */
@@ -189,31 +189,31 @@
 /* -- Vertical Padding -- */
 
 :where(body > :first-child) {
-  padding-block-start: var(--py-body);
+    padding-block-start: var(--py-body);
 }
 :where(body > :last-child) {
-  padding-block-end: var(--py-body);
+    padding-block-end: var(--py-body);
 }
 :where(body > :where(header, footer, main, aside)),
 :where(body > main > :where(header, footer, aside)) {
-  --py: var(--py-body);
-  padding-block: var(--py-body);
+    --py: var(--py-body);
+    padding-block: var(--py-body);
 }
 :where(section, .section) {
-  --py: var(--py-section);
-  padding-block: var(--py-section);
+    /*--py: var(--py-section);*/
+    padding-block: var(--py-section);
 }
 :where(body > main:has(& > :where(header, footer, aside):first-child)) {
-  padding-block-start: 0;
+    padding-block-start: 0;
 }
 :where(body > main:has(& > :where(header, footer, aside):last-child)) {
-  padding-block-end: 0;
+    padding-block-end: 0;
 }
 :where(:where(section, .section) :where(section, .section, header, footer)),
 :where(:where(section, .section) > div) {
-  --py: var(--py-prose);
-  padding-block: var(--py-prose);
+    --py: var(--py-prose);
+    padding-block: var(--py-prose);
 } /* prettier-ignore */
-:where([class*="palette--contrast"], [class*="palette--dark"], [class*="palette--light"]) {
+:where(.box, .card:where(.palette--contrast, .palette--dark, .palette--light)) {
     padding: var(--py);
 }

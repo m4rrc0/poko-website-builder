@@ -4,10 +4,9 @@ lang }, { by: 'parent', value: '' }]) | eleventyNavigation %}
 {% if navPages | length %}
 
 <header>
-    <nav>
+    <nav class="flex flex-nowrap gap-[--step-0] flex-justify-between items-start">
     <!-- Main pages navigation -->
-    {# {{ navPages | eleventyNavigationToHtml | safe }} #}
-    <ul role="list" id="main-nav">
+    <ul role="list" id="main-nav" class="cluster">
         {% for link in navPages %}
         <li>
         {# prettier-ignore #}
@@ -23,7 +22,7 @@ lang }, { by: 'parent', value: '' }]) | eleventyNavigation %}
 
     <!-- Language navigation -->
     {% if page.url | locale_links | length %}
-    <ul role="list" id="lang-nav">
+    <ul role="list" id="lang-nav" class="flex flex-nowrap gap-[--step--2] m0">
         {% for link in page.url | locale_links("all") %}
         <li>
         <a

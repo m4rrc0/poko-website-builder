@@ -2077,9 +2077,10 @@ class CmsConfig {
               pagesCollection,
               ...selectedOptionalCollections,
               ...userConfig.collections,
-              {
-                divider: Boolean(!mustSetup && userConfig.collections?.length),
-              },
+              { divider: true },
+              // {
+              //   divider: Boolean(!mustSetup && userConfig.collections?.length),
+              // },
               navCollection(allSelectedCollections),
               footerCollection,
               pageLayoutsCollection,

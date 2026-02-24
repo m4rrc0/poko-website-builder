@@ -102,7 +102,7 @@
     --width-body: calc(var(--width-prose) * 1.618); /* 80,98 */
     --width-section: var(--width-body);
     --width-featured: calc(var(--width-prose) / 1.618); /* 30.90 */
-    --width-column: calc(var(--width-prose) / 2.618); /* 19 */
+    --width-card: calc(var(--width-prose) / 2.618); /* 19 */
     /*--width-token: 30rem;*/
 
     /* Open Props */
@@ -115,10 +115,10 @@
 
     --radius-round: 1e5px;
     --radius-body: 0rem;
-    --radius-section: 8rem;
-    --radius-prose: 4rem;
+    --radius-section: 2rem;
+    --radius-prose: 2rem;
     --radius-featured: 2rem;
-    --radius-column: 1rem;
+    --radius-card: 1rem;
     --radius-token: 5px;
 
     /* Open Props */
@@ -128,32 +128,39 @@
     --border-size-4: 10px;
     --border-size-5: 25px;*/
 
-    --thick-body: 5px;
+    /*--thick-body: 5px;
     --thick-section: 5px;
     --thick-prose: 5px;
     --thick-featured: 2px;
-    --thick-column: 2px;
-    --thick-token: 2px;
+    --thick-card: 2px;
+    --thick-token: 2px;*/
+
+    /*--border-style-body: solid;
+    --border-style-section: solid;
+    --border-style-prose: solid;
+    --border-style-featured: solid;
+    --border-style-card: solid;
+    --border-style-token: solid;*/
 
     --px-body: var(--step--2, 0.8rem);
     --px-section: var(--step--1, 1rem);
     --px-prose: var(--step--1, 1rem);
     --px-featured: var(--step--1, 1rem);
-    --px-column: var(--step--1, 1rem);
+    --px-card: var(--step--1, 1rem);
     --px-token: var(--step--1, 1rem);
 
     --py-body: var(--step-2, 0.8rem);
     --py-section: var(--step-4, 3rem);
     --py-prose: var(--step--1, 1rem);
     --py-featured: var(--step--1, 1rem);
-    --py-column: var(--step--1, 1rem);
+    --py-card: var(--step--1, 1rem);
     --py-token: var(--step--1, 1rem);
 
     /*--gap-body: var(--step-0, 1.25rem);
     --gap-section: var(--step-0, 1.25rem);
     --gap-prose: var(--step--1, 1rem);
     --gap-featured: var(--step--1, 1rem);
-    --gap-column: var(--step--1, 1rem);
+    --gap-card: var(--step--1, 1rem);
     --gap-token: var(--step--1, 1rem);*/
 
     --flow-p: var(--step-0); /* Chrome: 1em | for ul, menu, dir, ol, dl, p */
