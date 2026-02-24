@@ -230,7 +230,7 @@ export const pageFooterRelationField = {
   hint:
     "Select a footer for this entry. Leave empty to use default footer set in global settings.",
   required: false,
-  i18n: "duplicate",
+  i18n: "true",
   search_fields: ["slug"],
   display_fields: ["slug"],
   value_field: "{{slug}}",
