@@ -1452,34 +1452,6 @@ const globalSettingsSingleton = {
       value_field: "{{slug}}",
     },
     {
-      // footer défini par collection (page, articles, events, etc.)
-      name: "collectionFooters",
-      label: "Collection Footers",
-      widget: "list",
-      required: false,
-      collapsed: true,
-      summary: "{{fields.collection}} → {{fields.footer}}",
-      fields: [
-        {
-          name: "collection",
-          label: "Collection",
-          widget: "select",
-          required: true,
-          options: ["pages", ...Object.keys(optionalCollections)],
-        },
-        {
-          name: "footer",
-          label: "Footer",
-          widget: "relation",
-          collection: "footers",
-          required: false,
-          search_fields: ["slug"],
-          display_fields: ["slug"],
-          value_field: "{{slug}}",
-        },
-      ],
-    },
-    {
       name: "languages",
       label: "Languages",
       hint: "❗️ Re-build your site to see your changes here",
