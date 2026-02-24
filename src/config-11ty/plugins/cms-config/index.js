@@ -230,7 +230,7 @@ export const pageFooterRelationField = {
   hint:
     "Select a footer for this entry. Leave empty to use default footer set in global settings.",
   required: false,
-  i18n: "true",
+  i18n: "duplicate",
   search_fields: ["slug"],
   display_fields: ["slug"],
   value_field: "{{slug}}",
@@ -2148,6 +2148,7 @@ export const footerCollection = {
   format: "yaml-frontmatter",
   create: true,
   summary: "{{slug}}",
+  i18n: true,
   // MEDIAS
   media_folder: `/${CONTENT_DIR}/_images`,
   public_folder: "/_images",
