@@ -2149,7 +2149,7 @@ export const footerCollection = {
   create: true,
   editor: { preview: false }, // Pour ne pas afficher le preview de la page comme dans les autres collections
   summary: "{{slug}}",
-  i18n: true,
+  i18n: true, // Pour pouvoir avec la fonctionnalité d'avoir les 2 langues gauche-droite 
   // MEDIAS
   media_folder: `/${CONTENT_DIR}/_images`,
   public_folder: "/_images",
@@ -2166,7 +2166,7 @@ export const footerCollection = {
       label: "Content",
       widget: "markdown",
       required: false,
-      i18n: true,
+      i18n: true, // Pour pouvoir que les deux langues ont leur body
     },
   ],
 };
