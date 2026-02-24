@@ -2140,13 +2140,14 @@ export const footerCollection = {
   name: "footers",
   label: "Footers",
   label_singular: "Footer",
-  path: "{{slug}}",
+  path: "footer/{{slug}}", 
   slug: "{{fields._slug}}",
   icon: "bottom_navigation",
-  folder: `${CONTENT_DIR}/_partials/footer`,
+  folder: `${CONTENT_DIR}/_partials`, 
   extension: "md",
   format: "yaml-frontmatter",
   create: true,
+  editor: { preview: false }, // Pour ne pas afficher le preview de la page comme dans les autres collections
   summary: "{{slug}}",
   i18n: true,
   // MEDIAS
@@ -2165,6 +2166,7 @@ export const footerCollection = {
       label: "Content",
       widget: "markdown",
       required: false,
+      i18n: true,
     },
   ],
 };
