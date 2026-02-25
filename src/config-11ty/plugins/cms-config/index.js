@@ -1,4 +1,6 @@
 import slugify from "@sindresorhus/slugify";
+import { readdirSync, existsSync } from "node:fs";
+import { join } from "node:path";
 // NOTE: I need to work on a Sveltia fork: https://github.com/sveltia/sveltia-cms/issues/180#issuecomment-2256112119
 import {
   NODE_ENV,
@@ -1155,6 +1157,16 @@ const getMiscLinkTypes = (allSelectedCollections, currentLevel, maxLevels) =>
         hint: "Override the page name",
         i18n: true,
       },
+      {
+        name: "image",
+        label: "Image",
+        widget: "object",
+        hint: "Override the page title with an image",
+        required: false,
+        i18n: "duplicate",
+        summary: "{{src}}",
+        fields: imageFields,
+      },
       ...createNavLevels(allSelectedCollections, currentLevel + 1, maxLevels), // Adjust the second argument to set max levels
     ],
   }));
@@ -1201,6 +1213,16 @@ function createNavLevels(allSelectedCollections, currentLevel, maxLevels) {
                   hint: "Override the page title",
                   i18n: true,
                 },
+                {
+                  name: "image",
+                  label: "Image",
+                  widget: "object",
+                  hint: "Override the page title with an image",
+                  required: false,
+                  i18n: "duplicate",
+                  summary: "{{src}}",
+                  fields: imageFields,
+                },
                 ...createNavLevels(
                   allSelectedCollections,
                   currentLevel + 1,
@@ -1232,6 +1254,16 @@ function createNavLevels(allSelectedCollections, currentLevel, maxLevels) {
                   required: false,
                   hint: "Use this for external links or if you want to override the page link.",
                   i18n: true,
+                },
+                {
+                  name: "image",
+                  label: "Image",
+                  widget: "object",
+                  hint: "Override the page title with an image",
+                  required: false,
+                  i18n: "duplicate",
+                  summary: "{{src}}",
+                  fields: imageFields,
                 },
                 ...createNavLevels(
                   allSelectedCollections,
@@ -1283,89 +1315,137 @@ export const navCollection = (allSelectedCollections) => ({
   public_folder: "/_images",
   fields: [
     {
-      name: "items",
-      label: "Items",
-      label_singular: "Item (Level 1)",
+      name: "navGroup",
+      label: "Nav Group",
       widget: "list",
-      i18n: "duplicate",
+      root: true,
       required: true,
+      i18n: "duplicate",
       fields: [
         {
-          name: "linkTo",
-          label: "Link to ...",
-          widget: "object",
-          required: false,
+          name: "items",
+          label: "Items",
+          label_singular: "Item (Level 1)",
+          widget: "list",
           i18n: "duplicate",
-          collapsed: "auto",
-          types: [
+          required: true,
+          fields: [
             {
-              name: "pages",
-              label: "Page",
-              fields: [
+              name: "linkTo",
+              label: "Link to ...",
+              widget: "object",
+              required: false,
+              i18n: "duplicate",
+              collapsed: "auto",
+              types: [
                 {
-                  name: "slug",
-                  label: "Select Page",
-                  widget: "relation",
-                  collection: "pages",
-                  search_fields: ["name"],
-                  display_fields: ["name"],
-                  required: false,
-                  i18n: "duplicate",
+                  name: "pages",
+                  label: "Page",
+                  fields: [
+                    {
+                      name: "slug",
+                      label: "Select Page",
+                      widget: "relation",
+                      collection: "pages",
+                      search_fields: ["name"],
+                      display_fields: ["name"],
+                      required: false,
+                      i18n: "duplicate",
+                    },
+                    {
+                      name: "label",
+                      label: "Label",
+                      widget: "string",
+                      required: false,
+                      hint: "Override the page title",
+                      i18n: true,
+                    },
+                    {
+                      name: "image",
+                      label: "Image",
+                      widget: "object",
+                      hint: "Override the page title with an image",
+                      required: false,
+                      i18n: "duplicate",
+                      summary: "{{src}}",
+                      fields: imageFields,
+                    },
+                    ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
+                  ],
                 },
-                {
-                  name: "label",
-                  label: "Label",
-                  widget: "string",
-                  required: false,
-                  hint: "Override the page title",
-                  i18n: true,
-                },
-                ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
-              ],
-            },
-            ...getMiscLinkTypes(allSelectedCollections, 1, 4),
-            {
-              name: "url",
-              label: "Custom URL",
-              fields: [
-                {
-                  name: "label",
-                  label: "Label",
-                  widget: "string",
-                  required: false,
-                  hint: "Override the page title",
-                  i18n: true,
-                },
+                ...getMiscLinkTypes(allSelectedCollections, 1, 4),
                 {
                   name: "url",
                   label: "Custom URL",
-                  widget: "string",
-                  required: false,
-                  hint: "Use this for external links or if you want to override the page link.",
-                  i18n: true,
+                  fields: [
+                    {
+                      name: "label",
+                      label: "Label",
+                      widget: "string",
+                      required: true,
+                      hint: "Override the page title",
+                      i18n: true,
+                    },
+                    {
+                      name: "url",
+                      label: "Custom URL",
+                      widget: "string",
+                      required: false,
+                      hint: "Use this for external links or if you want to override the page link.",
+                      i18n: true,
+                    },
+                    {
+                      name: "image",
+                      label: "Image",
+                      widget: "object",
+                      hint: "Override the page title with an image",
+                      required: false,
+                      i18n: "duplicate",
+                      summary: "{{src}}",
+                      fields: imageFields,
+                    },
+                    ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
+                  ],
                 },
-                ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
-              ],
-            },
-            {
-              name: "label",
-              label: "Label Only",
-              fields: [
                 {
                   name: "label",
-                  label: "Label",
-                  widget: "string",
-                  required: false,
-                  hint: "Override the page title",
-                  i18n: true,
+                  label: "Label Only",
+                  fields: [
+                    {
+                      name: "label",
+                      label: "Label",
+                      widget: "string",
+                      required: true,
+                      hint: "Override the page title",
+                      i18n: true,
+                    },
+                    ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
+                  ],
                 },
-                ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
               ],
             },
           ],
         },
       ],
     },
+
+    // {
+    //   name: "markup",
+    //   label: "Markup",
+    //   widget: "object",
+    //   required: false,
+    //   i18n: "duplicate",
+    //   collapsed: "auto",
+    //   fields: [
+    //     {
+    //       name: "markup",
+    //       label: "Markup",
+    //       widget: "markdown",
+    //       required: false,
+    //       i18n: "duplicate",
+    //     },
+    //   ],
+    // },
   ],
 });
 
@@ -1517,6 +1597,23 @@ const globalSettingsSingleton = {
       // TODO: more customization on collections
       options: Object.keys(optionalCollections),
       dropdown_threshold: 100,
+    },
+    {
+      name: "customNav",
+      label: "Custom Navigation",
+      widget: "select",
+      required: false,
+      hint: "Choose which custom nav file to use for this page (from _data/[lang]/nav/)",
+      options: allLanguages
+        .flatMap((lang) => {
+          const dir = join(WORKING_DIR_ABSOLUTE, "_data", lang.code, "nav");
+          return existsSync(dir)
+            ? readdirSync(dir)
+                .filter((f) => f.endsWith(".yaml") || f.endsWith(".yml"))
+                .map((f) => f.replace(/\.(yaml|yml)$/, ""))
+            : [];
+        })
+        .filter((v, i, a) => a.indexOf(v) === i), // déduplique entre langues
     },
   ],
 };

@@ -1,35 +1,79 @@
 {% set navPages = collections.all | filterCollection([{ by: 'lang', value:
 lang }, { by: 'parent', value: '' }]) | eleventyNavigation %}
 
-{% if navPages | length %}
+{# ============================================================
+   Macro récursive : rend un item de nav (lien, label ou dropdown)
+   link.label     → toujours non-vide (garanti par le JS)
+   link.hasImage  → booléen (garanti par le JS)
+   link.hasSubItems → booléen (garanti par le JS)
+   ============================================================ #}
+{% macro renderNavItem(link, currentUrl, currentLang) %}
+<li>
+{% if link.hasSubItems %}
+    {# --- Dropdown (sous-menu) --- #}
+    <details class="dropdown">
+        <summary>
+            {% if link.hasImage %}<img
+                src="{{link.imageSrc}}"
+                alt="{{link.imageAlt}}"
+                {% if link.imageTitle %} title="{{link.imageTitle}}"{% endif %}
+                {% if link.imageWidth %} width="{{link.imageWidth}}"{% endif %}
+                {% if link.imageAspectRatio %} style="aspect-ratio: {{link.imageAspectRatio}}"{% endif %}
+                {% if link.imageLoading %} loading="{{link.imageLoading}}"{% endif %}
+                {{link.imageAttrs}}
+            />{% else %}{{link.label}}{% endif %}
+        </summary>
+        <ul>
+        {% for sub in link.subItems %}
+            {{ renderNavItem(sub, currentUrl, currentLang) }}
+        {% endfor %}
+        </ul>
+    </details>
+{% elif link.url %}
+    {# --- Lien simple --- #}
+    <a href="{{link.url}}" hreflang="{{currentLang}}"
+        {% if link.url == currentUrl %}aria-current="page"{% endif %}
+    >
+        {% if link.hasImage %}<img
+            src="{{link.imageSrc}}"
+            alt="{{link.imageAlt}}"
+            {% if link.imageTitle %} title="{{link.imageTitle}}"{% endif %}
+            {% if link.imageWidth %} width="{{link.imageWidth}}"{% endif %}
+            {% if link.imageAspectRatio %} style="aspect-ratio: {{link.imageAspectRatio}}"{% endif %}
+            {% if link.imageLoading %} loading="{{link.imageLoading}}"{% endif %}
+            {{link.imageAttrs}}
+        />{% else %}{{link.label}}{% endif %}
+    </a>
+{% else %}
+    {# --- Label (non cliquable) --- #}
+    {{link.label}}
+{% endif %}
+</li>
+{% endmacro %}
+
+{% if nav | length %}
 
 <header>
-    <nav>
+    <nav class="cluster" style="--justify-cluster: space-between">
     <!-- Main pages navigation -->
-    {# {{ navPages | eleventyNavigationToHtml | safe }} #}
-    <ul role="list" id="main-nav">
-        {% for link in navPages %}
-        <li>
-        {# prettier-ignore #}
-        <a
-            href="{{link.url}}"
-            hreflang="{{link.lang}}"
-            {% if link.url == page.url %}aria-current="page"{% endif %}
-            >{{link.title}}</a
-        >
-        </li>
+    {% for navItem in nav %}
+    <ul role="list" class="cluster" style="list-style: none; padding: 0; margin: 0">
+        {% for link in navItem.groups %}
+        {{ renderNavItem(link, page.url, lang) }}
         {% endfor %}
     </ul>
+    {% endfor %}
+
 
     <!-- Language navigation -->
     {% if page.url | locale_links | length %}
-    <ul role="list" id="lang-nav">
+    <ul role="list" id="lang-nav" class="cluster" style="list-style: none; padding: 0; margin: 0">
         {% for link in page.url | locale_links("all") %}
         <li>
         <a
             href="{{link.url}}"
             hreflang="{{link.lang}}"
-            aria-current="{{ 'page' if link.lang === page.lang else 'false' }}"
+            aria-current="{{ 'page' if link.lang === lang else 'false' }}"
             ><abbr lang="{{link.lang}}" title="{{link.label}}"
             >{{link.lang | upper}}</abbr></a>
         </li>

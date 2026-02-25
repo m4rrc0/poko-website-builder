@@ -2,8 +2,17 @@
 const autoTagNameDico = {
   pages: "pages",
   articles: "articles",
+  services: "services",
+  events: "events",
+  products: "products",
+  projects: "projects",
   people: "people",
   organizations: "organizations",
+  courses: "courses",
+  places: "places",
+  reviews: "reviews",
+  faqs: "faqs",
+  documentations: "documentations",
 };
 
 export const tags = (data) => {
