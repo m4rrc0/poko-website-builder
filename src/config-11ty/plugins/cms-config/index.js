@@ -221,7 +221,7 @@ export const pageLayoutRelationField = {
   i18n: "duplicate",
 };
 
-// footer défini page par page (dans le CMS)
+// footer defined page by page (in the CMS)
 export const pageFooterRelationField = {
   name: "pageFooter",
   label: "Footer",
@@ -1439,7 +1439,7 @@ const globalSettingsSingleton = {
       allow_language_selection: false,
     },
     {
-      // footer défini choisit par défaut dans global settings (dans le CMS)
+      // footer defined in global settings (in the CMS)
       name: "pageFooter",
       label: "Default Footer",
       widget: "relation",
@@ -1447,9 +1447,11 @@ const globalSettingsSingleton = {
       hint:
         "Footer used for all pages and collections that don't have a specific footer set.",
       required: false,
-      search_fields: ["slug"],
-      display_fields: ["slug"],
-      value_field: "{{slug}}",
+      i18n: true,
+      // search_fields: ["slug"],
+      // display_fields: ["fields.slug"],
+      // value_field: "{{slug}}",
+      // options: faire une liste avec les footers disponibles dans la collection footers
     },
     {
       name: "languages",
@@ -2136,20 +2138,20 @@ class CmsConfig {
 }
 
 export const footerCollection = {
-  identifier_field: "{{slug}}",
+  // identifier_field: "{{slug}}",
   name: "footers",
   label: "Footers",
   label_singular: "Footer",
-  path: "footer/{{slug}}", 
+  path: "footers/{{slug}}", 
   slug: "{{fields._slug}}",
   icon: "bottom_navigation",
   folder: `${CONTENT_DIR}/_partials`, 
   extension: "md",
   format: "yaml-frontmatter",
   create: true,
-  editor: { preview: false }, // Pour ne pas afficher le preview de la page comme dans les autres collections
+  editor: { preview: false }, // to not display the preview of the page like in other collections
   summary: "{{slug}}",
-  i18n: true, // Pour pouvoir avec la fonctionnalité d'avoir les 2 langues gauche-droite 
+  i18n: true, // to have the left-right feature with the two languages  
   // MEDIAS
   media_folder: `/${CONTENT_DIR}/_images`,
   public_folder: "/_images",
@@ -2166,7 +2168,7 @@ export const footerCollection = {
       label: "Content",
       widget: "markdown",
       required: false,
-      i18n: true, // Pour pouvoir que les deux langues ont leur body
+      i18n: true, // each language has its own body
     },
   ],
 };
