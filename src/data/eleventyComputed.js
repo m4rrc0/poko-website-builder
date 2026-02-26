@@ -172,7 +172,7 @@ export default {
   url: (data) => data.url || data.page?.url,
 
   pageFooter: (data) => {    
-    // Priorise le footer sélectionné sur la collection, puis par défaut dans settings
+    // Prioritize the footer selected on the collection, then the default in settings
     const raw = data.pageFooter || data.globalSettings?.pageFooter || "";
     // const key =
     //   typeof raw === "string"
