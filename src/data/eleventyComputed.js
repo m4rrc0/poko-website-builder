@@ -174,15 +174,15 @@ export default {
   pageFooter: (data) => {    
     // Priorise le footer sélectionné sur la collection, puis par défaut dans settings
     const raw = data.pageFooter || data.globalSettings?.pageFooter || "";
-    const key =
-      typeof raw === "string"
-        ? raw
-            .trim()
-            .replace(/\.(md|njk|11ty\.js|liquid|html)$/i, "")
-            .split("/")
-            .filter(Boolean)
-            .pop()
-        : "";
+    // const key =
+    //   typeof raw === "string"
+    //     ? raw
+    //         .trim()
+    //         .replace(/\.(md|njk|11ty\.js|liquid|html)$/i, "")
+    //         .split("/")
+    //         .filter(Boolean)
+    //         .pop()
+    //     : "";
 
     // If no footer is defined, keep it empty so templates can fallback cleanly.
     return key ? `${data.lang}/footer/${key}` : "";
