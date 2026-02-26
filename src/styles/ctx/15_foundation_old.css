@@ -1,0 +1,417 @@
+/*
+ * CTX CSS Classless Layer
+ * Provides sensible styling defaults that go beyond the reset
+ * These styles are more subjective but still maintain a clean, minimal approach
+ */
+
+/* ==========================================================================
+   # TABLE OF CONTENTS
+   ========================================================================== */
+
+/*
+ * 1. TYPOGRAPHY
+ *    1.1 Base typography
+ *    1.2 Headings
+ *    1.3 Text elements
+ *    1.4 Lists
+ *    1.5 Blockquotes
+ *    1.6 Code blocks
+ *    1.7 Horizontal rules
+ *
+ * 2. LAYOUT & SPACING
+ *    2.1 Page layout
+ *    2.2 Sectioning elements
+ *    2.3 Responsive spacing
+ *
+ * 3. MEDIA & EMBEDDED CONTENT
+ *    3.1 Images
+ *    3.2 Figures
+ *    3.3 Iframes
+ *    3.4 Audio/Video
+ *
+ * 4. FORMS
+ *    4.1 Form layout
+ *    4.2 Inputs & buttons
+ *    4.3 Select, radio, checkbox
+ *    4.4 Form validation
+ *
+ * 5. TABLES
+ *    5.1 Basic table styles
+ *    5.2 Table layout
+ *    5.3 Responsive tables
+ *
+ * 6. NAVIGATION
+ *    6.1 Links
+ *    6.2 Navigation lists
+ *    6.3 Skip links
+ *
+ * 7. MEDIA QUERIES
+ *    7.1 Print styles
+ *    7.2 Reduced motion
+ *    7.3 Dark mode
+ *
+ * 8. UTILITIES
+ *    8.1 Text utilities
+ *    8.2 Layout utilities
+ *    8.3 Visibility utilities
+ */
+
+/* ==========================================================================
+   #1 TYPOGRAPHY
+   ========================================================================== */
+
+:where(:root) {
+    /* Size Scale */
+    /* Step -2: 11.1111px → 11.2556px */
+    --step--2: clamp(0.6944rem, 0.6919rem + 0.0129vw, 0.7035rem);
+    /* Step -1: 13.3333px → 15.0038px */
+    --step--1: clamp(0.8333rem, 0.8035rem + 0.1491vw, 0.9377rem);
+    /* Step 0: 16px → 20px */
+    --step-0: clamp(1rem, 0.9286rem + 0.3571vw, 1.25rem);
+    /* Step 1: 19.2px → 26.66px */
+    --step-1: clamp(1.2rem, 1.0668rem + 0.6661vw, 1.6663rem);
+    /* Step 2: 23.04px → 35.5378px */
+    --step-2: clamp(1.44rem, 1.2168rem + 1.1159vw, 2.2211rem);
+    /* Step 3: 27.648px → 47.3719px */
+    --step-3: clamp(1.728rem, 1.3758rem + 1.7611vw, 2.9607rem);
+    /* Step 4: 33.1776px → 63.1467px */
+    --step-4: clamp(2.0736rem, 1.5384rem + 2.6758vw, 3.9467rem);
+    /* Step 5: 39.8131px → 84.1745px */
+    --step-5: clamp(2.4883rem, 1.6962rem + 3.9608vw, 5.2609rem);
+    /* Step 6: 47.7757px → 112.2047px */
+    --step-6: clamp(2.986rem, 1.8355rem + 5.7526vw, 7.0128rem);
+
+    /* Page widths */
+    --width-max: 80rem;
+    /* NOTE: Do not use ch or em here because it is applied to headings and we want an uniform width */
+    --width-prose: 50rem;
+
+    --pi-body: 0.68rem;
+    --pb-body: 1.68rem;
+    /* Fonts */
+    /* --font-stack-body: system-ui, sans-serif; */
+    /* --font-stack-heading: system-ui, sans-serif; */
+    /* --font-stack-code:
+    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; */
+}
+
+/* 1.1 Base typography */
+body {
+    font-size: var(--step-0);
+    font-family: var(--font-stack-body, system-ui, sans-serif);
+}
+
+/* 1.2 Headings */
+/* prettier-ignore */
+.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1 {
+  font-family: var(--font-stack-heading, system-ui, sans-serif);
+}
+/* prettier-ignore */
+.h8 { font-size: var(--step--4); } /* prettier-ignore */
+.h7 { font-size: var(--step--3); } /* prettier-ignore */
+h6, .h6 { font-size: var(--step--2); } /* prettier-ignore */
+h5, .h5, small, .small { font-size: var(--step--1); } /* prettier-ignore */
+h4, .h4 { font-size: var(--step-1); } /* prettier-ignore */
+h3, .h3 { font-size: var(--step-2); } /* prettier-ignore */
+h2, .h2 { font-size: var(--step-3); } /* prettier-ignore */
+h1, .h1 { font-size: var(--step-4); } /* prettier-ignore */
+.h0 { font-size: var(--step-5); } /* prettier-ignore */
+.h-1 { font-size: var(--step-6); } /* prettier-ignore */
+
+/* 1.3 Text elements */
+/* b = visual importance without semantic meaning */
+/* dl, dt, dd = description list, with terms and descriptions */
+
+body {
+    text-underline-offset: 0.15em;
+}
+
+:where(tt, code, kbd, pre, samp) {
+    /* Extends the background-color on the sides */
+    box-shadow:
+        0.1em 0 var(--code-bg, GrayText),
+        -0.1em 0 var(--code-bg, GrayText);
+}
+
+:where(mark) {
+    /* Extends the background-color on the sides */
+    box-shadow:
+        0.1em 0 var(--mark-bg, Mark),
+        -0.1em 0 var(--mark-bg, Mark);
+}
+
+/* 1.4 Lists */
+
+/* 1.5 Quotes & Blockquotes */
+:where(q) {
+    font-style: italic;
+}
+
+:where(blockquote) {
+    /* TODO: find a solution to indent because this gets overwritten by margin-inline: auto down below */
+    margin-inline: 1em;
+    padding-inline-start: 1em;
+    border-left: 1px solid currentColor;
+    font-style: italic;
+}
+
+:where(blockquote > footer) {
+    font-style: normal;
+    border: 0;
+}
+
+:where(blockquote cite) {
+    font-style: normal;
+}
+
+/* 1.6 Code blocks */
+/* TODO: pre code */
+/* TODO: code */
+/* TODO: kbd */
+/* prettier-ignore */
+:where(tt, code, kbd, pre, samp, tt *, code *, kbd *, pre *, samp *) {
+  font-family: var(
+    --font-stack-code,
+    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace
+  );
+}
+
+/* 1.7 Horizontal rules */
+
+/* 1.8 Other layout elements */
+/* TODO: details and summary and accordion */
+
+:where(nav li) {
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   #2 LAYOUT & SPACING
+   ========================================================================== */
+
+/* 2.1 Page layout */
+body {
+    color: #100c08;
+    background-color: #fdfdfe;
+    padding-inline: var(--pi-body, 0.68rem);
+    padding-block: var(--pb-body, 1.68rem);
+}
+
+:where(.reset > :where(p, h1, h2, h3, h4, h5, h6)) {
+    margin-block-start: 0;
+}
+
+:where(.prose),
+:where(
+    :where(
+        main,
+        header,
+        footer,
+        article,
+        section,
+        aside,
+        form,
+        fieldset,
+        body
+    ):not([class])
+) {
+    max-inline-size: var(--width-max, 80rem);
+    margin-inline: auto;
+
+    & > :where(:where(p, h1, h2, h3, h4, h5, h6, ul, ol):first-child),
+    &
+        > :where(div:not([class]))
+        :where(:where(p, h1, h2, h3, h4, h5, h6, ul, ol):first-child),
+    & :where(hgroup) > * {
+        margin-block-start: 0;
+    }
+
+    /* Apply flow spacing inside sectioning elements */
+    /* TODO: Might need special adjustment for some elements */
+    /* prettier-ignore */
+    & > :where(* + *:not(:where(h1, h2, h3, h4, h5, h6, p, style, .prose, main, header, nav, footer, article, section, aside, form, fieldset))) {
+    margin-block-start: 0.8em;
+  }
+    & > :where(label + :where(input, select, textarea, button)) {
+        margin-block-start: 0.4em;
+    }
+}
+
+:where(
+    .prose,
+    article,
+    aside,
+    form,
+    fieldset,
+    body:not(:has(:where(main, article)))
+) {
+    max-inline-size: var(--width-prose, 50rem);
+}
+
+:where(
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    dl,
+    dt,
+    dd,
+    quote,
+    blockquote,
+    figcaption,
+    details
+),
+:where(:not(nav)) > :where(ul, ol) {
+    max-inline-size: var(--width-prose, 50rem);
+    inline-size: 100%;
+    margin-inline: auto;
+}
+
+/* Try an nuke browser extensions added at the end of the body */
+/* TODO: Find a better way */
+body > footer ~ * {
+    all: revert;
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+/* 2.2 Sectioning elements */
+/* main article */
+/* section */
+/* aside */
+/* nav */
+/* footer */
+/* header */
+
+/* 2.3 Responsive spacing */
+
+/* ==========================================================================
+   #3 MEDIA & EMBEDDED CONTENT
+   ========================================================================== */
+
+/* 3.1 Images */
+:where(img, picture, video, svg) {
+    max-inline-size: max-content; /* Avoid oversized images */
+    margin-inline: auto; /* Center images by default */
+    inline-size: 100%;
+    block-size: auto; /* Maintain aspect ratio */
+    object-fit: var(--_object-fit, cover);
+
+    :where(.with-icon &),
+    :where(&.icon) {
+        margin-inline: 0; /* Avoid inline margins on icons */
+    }
+}
+:where(img[src*=".svg"]) {
+    max-inline-size: 100%; /* Otherwise svg images are 0 width */
+}
+/* Comes from the frame layout.css - Seems like a good default */
+/* :where(img, picture, video, svg) {
+  inline-size: 100%;
+  block-size: 100%;
+} */
+
+/* 3.2 Figures */
+
+/* 3.3 Iframes */
+
+/* 3.4 Audio/Video */
+
+/* 3.5 SVG */
+/* Inline SVG */
+/* TODO: This can be set on the html element. See what the most common practice is in icon libraries */
+/* prettier-ignore */
+/* :where(a, button, label, span, p, li, dt, dd, th, td, code, summary) svg {
+  fill: currentColor;
+  stroke: currentColor;
+} */
+
+/* ==========================================================================
+   #4 FORMS
+   ========================================================================== */
+
+/* 4.1 Form layout */
+:where(
+    a,
+    button,
+    .button,
+    input[type="submit"],
+    input[type="button"],
+    input[type="reset"],
+    [role="button"],
+    summary,
+    select,
+    input[type="checkbox"],
+    input[type="range"],
+    input[type="radio"]
+):not(:disabled),
+::scroll-button(*):not(:disabled) {
+    cursor: pointer;
+}
+
+/* 4.2 Inputs & buttons */
+
+:where(button, input, textarea),
+::scroll-button(*) {
+    background: inherit;
+    padding-inline: 0.3em;
+    transition:
+        background-color var(--animation-duration, 0.1s) linear,
+        border-color var(--animation-duration, 0.1s) linear,
+        color var(--animation-duration, 0.1s) linear,
+        box-shadow var(--animation-duration, 0.1s) linear,
+        transform var(--animation-duration, 0.1s) ease;
+
+    &::placeholder {
+        color: inherit;
+        opacity: 0.5;
+    }
+}
+
+/* 4.3 Select, radio, checkbox */
+
+/* 4.4 Form validation */
+
+/* ==========================================================================
+   #5 TABLES
+   ========================================================================== */
+
+/* 5.1 Basic table styles */
+
+/* 5.2 Table layout */
+
+/* 5.3 Responsive tables */
+
+/* ==========================================================================
+   #6 NAVIGATION
+   ========================================================================== */
+
+/* 6.1 Links */
+
+/* 6.2 Navigation lists */
+
+/* 6.3 Skip links */
+
+/* ==========================================================================
+   #7 MEDIA QUERIES
+   ========================================================================== */
+
+/* 7.1 Print styles */
+
+/* 7.2 Reduced motion */
+
+/* 7.3 Dark mode */
+
+/* ==========================================================================
+   #8 UTILITIES
+   ========================================================================== */
+
+/* 8.1 Text utilities */
+
+/* 8.2 Layout utilities */
+
+/* 8.3 Visibility utilities */

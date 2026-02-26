@@ -30,12 +30,12 @@ body,
     stroke: var(--color-stroke, currentcolor);
 }
 
-.contrast,
+/*.contrast,
 [class*="palette"].contrast,
 [class*="palette"] .contrast {
     color: var(--color-var-bg, #fdfdfe);
     background-color: var(--color-var-text, #100c08);
-}
+}*/
 
 /* More variable names definitions and fallback values for css selectors */
 *:focus,
@@ -54,10 +54,10 @@ body,
     border-color: var(--color-border--selection, currentcolor);
 }
 /* prettier-ignore */
-:is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9),
-:is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9)[class*='palette'],
-[class*='palette'] :is(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, .h9) {
-  color: var(--color-text__heading);
+:is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4),
+:is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4)[class*='palette'],
+[class*='palette'] :is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4) {
+  color: var(--color-text__heading, --color-text);
   background-color: var(--color-bg__heading);
   border-color: var(--color-border__heading, currentcolor);
 }
@@ -208,3 +208,84 @@ b[class*="palette"],
     caret-color: inherit;
     column-rule-color: inherit;
 }
+
+/* Create color palette variations */
+body,
+.palette--reset,
+.palette--type,
+.palette--alt,
+.palette--accent,
+.palette--contrast {
+    --color-type-theme: var(--color-type); /* prettier-ignore */
+    --color-alt-theme: var(--color-alt); /* prettier-ignore */
+    --color-accent-theme: var(--color-accent); /* prettier-ignore */
+    --color-neutral-theme: var(--color-neutral); /* prettier-ignore */
+}
+.palette--contrast {
+    --color-type-theme: var(--color-neutral); /* prettier-ignore */
+    --color-neutral-theme: var(--color-type); /* prettier-ignore */
+}
+.palette--accent {
+    --color-type-theme: var(--color-accent); /* prettier-ignore */
+    --color-accent-theme: var(--color-type); /* prettier-ignore */
+}
+.palette--alt {
+    --color-type-theme: var(--color-alt); /* prettier-ignore */
+    --color-alt-theme: var(--color-type); /* prettier-ignore */
+}
+
+/* WIP: color palette interface */
+/*
+--color-text
+--color-bg
+--color-text
+--color-border
+--color-outline
+--color-text-decoration
+--color-text-emphasis
+--color-caret
+--color-column-rule
+--color-fill
+--color-stroke
+--color-var-bg
+--color-var-text
+--color-outline
+--color-text--selection
+--color-bg--selection
+--color-border--selection
+--color-text__heading
+--color-bg__heading
+--color-border__heading
+--color-text__a
+--color-bg__a
+--color-border__a
+--color-border
+--color-text__a--hover
+--color-bg__a--hover
+--color-border__a
+--color-text__button
+--color-bg__button
+--color-border
+--color-bg__button
+--color-text__button
+--color-border__button--hover
+--color-text__button--focus
+--color-bg__button--focus
+--color-border__button--focus
+--color-text__button--disabled
+--color-bg__button--disabled
+--color-border__button--disabled
+--color-text__code
+--color-bg__code
+--color-border__code
+--color-text__mark
+--color-bg__mark
+--color-border__mark
+--color-text__strong
+--color-bg__strong
+--color-text__em
+--color-bg__em
+--color-text__b
+--color-bg__b
+--color-text--marker
+*/

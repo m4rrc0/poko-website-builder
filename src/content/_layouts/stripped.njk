@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="{{lang or 'en'}}" class="no-js">
+    <head>
+        {% partial "_html-head-default.md" %} {% getBundle "html", "head" %}
+    </head>
+    <body>
+        <!-- Navigation -->
+        {# {% partial "headless/page-nav.11ty.js" %} #}
+        {% partial "headless/page-nav.11ty.js" %}
+
+        <!-- Content -->
+        {# {% partial "_main-content.md" %} #}
+
+        <!-- Footer -->
+        {# {% partial "headless/page-footer.11ty.js" %} #}
+
+        {{ content | safe }}
+    </body>
+</html>

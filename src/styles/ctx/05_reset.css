@@ -5,129 +5,152 @@
  */
 
 :root {
-  --scroll-margin: 5ex;
+    --scroll-margin: 5ex;
 }
 /* Box sizing rules */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 /* Prevent font size inflation */
 html {
-  -moz-text-size-adjust: none;
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
 }
 
 /* Set core body defaults */
 :where(body) {
-  min-height: 100vh;
-  margin-block: 0;
-  line-height: 1.5;
-  overflow-wrap: break-word; /* Break long words if needed */
-  font-family: system-ui, sans-serif;
+    min-height: 100vh;
+    margin-block: 0;
+    line-height: 1.5;
+    overflow-wrap: break-word; /* Break long words if needed */
+    font-family: system-ui, sans-serif;
 }
 
 /* Normalize margins with logical properties for better internationalization */
 /* Reset only top-level margins to allow for proper spacing within components */
-:where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd) {
-  margin-block-end: 0;
+:where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd, ul, ol) {
+    margin-block-end: 0;
 }
 
-:where(blockquote, figure) {
-  margin-block: 0;
-  margin-inline: 0;
+:where(blockquote, figure, pre) {
+    margin-block: 0;
+    margin-inline: 0;
 }
 
 /* Only remove list styles on ul, ol elements with a list role */
 /* This preserves default list styles for semantic lists while allowing unstyled lists when needed */
-:where(ul[role='list'], ol[role='list'], ul.reset, ol.reset) {
-  list-style: none;
-  padding-inline-start: 0;
-  margin-block-start: 0;
-  margin-block-end: 0;
+:where(ul[role="list"], ol[role="list"], ul.reset, ol.reset) {
+    list-style: none;
+    padding-inline-start: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
 }
 
 /* Push footer to bottom of page */
 :where(footer) {
-  margin-block-start: auto;
+    margin-block-start: auto;
 }
 
 /* Improve typography */
 /* Set shorter line heights on headings and interactive elements */
 /* prettier-ignore */
-:where(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8, button, input, label) {
+:where(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4, button, input, label) {
   line-height: 1.1;
 }
 
 /* Balance text wrapping on headings and prevent overflow with long words */
-:where(h1, h2, h3, h4, h5, h6, .h-1, .h0, .h1, .h2, .h3, .h4, .h5, .h6, .h7, .h8) {
-  text-wrap: balance;
-  max-width: 100%; /* Ensure headings don't exceed their container */
+/* prettier-ignore */
+:where(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4) {
+    text-wrap: balance;
+    max-width: 100%; /* Ensure headings don't exceed their container */
 }
 :where(h1) {
-  hyphens: auto; /* Add hyphens when breaking words for better readability. NOTE: word breaking is more sensitive with this */
+    hyphens: auto; /* Add hyphens when breaking words for better readability. NOTE: word breaking is more sensitive with this */
 }
 
 /* A elements that don't have a class get default skip-ink */
 :where(a:not([class])) {
-  text-decoration-skip-ink: auto;
+    text-decoration-skip-ink: auto;
 }
 :where(a:not([class]) > *) {
-  color: inherit;
+    color: inherit;
 }
 
 /* Make images easier to work with */
-:where(img, picture, video, svg) {
-  max-inline-size: 100%;
-  block-size: auto; /* Maintain aspect ratio */
+:where(img, picture, video) {
+    max-width: 100%;
+    max-inline-size: 100%;
+    height: auto;
+    block-size: auto; /* Maintain aspect ratio */
+    /* From Harry Roberts @csswizardry: https://x.com/csswizardry/status/1717841334462005661 */
+    /* Usefull when img is inline */
+    vertical-align: middle;
+    font-style: italic;
+    background-repeat: no-repeat;
+    background-size: cover;
+    shape-margin: 0.75rem;
+
+    display: block;
 }
 
 /* Only block display for images that are direct children of certain containers */
-:where(figure) > :where(img, picture, video),
-:where(p, div, h1, h2, h3, h4, h5, h6) > :where(img, picture, video):only-child {
-  display: block;
-}
+/*:where(figure) > :where(img, picture, video),
+:where(p, div, h1, h2, h3, h4, h5, h6)
+    > :where(img, picture, video):only-child {
+    display: block;
+}*/
+
+:where(:where(p, h1, h2, h3, h4, h5, h6) > :where(img, picture, video)):not(
+    :only-child
+) {
+    display: inline;
+} /* prettier-ignore */
 
 /* Form elements: prevent overflow and improve usability */
 :where(input, button, textarea, select, fieldset, legend) {
-  font: inherit; /* Shorthand for font-family and font-size */
-  max-width: 100%;
+    font: inherit; /* Shorthand for font-family and font-size */
+    max-width: 100%;
 }
 
 /* TODO: Should we keep? It is a bit drastic */
 /* Avoid overflowing textarea when cols is a large number */
 textarea {
-  /* display: block; */
-  /* width: 100%; */
+    /* display: block; */
+    /* width: 100%; */
 }
 
 /* Make sure textareas without a rows attribute are not tiny */
 :where(textarea:not([rows])) {
-  min-height: 10em;
+    min-height: 10em;
 }
 
 /* Handle number input controls specially */
-:where(input[type='number']) {
-  width: auto; /* Prevent full-width number inputs */
+:where(input[type="number"]) {
+    width: auto; /* Prevent full-width number inputs */
 }
 
 /* Ensure form controls are properly contained */
 :where(fieldset) {
-  min-width: 0; /* Prevent minimum content width in Firefox and others */
+    min-width: 0; /* Prevent minimum content width in Firefox and others */
 }
 
 /* Make sure legends don't cause overflow */
 :where(legend) {
-  white-space: normal; /* Allow wrapping */
-  display: table; /* Allow margin to work */
+    white-space: normal; /* Allow wrapping */
+    display: table; /* Allow margin to work */
 }
 
-/* Prevent unexpected clipping of decorations, shadows, animations, ... */
 :where(svg) {
-  overflow: visible;
+    max-width: 100%;
+    max-inline-size: 100%;
+    height: auto;
+    block-size: auto; /* Maintain aspect ratio */
+    /* Prevent unexpected clipping of decorations, shadows, animations, ... */
+    overflow: visible;
 }
 
 /* SVGs in text contexts - icon-sized and aligned with text */
@@ -136,69 +159,71 @@ textarea {
 :where(svg:not([width]):not([height]):not(:only-child)),
 /* Target SVGs without explicit dimensions inside text containers */
 :where(a, button, label, span, p, li, dt, dd, th, td, code, summary) :where(svg:not([width]):not([height])) {
-  display: inline-block;
-  /* TODO: Think about consistency with layout.css */
-  /* TODO: Find the right default values. 0.75em matches layout.css .icon */
-  width: 0.75em;
-  height: 0.75em;
-  vertical-align: -0.125em;
+    display: inline-block;
+    /* TODO: Think about consistency with layout.css */
+    /* TODO: Find the right default values. 0.75em matches layout.css .icon */
+    width: 0.75em;
+    height: 0.75em;
+    vertical-align: -0.125em;
 }
 
 /* SVGs that are standalone illustrations/diagrams */
 /* TODO: should we select p parents as well? Might be useful for content extracted from markdown */
-:where(figure, div, section, header, footer, main, article, aside, nav) > svg:only-child {
-  display: block;
-  margin-inline: auto;
+:where(figure, div, section, header, footer, main, article, aside, nav)
+    > svg:only-child {
+    display: block;
+    margin-inline: auto;
 }
 
 /* Remove all animations, transitions and smooth scrolling for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {
-  html:focus-within {
-    scroll-behavior: auto !important;
-  }
+    html:focus-within {
+        scroll-behavior: auto !important;
+    }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 /* Improve scrolling experience */
 /* :target does not seem to be enough on firefox. I suspect the scroll event is happening before the element receives the :target pseudo-element */
 :target,
 [id] {
-  scroll-margin-block: var(--scroll-margin);
+    scroll-margin-block: var(--scroll-margin);
 }
 
 /* Fix monospace sizing issues and overflow */
 :where(pre, code, kbd, samp) {
-  font-family: monospace;
-  font-size: 1em;
+    font-family: monospace;
+    font-size: 1em;
 }
 
 /* Prevent code blocks from overflowing */
 :where(pre) {
-  /* TODO: see if we should use white-space: pre-wrap; */
-  /* Line breaks may render as less legible */
-  /* white-space: pre-wrap; */
-  /* overflow-wrap: break-word; */
-  max-width: 100%;
-  overflow-x: auto;
+    /* TODO: see if we should use white-space: pre-wrap; */
+    /* Line breaks may render as less legible */
+    /* white-space: pre-wrap; */
+    /* overflow-wrap: break-word; */
+    /*max-width: 100%;*/
+    max-inline-size: auto;
+    overflow-x: auto;
 }
 
 /* Handle long strings in code and prevent layout overflow */
 :where(code) {
-  word-break: break-word;
-  overflow-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Ensure basic focus visibility for accessibility */
 :focus-visible {
-  outline: 2px solid;
+    outline: 2px solid;
 }
 
 /* Remove the default focus outline from elements that already have a visible focus state */
@@ -206,70 +231,70 @@ button:focus:not(:focus-visible),
 input:focus:not(:focus-visible),
 textarea:focus:not(:focus-visible),
 select:focus:not(:focus-visible) {
-  outline: none;
+    outline: none;
 }
 
 /* Preserve default styling for tables and prevent overflow */
 :where(table) {
-  border-collapse: collapse;
-  table-layout: auto;
-  display: block;
-  width: fit-content; /* Closer to default behavior when display: table; */
-  overflow-x: auto;
-  max-width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    display: block;
+    width: fit-content; /* Closer to default behavior when display: table; */
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 /* Handle nested tables - reset nested tables back to table display */
 :where(table table) {
-  display: table;
-  width: 100%;
-  overflow: visible;
-  margin-block-end: 0;
+    display: table;
+    width: 100%;
+    overflow: visible;
+    margin-block-end: 0;
 }
 
 /* Explicitly specify display for table elements for accessibility reasons */
 /* This maintains table semantics for assistive technologies when parent is display: block */
 :where(caption) {
-  display: table-caption;
+    display: table-caption;
 }
 :where(thead, tbody, tfoot) {
-  display: table-row-group;
+    display: table-row-group;
 }
 :where(tr) {
-  display: table-row;
+    display: table-row;
 }
 :where(th, td) {
-  display: table-cell;
+    display: table-cell;
 }
 :where(colgroup) {
-  display: table-column-group;
+    display: table-column-group;
 }
 :where(col) {
-  display: table-column;
+    display: table-column;
 }
 
 :where(hr) {
-  width: 100%;
-  border: none;
-  border-top: 1px solid;
+    width: 100%;
+    border: none;
+    border-top: 1px solid;
 }
 
 :where(summary > *) {
-  display: inline; /* Prevent summary from jumping under the summary::marker (arrow) if it is a block element like a heading */
+    display: inline; /* Prevent summary from jumping under the summary::marker (arrow) if it is a block element like a heading */
 }
 
 :where(summary) {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 /* Skip link for accessibility */
-:where(body, body > header) > :where(a:first-of-type[href='#main']) {
-  background: white;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%) translateY(-150%);
-  transition: transform 0.3s;
+:where(body, body > header) > :where(a:first-of-type[href="#main"]) {
+    background: white;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(-150%);
+    transition: transform 0.3s;
 }
-:where(body, body > header) > :where(a:first-of-type[href='#main']):focus {
-  transform: translateX(-50%) translateY(20%);
+:where(body, body > header) > :where(a:first-of-type[href="#main"]):focus {
+    transform: translateX(-50%) translateY(20%);
 }

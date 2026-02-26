@@ -61,113 +61,140 @@
    ========================================================================== */
 
 :where(:root) {
-  /* Size Scale */
-  /* Step -2: 11.1111px → 11.2556px */
-  --step--2: clamp(0.6944rem, 0.6919rem + 0.0129vw, 0.7035rem);
-  /* Step -1: 13.3333px → 15.0038px */
-  --step--1: clamp(0.8333rem, 0.8035rem + 0.1491vw, 0.9377rem);
-  /* Step 0: 16px → 20px */
-  --step-0: clamp(1rem, 0.9286rem + 0.3571vw, 1.25rem);
-  /* Step 1: 19.2px → 26.66px */
-  --step-1: clamp(1.2rem, 1.0668rem + 0.6661vw, 1.6663rem);
-  /* Step 2: 23.04px → 35.5378px */
-  --step-2: clamp(1.44rem, 1.2168rem + 1.1159vw, 2.2211rem);
-  /* Step 3: 27.648px → 47.3719px */
-  --step-3: clamp(1.728rem, 1.3758rem + 1.7611vw, 2.9607rem);
-  /* Step 4: 33.1776px → 63.1467px */
-  --step-4: clamp(2.0736rem, 1.5384rem + 2.6758vw, 3.9467rem);
-  /* Step 5: 39.8131px → 84.1745px */
-  --step-5: clamp(2.4883rem, 1.6962rem + 3.9608vw, 5.2609rem);
-  /* Step 6: 47.7757px → 112.2047px */
-  --step-6: clamp(2.986rem, 1.8355rem + 5.7526vw, 7.0128rem);
+    /* Size Scale */
+    /* @link https://utopia.fyi/type/calculator?c=360,18,1.2,1240,20,1.25,9,4,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+    /* Step -4: 8.6806px → 8.192px */
+    --step--4: clamp(0.512rem, 0.555rem + -0.0555vw, 0.5425rem);
+    /* Step -3: 10.4167px → 10.24px */
+    --step--3: clamp(0.64rem, 0.6556rem + -0.0201vw, 0.651rem);
+    /* Step -2: 12.5px → 12.8px */
+    --step--2: clamp(0.7813rem, 0.7736rem + 0.0341vw, 0.8rem);
+    /* Step -1: 15px → 16px */
+    --step--1: clamp(0.9375rem, 0.9119rem + 0.1136vw, 1rem);
+    /* Step 0: 18px → 20px */
+    --step-0: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem);
+    /* Step 1: 21.6px → 25px */
+    --step-1: clamp(1.35rem, 1.2631rem + 0.3864vw, 1.5625rem);
+    /* Step 2: 25.92px → 31.25px */
+    --step-2: clamp(1.62rem, 1.4837rem + 0.6057vw, 1.9531rem);
+    /* Step 3: 31.104px → 39.0625px */
+    --step-3: clamp(1.944rem, 1.7405rem + 0.9044vw, 2.4414rem);
+    /* Step 4: 37.3248px → 48.8281px */
+    --step-4: clamp(2.3328rem, 2.0387rem + 1.3072vw, 3.0518rem);
+    /* Step 5: 44.7898px → 61.0352px */
+    --step-5: clamp(2.7994rem, 2.384rem + 1.8461vw, 3.8147rem);
+    /* Step 6: 53.7477px → 76.2939px */
+    --step-6: clamp(3.3592rem, 2.7828rem + 2.5621vw, 4.7684rem);
+    /* Step 7: 64.4973px → 95.3674px */
+    --step-7: clamp(4.0311rem, 3.2418rem + 3.508vw, 5.9605rem);
+    /* Step 8: 77.3967px → 119.2093px */
+    --step-8: clamp(4.8373rem, 3.7682rem + 4.7514vw, 7.4506rem);
+    /* Step 9: 92.876px → 149.0116px */
+    --step-9: clamp(5.8048rem, 4.3695rem + 6.379vw, 9.3132rem);
 
-  /* Page widths */
-  --width-max: 80rem;
-  /* NOTE: Do not use ch or em here because it is applied to headings and we want an uniform width */
-  --width-prose: 50rem;
+    /*--rhythm-1: var(--step-0, 1rem);
+    --rhythm-2: var(--step-1, 2rem);
+    --rhythm-3: var(--step-2, 3rem);
+    --rhythm-4: var(--step-3, 4rem);*/
 
-  --pi-body: 0.68rem;
-  --pb-body: 1.68rem;
-  /* Fonts */
-  /* --font-stack-body: system-ui, sans-serif; */
-  /* --font-stack-heading: system-ui, sans-serif; */
-  /* --font-stack-code:
-    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; */
+    --width-prose: 50rem;
+    /*--width-max: (alias for width-body) ;*/
+    --width-body: calc(var(--width-prose) * 1.618); /* 80,98 */
+    --width-section: var(--width-body);
+    --width-featured: calc(var(--width-prose) / 1.618); /* 30.90 */
+    --width-card: calc(var(--width-prose) / 2.618); /* 19 */
+    /*--width-token: 30rem;*/
+
+    /* Open Props */
+    /*--radius-1: 2px;
+    --radius-2: 5px;
+    --radius-3: 1rem;
+    --radius-4: 2rem;
+    --radius-5: 4rem;
+    --radius-6: 8rem;*/
+
+    --radius-round: 1e5px;
+    --radius-body: 0rem;
+    --radius-section: 2rem;
+    --radius-prose: 2rem;
+    --radius-featured: 2rem;
+    --radius-card: 1rem;
+    --radius-token: 5px;
+
+    /* Open Props */
+    /*--border-size-1: 1px;
+    --border-size-2: 2px;
+    --border-size-3: 5px;
+    --border-size-4: 10px;
+    --border-size-5: 25px;*/
+
+    /*--thick-body: 5px;
+    --thick-section: 5px;
+    --thick-prose: 5px;
+    --thick-featured: 2px;
+    --thick-card: 2px;
+    --thick-token: 2px;*/
+
+    /*--border-style-body: solid;
+    --border-style-section: solid;
+    --border-style-prose: solid;
+    --border-style-featured: solid;
+    --border-style-card: solid;
+    --border-style-token: solid;*/
+
+    --px-body: var(--step--2, 0.8rem);
+    --px-section: var(--step--1, 1rem);
+    --px-prose: var(--step--1, 1rem);
+    --px-featured: var(--step--1, 1rem);
+    --px-card: var(--step--1, 1rem);
+    --px-token: var(--step--1, 1rem);
+
+    --py-body: var(--step-2, 0.8rem);
+    --py-section: var(--step-4, 3rem);
+    --py-prose: var(--step--1, 1rem);
+    --py-featured: var(--step--1, 1rem);
+    --py-card: var(--step--1, 1rem);
+    --py-token: var(--step--1, 1rem);
+
+    /*--gap-body: var(--step-0, 1.25rem);
+    --gap-section: var(--step-0, 1.25rem);
+    --gap-prose: var(--step--1, 1rem);
+    --gap-featured: var(--step--1, 1rem);
+    --gap-card: var(--step--1, 1rem);
+    --gap-token: var(--step--1, 1rem);*/
+
+    --flow-p: var(--step-0); /* Chrome: 1em | for ul, menu, dir, ol, dl, p */
+    --flow-h1: var(--step-0); /* Chrome: 0.67em */
+    --flow-h2: var(--step-0); /* Chrome: 0.83em */
+    --flow-h3: var(--step-0); /* Chrome: 1em */
+    --flow-h4: var(--step-0); /* Chrome: 1.33em */
+    --flow-h5: var(--step-0); /* Chrome: 1.67em */
+    --flow-h6: var(--step-0); /* Chrome: 2.33em */
+    --flow-hr: var(--step-0);
+    --flow-prose: var(--step-1); /* Chrome: 1em | for blockquote, figure */
+    --flow-section: var(--step-2);
+
+    --offset-list: 2rem; /* ul and ol left padding */
+    --offset-blockquote: 1rem;
+    --text-underline-offset: 0.15em;
+    --fit: cover;
 }
 
 /* 1.1 Base typography */
-body {
-  font-size: var(--step-0);
-  font-family: var(--font-stack-body, system-ui, sans-serif);
+:where(body) {
+    font-size: var(--step-0);
+    font-family: var(--font-stack-body, system-ui, sans-serif);
+    color: #100c08;
+    background-color: #fdfdfe;
 }
 
 /* 1.2 Headings */
 /* prettier-ignore */
-.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1 {
-  font-family: var(--font-stack-heading, system-ui, sans-serif);
-}
-/* prettier-ignore */
-.h8 { font-size: var(--step--4); } /* prettier-ignore */
-.h7 { font-size: var(--step--3); } /* prettier-ignore */
-h6, .h6 { font-size: var(--step--2); } /* prettier-ignore */
-h5, .h5, small, .small { font-size: var(--step--1); } /* prettier-ignore */
-h4, .h4 { font-size: var(--step-1); } /* prettier-ignore */
-h3, .h3 { font-size: var(--step-2); } /* prettier-ignore */
-h2, .h2 { font-size: var(--step-3); } /* prettier-ignore */
-h1, .h1 { font-size: var(--step-4); } /* prettier-ignore */
-.h0 { font-size: var(--step-5); } /* prettier-ignore */
-.h-1 { font-size: var(--step-6); } /* prettier-ignore */
-
-/* 1.3 Text elements */
-/* b = visual importance without semantic meaning */
-/* dl, dt, dd = description list, with terms and descriptions */
-
-body {
-  text-underline-offset: 0.15em;
+:where(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4) {
+    font-family: var(--font-stack-heading, system-ui, sans-serif);
 }
 
-:where(tt, code, kbd, pre, samp) {
-  /* Extends the background-color on the sides */
-  box-shadow:
-    0.1em 0 var(--code-bg, GrayText),
-    -0.1em 0 var(--code-bg, GrayText);
-}
-
-:where(mark) {
-  /* Extends the background-color on the sides */
-  box-shadow:
-    0.1em 0 var(--mark-bg, Mark),
-    -0.1em 0 var(--mark-bg, Mark);
-}
-
-/* 1.4 Lists */
-
-/* 1.5 Quotes & Blockquotes */
-:where(q) {
-  font-style: italic;
-}
-
-:where(blockquote) {
-  /* TODO: find a solution to indent because this gets overwritten by margin-inline: auto down below */
-  margin-inline: 1em;
-  padding-inline-start: 1em;
-  border-left: 1px solid currentColor;
-  font-style: italic;
-}
-
-:where(blockquote > footer) {
-  font-style: normal;
-  border: 0;
-}
-
-:where(blockquote cite) {
-  font-style: normal;
-}
-
-/* 1.6 Code blocks */
-/* TODO: pre code */
-/* TODO: code */
-/* TODO: kbd */
+/* Code Font */
 /* prettier-ignore */
 :where(tt, code, kbd, pre, samp, tt *, code *, kbd *, pre *, samp *) {
   font-family: var(
@@ -176,71 +203,91 @@ body {
   );
 }
 
+/* prettier-ignore */
+:where(.h8) { font-size: var(--step--4); } /* prettier-ignore */
+:where(.h7) { font-size: var(--step--3); } /* prettier-ignore */
+:where(h6, .h6) { font-size: var(--step--2); } /* prettier-ignore */
+:where(h5, .h5, small, .small) { font-size: var(--step--1); } /* prettier-ignore */
+:where(h4, .h4) { font-size: var(--step-1); } /* prettier-ignore */
+:where(h3, .h3) { font-size: var(--step-2); } /* prettier-ignore */
+:where(h2, .h2) { font-size: var(--step-3); } /* prettier-ignore */
+:where(h1, .h1) { font-size: var(--step-4); } /* prettier-ignore */
+:where(.h0) { font-size: var(--step-5); } /* prettier-ignore */
+:where(.h-1) { font-size: var(--step-6); } /* prettier-ignore */
+:where(.h-2) { font-size: var(--step-7); } /* prettier-ignore */
+:where(.h-3) { font-size: var(--step-8); } /* prettier-ignore */
+:where(.h-4) { font-size: var(--step-9); } /* prettier-ignore */
+
+/* 1.3 Text elements */
+/* b = visual importance without semantic meaning */
+/* dl, dt, dd = description list, with terms and descriptions */
+
+:where(body) {
+    text-underline-offset: var(--text-underline-offset, 0.15em);
+}
+
+:where(tt, code, kbd, pre, samp) {
+    /* Extends the background-color on the sides */
+    box-shadow:
+        0.1em 0 var(--code-bg, GrayText),
+        -0.1em 0 var(--code-bg, GrayText);
+}
+
+:where(mark) {
+    /* Extends the background-color on the sides */
+    box-shadow:
+        0.1em 0 var(--mark-bg, Mark),
+        -0.1em 0 var(--mark-bg, Mark);
+}
+
+/* 1.4 Lists */
+
+/* 1.5 Quotes & Blockquotes */
+:where(q, blockquote) {
+    font-style: italic;
+}
+
+:where(blockquote) {
+    /* TODO: find a solution to indent because this gets overwritten by margin-inline: auto down below */
+    margin-inline: 1em;
+    padding-inline-start: 1em;
+    border-left: 1px solid currentColor;
+}
+
+:where(blockquote > footer) {
+    font-style: normal;
+    border: 0;
+}
+
+:where(blockquote cite) {
+    font-style: normal;
+}
+
+/* 1.6 Code blocks */
+/* TODO: pre code */
+/* TODO: code */
+/* TODO: kbd */
+
 /* 1.7 Horizontal rules */
 
 /* 1.8 Other layout elements */
 /* TODO: details and summary and accordion */
 
 :where(nav li) {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 /* ==========================================================================
    #2 LAYOUT & SPACING
    ========================================================================== */
 
-/* 2.1 Page layout */
-body {
-  color: #100c08;
-  background-color: #fdfdfe;
-  padding-inline: var(--pi-body, 0.68rem);
-  padding-block: var(--pb-body, 1.68rem);
-}
-
-:where(.reset > :where(p, h1, h2, h3, h4, h5, h6)) {
-    margin-block-start: 0;
-}
-
-:where(.prose),
-:where(:where(main, header, footer, article, section, aside, form, fieldset, body):not([class])) {
-  max-inline-size: var(--width-max, 80rem);
-  margin-inline: auto;
-
-  & > :where(:where(p, h1, h2, h3, h4, h5, h6, ul, ol):first-child),
-  & > :where(div:not([class])) :where(:where(p, h1, h2, h3, h4, h5, h6, ul, ol):first-child),
-  & :where(hgroup) > * {
-    margin-block-start: 0;
-  }
-
-  /* Apply flow spacing inside sectioning elements */
-  /* TODO: Might need special adjustment for some elements */
-  /* prettier-ignore */
-  & > :where(* + *:not(:where(h1, h2, h3, h4, h5, h6, p, style, .prose, main, header, nav, footer, article, section, aside, form, fieldset))) {
-    margin-block-start: 0.8em;
-  }
-  & > :where(label + :where(input, select, textarea, button)) {
-    margin-block-start: 0.4em;
-  }
-}
-
-:where(.prose, article, aside, form, fieldset, body:not(:has(:where(main, article)))) {
-  max-inline-size: var(--width-prose, 50rem);
-}
-
-:where(p, h1, h2, h3, h4, h5, h6, dl, dt, dd, quote, blockquote, figcaption, details),
-:where(:not(nav)) > :where(ul, ol) {
-  max-inline-size: var(--width-prose, 50rem);
-  inline-size: 100%;
-  margin-inline: auto;
-}
-
 /* Try an nuke browser extensions added at the end of the body */
 /* TODO: Find a better way */
-body > footer ~ * {
-  all: revert;
-  margin: 0;
-  padding: 0;
-  display: none;
+body > footer ~ div {
+    all: revert;
+    margin: 0;
+    padding: 0;
+    display: none;
 }
 
 /* 2.2 Sectioning elements */
@@ -259,20 +306,21 @@ body > footer ~ * {
 
 /* 3.1 Images */
 :where(img, picture, video, svg) {
-  max-inline-size: max-content; /* Avoid oversized images */
-  margin-inline: auto; /* Center images by default */
-  inline-size: 100%;
-  block-size: auto; /* Maintain aspect ratio */
-  object-fit: var(--_object-fit, cover);
+    /* Center images by default */
+    /*margin-inline: auto;*/
+    /*inline-size: 100%;*/
+    /*inline-size: auto;*/
+    object-fit: var(--fit, cover);
 
-  :where(.with-icon &),
-  :where(&.icon) {
-    margin-inline: 0; /* Avoid inline margins on icons */
-  }
+    :where(.with-icon &),
+    :where(&.icon) {
+        margin-inline: 0; /* Avoid inline margins on icons */
+    }
 }
-:where(img[src*='.svg']) {
-  max-inline-size: 100%; /* Otherwise svg images are 0 width */
-}
+/* Otherwise svg images are 0 width */
+/*:where(img[src*=".svg"]) {
+    max-inline-size: 100%;
+}*/
 /* Comes from the frame layout.css - Seems like a good default */
 /* :where(img, picture, video, svg) {
   inline-size: 100%;
@@ -299,41 +347,31 @@ body > footer ~ * {
    ========================================================================== */
 
 /* 4.1 Form layout */
+/* prettier-ignore */
 :where(
-    a,
-    button,
-    .button,
-    input[type='submit'],
-    input[type='button'],
-    input[type='reset'],
-    [role='button'],
-    summary,
-    select,
-    input[type='checkbox'],
-    input[type='range'],
-    input[type='radio']
-  ):not(:disabled),
+    a,button,.button,input[type="submit"],input[type="button"],input[type="reset"],[role="button"],summary,select,input[type="checkbox"],input[type="range"],input[type="radio"]
+):not(:disabled),
 ::scroll-button(*):not(:disabled) {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 /* 4.2 Inputs & buttons */
 
 :where(button, input, textarea),
 ::scroll-button(*) {
-  background: inherit;
-  padding-inline: 0.3em;
-  transition:
-    background-color var(--animation-duration, 0.1s) linear,
-    border-color var(--animation-duration, 0.1s) linear,
-    color var(--animation-duration, 0.1s) linear,
-    box-shadow var(--animation-duration, 0.1s) linear,
-    transform var(--animation-duration, 0.1s) ease;
+    background: inherit;
+    padding-inline: 0.3em;
+    transition:
+        background-color var(--animation-duration, 0.1s) linear,
+        border-color var(--animation-duration, 0.1s) linear,
+        color var(--animation-duration, 0.1s) linear,
+        box-shadow var(--animation-duration, 0.1s) linear,
+        transform var(--animation-duration, 0.1s) ease;
 
-  &::placeholder {
-    color: inherit;
-    opacity: 0.5;
-  }
+    &::placeholder {
+        color: inherit;
+        opacity: 0.5;
+    }
 }
 
 /* 4.3 Select, radio, checkbox */

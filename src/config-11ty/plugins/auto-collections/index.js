@@ -1,10 +1,13 @@
-// TODO: import this dynamically from globalSettings probably
-const autoTagNameDico = {
-  pages: "pages",
-  articles: "articles",
-  people: "people",
-  organizations: "organizations",
-};
+import { getSelectedCollections } from "../cms-config/index.js";
+
+const selectedCollections = getSelectedCollections();
+
+// Build autoTagNameDico dynamically from selected collections
+// Each entry maps collectionName -> collectionName (used for tag matching)
+const autoTagNameDico = Object.fromEntries([
+  ["pages", "pages"], // always included
+  ...selectedCollections.map((col) => [col.name, col.name]),
+]);
 
 export const tags = (data) => {
   data.lang;

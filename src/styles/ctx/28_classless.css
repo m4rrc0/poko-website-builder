@@ -1,61 +1,65 @@
 /* Page Layout Rhythm */
 :root {
-  --rhythm-1: var(--step-0, 1rem);
-  --rhythm-2: var(--step-1, 2rem);
-  --rhythm-3: var(--step-2, 3rem);
-  --rhythm-4: var(--step-3, 4rem);
+    --rhythm-1: var(--step-0, 1rem);
+    --rhythm-2: var(--step-1, 2rem);
+    --rhythm-3: var(--step-2, 3rem);
+    --rhythm-4: var(--step-3, 4rem);
 }
 body {
-  padding-block: 0;
+    padding-block: 0;
 }
 :where(body > :first-child) {
-  padding-block-start: var(--rhythm-2);
+    padding-block-start: var(--rhythm-2);
 }
 :where(body > :last-child) {
-  padding-block-end: var(--rhythm-2);
+    padding-block-end: var(--rhythm-2);
 }
-:where(body > * + :where(main, article, section, aside, form, fieldset, header, footer)) {
-  /* margin-block-start: var(--margin-page-rhythm, 4rem); */
-  margin-block-start: var(--rhythm-4);
+:where(
+    body
+        > *
+        + :where(main, article, section, aside, form, fieldset, header, footer)
+) {
+    /* margin-block-start: var(--margin-page-rhythm, 4rem); */
+    margin-block-start: var(--rhythm-4);
 }
 
 /* Main Nav */
 :where(body > header) {
-  max-inline-size: var(--width-nav, var(--width-max, 80rem));
-  /* padding-block-end: var(--padding-nav, 2rem); */
-  padding-block-end: var(--rhythm-2);
-  border-block-end: var(--border-nav, 1px solid CurrentColor);
+    max-inline-size: var(--width-nav, var(--width-max, 80rem));
+    /* padding-block-end: var(--padding-nav, 2rem); */
+    padding-block-end: var(--rhythm-2);
+    /*border-block-end: var(--border-nav, 1px solid CurrentColor);*/
 }
 :where(body > header nav) {
-  display: flex;
-  flex-wrap: nowrap;
-  /* gap: 2rem; */
-  gap: var(--rhythm-2);
+    display: flex;
+    flex-wrap: nowrap;
+    /* gap: 2rem; */
+    gap: var(--rhythm-2);
 }
 :where(body > header nav ul) {
-  list-style: none;
-  padding-inline-start: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--gap-nav, var(--rhythm-1, 1rem));
+    list-style: none;
+    padding-inline-start: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap-nav, var(--rhythm-1, 1rem));
 }
 
 /* Main Footer */
 :where(body > footer) {
-  max-inline-size: var(--width-footer, var(--width-max, 80rem));
-  /* padding-block-start: var(--padding-footer, 2rem); */
-  padding-block-start: var(--rhythm-2);
-  border-block-start: var(--border-footer, 1px solid CurrentColor);
+    max-inline-size: var(--width-footer, var(--width-max, 80rem));
+    /* padding-block-start: var(--padding-footer, 2rem); */
+    padding-block-start: var(--rhythm-2);
+    /*border-block-start: var(--border-footer, 1px solid CurrentColor);*/
 }
 
 /* Animation & Movement */
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 *,
 *::before,
 *::after {
-  animation-duration: 0.1s;
-  transition-duration: 0.1s;
+    animation-duration: 0.1s;
+    transition-duration: 0.1s;
 }

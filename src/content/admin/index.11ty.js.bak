@@ -1,0 +1,16 @@
+class Admin {
+  async data() {
+    return {
+      // layout: null,
+      eleventyExcludeFromCollections: true,
+    };
+  }
+
+  async render({ content }) {
+    // const contentRendered = await this.renderTemplate(content, "njk,md");
+
+    return `HELLO`;
+  }
+}
+
+export default Admin;

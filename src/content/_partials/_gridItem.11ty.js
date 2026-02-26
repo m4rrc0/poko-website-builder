@@ -1,20 +1,5 @@
-class Grid {
-  // or `async data() {`
-  // or `get data() {`
-  // data() {
-  // 	return {
-  // 		name: "Ted",
-  // 		layout: "teds-rad-layout",
-  // 		// … other front matter keys
-  // 	};
-  // }
-
-  async render({ content }) {
-    // const contentRendered = await this.renderTemplate(content, "njk,md");
-    return `<div class="grid-item">
+export default function ({ content, class: className }) {
+  return `<div class="card grid-item ${className || ""}">
 ${content}
 </div>`;
-  }
 }
-
-export default Grid;

@@ -1,0 +1,47 @@
+/* ----- BORDER RADIUS ----- */
+:where(body) {
+    --radius: var(--radius-body);
+    --thickness: var(--thick-body);
+    border-radius: var(--radius-body);
+    border-width: var(--thick-body);
+    border-style: var(--border-style-body);
+}
+:where(section, .section) {
+    --radius: var(--radius-section);
+    --thickness: var(--thick-section);
+    overflow: hidden;
+    border-radius: var(--radius-section);
+    border-width: var(--thick-section);
+    border-style: var(--border-style-section);
+}
+:where(.prose) {
+    --radius: var(--radius-prose);
+    --thickness: var(--thick-prose);
+    overflow: hidden;
+    border-radius: var(--radius-prose);
+    border-width: var(--thick-prose);
+    border-style: var(--border-style-prose);
+}
+:where(.featured) {
+    --radius: var(--radius-featured);
+    --thickness: var(--thick-featured);
+    overflow: hidden;
+    border-radius: var(--radius-featured);
+    border-width: var(--thick-featured);
+    border-style: var(--border-style-featured);
+}
+:where(.card, :where(section, .section, .layout) article) {
+    --radius: var(--radius-card);
+    --thickness: var(--thick-card);
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    border-width: var(--thick-card);
+    border-style: var(--border-style-card);
+} /* prettier-ignore */
+:where(.token, button, .button,  input[type="submit"], input[type="button"], input[type="reset"], [role="button"]) {
+    --radius: var(--radius-token);
+    --thickness: var(--thick-token);
+    border-radius: var(--radius-token);
+    border-width: var(--thick-token);
+    border-style: var(--border-style-token);
+}

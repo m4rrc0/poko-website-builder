@@ -49,8 +49,8 @@ export default async function (data) {
   const pageFooter = data.pageFooter;
 
   let footerContent = pageFooter
-    ? await partialSc(pageFooter, { ...data })
-    : await partialSc("_page-footer", { ...data });
+    ? await partialSc.call({ ...data }, pageFooter, { ...data })
+    : await partialSc.call({ ...data }, "_page-footer", { ...data });
 
   if (footerContent && !hasTopLevelFooter(footerContent)) {
     footerContent = `<footer>${footerContent}</footer>`;

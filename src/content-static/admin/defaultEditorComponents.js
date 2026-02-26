@@ -11,6 +11,12 @@ const inlineToMultiline = (inline) => {
   return inline?.replace(/\\n/g, "\n")?.replace(/\\"/g, '"');
 };
 
+const njkAttrsStringFromObj = (obj) =>
+  Object.entries(obj)
+    .filter(([key, value]) => !!value)
+    .map(([key, value]) => `${key}="${value}"`)
+    .join(", ");
+
 function toQuotableString(text) {
   return text
     .replace(/\\/g, "\\\\") // escape backslashes first
@@ -347,6 +353,373 @@ const imageFields = [
   },
 ];
 
+export const link = {
+  id: "link",
+  label: "Link",
+  icon: "link",
+  dialog: true,
+  summary:
+    "🔗 {{text | truncate(20)}}{{text | ternary(': ', '')}}{{linkType.url | truncate(30)}}",
+  fields: [
+    {
+      name: "text",
+      label: "Text",
+      widget: "string",
+      required: false,
+      hint: "Optional text to display for the link",
+    },
+    {
+      name: "linkType",
+      label: "Link Type",
+      widget: "object",
+      required: true,
+      types: [
+        {
+          name: "pages",
+          label: "Page",
+          fields: [
+            {
+              name: "url",
+              label: "Select Page",
+              widget: "relation",
+              collection: "pages",
+              required: true,
+            },
+          ],
+        },
+        ...allCollections.map((collection) => ({
+          name: collection.name,
+          label:
+            collection.label_singular || collection.label || collection.name,
+          fields: [
+            {
+              name: "url",
+              label:
+                "Select " + collection.label_singular ||
+                collection.label ||
+                collection.name,
+              widget: "relation",
+              collection: collection.name,
+              required: true,
+            },
+          ],
+        })),
+        {
+          name: "external",
+          label: "External Link",
+          fields: [
+            {
+              name: "url",
+              label: "URL",
+              widget: "string",
+              required: true,
+              default: "https://",
+            },
+          ],
+        },
+        {
+          name: "email",
+          label: "Email",
+          fields: [
+            {
+              name: "url",
+              label: "Email address",
+              widget: "string",
+              required: true,
+            },
+            {
+              name: "advanced",
+              label: "Advanced options",
+              widget: "object",
+              required: false,
+              fields: [
+                {
+                  name: "cc",
+                  label: "CC",
+                  widget: "string",
+                  required: false,
+                },
+                {
+                  name: "bcc",
+                  label: "BCC",
+                  widget: "string",
+                  required: false,
+                },
+                {
+                  name: "subject",
+                  label: "Email subject",
+                  widget: "string",
+                  required: false,
+                },
+                {
+                  name: "body",
+                  label: "Body",
+                  widget: "text",
+                  required: false,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: "file",
+          label: "File",
+          fields: [
+            {
+              name: "url",
+              label: "Select File",
+              widget: "file",
+              required: true,
+              // TODO: ⚠️ Overriding media_folder and public_folder does not work!
+              media_folder: `/${CONTENT_DIR}/_files`,
+              public_folder: "/_files",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "otherAttrs",
+      label: "Other raw attributes",
+      widget: "hidden",
+      required: false,
+    },
+  ],
+  pattern: /{% link\s+(.*?)\s*%}/,
+  fromBlock: function (match) {
+    const argumentsString = match[1] || "";
+    const text = extractQuotedString(argumentsString, "text") || "";
+    const url = extractQuotedString(argumentsString, "url") || "";
+    let linkType = extractQuotedString(argumentsString, "linkType") || "";
+    const collection = extractQuotedString(argumentsString, "collection") || "";
+    const cc = extractQuotedString(argumentsString, "cc") || "";
+    const bcc = extractQuotedString(argumentsString, "bcc") || "";
+    const subject = extractQuotedString(argumentsString, "subject") || "";
+    let body = extractQuotedString(argumentsString, "body") || "";
+    body = fromQuotableString(body);
+
+    // Clean up otherAttrs by removing a leading comma and the attributes we've already parsed
+    const otherAttrs = argumentsString
+      .replace(/^\s*,\s*/, "")
+      .replace(
+        /(text|url|linkType|collection|cc|bcc|subject|body)="[^"]*"(?:\s*,)?/g,
+        "",
+      )
+      .trim();
+
+    function isFileUrl(urlString) {
+      try {
+        // Use a dummy base for relative URLs
+        const url = new URL(urlString, "http://x");
+        const pathname = url.pathname;
+
+        if (pathname.endsWith("/")) return false;
+
+        return /\.\w{2,5}$/i.test(pathname);
+      } catch {
+        return false;
+      }
+    }
+
+    switch (true) {
+      case !!linkType:
+        break;
+      case url.startsWith("http") || url.startsWith("www."):
+        linkType = "external";
+        break;
+      case /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(url):
+        linkType = "email";
+        break;
+      case isFileUrl(url):
+        linkType = "file";
+        break;
+      default:
+        linkType = "external";
+    }
+
+    if (linkType == "internal") {
+      linkType = collection || "all";
+    }
+
+    let advanced;
+
+    if (cc || bcc || subject || body) {
+      advanced = {
+        cc,
+        bcc,
+        subject,
+        body,
+      };
+    }
+
+    return {
+      text: text || "",
+      linkType: {
+        type: linkType,
+        url,
+        ...(linkType === "email" && advanced ? { advanced } : {}),
+      },
+      otherAttrs,
+    };
+  },
+
+  toBlock: function (data) {
+    const text = data?.text || "";
+    let linkType = data?.linkType?.type;
+    const url = data?.linkType?.url;
+    const advanced = data?.linkType?.advanced || {};
+    const { cc, bcc, subject, body } = advanced;
+    const otherAttrs = data?.otherAttrs;
+    const otherAttrsString = otherAttrs?.trim() ? `, ${otherAttrs}` : "";
+
+    if (linkType === "external" || linkType === "file") {
+      return `{% link url="${url}", text="${text}", linkType="${linkType}"${otherAttrsString} %}`;
+    } else if (linkType === "email") {
+      const attrsStr = njkAttrsStringFromObj({
+        url,
+        text,
+        linkType,
+        cc,
+        bcc,
+        subject,
+        body: toQuotableString(body),
+      });
+
+      return `{% link ${attrsStr}${otherAttrsString} %}`;
+    } else {
+      const collection = linkType;
+      linkType = "internal";
+      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}"${otherAttrsString} %}`;
+    }
+  },
+
+  toPreview: (data) => `<span>LINK</span>`,
+};
+
+export const icon = {
+  id: "icon",
+  label: "Icon",
+  icon: "triangle_circle",
+  dialog: true,
+  summary: "🔅 {{icon.iconLib.iconName}}",
+  fields: [
+    {
+      name: "icon",
+      label: "Icon",
+      widget: "object",
+      required: true,
+      collapsed: true,
+      summary:
+        "{{iconLib.type}} : {{iconLib.iconName}}  {{size}} {{class}} {{otherAttrs}}",
+      hint: "Choose between [Simple Icons](https://simpleicons.org/) or [Tabler Icons](https://tabler.io/icons)",
+      fields: [
+        {
+          name: "iconLib",
+          label: "Icon Library",
+          widget: "object",
+          required: true,
+          collapsed: false,
+          // summary:
+          //   "'{{name}}' ({{type}}): {{weights}} {{styles}} {{subsets}}",
+          hint: "Choose between ",
+          types: [
+            ...iconLibs.map((libName) => ({
+              name: libName,
+              label: libName,
+              widget: "object",
+              required: true,
+              collapsed: "auto",
+              fields: [
+                {
+                  name: "iconName",
+                  label: "Icon Name",
+                  widget: "select",
+                  required: true,
+                  options: iconLists[libName],
+                  ...(libName === "simple" && {
+                    hint: "Select an icon from https://simpleicons.org/",
+                  }),
+                  ...((libName === "tablerOutline" ||
+                    libName === "tablerFilled") && {
+                    hint: "Select an icon from https://tabler.io/icons",
+                  }),
+                },
+              ],
+            })),
+          ],
+        },
+        { name: "size", label: "Size", widget: "string", required: false },
+        { name: "class", label: "Class", widget: "string", required: false },
+        {
+          name: "otherAttrs",
+          label: "Other raw attributes",
+          widget: "string",
+          required: false,
+        },
+      ],
+    },
+  ],
+  // Match example: {% icon "tablerOutline:layout-bottombar", width="50", height="50", class="", ...other attrs %}
+  pattern: /{% icon\s+"([^"]+)"(.*?)\s*%}/,
+  fromBlock: function (match) {
+    const iconId = match[1] || "";
+    let [iconLib = "", iconName = ""] = iconId.split(":");
+    if (!iconName) {
+      iconName = iconLib;
+      for (const libName of iconLibs) {
+        if (iconLists[libName].includes(iconName)) {
+          iconLib = libName;
+          break;
+        }
+      }
+    }
+    const argumentsString = match[2] || "";
+
+    // Extract named values from the remaining string
+    const size = extractQuotedString(argumentsString, "width") || "";
+    const className = extractQuotedString(argumentsString, "class") || "";
+
+    // Clean up otherAttrs by removing a leading comma and the attributes we've already parsed
+    const otherAttrs = argumentsString
+      .replace(/^\s*,\s*/, "")
+      .replace(/(width|height|class)="[^"]*"(?:\s*,)?/g, "")
+      .trim();
+
+    return {
+      icon: {
+        iconLib: { type: iconLib, iconName: iconName },
+        // iconName,
+        size,
+        class: className,
+        otherAttrs,
+      },
+    };
+  },
+  toBlock: function (data) {
+    const iconLib = data?.icon?.iconLib?.type;
+    const iconName = data?.icon?.iconLib?.iconName;
+    const size = data?.icon?.size;
+    const className = data?.icon?.class;
+    const otherAttrs = data?.icon?.otherAttrs;
+
+    const parts = [`"${iconLib}:${iconName}"`];
+
+    if (size) {
+      parts.push(`width="${size}"`, `height="${size}"`);
+    }
+    if (className) {
+      parts.push(`class="${className}"`);
+    }
+    if (otherAttrs) {
+      parts.push(otherAttrs);
+    }
+
+    return `{% icon ${parts.join(", ")} %}`;
+  },
+
+  toPreview: (data) => `<span>ICON</span>`,
+};
+
 export const imageShortcode = {
   id: "imageShortcode",
   label: "Image",
@@ -507,9 +880,7 @@ export const imageShortcode = {
       ...(wrapper && { wrapper }),
       // ...(imgAttrs && { imgAttrs }),
     };
-    const attrsStr = Object.entries(attrs)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(", ");
+    const attrsStr = njkAttrsStringFromObj(attrs);
 
     return `{% image ${attrsStr}${imgAttrs ? ", " + imgAttrs : ""} %}`;
   },
@@ -1257,375 +1628,6 @@ ${content}
 //   },
 // };
 
-export const icon = {
-  id: "icon",
-  label: "Icon",
-  icon: "triangle_circle",
-  dialog: true,
-  summary: "🔅 {{icon.iconLib.iconName}}",
-  fields: [
-    {
-      name: "icon",
-      label: "Icon",
-      widget: "object",
-      required: true,
-      collapsed: true,
-      summary:
-        "{{iconLib.type}} : {{iconLib.iconName}}  {{size}} {{class}} {{otherAttrs}}",
-      hint: "Choose between [Simple Icons](https://simpleicons.org/) or [Tabler Icons](https://tabler.io/icons)",
-      fields: [
-        {
-          name: "iconLib",
-          label: "Icon Library",
-          widget: "object",
-          required: true,
-          collapsed: false,
-          // summary:
-          //   "'{{name}}' ({{type}}): {{weights}} {{styles}} {{subsets}}",
-          hint: "Choose between ",
-          types: [
-            ...iconLibs.map((libName) => ({
-              name: libName,
-              label: libName,
-              widget: "object",
-              required: true,
-              collapsed: "auto",
-              fields: [
-                {
-                  name: "iconName",
-                  label: "Icon Name",
-                  widget: "select",
-                  required: true,
-                  options: iconLists[libName],
-                  ...(libName === "simple" && {
-                    hint: "Select an icon from https://simpleicons.org/",
-                  }),
-                  ...((libName === "tablerOutline" ||
-                    libName === "tablerFilled") && {
-                    hint: "Select an icon from https://tabler.io/icons",
-                  }),
-                },
-              ],
-            })),
-          ],
-        },
-        { name: "size", label: "Size", widget: "string", required: false },
-        { name: "class", label: "Class", widget: "string", required: false },
-        {
-          name: "otherAttrs",
-          label: "Other raw attributes",
-          widget: "string",
-          required: false,
-        },
-      ],
-    },
-  ],
-  // Match example: {% icon "tablerOutline:layout-bottombar", width="50", height="50", class="", ...other attrs %}
-  pattern: /{% icon\s+"([^"]+)"(.*?)\s*%}/,
-  fromBlock: function (match) {
-    const iconId = match[1] || "";
-    let [iconLib = "", iconName = ""] = iconId.split(":");
-    if (!iconName) {
-      iconName = iconLib;
-      for (const libName of iconLibs) {
-        if (iconLists[libName].includes(iconName)) {
-          iconLib = libName;
-          break;
-        }
-      }
-    }
-    const argumentsString = match[2] || "";
-
-    // Extract named values from the remaining string
-    const size = extractQuotedString(argumentsString, "width") || "";
-    const className = extractQuotedString(argumentsString, "class") || "";
-
-    // Clean up otherAttrs by removing a leading comma and the attributes we've already parsed
-    const otherAttrs = argumentsString
-      .replace(/^\s*,\s*/, "")
-      .replace(/(width|height|class)="[^"]*"(?:\s*,)?/g, "")
-      .trim();
-
-    return {
-      icon: {
-        iconLib: { type: iconLib, iconName: iconName },
-        // iconName,
-        size,
-        class: className,
-        otherAttrs,
-      },
-    };
-  },
-  toBlock: function (data) {
-    const iconLib = data?.icon?.iconLib?.type;
-    const iconName = data?.icon?.iconLib?.iconName;
-    const size = data?.icon?.size;
-    const className = data?.icon?.class;
-    const otherAttrs = data?.icon?.otherAttrs;
-
-    const parts = [`"${iconLib}:${iconName}"`];
-
-    if (size) {
-      parts.push(`width="${size}"`, `height="${size}"`);
-    }
-    if (className) {
-      parts.push(`class="${className}"`);
-    }
-    if (otherAttrs) {
-      parts.push(otherAttrs);
-    }
-
-    return `{% icon ${parts.join(", ")} %}`;
-  },
-
-  toPreview: (data) => `<span>ICON</span>`,
-};
-
-export const link = {
-  id: "link",
-  label: "Link",
-  icon: "link",
-  dialog: true,
-  summary:
-    "🔗 {{text | truncate(20)}}{{text | ternary(': ', '')}}{{linkType.url | truncate(30)}}",
-  fields: [
-    {
-      name: "text",
-      label: "Text",
-      widget: "string",
-      required: false,
-      hint: "Optional text to display for the link",
-    },
-    {
-      name: "linkType",
-      label: "Link Type",
-      widget: "object",
-      required: true,
-      types: [
-        {
-          name: "pages",
-          label: "Page",
-          fields: [
-            {
-              name: "url",
-              label: "Select Page",
-              widget: "relation",
-              collection: "pages",
-              required: true,
-            },
-          ],
-        },
-        ...allCollections.map((collection) => ({
-          name: collection.name,
-          label:
-            collection.label_singular || collection.label || collection.name,
-          fields: [
-            {
-              name: "url",
-              label:
-                "Select " + collection.label_singular ||
-                collection.label ||
-                collection.name,
-              widget: "relation",
-              collection: collection.name,
-              required: true,
-            },
-          ],
-        })),
-        {
-          name: "external",
-          label: "External Link",
-          fields: [
-            {
-              name: "url",
-              label: "URL",
-              widget: "string",
-              required: true,
-              default: "https://",
-            },
-          ],
-        },
-        {
-          name: "email",
-          label: "Email",
-          fields: [
-            {
-              name: "url",
-              label: "Email address",
-              widget: "string",
-              required: true,
-            },
-            {
-              name: "advanced",
-              label: "Advanced options",
-              widget: "object",
-              required: false,
-              fields: [
-                {
-                  name: "cc",
-                  label: "CC",
-                  widget: "string",
-                  required: false,
-                },
-                {
-                  name: "bcc",
-                  label: "BCC",
-                  widget: "string",
-                  required: false,
-                },
-                {
-                  name: "subject",
-                  label: "Email subject",
-                  widget: "string",
-                  required: false,
-                },
-                {
-                  name: "body",
-                  label: "Body",
-                  widget: "text",
-                  required: false,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          name: "file",
-          label: "File",
-          fields: [
-            {
-              name: "url",
-              label: "Select File",
-              widget: "file",
-              required: true,
-              // TODO: ⚠️ Overriding media_folder and public_folder does not work!
-              media_folder: `/${CONTENT_DIR}/_files`,
-              public_folder: "/_files",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "otherAttrs",
-      label: "Other raw attributes",
-      widget: "hidden",
-      required: false,
-    },
-  ],
-  pattern: /{% link\s+(.*?)\s*%}/,
-  fromBlock: function (match) {
-    const argumentsString = match[1] || "";
-    const text = extractQuotedString(argumentsString, "text") || "";
-    const url = extractQuotedString(argumentsString, "url") || "";
-    let linkType = extractQuotedString(argumentsString, "linkType") || "";
-    const collection = extractQuotedString(argumentsString, "collection") || "";
-    const cc = extractQuotedString(argumentsString, "cc") || "";
-    const bcc = extractQuotedString(argumentsString, "bcc") || "";
-    const subject = extractQuotedString(argumentsString, "subject") || "";
-    let body = extractQuotedString(argumentsString, "body") || "";
-    body = fromQuotableString(body);
-
-    // Clean up otherAttrs by removing a leading comma and the attributes we've already parsed
-    const otherAttrs = argumentsString
-      .replace(/^\s*,\s*/, "")
-      .replace(
-        /(text|url|linkType|collection|cc|bcc|subject|body)="[^"]*"(?:\s*,)?/g,
-        "",
-      )
-      .trim();
-
-    function isFileUrl(urlString) {
-      try {
-        // Use a dummy base for relative URLs
-        const url = new URL(urlString, "http://x");
-        const pathname = url.pathname;
-
-        if (pathname.endsWith("/")) return false;
-
-        return /\.\w{2,5}$/i.test(pathname);
-      } catch {
-        return false;
-      }
-    }
-
-    switch (true) {
-      case !!linkType:
-        break;
-      case url.startsWith("http") || url.startsWith("www."):
-        linkType = "external";
-        break;
-      case /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(url):
-        linkType = "email";
-        break;
-      case isFileUrl(url):
-        linkType = "file";
-        break;
-      default:
-        linkType = "external";
-    }
-
-    if (linkType == "internal") {
-      linkType = collection || "all";
-    }
-
-    let advanced;
-
-    if (cc || bcc || subject || body) {
-      advanced = {
-        cc,
-        bcc,
-        subject,
-        body,
-      };
-    }
-
-    return {
-      text: text || "",
-      linkType: {
-        type: linkType,
-        url,
-        ...(linkType === "email" && advanced ? { advanced } : {}),
-      },
-      otherAttrs,
-    };
-  },
-
-  toBlock: function (data) {
-    const text = data?.text || "";
-    let linkType = data?.linkType?.type;
-    const url = data?.linkType?.url;
-    const advanced = data?.linkType?.advanced || {};
-    const { cc, bcc, subject, body } = advanced;
-    const otherAttrs = data?.otherAttrs;
-    const otherAttrsString = otherAttrs?.trim() ? `, ${otherAttrs}` : "";
-
-    if (linkType === "external" || linkType === "file") {
-      return `{% link url="${url}", text="${text}", linkType="${linkType}"${otherAttrsString} %}`;
-    } else if (linkType === "email") {
-      const attrsStr = Object.entries({
-        url,
-        text,
-        linkType,
-        cc,
-        bcc,
-        subject,
-        body: toQuotableString(body),
-      })
-        .map(([key, value]) => `${key}="${value}"`)
-        .join(", ");
-
-      return `{% link ${attrsStr}${otherAttrsString} %}`;
-    } else {
-      const collection = linkType;
-      linkType = "internal";
-      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}"${otherAttrsString} %}`;
-    }
-  },
-
-  toPreview: (data) => `<span>LINK</span>`,
-};
-
 export const sectionGrid = {
   id: "sectionGrid",
   label: "Grid Section",
@@ -1768,10 +1770,10 @@ export const sectionGrid = {
     const grid = extractWithNunjucksTag(sectionInner, "grid");
     const { extracted: gridAttributes } = extractAttributes(grid.attributes, [
       "type",
-      "columns",
       "gap",
       "class",
       "widthWrap",
+      "columns",
     ]);
 
     // Extract all gridItems with their attributes
@@ -1795,10 +1797,10 @@ export const sectionGrid = {
   toBlock: function (data) {
     const {
       type,
-      columns,
       gap,
       class: className,
       widthWrap,
+      columns,
     } = data?.options || {};
 
     const headerContent = data?.header?.content
@@ -1827,10 +1829,7 @@ ${item}
       : "";
 
     const gridAttrs = { type, columns, gap, class: className, widthWrap };
-    const gridAttrsStr = Object.entries(gridAttrs)
-      .filter(([key, value]) => !!value)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(", ");
+    const gridAttrsStr = njkAttrsStringFromObj(gridAttrs);
     const gridContent = data?.items?.length
       ? `{% grid ${gridAttrsStr} %}
 ${gridItemsStr}
@@ -1912,11 +1911,11 @@ export const sectionTwoColumns = {
       hint: "Manually select a layout and related options",
       widget: "object",
       required: false,
-      collapsed: "auto",
+      collapsed: true,
       types: [
         {
           name: "switcher",
-          label: "Symmetrical",
+          label: "Symmetrical Columns",
           widget: "object",
           required: false,
           fields: [
@@ -1945,7 +1944,7 @@ export const sectionTwoColumns = {
         },
         {
           name: "fixedFluid",
-          label: "Asymmetrical",
+          label: "Asymmetrical Columns",
           widget: "object",
           required: false,
           collapsed: true,
@@ -1956,6 +1955,7 @@ export const sectionTwoColumns = {
               widget: "select",
               hint: "The position of the small column.",
               required: true,
+              default: "fixedLeft",
               options: [
                 { value: "fixedLeft", label: "Left" },
                 { value: "fixedRight", label: "Right" },
@@ -1970,9 +1970,9 @@ export const sectionTwoColumns = {
             },
             {
               name: "widthFluidMin",
-              label: "Big Column Min Width",
+              label: "Wide Column Min Width",
               widget: "string",
-              hint: "The minimum width of the big column. (e.g. 50% [default], 30rem, 800px, 0px [no wrap])",
+              hint: "The minimum width of the wide column. (e.g. 50% [default], 30rem, 800px, 0px [no wrap])",
               required: false,
             },
             {
@@ -2003,7 +2003,7 @@ export const sectionTwoColumns = {
     const footer = extractWithNunjucksTag(sectionInner, "sectionFooter");
     const twoColumns = extractWithNunjucksTag(sectionInner, "twoColumns");
     const { extracted: twoColumnsAttributes } = extractAttributes(
-      twoColumns?.attributes || "",
+      twoColumns?.attributes,
       [
         "type",
         "gap",
@@ -2024,38 +2024,23 @@ export const sectionTwoColumns = {
     const itemLeft = columnItems[0]?.content || "";
     const itemRight = columnItems[1]?.content || "";
 
-    // Map the type to the options structure
-    const optionsType = twoColumnsAttributes?.type || "switcher";
-    let options;
-    if (optionsType === "fixedFluid") {
-      options = {
-        type: "fixedFluid",
-        fixedSide: twoColumnsAttributes?.fixedSide,
-        widthFixed: twoColumnsAttributes?.widthFixed,
-        widthFluidMin: twoColumnsAttributes?.widthFluidMin,
-        gap: twoColumnsAttributes?.gap,
-        class: twoColumnsAttributes?.class,
-      };
-    } else {
-      options = {
-        type: "switcher",
-        widthWrap: twoColumnsAttributes?.widthWrap,
-        gap: twoColumnsAttributes?.gap,
-        class: twoColumnsAttributes?.class,
-      };
-    }
-
     return {
       header: header ? { content: header.content } : undefined,
       footer: footer ? { content: footer.content } : undefined,
       items: { itemLeft, itemRight },
-      options,
+      options: twoColumnsAttributes,
     };
   },
   toBlock: function (data) {
-    const options = data?.options || {};
-    const optionsType = options?.type || "switcher";
-    const { gap, class: className } = options;
+    const {
+      type,
+      gap,
+      class: className,
+      widthWrap,
+      widthFixed,
+      widthFluidMin,
+      fixedSide,
+    } = data?.options || {};
 
     const headerContent = data?.header?.content
       ? `{% sectionHeader %}
@@ -2081,34 +2066,26 @@ ${data.items.itemRight}
 {% endtwoColumnsItem %}`
       : "";
 
+    // TODO: Check what happens when one of the items is empty
     const columnItemsStr = [itemLeftStr, itemRightStr]
       .filter(Boolean)
       .join("\n");
 
     // Build twoColumns attributes based on layout type
-    let colAttrs;
-    if (optionsType === "fixedFluid") {
-      const { fixedSide, widthFixed, widthFluidMin } = options;
-      colAttrs = {
-        type: "fixedFluid",
-        fixedSide,
-        widthFixed,
-        widthFluidMin,
-        gap,
-        class: className,
-      };
-    } else {
-      const { widthWrap } = options;
-      colAttrs = { type: "switcher", widthWrap, gap, class: className };
-    }
+    const twoColumnsAttrs = {
+      type,
+      gap,
+      class: className,
+      widthWrap,
+      widthFixed,
+      widthFluidMin,
+      fixedSide,
+    };
 
-    const colAttrsStr = Object.entries(colAttrs)
-      .filter(([key, value]) => !!value)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join(", ");
+    const twoColumnsAttrsStr = njkAttrsStringFromObj(twoColumnsAttrs);
 
     const twoColumnsContent = columnItemsStr
-      ? `{% twoColumns ${colAttrsStr} %}
+      ? `{% twoColumns ${twoColumnsAttrsStr} %}
 ${columnItemsStr}
 {% endtwoColumns %}`
       : "";
@@ -2120,6 +2097,355 @@ ${footerContent}
 {% endsectionTwoColumns %}`;
   },
   toPreview: (data) => `<span>TWO COLUMNS SECTION</span>`,
+};
+
+export const sectionCollection = {
+  id: "sectionCollection",
+  label: "Collection Section",
+  icon: "grid_view",
+  fields: [
+    {
+      name: "header",
+      label: "Section Header",
+      widget: "object",
+      required: false,
+      summary: "{{content | truncate(50)}}",
+      collapsed: true,
+      fields: [
+        {
+          name: "content",
+          label: "Header Content",
+          widget: "markdown",
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "collections",
+      label: "Select whole collections",
+      widget: "select",
+      required: true,
+      multiple: false,
+      dropdown_threshold: 12,
+      default: ["all"],
+      options: [
+        { value: "all", label: "All Collections" },
+        ...allCollections.map((collection) => ({
+          value: collection.name,
+          label:
+            collection.label_singular || collection.label || collection.name,
+        })),
+      ],
+    },
+    {
+      name: "tags",
+      label: "Select Tags",
+      widget: "relation",
+      collection: "dataFiles",
+      file: "translatedData",
+      value_field: "tagsList.*.slug",
+      // display_fields: ["tagsList.*.name"],
+      required: false,
+      multiple: false,
+    },
+    {
+      name: "footer",
+      label: "Section Footer",
+      widget: "object",
+      required: false,
+      summary: "{{content | truncate(50)}}",
+      collapsed: true,
+      fields: [
+        {
+          name: "content",
+          label: "Footer Content",
+          widget: "markdown",
+          required: false,
+        },
+      ],
+    },
+    {
+      name: "sortOptions",
+      label: "Sort Options",
+      widget: "object",
+      fields: [
+        {
+          name: "sort",
+          label: "Sort",
+          widget: "select",
+          required: false,
+          multiple: false,
+          default: "asc",
+          options: [
+            { value: "asc", label: "ASC" },
+            { value: "desc", label: "DESC" },
+          ],
+        },
+        {
+          name: "sortBy",
+          label: "Sort By",
+          widget: "select",
+          required: false,
+          multiple: false,
+          default: "date",
+          options: [
+            { value: "date", label: "Date" },
+            { value: "data.title", label: "Title" },
+          ],
+        },
+      ],
+    },
+    {
+      name: "filterOptions",
+      label: "Filters Options",
+      hint: "Select filters",
+      widget: "list",
+      required: false,
+      collapsed: "auto",
+      types: [
+        {
+          name: "filterFirst",
+          label: "Filter First",
+          hint: "Display first x items",
+          widget: "object",
+          fields: [
+            {
+              name: "count",
+              label: "Count",
+              widget: "number",
+              required: true,
+              default: 1,
+            },
+          ],
+        },
+        {
+          name: "filterLast",
+          label: "Filter Last",
+          hint: "Display last x items",
+          widget: "object",
+          fields: [
+            {
+              name: "count",
+              label: "Count",
+              widget: "number",
+              required: true,
+              default: 1,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "layoutOptions",
+      label: "Layout Options",
+      hint: "Manually select a layout and related options",
+      widget: "object",
+      required: false,
+      collapsed: "auto",
+      types: [
+        {
+          name: "switcher",
+          label: "Switcher",
+          widget: "object",
+          required: false,
+          fields: [
+            {
+              name: "widthWrap",
+              label: "Width Wrap",
+              widget: "string",
+              hint: "Section width to switch from side by side to vertical display. (e.g. var(--width-prose) [default], 30rem, 800px, 0px [no wrap])",
+              required: false,
+            },
+            {
+              name: "gap",
+              label: "Gap",
+              widget: "string",
+              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+              required: false,
+            },
+            {
+              name: "class",
+              label: "Class Names",
+              widget: "string",
+              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+              required: false,
+            },
+          ],
+        },
+        {
+          name: "grid-fluid",
+          // label: "Fluid Grid: Fluid sized blocks wrap automatically",
+          label: "Fluid Grid",
+          widget: "object",
+          required: false,
+          fields: [
+            {
+              name: "columns",
+              label: "Columns",
+              widget: "number",
+              hint: "The number of columns on large screens [note: can be overwritten with a custom variable widthColumnMin defining a min column size in CSS units]",
+              required: false,
+              default: 5,
+            },
+            {
+              name: "gap",
+              label: "Gap",
+              widget: "string",
+              hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+              required: false,
+            },
+            {
+              name: "class",
+              label: "Class Names",
+              widget: "string",
+              hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+              required: false,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  pattern:
+    /^{%\s*sectionCollection\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsectionCollection\s*%}$/gm,
+  fromBlock: function (match) {
+    const sectionInner = match[2];
+
+    const header = extractWithNunjucksTag(sectionInner, "sectionHeader");
+    const footer = extractWithNunjucksTag(sectionInner, "sectionFooter");
+    const collection = extractWithNunjucksTag(sectionInner, "collection");
+    const { extracted: collectionAttributes } = extractAttributes(
+      collection?.attributes || "",
+      [
+        "collection",
+        "tag",
+        "sort",
+        "sortBy",
+        "filterFirst",
+        "filterLast",
+        "type",
+        "columns",
+        "widthWrap",
+        "gap",
+        "class",
+      ],
+    );
+
+    // Rebuild filterOptions list from filterFirst / filterLast attributes
+    const filterOptions = [];
+    if (collectionAttributes?.filterFirst) {
+      filterOptions.push({
+        type: "filterFirst",
+        count: Number(collectionAttributes.filterFirst),
+      });
+    }
+    if (collectionAttributes?.filterLast) {
+      filterOptions.push({
+        type: "filterLast",
+        count: Number(collectionAttributes.filterLast),
+      });
+    }
+
+    // Rebuild layoutOptions from layout attributes
+    const layoutType = collectionAttributes?.type;
+    let layoutOptions;
+    if (layoutType === "switcher") {
+      layoutOptions = {
+        type: "switcher",
+        widthWrap: collectionAttributes?.widthWrap,
+        gap: collectionAttributes?.gap,
+        class: collectionAttributes?.class,
+      };
+    } else if (layoutType === "grid-fluid") {
+      layoutOptions = {
+        type: "grid-fluid",
+        columns: collectionAttributes?.columns,
+        gap: collectionAttributes?.gap,
+        class: collectionAttributes?.class,
+      };
+    }
+
+    return {
+      header: header ? { content: header.content } : undefined,
+      footer: footer ? { content: footer.content } : undefined,
+      collections: collectionAttributes?.collection || "all",
+      tags: collectionAttributes?.tag || undefined,
+      sortOptions: {
+        sort: collectionAttributes?.sort || "",
+        sortBy: collectionAttributes?.sortBy || "",
+      },
+      filterOptions: filterOptions.length ? filterOptions : undefined,
+      layoutOptions,
+    };
+  },
+  toBlock: function (data) {
+    const collection = data?.collections || "all";
+    const tag = data?.tags;
+    const sort = data?.sortOptions?.sort;
+    const sortBy = data?.sortOptions?.sortBy;
+    const filterOptions = data?.filterOptions || [];
+    const layoutOptions = data?.layoutOptions || {};
+    const layoutType = layoutOptions?.type;
+
+    // Build layout attrs from layoutOptions
+    let layoutAttrs = {};
+    if (layoutType === "switcher") {
+      layoutAttrs = {
+        type: "switcher",
+        ...(layoutOptions.widthWrap
+          ? { widthWrap: layoutOptions.widthWrap }
+          : {}),
+        ...(layoutOptions.gap ? { gap: layoutOptions.gap } : {}),
+        ...(layoutOptions.class ? { class: layoutOptions.class } : {}),
+      };
+    } else if (layoutType === "grid-fluid") {
+      layoutAttrs = {
+        type: "grid-fluid",
+        ...(layoutOptions.columns ? { columns: layoutOptions.columns } : {}),
+        ...(layoutOptions.gap ? { gap: layoutOptions.gap } : {}),
+        ...(layoutOptions.class ? { class: layoutOptions.class } : {}),
+      };
+    }
+
+    const headerContent = data?.header?.content
+      ? `{% sectionHeader %}
+${data?.header?.content}
+{% endsectionHeader %}`
+      : "";
+
+    const footerContent = data?.footer?.content
+      ? `{% sectionFooter %}
+${data?.footer?.content}
+{% endsectionFooter %}`
+      : "";
+
+    // Build filterFirst / filterLast from filterOptions list
+    const filterFirst = filterOptions.find((o) => o.type === "filterFirst");
+    const filterLast = filterOptions.find((o) => o.type === "filterLast");
+
+    const colAttrs = {
+      collection,
+      ...(tag ? { tag } : {}),
+      ...(sort ? { sort } : {}),
+      ...(sortBy ? { sortBy } : {}),
+      ...layoutAttrs,
+      ...(filterFirst ? { filterFirst: filterFirst.count } : {}),
+      ...(filterLast ? { filterLast: filterLast.count } : {}),
+    };
+    const colAttrsStr = Object.entries(colAttrs)
+      .filter(([, value]) => value !== undefined && value !== "")
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(", ");
+
+    const collectionContent = `{% collection ${colAttrsStr} %}{% endcollection %}`;
+
+    return `{% sectionCollection %}
+${headerContent}
+${collectionContent}
+${footerContent}
+{% endsectionCollection %}`;
+  },
+  toPreview: (data) => `<span>COLLECTION SECTION</span>`,
 };
 
 // Example for project specific component def

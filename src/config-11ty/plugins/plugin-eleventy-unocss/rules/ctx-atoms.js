@@ -9,7 +9,10 @@ export default [
     },
   ],
   // Aspect ratio utility
-  [/^aspect-ratio-(\d+(?:\.\d+)?)$/, ([, d]) => ({ "aspect-ratio": d })],
+  [
+    /^aspect-ratio-(\d+(?:\.\d+)?)$/,
+    ([, d]) => ({ "aspect-ratio": d, "object-fit": "cover" }),
+  ],
   // Width utility
   [
     /^width-prose$/,

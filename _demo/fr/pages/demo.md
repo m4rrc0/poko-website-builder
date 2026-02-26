@@ -1,12 +1,16 @@
 ---
-translationKey: demo-html5
+translationKey: demo
 lang: en
 createdAt: 2025-10-24T11:19:00.000Z
 uuid: 4bebefc7e99a
 localizationKey: 49e6ae094a58
-status: noindex
 name: Demo HTML5
-vars: {}
+eleventyNavigation:
+  title: ''
+  parent: ''
+  order: 1
+status: noindex
+vars: null
 ---
 
 <div id="top"></div>
@@ -20,7 +24,6 @@ vars: {}
 
 {% css %}
 :root {
-
 --radius-token: 0.25rem;
 --radius-pill: 9999px;
 --radius-round: 50%;
@@ -29,45 +32,44 @@ vars: {}
 --radius-prose: 0.0rem;
 --radius-max: 0rem;
 
-    /* Width Defaults */
-    --width-card: 320px;
-    --width-featured: 60rem;
+/* Width Defaults */
+--width-card: 320px;
+--width-featured: 60rem;
 
-    /* 2. THEME CONFIGURATION */
+/* 2. THEME CONFIGURATION */
 
-    /* Typography Mapping */
-    --font-family-heading: var(--font-stack-heading, system-ui, sans-serif);
-    --font-family-body: var(--font-stack-body, system-ui, sans-serif);
-    --font-family-code: var(--font-stack-code, monospace);
+/* Typography Mapping */
+--font-family-heading: var(--font-stack-heading, system-ui, sans-serif);
+--font-family-body: var(--font-stack-body, system-ui, sans-serif);
+--font-family-code: var(--font-stack-code, monospace);
 
+--font-weight-heading: 700;
+--letter-spacing-heading: -0.02em;
+--text-transform-heading: uppercase;
+--line-height-heading: 1.1;
 
-    --font-weight-heading: 700;
-    --letter-spacing-heading: -0.02em;
-    --text-transform-heading: uppercase;
-    --line-height-heading: 1.1;
+/* Colors Mapping */
+--theme-color-primary: var(--theme1-v1-dark-typo, #000);
+--theme-color-secondary: var(--theme1-v1-dark-alt, #f0f0f0);
+--theme-color-accent: var(--theme1-v1-dark-accent, #fff);
+--theme-color-bg: var(--theme1-v1-dark-contrast, #fff);
 
-    /* Colors Mapping */
-    --theme-color-primary: var(--theme1-v1-dark-typo, #000);
-    --theme-color-secondary: var(--theme1-v1-dark-alt, #f0f0f0);
-    --theme-color-accent: var(--theme1-v1-dark-accent, #fff);
-    --theme-color-bg: var(--theme1-v1-dark-contrast, #fff);
+/* Layout Mapping */
+--section-padding-block: var(--step-6);
+--hero-padding-block: var(--step-7);
+--content-max-width-text: var(--width-prose, 60ch);
+--gutter: var(--step-4, 1.5rem);
+--card-width: var(--width-card);
 
-    /* Layout Mapping */
-    --section-padding-block: var(--step-6);
-    --hero-padding-block: var(--step-7);
-    --content-max-width-text: var(--width-prose, 60ch);
-    --gutter: var(--step-4, 1.5rem);
-    --card-width: var(--width-card);
+/* Decoration Mapping */
+--image-radius: var(--radius-max);
+--card-aspect-ratio: 1/1;
+--btn-radius: var(--radius-token);
 
-    /* Decoration Mapping */
-    --image-radius: var(--radius-max);
-    --card-aspect-ratio: 1/1;
-    --btn-radius: var(--radius-token);
-
-    /* 3. CUSTOM OVERRIDES (Example) */
-    /* Uncomment or add here to override the defaults above */
-    /* --font-size-h1: var(--step-7); */
-    /* --radius-max: 2rem; */
+/* 3. CUSTOM OVERRIDES (Example) */
+/* Uncomment or add here to override the defaults above */
+/* --font-size-h1: var(--step-7); */
+/* --radius-max: 2rem; */
 
 }
 

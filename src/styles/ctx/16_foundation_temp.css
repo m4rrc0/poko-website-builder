@@ -1,0 +1,526 @@
+/*
+ * CTX CSS Classless Layer
+ * Provides sensible styling defaults that go beyond the reset
+ * These styles are more subjective but still maintain a clean, minimal approach
+ */
+
+/* ==========================================================================
+   # TABLE OF CONTENTS
+   ========================================================================== */
+
+/*
+ * 1. TYPOGRAPHY
+ *    1.1 Base typography
+ *    1.2 Headings
+ *    1.3 Text elements
+ *    1.4 Lists
+ *    1.5 Blockquotes
+ *    1.6 Code blocks
+ *    1.7 Horizontal rules
+ *
+ * 2. LAYOUT & SPACING
+ *    2.1 Page layout
+ *    2.2 Sectioning elements
+ *    2.3 Responsive spacing
+ *
+ * 3. MEDIA & EMBEDDED CONTENT
+ *    3.1 Images
+ *    3.2 Figures
+ *    3.3 Iframes
+ *    3.4 Audio/Video
+ *
+ * 4. FORMS
+ *    4.1 Form layout
+ *    4.2 Inputs & buttons
+ *    4.3 Select, radio, checkbox
+ *    4.4 Form validation
+ *
+ * 5. TABLES
+ *    5.1 Basic table styles
+ *    5.2 Table layout
+ *    5.3 Responsive tables
+ *
+ * 6. NAVIGATION
+ *    6.1 Links
+ *    6.2 Navigation lists
+ *    6.3 Skip links
+ *
+ * 7. MEDIA QUERIES
+ *    7.1 Print styles
+ *    7.2 Reduced motion
+ *    7.3 Dark mode
+ *
+ * 8. UTILITIES
+ *    8.1 Text utilities
+ *    8.2 Layout utilities
+ *    8.3 Visibility utilities
+ */
+
+/* ==========================================================================
+   #1 TYPOGRAPHY
+   ========================================================================== */
+
+:where(:root) {
+    /* Size Scale */
+    /* @link https://utopia.fyi/type/calculator?c=360,18,1.2,1240,20,1.25,9,4,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+    /* Step -4: 8.6806px → 8.192px */
+    --step--4: clamp(0.512rem, 0.555rem + -0.0555vw, 0.5425rem);
+    /* Step -3: 10.4167px → 10.24px */
+    --step--3: clamp(0.64rem, 0.6556rem + -0.0201vw, 0.651rem);
+    /* Step -2: 12.5px → 12.8px */
+    --step--2: clamp(0.7813rem, 0.7736rem + 0.0341vw, 0.8rem);
+    /* Step -1: 15px → 16px */
+    --step--1: clamp(0.9375rem, 0.9119rem + 0.1136vw, 1rem);
+    /* Step 0: 18px → 20px */
+    --step-0: clamp(1.125rem, 1.0739rem + 0.2273vw, 1.25rem);
+    /* Step 1: 21.6px → 25px */
+    --step-1: clamp(1.35rem, 1.2631rem + 0.3864vw, 1.5625rem);
+    /* Step 2: 25.92px → 31.25px */
+    --step-2: clamp(1.62rem, 1.4837rem + 0.6057vw, 1.9531rem);
+    /* Step 3: 31.104px → 39.0625px */
+    --step-3: clamp(1.944rem, 1.7405rem + 0.9044vw, 2.4414rem);
+    /* Step 4: 37.3248px → 48.8281px */
+    --step-4: clamp(2.3328rem, 2.0387rem + 1.3072vw, 3.0518rem);
+    /* Step 5: 44.7898px → 61.0352px */
+    --step-5: clamp(2.7994rem, 2.384rem + 1.8461vw, 3.8147rem);
+    /* Step 6: 53.7477px → 76.2939px */
+    --step-6: clamp(3.3592rem, 2.7828rem + 2.5621vw, 4.7684rem);
+    /* Step 7: 64.4973px → 95.3674px */
+    --step-7: clamp(4.0311rem, 3.2418rem + 3.508vw, 5.9605rem);
+    /* Step 8: 77.3967px → 119.2093px */
+    --step-8: clamp(4.8373rem, 3.7682rem + 4.7514vw, 7.4506rem);
+    /* Step 9: 92.876px → 149.0116px */
+    --step-9: clamp(5.8048rem, 4.3695rem + 6.379vw, 9.3132rem);
+
+    /*--rhythm-1: var(--step-0, 1rem);
+    --rhythm-2: var(--step-1, 2rem);
+    --rhythm-3: var(--step-2, 3rem);
+    --rhythm-4: var(--step-3, 4rem);*/
+
+    --width-prose: 50rem;
+    --width-max: calc(var(--width-prose) * 1.618); /* 80,98 */
+    --width-featured: calc(var(--width-prose) / 1.618); /* 30.90 */
+    --width-column: calc(var(--width-prose) / 2.618); /* 19 */
+    /*--width-token: 30rem;*/
+
+    /* Open Props */
+    /*--radius-1: 2px;
+    --radius-2: 5px;
+    --radius-3: 1rem;
+    --radius-4: 2rem;
+    --radius-5: 4rem;
+    --radius-6: 8rem;*/
+
+    --radius-round: 1e5px;
+    --radius-max: 8rem;
+    --radius-prose: 4rem;
+    --radius-featured: 2rem;
+    --radius-column: 1rem;
+    --radius-token: 5px;
+
+    /* Open Props */
+    /*--border-size-1: 1px;
+    --border-size-2: 2px;
+    --border-size-3: 5px;
+    --border-size-4: 10px;
+    --border-size-5: 25px;*/
+
+    --thick-max: 5px;
+    --thick-prose: 5px;
+    --thick-featured: 2px;
+    --thick-column: 2px;
+    --thick-token: 2px;
+
+    --px-body: var(--step--2, 0.8rem);
+    --px-max: var(--step--1, 1rem);
+    --px-prose: var(--step--1, 1rem);
+    --px-featured: var(--step--1, 1rem);
+    --px-column: var(--step--1, 1rem);
+    --px-token: var(--step--1, 1rem);
+
+    --py-body: var(--step--2, 0.8rem);
+    --py-max: var(--step-4, 3rem);
+    --py-prose: var(--step--1, 1rem);
+    --py-featured: var(--step--1, 1rem);
+    --py-column: var(--step--1, 1rem);
+    --py-token: var(--step--1, 1rem);
+
+    --gap-max: var(--step-0, 1.25rem);
+    --gap-prose: var(--step--1, 1rem);
+    --gap-featured: var(--step--1, 1rem);
+    --gap-column: var(--step--1, 1rem);
+    --gap-token: var(--step--1, 1rem);
+
+    --flow-p: var(--step-0); /* Chrome: 1em | for ul, menu, dir, ol, dl, p */
+    --flow-h1: var(--step-0); /* Chrome: 0.67em */
+    --flow-h2: var(--step-0); /* Chrome: 0.83em */
+    --flow-h3: var(--step-0); /* Chrome: 1em */
+    --flow-h4: var(--step-0); /* Chrome: 1.33em */
+    --flow-h5: var(--step-0); /* Chrome: 1.67em */
+    --flow-h6: var(--step-0); /* Chrome: 2.33em */
+    --flow-component: var(--step-1); /* Chrome: 1em | for blockquote, figure */
+    --flow-section: var(--step-2);
+
+    --offset-list: 2rem; /* ul and ol left padding */
+    --offset-blockquote: 1rem;
+    --text-underline-offset: 0.15em;
+    --fit: cover;
+}
+
+/* 1.1 Base typography */
+:where(body) {
+    font-size: var(--step-0);
+    font-family: var(--font-stack-body, system-ui, sans-serif);
+}
+
+/* 1.2 Headings */
+/* prettier-ignore */
+:where(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4) {
+    font-family: var(--font-stack-heading, system-ui, sans-serif);
+}
+
+/* Code Font */
+/* prettier-ignore */
+:where(tt, code, kbd, pre, samp, tt *, code *, kbd *, pre *, samp *) {
+  font-family: var(
+    --font-stack-code,
+    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace
+  );
+}
+
+/* prettier-ignore */
+:where(.h8) { font-size: var(--step--4); } /* prettier-ignore */
+:where(.h7) { font-size: var(--step--3); } /* prettier-ignore */
+:where(h6, .h6) { font-size: var(--step--2); } /* prettier-ignore */
+:where(h5, .h5, small, .small) { font-size: var(--step--1); } /* prettier-ignore */
+:where(h4, .h4) { font-size: var(--step-1); } /* prettier-ignore */
+:where(h3, .h3) { font-size: var(--step-2); } /* prettier-ignore */
+:where(h2, .h2) { font-size: var(--step-3); } /* prettier-ignore */
+:where(h1, .h1) { font-size: var(--step-4); } /* prettier-ignore */
+:where(.h0) { font-size: var(--step-5); } /* prettier-ignore */
+:where(.h-1) { font-size: var(--step-6); } /* prettier-ignore */
+:where(.h-2) { font-size: var(--step-7); } /* prettier-ignore */
+:where(.h-3) { font-size: var(--step-8); } /* prettier-ignore */
+:where(.h-4) { font-size: var(--step-9); } /* prettier-ignore */
+
+/* 1.3 Text elements */
+/* b = visual importance without semantic meaning */
+/* dl, dt, dd = description list, with terms and descriptions */
+
+:where(body) {
+    text-underline-offset: var(--text-underline-offset, 0.15em);
+}
+
+:where(tt, code, kbd, pre, samp) {
+    /* Extends the background-color on the sides */
+    box-shadow:
+        0.1em 0 var(--code-bg, GrayText),
+        -0.1em 0 var(--code-bg, GrayText);
+}
+
+:where(mark) {
+    /* Extends the background-color on the sides */
+    box-shadow:
+        0.1em 0 var(--mark-bg, Mark),
+        -0.1em 0 var(--mark-bg, Mark);
+}
+
+/* 1.4 Lists */
+
+/* 1.5 Quotes & Blockquotes */
+:where(q, blockquote) {
+    font-style: italic;
+}
+
+:where(blockquote) {
+    /* TODO: find a solution to indent because this gets overwritten by margin-inline: auto down below */
+    margin-inline: 1em;
+    padding-inline-start: 1em;
+    border-left: 1px solid currentColor;
+}
+
+:where(blockquote > footer) {
+    font-style: normal;
+    border: 0;
+}
+
+:where(blockquote cite) {
+    font-style: normal;
+}
+
+/* 1.6 Code blocks */
+/* TODO: pre code */
+/* TODO: code */
+/* TODO: kbd */
+
+/* 1.7 Horizontal rules */
+
+/* 1.8 Other layout elements */
+/* TODO: details and summary and accordion */
+
+:where(nav li) {
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   #2 LAYOUT & SPACING
+   ========================================================================== */
+
+/* 2.1 Page layout, max-widths, section spacing */
+:where(body) {
+    color: #100c08;
+    background-color: #fdfdfe;
+    /*padding-inline: var(--pi-body, 0.68rem);*/
+    /*padding-block: var(--pb-body, 1.68rem);*/
+    min-block-size: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Section spacing levels */
+/* Level 1: Top level -> sections between them */ /* prettier-ignore */
+:where(body > :where(section, .section)),
+:where(body > :where(header, nav, main, footer, article, aside) > :where(section, .section)) {
+    padding-block: var(--py-max);
+}
+/* Vertical page padding */
+:where(body > :first-child) {
+    padding-block-start: var(--py-body);
+}
+:where(body > :last-child) {
+    padding-block-end: var(--py-body);
+}
+/* Default basic vertical padding on level 1 containers */
+:where(body > :where(header, nav, main, footer, article, aside)) {
+    padding-block: var(--py-body);
+}
+/* TARGET TOP LEVEL ELEMENTS */
+/* Lateral page padding should be on any direct child of body OR direct children of the main page containers */ /* prettier-ignore */
+:where(body > *) {
+    padding-inline: var(--px-body, 0.8rem);
+    /* All top level elements (those where lateral paddings apply) should be centered */
+    max-inline-size: min(100%, var(--width-max, 80rem));
+    margin-inline: auto;
+    /* Do not htink this is needed... */
+    /*inline-size: auto;*/
+} /* Exception for full bleed images */ /* prettier-ignore */
+:where(body > :where(img, picture, video)) { box-sizing: content-box; }
+/* prettier-ignore */
+:where(body > :where(header, nav, main, footer, article, aside)) {
+    padding-inline: 0;
+} /* prettier-ignore */
+:where(body > :where(header, nav, main, footer, article, aside) > *) {
+    padding-inline: var(--px-body, 0.8rem);
+}
+/* Special case for ul and ol */ /* prettier-ignore */
+:where(body > :where(ul, ol)),
+:where(body > :where(header, nav, main, footer, article, aside) > :where(ul, ol)) {
+    padding-inline-start: calc(var(--px-body, 0.8rem) + var(--offset-list, 2rem));
+}
+/* Special case for blockquotes */ /* prettier-ignore */
+:where(body > blockquote),
+:where(body > :where(header, nav, main, footer, article, aside) > blockquote) {
+    padding-inline: var(--offset-blockquote, 1rem);
+}
+/* End of page padding setting */
+
+/* Push page footer at the bottom without the need for a grid or flex body */
+:where(body > footer) {
+    position: sticky;
+    top: calc(100vh - 1px);
+}
+
+/* Manage vertical flow */
+/* h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure */
+/* prettier-ignore */
+/*:where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure) {
+    margin-block-start: var(--flow-p, 1em);
+}*/
+/*:where(label + :where(input, select, textarea, button)) {
+    margin-block-start: 0.4em;
+}*/
+/* No top margin on the first typographic element of a container */ /* prettier-ignore */
+:where(:where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure):first-child),
+:where(hgroup > *) {
+    margin-block-start: 0;
+}
+/* Space out sectioning elements after typographic elements */ /* prettier-ignore */
+:where(:where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure) + :where(section, .section, header, footer, article, aside, img)) {
+    margin-block-start: var(--flow-section);
+}
+/* Flow between sectioning elements inside sectioning elements */ /* prettier-ignore */
+:where(:where(section, .section, header, footer, article, aside) > :where(section, .section, header, footer, article, aside, div, .layout):not(:first-child)) {
+    /* TODO: Should this be margin or padding? Maybe padding all around like on sub-body sectioning elements */
+    margin-block-start: var(--flow-section);
+}
+/* Escape hatch to reset top margins on elements */ /* prettier-ignore */
+:where(:where(.reset, .layout) > :where(h1, h2, h3, h4, h5, h6, p, ul, menu, dir, ol, dl, blockquote, figure)) {
+    margin-block-start: 0;
+}
+
+/* Max Widths */
+
+/* prettier-ignore */
+/*:where(.prose),
+:where(:where(main, header, footer, article, section, aside, form, fieldset, body):not([class])) {
+    max-inline-size: var(--width-max, 80rem);
+    margin-inline: auto;
+}*/
+/* prettier-ignore */
+/*:where(.prose,article,aside,form,fieldset,body:not(:has(:where(main, article)))) {
+    max-inline-size: var(--width-prose, 50rem);
+}*/
+
+/* TODO: group prose elements here */
+/* prettier-ignore */
+:where(.prose,p,h1,h2,h3,h4,h5,h6,dl,dt,dd,quote,blockquote,figure,figcaption,details, address),
+:where(),
+:where(),
+:where(:not(nav)) > :where(ul, ol) {
+    max-inline-size: var(--width-prose, 50rem);
+    inline-size: auto;
+    margin-inline: auto;
+}
+/* Exception for blockquotes */
+/*:where(blockquote) {
+    margin-inline-start: var(--px-body, 0.8rem);
+}*/
+
+/* End of Max Widths setting */
+
+/* Try an nuke browser extensions added at the end of the body */
+/* TODO: Find a better way */
+body > footer ~ div {
+    all: revert;
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+/* 2.2 Sectioning elements */
+/* main article */
+/* section */
+/* aside */
+/* nav */
+/* footer */
+/* header */
+
+/* 2.3 Responsive spacing */
+
+/* ==========================================================================
+   #3 MEDIA & EMBEDDED CONTENT
+   ========================================================================== */
+
+/* 3.1 Images */
+:where(img, picture, video, svg) {
+    /* Center images by default */
+    /*margin-inline: auto;*/
+    /*inline-size: 100%;*/
+    /*inline-size: auto;*/
+    object-fit: var(--fit, cover);
+
+    :where(.with-icon &),
+    :where(&.icon) {
+        margin-inline: 0; /* Avoid inline margins on icons */
+    }
+}
+/* Otherwise svg images are 0 width */
+/*:where(img[src*=".svg"]) {
+    max-inline-size: 100%;
+}*/
+/* Comes from the frame layout.css - Seems like a good default */
+/* :where(img, picture, video, svg) {
+  inline-size: 100%;
+  block-size: 100%;
+} */
+
+/* 3.2 Figures */
+
+/* 3.3 Iframes */
+
+/* 3.4 Audio/Video */
+
+/* 3.5 SVG */
+/* Inline SVG */
+/* TODO: This can be set on the html element. See what the most common practice is in icon libraries */
+/* prettier-ignore */
+/* :where(a, button, label, span, p, li, dt, dd, th, td, code, summary) svg {
+  fill: currentColor;
+  stroke: currentColor;
+} */
+
+/* ==========================================================================
+   #4 FORMS
+   ========================================================================== */
+
+/* 4.1 Form layout */
+/* prettier-ignore */
+:where(
+    a,button,.button,input[type="submit"],input[type="button"],input[type="reset"],[role="button"],summary,select,input[type="checkbox"],input[type="range"],input[type="radio"]
+):not(:disabled),
+::scroll-button(*):not(:disabled) {
+    cursor: pointer;
+}
+
+/* 4.2 Inputs & buttons */
+
+:where(button, input, textarea),
+::scroll-button(*) {
+    background: inherit;
+    padding-inline: 0.3em;
+    transition:
+        background-color var(--animation-duration, 0.1s) linear,
+        border-color var(--animation-duration, 0.1s) linear,
+        color var(--animation-duration, 0.1s) linear,
+        box-shadow var(--animation-duration, 0.1s) linear,
+        transform var(--animation-duration, 0.1s) ease;
+
+    &::placeholder {
+        color: inherit;
+        opacity: 0.5;
+    }
+}
+
+/* 4.3 Select, radio, checkbox */
+
+/* 4.4 Form validation */
+
+/* ==========================================================================
+   #5 TABLES
+   ========================================================================== */
+
+/* 5.1 Basic table styles */
+
+/* 5.2 Table layout */
+
+/* 5.3 Responsive tables */
+
+/* ==========================================================================
+   #6 NAVIGATION
+   ========================================================================== */
+
+/* 6.1 Links */
+
+/* 6.2 Navigation lists */
+
+/* 6.3 Skip links */
+
+/* ==========================================================================
+   #7 MEDIA QUERIES
+   ========================================================================== */
+
+/* 7.1 Print styles */
+
+/* 7.2 Reduced motion */
+
+/* 7.3 Dark mode */
+
+/* ==========================================================================
+   #8 UTILITIES
+   ========================================================================== */
+
+/* 8.1 Text utilities */
+
+/* 8.2 Layout utilities */
+
+/* 8.3 Visibility utilities */
