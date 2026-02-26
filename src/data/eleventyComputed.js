@@ -185,6 +185,6 @@ export default {
     //     : "";
 
     // If no footer is defined, keep it empty so templates can fallback cleanly.
-    return key ? `${data.lang}/footer/${key}` : "";
+    return `${data.lang}/footer/${data.slug}`;
   },
 };
