@@ -436,6 +436,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addGlobalData("inlineAllStyles", inlineAllStyles);
   eleventyConfig.addGlobalData("brandStyles", brandStyles);
   eleventyConfig.addGlobalData("fontPreloadTags", fontPreloadTags);
+  // eleventyConfig.addGlobalData("pageFooter", "");
   // Computed Data
   eleventyConfig.addGlobalData("eleventyComputed", eleventyComputed);
 
