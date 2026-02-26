@@ -1,0 +1,51 @@
+- items:
+    - linkTo:
+        type: pages
+        slug: index
+        label: ''
+        image:
+          src: /_images/favicon-POKO-01.webp
+          alt: logo
+          title: ''
+          width: 60
+          aspectRatio: null
+          loading: ''
+          imgAttrs: ''
+        subItems: []
+- items:
+    - linkTo:
+        type: pages
+        slug: demo
+        label: ''
+        image: null
+        subItems: []
+    - linkTo:
+        type: pages
+        slug: index
+        label: ''
+        subItems: []
+    - linkTo:
+        type: url
+        label: poko
+        url: https://poko.eco/
+        subItems: []
+    - linkTo:
+        type: label
+        label: label
+        subItems:
+          - linkTo:
+              type: url
+              label: ''
+              image: null
+              url: ''
+              subItems: []
+          - linkTo:
+              slug: index
+          - linkTo:
+              slug: demo
+              subItems:
+                - null
+                - linkTo:
+                    slug: index
+                - linkTo:
+                    slug: demo

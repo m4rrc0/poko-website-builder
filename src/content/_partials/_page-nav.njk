@@ -1,7 +1,38 @@
-{% set navPages = collections.all | filterCollection([{ by: 'lang', value:
-lang }, { by: 'parent', value: '' }]) | eleventyNavigation %}
+{# ============================================================
+   Macro récursive : rend un item de nav (lien, label ou dropdown)
+   link.label     → toujours non-vide (garanti par le JS)
+   link.hasImage  → booléen (garanti par le JS)
+   link.hasSubItems → booléen (garanti par le JS)
+   ============================================================ #}
+{% macro renderNavItem(link, currentUrl, currentLang) %}
+<li>
+{% if link.hasSubItems %}
+    {# --- Dropdown (sous-menu) --- #}
+    <details class="dropdown">
+        <summary>
+            {% if link.hasImage %}<img src="{{link.imageSrc}}" alt="{{link.label}}" />{% endif %}{{link.label}}
+        </summary>
+        <ul>
+        {% for sub in link.subItems %}
+            {{ renderNavItem(sub, currentUrl, currentLang) }}
+        {% endfor %}
+        </ul>
+    </details>
+{% elif link.url %}
+    {# --- Lien simple --- #}
+    <a href="{{link.url}}" hreflang="{{currentLang}}"
+        {% if link.url == currentUrl %}aria-current="page"{% endif %}
+    >
+        {% if link.hasImage %}<img src="{{link.imageSrc}}" alt="{{link.label}}" class="icon"/>{% endif %}{{link.label}}
+    </a>
+{% else %}
+    {# --- Label (non cliquable) --- #}
+    {{link.label}}
+{% endif %}
+</li>
+{% endmacro %}
 
-{% if navPages | length %}
+{% if nav | length %}
 
 <header>
     <nav class="flex flex-nowrap gap-[--step-0] flex-justify-between items-start">
@@ -39,3 +70,9 @@ lang }, { by: 'parent', value: '' }]) | eleventyNavigation %}
 
 </header>
 {% endif %}
+
+{% css %}
+img {
+    display: inline-block;
+}
+{% endcss %}

@@ -19,10 +19,6 @@ languages:
       prefix: ""
 collections:
   - articles
-  - events
-  - courses
-  - places
-  - products
-  - reviews
+customNav: navtest
 metadata:
   image: ""
