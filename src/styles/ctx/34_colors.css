@@ -57,7 +57,7 @@ body,
 :is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4),
 :is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4)[class*='palette'],
 [class*='palette'] :is(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4) {
-  color: var(--color-text__heading);
+  color: var(--color-text__heading, --color-text);
   background-color: var(--color-bg__heading);
   border-color: var(--color-border__heading, currentcolor);
 }

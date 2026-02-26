@@ -882,6 +882,22 @@ export const bodyMarkdownField = {
   widget: "markdown",
   required: false,
   i18n: true,
+  buttons: [
+    "bold",
+    "italic",
+    "strikethrough",
+    "code",
+    // "link",
+    "heading-one",
+    "heading-two",
+    "heading-three",
+    "heading-four",
+    "heading-five",
+    "heading-six",
+    "bulleted-list",
+    "numbered-list",
+    "quote",
+  ],
   editor_components: [
     // "eleventyImage", // Removed
     // "imageShortcode",
@@ -890,6 +906,8 @@ export const bodyMarkdownField = {
     // "wrapper",
     // "section",
     // "links",
+    "code-block",
+    // "image",
     ...defaultEditorComponentNames,
     ...userEditorComponentNames,
   ],
@@ -964,27 +982,27 @@ export const pagesCollection = {
   //     pattern: true,
   //   },
   // ],
-  index_file: {
-    name: "_index",
-    label: "Page Data",
-    // path: "pages.yaml",
-    path: "_index",
-    extension: "md",
-    // file: `${CONTENT_DIR}/_data/brand.yaml`,
-    // format: "yaml",
-    icon: "home",
-    editor: { preview: false },
-    i18n: false,
-    fields: [
-      {
-        name: "layout",
-        label: "Layout",
-        widget: "string",
-        default: "base",
-        required: false,
-      },
-    ],
-  },
+  // index_file: {
+  //   name: "pages",
+  //   label: "Page Data",
+  //   path: "pages/{{slug}}",
+  //   // path: "_index",
+  //   extension: "yaml",
+  //   // file: `${CONTENT_DIR}/_data/brand.yaml`,
+  //   // format: "yaml",
+  //   icon: "home",
+  //   editor: { preview: false },
+  //   i18n: false,
+  //   fields: [
+  //     {
+  //       name: "layout",
+  //       label: "Layout",
+  //       widget: "string",
+  //       default: "base",
+  //       required: false,
+  //     },
+  //   ],
+  // },
 };
 export function spreadPageSetup(collectionNameRaw) {
   // Make sure the collection name is hyphenized/slugified (kebab-case)
@@ -1060,7 +1078,7 @@ export const coursesCollection = { ...courses };
 export const placeFields = [...commonCollectionFields, ...commonPageFields];
 export const places = {
   ...spreadPageSetup("places"),
-  icon: "deployed_code",
+  icon: "location_on",
   fields: placeFields,
 };
 export const placesCollection = { ...places };
@@ -1806,9 +1824,12 @@ const stylesConfigCollection = (fontsourceFonts) => ({
               required: true,
             },
             // prettier-ignore
-            { name: "text", label: "Text Color", ...brandColorField, required: true }, // prettier-ignore
-            { name: "bg", label: "Background Color", ...brandColorField, required: true }, // prettier-ignore
-            { name: "accent", label: "Accent Color", ...brandColorField }, // prettier-ignore
+            { name: "type", label: "Typography Color", ...brandColorField, required: true }, // prettier-ignore
+            { name: "alt", label: "Alternative Typography Color", ...brandColorField, required: true }, // prettier-ignore
+            { name: "accent", label: "Accent Color", ...brandColorField, required: true }, // prettier-ignore
+            { name: "contrast", label: "Contrast Color (E.g. for background)", ...brandColorField, required: true }, // prettier-ignore
+            { name: "text", label: "Text Color", ...brandColorField }, // prettier-ignore
+            { name: "bg", label: "Background Color", ...brandColorField }, // prettier-ignore
             { name: "border", label: "Border Color", ...brandColorField }, // prettier-ignore
             { name: "text-decoration", label: "Text Decoration Color", ...brandColorField }, // prettier-ignore
             { name: "text--marker", label: "Text Marker Color (bullet points, etc.)", ...brandColorField }, // prettier-ignore

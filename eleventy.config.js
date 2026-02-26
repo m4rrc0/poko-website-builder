@@ -307,28 +307,16 @@ export default async function (eleventyConfig) {
   });
 
   // --------------------- Plugins Markdown
+  eleventyConfig.amendLibrary("md", (mdLib) =>
+    mdLib.set({
+      breaks: true,
+      // linkify: true // Do not do this until we implement an automatic email protection 11ty transform
+    }),
+  );
   eleventyConfig.amendLibrary(
     "md",
     (mdLib) =>
       mdLib
-        // https://github.com/markdown-it/markdown-it-container
-        // .use(markdownItContainer, "@", {
-        //   render: function (tokens, idx) {
-        //     const token = tokens[idx];
-        //     const attrsStr =
-        //       token.attrs
-        //         ?.map(([name, value]) => `${name}="${value}"`)
-        //         ?.join(" ") || "";
-        //     const tagMatch = token.info
-        //       .trim()
-        //       .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
-        //     const tag = tagMatch ? tagMatch[1] : "div";
-
-        //     console.log({ token, idx, tag, attrsStr });
-
-        //     return token.nesting === 1 ? `<${tag} ${attrsStr}>` : `</${tag}>`;
-        //   },
-        // })
         // Use it like this:
         // ::: section
         // :::
@@ -358,54 +346,7 @@ export default async function (eleventyConfig) {
         .use(markdownItContainer, "cover")
         .use(markdownItContainer, "fixed-fluid")
         .use(markdownItContainer, "prose")
-
-        // .use(markdownItContainer, {
-        //   name: "@",
-        //   // render: function (tokens, idx) {
-        //   //   const token = tokens[idx];
-        //   //   const attrsStr =
-        //   //     token.attrs
-        //   //       ?.map(([name, value]) => `${name}="${value}"`)
-        //   //       ?.join(" ") || "";
-        //   //   const tagMatch = token.info
-        //   //     .trim()
-        //   //     .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
-        //   //   const tag = tagMatch ? tagMatch[1] : "div";
-
-        //   //   return token.nesting === 1 ? `<${tag} ${attrsStr}>` : `</${tag}>`;
-        //   // },
-        //   openRender: (tokens, idx, _options) => {
-        //     const token = tokens[idx];
-        //     const attrsStr =
-        //       token.attrs
-        //         ?.map(([name, value]) => `${name}="${value}"`)
-        //         ?.join(" ") || "";
-        //     const tagMatch = token.info
-        //       .trim()
-        //       .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
-        //     const tag = tagMatch ? tagMatch[1] : "div";
-
-        //     console.log({ token, tag, attrsStr, _options });
-
-        //     return `<${tag} ${attrsStr}>`;
-        //   },
-        //   closeRender: (tokens, idx, _options) => {
-        //     const tagMatch = tokens[idx].info
-        //       .trim()
-        //       .match(/^@\s*([a-zA-Z0-9]+)\s*(.*)$/);
-        //     const tag = tagMatch ? tagMatch[1] : "div";
-
-        //     console.log({ token: tokens[idx], tag, _options });
-
-        //     return `</${tag}>`;
-        //   },
-        // })
-        // .use(markdownItContainer, { name: "block" })
-        // .use(markdownItContainer, { name: "flow" })
-        // .use(markdownItContainer, { name: "grid-fluid" })
-        // .use(markdownItContainer, { name: "cluster" })
-        // .use(markdownItContainer, { name: "switcher" })
-
+        //
         .use(markdownItMark) // https://github.com/markdown-it/markdown-it-mark
         .use(markdownItLinkAttributes) // https://github.com/crookedneighbor/markdown-it-link-attributes
         .use(markdownItAttrs) // https://github.com/arve0/markdown-it-attrs
