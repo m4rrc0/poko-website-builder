@@ -27,8 +27,8 @@
     - linkTo:
         type: url
         label: poko
-        subItems: []
         url: https://poko.eco/
+        subItems: []
     - linkTo:
         type: label
         label: label
@@ -37,8 +37,8 @@
               type: url
               label: ''
               image: null
-              subItems: []
               url: ''
+              subItems: []
           - linkTo:
               slug: index
           - linkTo:

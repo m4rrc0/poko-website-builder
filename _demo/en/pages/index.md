@@ -13,6 +13,7 @@ metadata:
 tags:
   - featured
 status: published
+pageNav: navtest
 vars: null
 ---
 

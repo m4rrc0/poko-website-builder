@@ -19,10 +19,6 @@ languages:
       prefix: ''
 collections:
   - articles
-  - events
-  - organizations
-  - products
-  - projects
 customNav: navtest
 metadata:
   image: ''
