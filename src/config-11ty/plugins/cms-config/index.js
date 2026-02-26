@@ -220,6 +220,21 @@ export const pageLayoutRelationField = {
   required: false,
   i18n: "duplicate",
 };
+
+// footer defined page by page (in the CMS)
+export const pageFooterRelationField = {
+  name: "pageFooter",
+  label: "Footer",
+  widget: "relation",
+  collection: "footers",
+  hint:
+    "Select a footer for this entry. Leave empty to use default footer set in global settings.",
+  required: false,
+  i18n: "duplicate",
+  search_fields: ["slug"],
+  display_fields: ["slug"],
+  value_field: "{{slug}}",
+};
 export const pageNavRelationField = {
   name: "pageNav",
   label: "Page Navigation",
@@ -950,6 +965,7 @@ export const commonPageFields = [
   tagsField,
   statusField,
   pageLayoutRelationField,
+  pageFooterRelationField,
   pageNavRelationField,
   generatePageField,
   varsField,
@@ -1618,6 +1634,21 @@ const globalSettingsSingleton = {
       default_language: "css",
       output_code_only: true,
       allow_language_selection: false,
+    },
+    {
+      // footer defined in global settings (in the CMS)
+      name: "pageFooter",
+      label: "Default Footer",
+      widget: "relation",
+      collection: "footers",
+      hint:
+        "Footer used for all pages and collections that don't have a specific footer set.",
+      required: false,
+      i18n: true,
+      // search_fields: ["slug"],
+      // display_fields: ["fields.slug"],
+      // value_field: "{{slug}}",
+      // options: faire une liste avec les footers disponibles dans la collection footers
     },
     {
       name: "languages",
@@ -2320,18 +2351,20 @@ class CmsConfig {
 }
 
 export const footerCollection = {
-  identifier_field: "{{slug}}",
+  // identifier_field: "{{slug}}",
   name: "footers",
   label: "Footers",
   label_singular: "Footer",
-  path: "{{slug}}",
+  path: "footers/{{slug}}", 
   slug: "{{fields._slug}}",
   icon: "bottom_navigation",
-  folder: `${CONTENT_DIR}/_partials/footer`,
+  folder: `${CONTENT_DIR}/_partials`, 
   extension: "md",
   format: "yaml-frontmatter",
   create: true,
+  editor: { preview: false }, // to not display the preview of the page like in other collections
   summary: "{{slug}}",
+  i18n: true, // to have the left-right feature with the two languages  
   // MEDIAS
   media_folder: `/${CONTENT_DIR}/_images`,
   public_folder: "/_images",
@@ -2348,6 +2381,7 @@ export const footerCollection = {
       label: "Content",
       widget: "markdown",
       required: false,
+      i18n: true, // each language has its own body
     },
   ],
 };
