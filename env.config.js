@@ -56,6 +56,8 @@ export const SRC_DIR_FROM_WORKING_DIR = WORKING_DIR_ABSOLUTE
 
 // POKO_THEME
 export const POKO_THEME = processEnv.POKO_THEME || "default";
+// NAVIGATION MAX DEPTH
+export const NAV_DEPTH_MAX = processEnv.NAV_DEPTH_MAX || 4;
 // USER_DIR
 export const USER_DIR = processEnv.USER_DIR || `_user-content`;
 

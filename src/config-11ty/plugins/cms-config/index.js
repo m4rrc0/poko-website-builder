@@ -11,6 +11,7 @@ import {
   CMS_REPO,
   CMS_BACKEND,
   CMS_BRANCH,
+  NAV_DEPTH_MAX,
   selectedCollections,
   allLanguages,
   userCmsConfig,
@@ -1759,7 +1760,7 @@ export const navCollection = (allSelectedCollections) => ({
                     },
                   ],
                 },
-                ...getMiscLinkTypes(allSelectedCollections, 1, 4),
+                ...getMiscLinkTypes(allSelectedCollections, 1, NAV_DEPTH_MAX),
                 {
                   name: "url",
                   label: "Custom URL",
@@ -1830,13 +1831,13 @@ export const navCollection = (allSelectedCollections) => ({
                         },
                       ],
                     },
-                    ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
+                    ...createNavLevels(allSelectedCollections, 1, NAV_DEPTH_MAX), // Adjust the second argument to set max levels
                   ],
                 },
-                ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
+                ...createNavLevels(allSelectedCollections, 1, NAV_DEPTH_MAX), // Adjust the second argument to set max levels
               ],
             },
-            ...getMiscLinkTypes(allSelectedCollections, 1, 4),
+            ...getMiscLinkTypes(allSelectedCollections, 1, NAV_DEPTH_MAX),
             {
               name: "url",
               label: "Custom URL",
@@ -1857,7 +1858,7 @@ export const navCollection = (allSelectedCollections) => ({
                   hint: "Use this for external links or if you want to override the page link.",
                   i18n: true,
                 },
-                ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
+                ...createNavLevels(allSelectedCollections, 1, NAV_DEPTH_MAX), // Adjust the second argument to set max levels
               ],
             },
             {
@@ -1872,7 +1873,7 @@ export const navCollection = (allSelectedCollections) => ({
                   hint: "Override the page title",
                   i18n: true,
                 },
-                ...createNavLevels(allSelectedCollections, 1, 4), // Adjust the second argument to set max levels
+                ...createNavLevels(allSelectedCollections, 1, NAV_DEPTH_MAX), // Adjust the second argument to set max levels
               ],
             },
           ],
@@ -2655,16 +2656,16 @@ export const footerCollection = {
   name: "footers",
   label: "Footers",
   label_singular: "Footer",
-  path: "footers/{{slug}}", 
+  path: "footers/{{slug}}",
   slug: "{{fields._slug}}",
   icon: "bottom_navigation",
-  folder: `${CONTENT_DIR}/_partials`, 
+  folder: `${CONTENT_DIR}/_partials`,
   extension: "md",
   format: "yaml-frontmatter",
   create: true,
   editor: { preview: false }, // to not display the preview of the page like in other collections
   summary: "{{slug}}",
-  i18n: true, // to have the left-right feature with the two languages  
+  i18n: true, // to have the left-right feature with the two languages
   // MEDIAS
   media_folder: `/${CONTENT_DIR}/_images`,
   public_folder: "/_images",
