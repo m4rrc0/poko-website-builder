@@ -86,7 +86,9 @@ export default async function (data, customData) {
     };
   });
 
+  // TODO: fix this: pageNav is an array...
   return pageNav
-    ? await partialSc.call({ ...data }, pageNav, { ...data })
+    // ? await partialSc.call({ ...data }, pageNav, { ...data })
+    ? await partialSc.call({ ...data }, "_page-nav", { ...data })
     : await partialSc.call({ ...data }, "_page-nav", { ...data });
 }
