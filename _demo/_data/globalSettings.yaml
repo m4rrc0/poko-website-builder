@@ -19,6 +19,11 @@ languages:
       prefix: ''
 collections:
   - articles
+  - events
+  - people
+  - faqs
+  - services
+  - organizations
 customNav: navtest
 metadata:
   image: ''

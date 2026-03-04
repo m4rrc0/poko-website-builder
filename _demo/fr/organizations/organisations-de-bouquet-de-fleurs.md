@@ -6,7 +6,18 @@ uuid: 502e5c3279d7
 localizationKey: ad355dc6c213
 name: Organisations de bouquet de fleurs
 eleventyNavigation: null
-metadata: null
+metadata:
+  title: ''
+  description: ''
+  image: null
+  email: fleur@oui.com
+  telephone: +32 123456789
+  address:
+    streetAddress: rds
+    addressLocality: vdscx
+    addressCountry: revfds
+    addressRegion: ervfds
+    postalCode: befvd
 preview: null
 tags: []
 status: ''

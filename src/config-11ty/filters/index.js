@@ -17,6 +17,6 @@ export {
   asc,
   desc,
 } from "./array.js";
-export { ogImageSrc, image } from "./images.js";
+export { ogImageSrc, image, imgStats } from "./images.js";
 export { emailLink, email } from "./email.js";
 export { htmlAttrs, htmlImgAttrs } from "./html.js";

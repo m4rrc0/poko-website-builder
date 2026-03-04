@@ -79,6 +79,7 @@ import {
 } from "./env.config.js";
 import { getSelectedCollections } from "./src/config-11ty/plugins/cms-config/index.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
+import ldWebSite from "./src/data/structured-data/ldWebSite.js";
 
 // Eleventy Config
 import {
@@ -100,6 +101,7 @@ import {
   desc,
   ogImageSrc,
   image as imageFilter,
+  imgStats,
   emailLink,
   email,
   htmlAttrs,
@@ -383,6 +385,7 @@ export default async function (eleventyConfig) {
   // eleventyConfig.addGlobalData("pageFooter", "");
   // Computed Data
   eleventyConfig.addGlobalData("eleventyComputed", eleventyComputed);
+  eleventyConfig.addGlobalData("ldWebSite", ldWebSite);
 
   // --------------------- Collections
   eleventyConfig.addCollection("sitemap", function (collectionApi) {
@@ -647,6 +650,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
   // Images
   eleventyConfig.addAsyncFilter("ogImage", ogImageSrc);
   eleventyConfig.addAsyncFilter("image", imageFilter);
+  eleventyConfig.addAsyncFilter("imgStats", imgStats);
   // Email
   eleventyConfig.addFilter("emailLink", emailLink);
   eleventyConfig.addFilter("email", email);

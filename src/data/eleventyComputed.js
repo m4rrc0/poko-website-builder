@@ -2,11 +2,20 @@ import { USER_DIR, languages, SITE_NAME } from "../../env.config.js";
 // Was usefull when parents were declared in references
 // import temp from './temp.js';
 import mapInputPathToUrl from "../utils/mapInputPathToUrl.js";
+import ldWebPage from "./structured-data/ldWebPage.js";
+import ld from "./structured-data/ld.js";
 
 const defaultLang = languages.find((lang) => lang.isWebsiteDefault)?.code;
 
 export default {
   // ...temp,
+  collectionDir: (data) => {
+    return data.page.filePathStem
+      .replace(/^\/+/, "") // Remove leading slashes
+      .split("/") // Get the first directory
+      .filter(Boolean)
+      .slice(1, 2)?.[0];
+  },
   language: (data) => {
     // Display collection names only
     const filePathStem = data.page.filePathStem;
@@ -151,11 +160,14 @@ export default {
     const siteName = SITE_NAME;
     const titleCascade = data.metadata?.title || data.title || null;
     return {
+      ...data.metadata,
       title: [titleCascade, siteName].filter(Boolean).join(" | "),
       description: (data.metadata?.description || gMeta.description) ?? "",
       image: (data.metadata?.image || gMeta.image) ?? "",
     };
   },
+  ldWebPage,
+  ld,
   pagePreview: (data) => {
     const title = data.preview?.title || data.title || null;
     const description =
@@ -171,7 +183,7 @@ export default {
   date: (data) => data.date || data.page?.date,
   url: (data) => data.url || data.page?.url,
 
-  pageFooter: (data) => {    
+  pageFooter: (data) => {
     // Prioritize the footer selected on the collection, then the default in settings
     const raw = data.pageFooter || data.globalSettings?.pageFooter || "";
     // const key =

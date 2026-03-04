@@ -17,3 +17,15 @@ body:data: null
 # Page Test
 
 Avec contenu
+
+{% link url="mon-article", text="article", linkType="internal", collection="articles" %}
+
+{% link url="mon-event", text="event", linkType="internal", collection="events" %}
+
+{% link url="faq", text="faq", linkType="internal", collection="faqs" %}
+
+{% link url="organisations-de-bouquet-de-fleurs", text="organisation", linkType="internal", collection="organizations" %}
+
+{% link url="moi", text="people", linkType="internal", collection="people" %}
+
+{% link url="service", text="service", linkType="internal", collection="services" %}

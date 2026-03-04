@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="{{lang or 'en'}}" class="no-js">
     <head>
-        {% partial "_html-head-default.md" %} {% getBundle "html", "head" %}
+        {% partial "_html-head-default.md" %} {% partial "_metadata-jsonld" %}
+        {% getBundle "html", "head" %}
     </head>
     <body>
         <!-- Navigation -->

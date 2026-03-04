@@ -1,43 +1,34 @@
-import { getSelectedCollections } from "../cms-config/index.js";
+import { COLLECTIONS } from "../../../../env.config.js";
 
-const selectedCollections = getSelectedCollections();
+// export const tags = (data) => {
+//   data.lang;
 
-// Build autoTagNameDico dynamically from selected collections
-// Each entry maps collectionName -> collectionName (used for tag matching)
-const autoTagNameDico = Object.fromEntries([
-  ["pages", "pages"], // always included
-  ...selectedCollections.map((col) => [col.name, col.name]),
-]);
+//   const fileMainDir = data.page.filePathStem
+//     .replace(/^\/+/, "") // Remove leading slashes
+//     .split("/")[0]; // Get the first directory
 
-export const tags = (data) => {
-  data.lang;
+//   const col = autoTagNameDico[fileMainDir] || fileMainDir;
+//   const autoTags = [
+//     fileMainDir,
+//     col,
+//     `collection:${fileMainDir}`,
+//     ...(data.lang
+//       ? [data.lang, `lang:${data.lang}`, `${data.lang}:${fileMainDir}`]
+//       : []),
+//   ];
+//   // console.log({data})
+//   const tagsList = [...(data.tags || []), ...autoTags];
+//   // remove duplicates
+//   const uniqueTags = [...new Set(tagsList)];
 
-  const fileMainDir = data.page.filePathStem
-    .replace(/^\/+/, "") // Remove leading slashes
-    .split("/")[0]; // Get the first directory
-
-  const col = autoTagNameDico[fileMainDir] || fileMainDir;
-  const autoTags = [
-    fileMainDir,
-    col,
-    `collection:${fileMainDir}`,
-    ...(data.lang
-      ? [data.lang, `lang:${data.lang}`, `${data.lang}:${fileMainDir}`]
-      : []),
-  ];
-  // console.log({data})
-  const tagsList = [...(data.tags || []), ...autoTags];
-  // remove duplicates
-  const uniqueTags = [...new Set(tagsList)];
-
-  return uniqueTags;
-};
+//   return uniqueTags;
+// };
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
 
-  for (const [key, value] of Object.entries(autoTagNameDico)) {
-    eleventyConfig.addCollection(key, function (collectionsApi) {
+  for (const [key, col] of Object.entries(COLLECTIONS)) {
+    eleventyConfig.addCollection(col.name, function (collectionsApi) {
       return collectionsApi
         .getAllSorted()
         .reverse()
@@ -57,12 +48,12 @@ export default async function (eleventyConfig, pluginOptions) {
             .replace(/^\/+/, "") // Remove leading slashes
             .split("/") // Get the first directory
             .filter(Boolean)
-            .slice(0, 2);
-          const keyMatch = fileDirs.includes(key);
+            .slice(1, 2);
+          const keyMatch = fileDirs[0] === col.name;
 
-          //   console.log({ fileDirs, keyMatch, key, tags });
+          // console.log({ fileDirs, keyMatch, col, tags });
 
-          return keyMatch || tags.includes(key);
+          return keyMatch || tags.includes(col.name);
         });
     });
     // eleventyConfig.addCollection(value, function (collectionsApi) {
