@@ -10,6 +10,7 @@ export default async function (data) {
   // TODO: find Org or Person referenced in globalSettings
   // TODO: find relations to other templates
 
+  //TODO: if ldWebPage is not a creativeWork, remove ldWebSite
   const ld = {
     "@context": "https://schema.org",
     "@graph": [data.ldWebSite, ...data.ldWebPage],

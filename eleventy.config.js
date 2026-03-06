@@ -56,7 +56,7 @@ import {
   WORKING_DIR,
   WORKING_DIR_ABSOLUTE,
   CONTENT_DIR,
-  // SRC_DIR_FROM_WORKING_DIR,
+  SRC_DIR_FROM_WORKING_DIR,
   PARTIALS_DIR,
   LAYOUTS_DIR,
   OUTPUT_DIR,
@@ -212,7 +212,7 @@ export const config = {
     includes: PARTIALS_DIR, // this is probably '_partials'
     layouts: LAYOUTS_DIR, // this is probably '_layouts'
     // data: "../src/data", // Directory for global data files. Default: "_data"
-    // data: "/src/data", // Directory for global data files. Default: "_data"
+    // data: ["_data", path.join(SRC_DIR_FROM_WORKING_DIR, "content/_data")], // NOTE: Not possible to provide an array here
     // output: "public",
     output: OUTPUT_DIR,
   },

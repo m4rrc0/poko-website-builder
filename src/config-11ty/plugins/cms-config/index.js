@@ -240,7 +240,7 @@ export const pageNavRelationField = {
   name: "pageNav",
   label: "Page Navigation",
   widget: "relation",
-  collection: "nav",
+  collection: "navs",
   hint: "Select a navigation for this page or leave empty to use the default navigation",
   required: false,
   i18n: "duplicate",
@@ -958,37 +958,37 @@ export const bodyMarkdownField = {
   ],
 };
 
-export const commonPageFields = [
-  {
-    name: "name",
-    label: "Name",
-    widget: "string",
-    required: true,
-    i18n: true,
-    // PERSON had ...
-    // i18n: "duplicate",
-  },
-  // {
-  //   name: "currentSlug",
-  //   label: "Current slug",
-  //   widget: "compute",
-  //   value: "{{fields.name}}",
-  //   i18n: true,
-  // },
-  // { name: "path", label: "Page URL path", widget: "string", required: true, pattern: ['^(?![\s\/\-]*$)(?!\/)[a-z0-9\/\-]*[a-z0-9\-]$', "URL must contain only letters, numbers, dashes, and forward slashes (not starting or ending with a slash or dash), and at least one letter or number"], hint: "URL-friendly slug or path (may contain '/' and '-'). NOTE: The homepage must be called 'index'"},
-  bodyMarkdownField,
-  eleventyNavigationField,
-  simpleMetadataField,
-  pagePreviewField,
-  tagsField,
-  statusField,
-  pageLayoutRelationField,
-  pageFooterRelationField,
-  pageNavRelationField,
-  generatePageField,
-  varsField,
-  dataListField,
-];
+// export const commonPageFields = [
+//   {
+//     name: "name",
+//     label: "Name",
+//     widget: "string",
+//     required: true,
+//     i18n: true,
+//     // PERSON had ...
+//     // i18n: "duplicate",
+//   },
+//   // {
+//   //   name: "currentSlug",
+//   //   label: "Current slug",
+//   //   widget: "compute",
+//   //   value: "{{fields.name}}",
+//   //   i18n: true,
+//   // },
+//   // { name: "path", label: "Page URL path", widget: "string", required: true, pattern: ['^(?![\s\/\-]*$)(?!\/)[a-z0-9\/\-]*[a-z0-9\-]$', "URL must contain only letters, numbers, dashes, and forward slashes (not starting or ending with a slash or dash), and at least one letter or number"], hint: "URL-friendly slug or path (may contain '/' and '-'). NOTE: The homepage must be called 'index'"},
+//   bodyMarkdownField,
+//   eleventyNavigationField,
+//   simpleMetadataField,
+//   pagePreviewField,
+//   tagsField,
+//   statusField,
+//   pageLayoutRelationField,
+//   pageFooterRelationField,
+//   pageNavRelationField,
+//   generatePageField,
+//   varsField,
+//   dataListField,
+// ];
 export function spreadCommonPageFields(modFields) {
   const defaultFields = {
     name: {
@@ -1026,6 +1026,14 @@ export function spreadCommonPageFields(modFields) {
 }
 export const pageFields = [
   ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["pages"].ldType,
+  },
   ...spreadCommonPageFields(),
 ];
 export const pages = {
@@ -1111,6 +1119,14 @@ export function spreadPageSetup(collectionNameRaw) {
 // ARTICLES
 export const articleFields = [
   ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["articles"].ldType,
+  },
   ...spreadCommonPageFields({
     simpleMetadata: {
       ...simpleMetadataField,
@@ -1160,6 +1176,14 @@ export const articlesCollection = { ...articles };
 // SERVICES
 export const serviceFields = [
   ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["services"].ldType,
+  },
   ...spreadCommonPageFields({
     simpleMetadata: {
       ...simpleMetadataField,
@@ -1189,6 +1213,14 @@ export const servicesCollection = { ...services };
 // EVENTS
 export const eventFields = [
   ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["events"].ldType,
+  },
   ...spreadCommonPageFields({
     simpleMetadata: {
       ...simpleMetadataField,
@@ -1300,66 +1332,57 @@ export const eventFields = [
           i18n: true,
           fields: [
             {
-              name: "offer",
-              label: "Offer",
-              widget: "object",
+              name: "url",
+              label: "URL",
+              widget: "string",
               required: true,
               i18n: true,
-              fields: [
-                {
-                  name: "url",
-                  label: "URL",
-                  widget: "string",
-                  required: true,
-                  i18n: true,
-                  hint: "Link to ticketing or registration page",
-                },
-                {
-                  name: "price",
-                  label: "Price",
-                  widget: "number",
-                  required: false,
-                  i18n: true,
-                  hint: "Price of the event tickets",
-                },
-                {
-                  name: "priceCurrency",
-                  label: "Price Currency",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                  hint: "Currency of the price (e.g. 'USD', 'EUR')",
-                },
-                {
-                  name: "availability",
-                  label: "Availability",
-                  widget: "select",
-                  default: "inStock",
-                  options: [
-                    { value: "InStock", label: "In Stock" },
-                    { value: "SoldOut", label: "Sold Out" },
-                    { value: "PreOrder", label: "Pre-order" },
-                  ],
-                  required: false,
-                  i18n: true,
-                  hint: "Availability status of the event tickets",
-                },
-                {
-                  name: "validFrom",
-                  label: "Valid From",
-                  widget: "datetime",
-                  type: "datetime",
-                  format: "YYYY-MM-DDTHH:mm:ss",
-                  required: false,
-                  i18n: true,
-                  hint: "Start date and time when the offer becomes valid",
-                },
+              hint: "Link to ticketing or registration page",
+            },
+            {
+              name: "price",
+              label: "Price",
+              widget: "number",
+              required: false,
+              i18n: true,
+              hint: "Price of the event tickets",
+            },
+            {
+              name: "priceCurrency",
+              label: "Price Currency",
+              widget: "string",
+              required: false,
+              i18n: true,
+              hint: "Currency of the price (e.g. 'USD', 'EUR')",
+            },
+            {
+              name: "availability",
+              label: "Availability",
+              widget: "select",
+              default: "inStock",
+              options: [
+                { value: "InStock", label: "In Stock" },
+                { value: "SoldOut", label: "Sold Out" },
+                { value: "PreOrder", label: "Pre-order" },
               ],
+              required: false,
+              i18n: true,
+              hint: "Availability status of the event tickets",
+            },
+            {
+              name: "validFrom",
+              label: "Valid From",
+              widget: "datetime",
+              type: "datetime",
+              format: "YYYY-MM-DDTHH:mm:ss",
+              required: false,
+              i18n: true,
+              hint: "Start date and time when the offer becomes valid",
             },
           ],
         },
         {
-          name: "performers",
+          name: "performer",
           label: "Performers",
           widget: "relation",
           collection: "people",
@@ -1368,7 +1391,7 @@ export const eventFields = [
           i18n: true,
         },
         {
-          name: "organizers",
+          name: "organizer",
           label: "Organizers",
           widget: "relation",
           collection: "people",
@@ -1392,6 +1415,14 @@ export const eventsCollection = { ...events };
 // PEOPLE
 export const personFields = [
   ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["people"].ldType,
+  },
   ...spreadCommonPageFields({
     simpleMetadata: {
       ...simpleMetadataField,
@@ -1412,27 +1443,18 @@ export const personFields = [
           i18n: true,
           fields: [
             {
-              name: "link",
-              label: "Link",
-              widget: "object",
+              name: "name",
+              label: "Name",
+              widget: "string",
               required: false,
               i18n: true,
-              fields: [
-                {
-                  name: "name",
-                  label: "Name",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                },
-                {
-                  name: "url",
-                  label: "URL",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                },
-              ],
+            },
+            {
+              name: "url",
+              label: "URL",
+              widget: "string",
+              required: false,
+              i18n: true,
             },
           ],
         },
@@ -1452,6 +1474,14 @@ export const peopleCollection = { ...people };
 // ORGANIZATIONS
 export const organizationFields = [
   ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["organizations"].ldType,
+  },
   ...spreadCommonPageFields({
     simpleMetadata: {
       ...simpleMetadataField,
@@ -1529,7 +1559,18 @@ export const organizations = {
 };
 export const organizationsCollection = { ...organizations };
 // COURSES
-export const courseFields = [...commonCollectionFields, ...commonPageFields];
+export const courseFields = [
+  ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["courses"].ldType,
+  },
+  ...spreadCommonPageFields(),
+];
 export const courses = {
   ...spreadPageSetup("courses"),
   name: COLLECTIONS.courses.name,
@@ -1540,7 +1581,18 @@ export const courses = {
 };
 export const coursesCollection = { ...courses };
 // PLACES
-export const placeFields = [...commonCollectionFields, ...commonPageFields];
+export const placeFields = [
+  ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["places"].ldType,
+  },
+  ...spreadCommonPageFields(),
+];
 export const places = {
   ...spreadPageSetup("places"),
   name: COLLECTIONS.places.name,
@@ -1551,7 +1603,18 @@ export const places = {
 };
 export const placesCollection = { ...places };
 // PRODUCTS
-export const productFields = [...commonCollectionFields, ...commonPageFields];
+export const productFields = [
+  ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["products"].ldType,
+  },
+  ...spreadCommonPageFields(),
+];
 export const products = {
   ...spreadPageSetup("products"),
   name: COLLECTIONS.products.name,
@@ -1562,7 +1625,18 @@ export const products = {
 };
 export const productsCollection = { ...products };
 // REVIEWS
-export const reviewFields = [...commonCollectionFields, ...commonPageFields];
+export const reviewFields = [
+  ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["reviews"].ldType,
+  },
+  ...spreadCommonPageFields(),
+];
 export const reviews = {
   ...spreadPageSetup("reviews"),
   name: COLLECTIONS.reviews.name,
@@ -1575,6 +1649,14 @@ export const reviewsCollection = { ...reviews };
 // FAQs
 export const faqFields = [
   ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["faqs"].ldType,
+  },
   ...spreadCommonPageFields({
     simpleMetadata: {
       ...simpleMetadataField,
@@ -1617,7 +1699,18 @@ export const faqs = {
 };
 export const faqsCollection = { ...faqs };
 // PROJECTS
-export const projectFields = [...commonCollectionFields, ...commonPageFields];
+export const projectFields = [
+  ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["projects"].ldType,
+  },
+  ...spreadCommonPageFields(),
+];
 export const projects = {
   ...spreadPageSetup("projects"),
   name: COLLECTIONS.projects.name,
@@ -1630,7 +1723,15 @@ export const projectsCollection = { ...projects };
 // DOCUMENTATION -- HowTo in schema.org
 export const documentationFields = [
   ...commonCollectionFields,
-  ...commonPageFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["documentations"].ldType,
+  },
+  ...spreadCommonPageFields(),
 ];
 export const documentations = {
   ...spreadPageSetup("documentations"),
@@ -2813,6 +2914,7 @@ class CmsConfig {
               //   divider: Boolean(!mustSetup && userConfig.collections?.length),
               // },
               navCollection(allSelectedCollections),
+              navCollection2,
               footerCollection,
               pageLayoutsCollection,
               { divider: true },
@@ -2838,6 +2940,40 @@ class CmsConfig {
     return JSON.stringify(generalConfig, null, isDev ? 2 : 0);
   }
 }
+export const navCollection2 = {
+  name: "navs",
+  label: "Navs",
+  label_singular: "Nav",
+  path: "navs/{{slug}}",
+  slug: "{{fields._slug}}",
+  icon: "menu_open",
+  folder: `${CONTENT_DIR}/_partials`,
+  extension: "md",
+  format: "yaml-frontmatter",
+  create: true,
+  editor: { preview: false }, // to not display the preview of the page like in other collections
+  summary: "{{slug}}",
+  i18n: true, // to have the left-right feature with the two languages
+  // MEDIAS
+  media_folder: `/${CONTENT_DIR}/_images`,
+  public_folder: "/_images",
+  sortable_fields: {
+    fields: ["slug"],
+    default: {
+      field: "slug",
+      direction: "ascending",
+    },
+  },
+  fields: [
+    {
+      name: "body",
+      label: "Content",
+      widget: "markdown",
+      required: false,
+      i18n: true, // each language has its own body
+    },
+  ],
+};
 
 export const footerCollection = {
   // identifier_field: "{{slug}}",

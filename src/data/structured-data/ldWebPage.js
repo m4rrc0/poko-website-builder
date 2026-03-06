@@ -1,165 +1,243 @@
-import { COLLECTIONS, BASE_URL } from "env.config";
-import { getId } from "./utils";
+import { COLLECTIONS, BASE_URL, DEBUG } from "../../../env.config.js";
+import { getId } from "./utils.js";
 
-export default async function (data) {
+export async function ldWebPage(data) {
   const imgStats = this.imgStats;
-  // console.log(data);
   if (
     !data ||
     Object.keys(data).length === 0 ||
     data.eleventyExcludeFromCollections
   )
-    return;
+    return "";
 
   const metadata = data.metadata ?? {};
 
   const asImageObject = async (img) => {
     if (!img) return undefined;
-    // img.src commence par "/" mais imageFilter fait `${WORKING_DIR}/${input}`
-    // → on retire le slash initial pour éviter le double slash
+    // img.src starts with "/" but imageFilter does `${WORKING_DIR}/${input}`
+    // → remove the initial slash to avoid double slash
     const src = (img.src ?? img).replace(/^\//, "");
     const stats = await imgStats(src);
-    // Object.values().flat().find() → premier format dispo (webp, jpeg, etc.)
+    // Object.values().flat().find() → first format available (webp, jpeg, etc.)
+    return stats?.url
+      ? {
+          "@type": "ImageObject",
+          url: `${BASE_URL}${stats.url}`,
+          caption: img.alt,
+          width: stats?.width,
+          height: stats?.height,
+        }
+      : undefined;
+  };
+
+  // TODO: check address pour etre sur que ce n'est pas vide
+  const asPostalAddress = (addr) => {
+    if (!addr) return undefined;
+
+    // Fetch all values (ex: ["Paris", undefined, "", "75000"])
+    // and check if there is at least one that exists (truthy) and is not an empty string.
+    const hasRealValues = Object.values(addr).some(
+      (val) => val && val.trim?.() !== "",
+    );
+
+    return hasRealValues ? { "@type": "PostalAddress", ...addr } : undefined;
+  };
+
+  const asPlace = (loc) => {
+    if (!loc) return undefined;
+
+    const address = asPostalAddress(loc.address);
+    const hasName = loc.name?.trim?.() !== "" && !!loc.name;
+
+    if (!address && !hasName) return undefined;
+
     return {
-      "@type": "ImageObject",
-      url: stats?.url ? `${BASE_URL}${stats.url}` : undefined,
-      caption: img.alt,
-      width: stats?.width,
-      height: stats?.height,
+      "@type": "Place",
+      ...(hasName ? { name: loc.name } : {}),
+      ...(address ? { address } : {}),
     };
   };
 
-  const asPostalAddress = (addr) =>
-    addr ? { "@type": "PostalAddress", ...addr } : undefined;
-
-  const asPlace = (loc) =>
-    loc
-      ? {
-          "@type": "Place",
-          name: loc.name,
-          address: asPostalAddress(loc.address),
-        }
-      : undefined;
-
-  const asOffer = (item) => {
-    // Le YAML stocke chaque offer sous une clé "offer" imbriquée → on l'aplatit
-    const offer = item?.offer ?? item;
-    if (!offer) return undefined;
+  const asOffer = (offer) => {
+    // TODO: faire un meilleur check pour plus de certitude
+    // YAML stores each offer under a nested "offer" key -> we flatten it
+    if (!offer || typeof offer !== "object" || Object.keys(offer).length === 0)
+      return undefined;
     return {
       "@type": "Offer",
       ...offer,
-      ...(offer.availability && {
-        availability: `https://schema.org/${offer.availability}`,
-      }),
     };
   };
 
-  // Résoudre un slug → item Eleventy
   const resolveSlug = (collectionItems, slug) =>
-    collectionItems?.find((item) => item.page.fileSlug === slug);
+    Array.from(collectionItems || []).find(
+      (item) => (item.page?.fileSlug || item.fileSlug) === slug,
+    );
 
-  // Résoudre une liste de slugs → références @id (pattern Yoast)
-  const resolvePeople = (slugsRaw) => {
+  // Resolve a list of slugs to full objects (Yoast-like but expanded)
+  const resolvePeople = async (slugsRaw) => {
     if (!slugsRaw) return undefined;
     const slugs = Array.isArray(slugsRaw) ? slugsRaw : [slugsRaw];
-    const refs = slugs.map((slug) => {
-      const item = resolveSlug(data.collections?.people, slug);
-      if (item) return { "@id": getId(item.data) };
-      return { name: slug }; // fallback si la page person n'existe pas
-    });
-    return refs.length === 1 ? refs[0] : refs;
+
+    const refs = await Promise.all(
+      slugs
+        .filter((slug) => slug && slug.trim?.() !== "")
+        .map(async (slug) => {
+          let item = resolveSlug(data.collections?.people, slug);
+
+          // Fallback: search in all items if specific collection is empty
+          if (!item) {
+            item = resolveSlug(data.collections?.all, slug);
+          }
+
+          if (item) {
+            const m = item.data?.metadata || {};
+            const res = {
+              "@type": item.data?.ldType || "Person",
+              "@id": getId(item.data),
+              name: item.data?.name || item.data?.title || slug,
+            };
+            if (item.data?.page?.metadata?.description)
+              res.description = item.data?.page?.metadata?.description;
+            if (item.page?.url) res.url = `${BASE_URL}${item.page.url}`;
+            if (m.image) {
+              const imgObj = await asImageObject(m.image);
+              if (imgObj) res.image = imgObj;
+            }
+            if (m.jobTitle) res.jobTitle = m.jobTitle;
+            return res;
+          }
+
+          // Predictive fallback to at least have the @id even if collection not ready
+          return {
+            "@type": "Person",
+            "@id": getId({ ldType: "Person", page: { fileSlug: slug } }),
+            name: slug,
+          };
+        }),
+    );
+
+    const filtered = refs.filter(Boolean);
+    if (filtered.length === 0) return undefined;
+    return filtered.length === 1 ? filtered[0] : filtered;
   };
 
   // ──────────────────────────────────────────────────
 
+  // TODO: faire un check pour filtrer les undefined
+  const validLinks = Array.isArray(metadata?.links)
+    ? metadata.links
+        .map((item) => item?.url)
+        .filter((url) => url && url.trim?.() !== "")
+    : [];
+
   const jsonLd = {
     ...metadata,
-    ...(Array.isArray(metadata?.links) &&
-      metadata.links.length > 0 && {
-        sameAs: metadata.links
-          .map((item) => item?.link?.url ?? item?.url)
-          .filter(Boolean),
-      }),
+    ...(validLinks.length > 0 ? { sameAs: validLinks } : {}),
+    location: asPlace(metadata.location),
+    address: asPostalAddress(metadata.address),
+    author: await resolvePeople(metadata.author),
+    performer: await resolvePeople(metadata.performer),
+    organizer: await resolvePeople(metadata.organizer),
+    image: await asImageObject(metadata.image),
   };
 
-  if (metadata.location) jsonLd.location = asPlace(metadata.location);
-  if (metadata.address) jsonLd.address = asPostalAddress(metadata.address);
+  // Relations -> @id references (synchronous, Yoast pattern)
 
-  // Relations → références @id (synchrones, pattern Yoast)
-  if (metadata.author) jsonLd.author = resolvePeople(metadata.author);
-  if (metadata.performers)
-    jsonLd.performer = resolvePeople(metadata.performers);
-  if (metadata.organizers)
-    jsonLd.organizer = resolvePeople(metadata.organizers);
-
-  if (metadata.eventStatus)
-    jsonLd.eventStatus = `https://schema.org/${metadata.eventStatus}`;
-
-  if (metadata.offers)
-    jsonLd.offers = Array.isArray(metadata.offers)
-      ? metadata.offers.map(asOffer)
+  if (metadata.offers) {
+    const offers = Array.isArray(metadata.offers)
+      ? metadata.offers.map(asOffer).filter(Boolean)
       : asOffer(metadata.offers);
+    if (offers && (!Array.isArray(offers) || offers.length > 0)) {
+      jsonLd.offers = offers;
+    }
+  }
 
-  if (metadata.image) jsonLd.image = await asImageObject(metadata.image);
+  // Articles: datePublished, dateModified
+  if (metadata.datePublished) jsonLd.datePublished = metadata.datePublished;
+  if (metadata.dateUpdated) jsonLd.dateUpdated = metadata.dateUpdated;
 
-  // FAQs: mainEntity → Question[] + acceptedAnswer
+  // FAQs: mainEntity -> Question[] + acceptedAnswer
   if (Array.isArray(metadata.faq) && metadata.faq.length > 0) {
-    jsonLd.mainEntity = metadata.faq.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    }));
+    const validFaqs = metadata.faq
+      .filter((item) => item.question?.trim?.() && item.answer?.trim?.())
+      .map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      }));
+    if (validFaqs.length > 0) {
+      jsonLd.mainEntity = validFaqs;
+    }
   }
 
-  // Supprimer les clés brutes copiées par ...metadata qui ont été remplacées
-  // ou qui ne sont pas des champs Schema.org valides
+  // Remove raw keys copied by ...metadata that have been replaced
+  // or that are not valid Schema.org fields
   delete jsonLd.links;
-  delete jsonLd.title; // Schema.org utilise "name", pas "title"
-  delete jsonLd.performers; // remplacé par "performer" (traité)
-  delete jsonLd.organizers; // remplacé par "organizer" (traité)
-  delete jsonLd.faq; // remplacé par "mainEntity" (traité)
-  // "image" brut (objet {src, alt}) → on le supprime, l'image sera traitée si besoin
-  // Si vous voulez garder l'image, utilisez asImageObject qui génère un ImageObject complet
-  delete jsonLd.image;
+  delete jsonLd.title; // Schema.org uses "name", not "title"
+  delete jsonLd.faq; // replaced by "mainEntity" (processed)
 
-  for (const key in jsonLd) {
-    if (!jsonLd[key]) delete jsonLd[key];
-  }
+  // Nettoyage complet (récursif) pour enlever les propriétés et objets devenus vides
+  const deepClean = (obj) => {
+    if (Array.isArray(obj)) {
+      for (let i = obj.length - 1; i >= 0; i--) {
+        obj[i] = deepClean(obj[i]);
+        if (obj[i] === undefined) obj.splice(i, 1);
+      }
+      return obj.length > 0 ? obj : undefined;
+    } else if (typeof obj === "object" && obj !== null) {
+      for (const key in obj) {
+        obj[key] = deepClean(obj[key]);
+        if (obj[key] === undefined) delete obj[key];
+      }
+      return Object.keys(obj).length > 0 ? obj : undefined;
+    }
+    // Retire les strings vides, null ou undefined
+    if (obj === undefined || obj === null || obj === "") return undefined;
+    return obj;
+  };
+
+  deepClean(jsonLd);
+
+  const url = data.page?.url || "";
+  const pageUrl = url.startsWith("http") ? url : `${BASE_URL}${url}`;
+  const pageName = data.name ?? metadata.title ?? "";
 
   const WebPage = {
     "@type": "WebPage",
-    "@id": data.url, // WebPage is an exception: use the url and keep the ID for the more precise type
-    url: data.url,
-    name: data.title,
-    description: data.metadata?.description,
-    image: data.metadata?.image,
+    "@id": pageUrl, // WebPage is an exception: use the url and keep the ID for the more precise type
+    url: pageUrl,
+    name: pageName,
+    ...(data.metadata?.description
+      ? { description: data.metadata?.description }
+      : {}),
     isPartOf: {
       "@id": data.ldWebSite?.["@id"],
     },
+    ...(data.metadata?.image
+      ? { image: await asImageObject(data.metadata.image) }
+      : {}),
   };
-
-  const collectionDir = data.collectionDir;
-  const schemaType =
-    COLLECTIONS[collectionDir]?.ldName ?? collectionDir ?? "WebPage";
 
   const CollectionItem = {
-    "@type": schemaType,
+    "@type": data.ldType,
     "@id": getId(data),
-    name: data.title ?? metadata.title,
-    headline: data.title ?? metadata.title,
+    name: pageName,
+    ...(data.metadata?.image
+      ? { image: await asImageObject(data.metadata.image) }
+      : {}),
     isPartOf: {
-      "@id": data.url,
+      "@id": pageUrl,
     },
     mainEntityOfPage: {
-      "@id": data.url,
+      "@id": pageUrl,
     },
     ...jsonLd,
-
-    // author, performer, organizer, eventStatus, offers, location
-    // → déjà présents via ...jsonLd (calculés ci-dessus)
   };
+  // TODO: if webpage classic, don't display the second
+  // if it's not a creativeWork, don't display the first
   return [WebPage, CollectionItem];
 }

@@ -1,20 +1,33 @@
-import { USER_DIR, languages, SITE_NAME } from "../../env.config.js";
+import {
+  USER_DIR,
+  languages,
+  SITE_NAME,
+  COLLECTIONS,
+} from "../../env.config.js";
 // Was usefull when parents were declared in references
 // import temp from './temp.js';
 import mapInputPathToUrl from "../utils/mapInputPathToUrl.js";
-import ldWebPage from "./structured-data/ldWebPage.js";
+import { ldWebPage } from "./structured-data/ldWebPage.js";
 import ld from "./structured-data/ld.js";
 
 const defaultLang = languages.find((lang) => lang.isWebsiteDefault)?.code;
 
 export default {
   // ...temp,
-  collectionDir: (data) => {
-    return data.page.filePathStem
+  ldType: (data) => {
+    if (data.eleventyExcludeFromCollections) return undefined;
+    if (data.eleventyExcludeFromCollections) return undefined;
+    const type = data.page?.ldType || data.ldType;
+    if (type) return type;
+
+    const segments = data.page.filePathStem
       .replace(/^\/+/, "") // Remove leading slashes
       .split("/") // Get the first directory
-      .filter(Boolean)
-      .slice(1, 2)?.[0];
+      .filter(Boolean);
+
+    const collectionDir = segments.slice(1, 2)?.[0];
+
+    return COLLECTIONS[collectionDir]?.ldType || "WebPage";
   },
   language: (data) => {
     // Display collection names only

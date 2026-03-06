@@ -86,9 +86,28 @@ export default async function (data, customData) {
     };
   });
 
+  // NOUVELLE LOGIQUE : Si pageNav est une string, c'est potentiellement un fichier de la collection "navs" (markdown)
+  if (typeof selectedPageNav === "string") {
+    // Le CMS sauvegarde le fichier dans un dossier spécifique : fr/navs/mon-fichier.md
+    const navPath = `${lang}/navs/${selectedPageNav}`;
+    let navContent = await partialSc.call({ ...data }, navPath, {
+      ...data,
+    });
+
+    // Si le fichier existe et a retourné du contenu
+    if (navContent) {
+      if (!navContent.includes("<nav")) {
+        navContent = `<nav>\n${navContent}\n</nav>`;
+      }
+
+      // Ajout d'un header autour du composant nav (structure sémantique typique)
+      return `<header class="container-fluid">\n${navContent}\n</header>`;
+    }
+  }
+  // ANCIENNE LOGIQUE : YAML structuré (_data/nav/)
   // TODO: fix this: pageNav is an array...
   return pageNav
-    // ? await partialSc.call({ ...data }, pageNav, { ...data })
-    ? await partialSc.call({ ...data }, "_page-nav", { ...data })
+    ? // ? await partialSc.call({ ...data }, pageNav, { ...data })
+      await partialSc.call({ ...data }, "_page-nav", { ...data })
     : await partialSc.call({ ...data }, "_page-nav", { ...data });
 }

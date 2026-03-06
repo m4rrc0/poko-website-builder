@@ -1,24 +1,15 @@
-import buildLd from "../../data/structured-data/ldWebPage.js";
+// This file calls ld.js via the computed `data.ld` object
+// All the construction logic is handled by src/data/structured-data/ld.js
+export default function (data) {
+  const ldData = data.ld;
 
-export default async function (data) {
-  // Appelle ldWebPage avec le contexte Eleventy (this) pour accéder aux filtres
-  // (this.imgStats, etc.) et avec les données de la page
-  const ldArray = await buildLd.call(this, data);
+  // If no JSON-LD data, return nothing
+  if (!ldData) return "";
 
-  // Si pas de données (page exclue, etc.), on ne génère rien
-  if (!ldArray) return "";
-
-  // Pour chaque objet JSON-LD, on nettoie les undefined et on génère un <script>
-  const scripts = ldArray.filter(Boolean).map((obj) => {
-    const clean = Object.fromEntries(
-      Object.entries(obj).filter(([, v]) => v !== undefined),
-    );
-    return `<script type="application/ld+json">
-${JSON.stringify(clean, null, 2)}
+  // Inject the final block
+  return `<script type="application/ld+json">
+${JSON.stringify(ldData, null, 2)}
 </script>`;
-  });
-
-  return scripts.join("\n");
 }
 
 // import { COLLECTIONS, BASE_URL } from "env.config";
@@ -27,21 +18,21 @@ ${JSON.stringify(clean, null, 2)}
 //   const { metadata = {} } = data;
 //   const imgStats = this.imgStats;
 
-//   // collectionDir est calculé par eleventyComputed.js
-//   // ex: /fr/events/mon-event → "events"
+//   // collectionDir is calculated by eleventyComputed.js
+//   // ex: /fr/events/my-event -> "events"
 //   const collectionName = data.collectionDir;
 //   const schemaType =
-//     COLLECTIONS[collectionName]?.ldName ?? collectionName ?? "WebPage";
+//     COLLECTIONS[collectionName]?.ldType ?? collectionName ?? "WebPage";
 
 //   // ─── Helpers ──────────────────────────────────────────────────────────────
 
 //   const asImageObject = async (img) => {
 //     if (!img) return undefined;
-//     // img.src commence par "/" mais imageFilter fait `${WORKING_DIR}/${input}`
-//     // → on retire le slash initial pour éviter le double slash
+//     // img.src starts with "/" but imageFilter does `${WORKING_DIR}/${input}`
+//     // -> we remove the initial slash to avoid a double slash
 //     const src = (img.src ?? img).replace(/^\//, "");
 //     const stats = await imgStats(src);
-//     // Object.values().flat().find() → premier format dispo (webp, jpeg, etc.)
+//     // Object.values().flat().find() -> first available format (webp, jpeg, etc.)
 //     return {
 //       "@type": "ImageObject",
 //       url: stats?.url ? `${BASE_URL}${stats.url}` : undefined,
@@ -64,7 +55,7 @@ ${JSON.stringify(clean, null, 2)}
 //       : undefined;
 
 //   const asOffer = (item) => {
-//     // Le YAML stocke chaque offer sous une clé "offer" imbriquée → on l'aplatit
+//     // YAML stores each offer under a nested "offer" key -> we flatten it
 //     const offer = item?.offer ?? item;
 //     if (!offer) return undefined;
 //     return {
@@ -76,11 +67,11 @@ ${JSON.stringify(clean, null, 2)}
 //     };
 //   };
 
-//   // Résoudre un slug de relation → item Eleventy (via .page.fileSlug)
+//   // Resolve a relation slug -> Eleventy item (via .page.fileSlug)
 //   const resolveSlug = (collectionItems, slug) =>
 //     collectionItems?.find((item) => item.page.fileSlug === slug);
 
-//   // Résoudre une liste de slugs → Person[] Schema.org
+//   // Resolve a list of slugs -> Schema.org Person[]
 //   const resolvePeople = async (slugsRaw) => {
 //     if (!slugsRaw) return undefined;
 //     const slugs = Array.isArray(slugsRaw) ? slugsRaw : [slugsRaw];
@@ -100,7 +91,7 @@ ${JSON.stringify(clean, null, 2)}
 //     );
 //   };
 
-//   // ─── Propriétés communes ──────────────────────────────────────────────────
+//   // ─── Common properties ──────────────────────────────────────────────────
 
 //   const jsonLd = {
 //     "@context": "https://schema.org",
@@ -117,7 +108,7 @@ ${JSON.stringify(clean, null, 2)}
 //         : undefined,
 //   };
 
-//   // ─── Propriétés spécifiques ───────────────────────────────────────────────
+//   // ─── Specific properties ───────────────────────────────────────────────
 
 //   // Articles: author, datePublished, dateModified
 //   if (metadata.author) jsonLd.author = await resolvePeople(metadata.author);
@@ -127,10 +118,10 @@ ${JSON.stringify(clean, null, 2)}
 //   // Services: slogan
 //   if (metadata.slogan) jsonLd.slogan = metadata.slogan;
 
-//   // People: jobTitle, sameAs (depuis links[].link.url)
+//   // People: jobTitle, sameAs (from links[].link.url)
 //   if (metadata.jobTitle) jsonLd.jobTitle = metadata.jobTitle;
 //   if (Array.isArray(metadata.links) && metadata.links.length > 0) {
-//     // pas possible d'afficher "name" de "link"
+//     // not possible to display "name" of "link"
 //     jsonLd.sameAs = metadata.links
 //       .map((item) => item?.link?.url ?? item?.url)
 //       .filter(Boolean);
@@ -172,7 +163,7 @@ ${JSON.stringify(clean, null, 2)}
 //     );
 //   }
 
-//   // FAQs: mainEntity → Question[] + acceptedAnswer
+//   // FAQs: mainEntity -> Question[] + acceptedAnswer
 //   if (Array.isArray(metadata.faq) && metadata.faq.length > 0) {
 //     jsonLd.mainEntity = metadata.faq.map((item) => ({
 //       "@type": "Question",
@@ -184,7 +175,7 @@ ${JSON.stringify(clean, null, 2)}
 //     }));
 //   }
 
-//   // ─── Nettoyage des undefined ──────────────────────────────────────────────
+//   // ─── Cleaning undefined values ──────────────────────────────────────────────
 
 //   const clean = Object.fromEntries(
 //     Object.entries(jsonLd).filter(([, v]) => v !== undefined),
