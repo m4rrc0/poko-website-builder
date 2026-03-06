@@ -385,6 +385,13 @@ export const link = {
               collection: "pages",
               required: true,
             },
+            {
+              name: "anchor",
+              label: "Anchor",
+              widget: "string",
+              required: false,
+              hint: "Paste a title in the page to link to it directly",
+            },
           ],
         },
         ...allCollections.map((collection) => ({
@@ -401,6 +408,13 @@ export const link = {
               widget: "relation",
               collection: collection.name,
               required: true,
+            },
+            {
+              name: "anchor",
+              label: "Anchor",
+              widget: "string",
+              required: false,
+              hint: "Paste a title in the page to link to it directly",
             },
           ],
         })),
@@ -491,6 +505,7 @@ export const link = {
     const text = extractQuotedString(argumentsString, "text") || "";
     const url = extractQuotedString(argumentsString, "url") || "";
     let linkType = extractQuotedString(argumentsString, "linkType") || "";
+    const anchor = extractQuotedString(argumentsString, "anchor") || "";
     const collection = extractQuotedString(argumentsString, "collection") || "";
     const cc = extractQuotedString(argumentsString, "cc") || "";
     const bcc = extractQuotedString(argumentsString, "bcc") || "";
@@ -502,7 +517,7 @@ export const link = {
     const otherAttrs = argumentsString
       .replace(/^\s*,\s*/, "")
       .replace(
-        /(text|url|linkType|collection|cc|bcc|subject|body)="[^"]*"(?:\s*,)?/g,
+        /(text|url|linkType|anchor|collection|cc|bcc|subject|body)="[^"]*"(?:\s*,)?/g,
         "",
       )
       .trim();
@@ -557,6 +572,7 @@ export const link = {
       linkType: {
         type: linkType,
         url,
+        ...(anchor ? { anchor } : {}),
         ...(linkType === "email" && advanced ? { advanced } : {}),
       },
       otherAttrs,
@@ -571,6 +587,7 @@ export const link = {
     const { cc, bcc, subject, body } = advanced;
     const otherAttrs = data?.otherAttrs;
     const otherAttrsString = otherAttrs?.trim() ? `, ${otherAttrs}` : "";
+    const anchor = data?.linkType?.anchor;
 
     if (linkType === "external" || linkType === "file") {
       return `{% link url="${url}", text="${text}", linkType="${linkType}"${otherAttrsString} %}`;
@@ -589,7 +606,8 @@ export const link = {
     } else {
       const collection = linkType;
       linkType = "internal";
-      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}"${otherAttrsString} %}`;
+      const anchorStr = anchor ? `, anchor="${anchor}"` : "";
+      return `{% link url="${url}", text="${text}", linkType="${linkType}", collection="${collection}"${anchorStr}${otherAttrsString} %}`;
     }
   },
 

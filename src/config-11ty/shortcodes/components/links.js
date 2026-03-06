@@ -20,6 +20,7 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
   const {
     __keywords,
     url,
+    anchor,
     text,
     lang,
     prop,
@@ -72,7 +73,9 @@ export function link(unnamedAttrOrObj, optionalAttrsObj) {
       .join(" ");
 
     if (typeof pageData === "object") {
-      return `<a href="${pageData.url}" ${attrsStr}>${text || pageData.name || pageData.url}</a>`;
+      const slugify = this.env.filters.slugify;
+      const anchorSlug = anchor && typeof anchor === 'string' ? '#' + slugify.call(this, anchor) : ""; //slugify the anchor only when itis not empty else return an empty string
+      return `<a href="${pageData.url}${anchorSlug}" ${attrsStr}>${text || pageData.name || pageData.url}</a>`;
     }
   }
 
