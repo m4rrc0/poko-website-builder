@@ -644,6 +644,27 @@ const layoutTypeFixedFluid = {
     },
   ],
 };
+const layoutTypeCluster = {
+  name: "cluster",
+  label: "Cluster",
+  collapsed: true,
+  fields: [
+    {
+      name: "gap",
+      label: "Gap",
+      widget: "string",
+      hint: "The gap between blocks (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
+      required: false,
+    },
+    {
+      name: "class",
+      label: "Class Names",
+      widget: "string",
+      hint: "Additional class names to add to the section (e.g. 'my-class another-class')",
+      required: false,
+    },
+  ]
+}
 
 export const link = {
   id: "link",
@@ -2023,7 +2044,7 @@ export const sectionGrid = {
       widget: "object",
       required: false,
       collapsed: true,
-      types: [layoutTypeSwitcher, layoutTypeGridFluid],
+      types: [layoutTypeSwitcher, layoutTypeGridFluid, layoutTypeCluster],
     },
     {
       name: "attributes",
@@ -2564,7 +2585,7 @@ export const sectionCollection = {
       widget: "object",
       required: false,
       collapsed: true,
-      types: [layoutTypeSwitcher, layoutTypeGridFluid],
+      types: [layoutTypeSwitcher, layoutTypeGridFluid, layoutTypeCluster],
     },
     {
       name: "attributes",

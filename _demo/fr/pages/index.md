@@ -53,3 +53,30 @@ And a paragraph
 {% endgrid %}
 
 {% endsectionGrid %}
+
+{% sectionGrid  %}
+{% sectionHeader  %}
+sectionGrid layout cluster
+{% endsectionHeader %}
+{% grid type="cluster" %}
+{% gridItem  %}
+#### Hello inside gridItem 1
+{% endgridItem %}
+{% gridItem  %}
+#### Hello inside gridItem 2
+{% endgridItem %}
+{% gridItem  %}
+#### Hello inside gridItem 3
+{% endgridItem %}
+{% gridItem  %}
+#### Hello inside gridItem 4
+{% endgridItem %}
+{% gridItem  %}
+#### Hello inside gridItem 5
+{% endgridItem %}
+{% gridItem  %}
+#### Hello inside gridItem 6
+{% endgridItem %}
+{% endgrid %}
+
+{% endsectionGrid %}
