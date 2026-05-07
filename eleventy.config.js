@@ -559,6 +559,7 @@ export default async function (eleventyConfig) {
     [`${WORKING_DIR}/_files/_headers`]: "_headers",
     // All CSS files to assets
     [`${WORKING_DIR}/*.css`]: "/assets/styles/",
+    "assets/js/instant-page.js": "assets/js/instant-page.js",
   });
   // Copy Sveltia CMS if not using CDN
   if (CMS_IMPORT === "npm") {

@@ -102,3 +102,5 @@
 <script src="{% getBundleFileUrl 'js', 'defer' %}" defer fetchpriority="low"></script>
 
 {% partial "_metadata-jsonld" %}
+
+<script src="/assets/js/instant-page.js" type="module"></script>
