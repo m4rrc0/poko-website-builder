@@ -3304,7 +3304,7 @@ export const sectionCollection = {
       label: "Item Partial",
       hint: "Select a custom partial to be used to display items",
       widget: "relation",
-      collection: "partials",
+      collection: "htmlPartials",
       required: false,
       value_field: "{{slug}}",
     },

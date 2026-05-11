@@ -1,3 +1,17 @@
+// const njkAttrsStringFromObj = (obj) =>
+//   Object.entries(obj)
+//     .filter(
+//       ([key, value]) =>
+//         !!value && key !== "content" && !key.startsWith("content:"),
+//     )
+//     .map(([key, value]) => {
+//       if (typeof value === "string") {
+//         return `${key}="${value}"`;
+//       }
+//       return `${key}=` + JSON.stringify(value);
+//     })
+//     .join(", ");
+
 export default async function ({
   // Data from context template
   collections,
@@ -46,6 +60,13 @@ export default async function ({
       }),
     )
   ).join("\n");
+
+  // const itemsStr = items
+  //   .map((item, index) => {
+  //     const itemAttrs = njkAttrsStringFromObj(item.data);
+  //     return `{% partial "${itemPartial || "_collectionItem"}", index=${index}, ${itemAttrs} %}`;
+  //   })
+  //   .join("\n");
 
   // const contentRendered = await this.renderTemplate(content, "njk,md");
   // const gridItemRegex = /class=["'][^"']*\bitem-grid\b[^"']*["']/g;

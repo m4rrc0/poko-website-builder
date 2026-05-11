@@ -81,6 +81,7 @@ export async function image(args) {
             ...((fetchpriority || loading === "eager") && {
               fetchpriority: fetchpriority || "high",
             }),
+            ...(width && { sizes: null }), // TODO: right?
             ...(sizes && { sizes }),
             ...((aspectRatio && {
               class: `${className || imgAttributes?.class || ""} aspect-ratio-${aspectRatio}`,

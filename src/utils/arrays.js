@@ -98,9 +98,14 @@ const sortCb = (collectionItem, by) => {
 };
 
 export function sortCollection(collection, sortCriteriasRaw) {
-  const sortCriterias = Array.isArray(sortCriteriasRaw)
+  let sortCriterias = Array.isArray(sortCriteriasRaw)
     ? sortCriteriasRaw
     : [sortCriteriasRaw];
+
+  sortCriterias =
+    sortCriterias.length === 0
+      ? [{ direction: "asc", by: "order" }]
+      : sortCriterias;
 
   const sortedCollection = sort(collection).by(
     sortCriterias

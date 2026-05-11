@@ -36,8 +36,8 @@ function toPx(cssValue, pxPerRem = 16) {
   }
 }
 
-const defaultMaxWidthInRem = "88rem";
-const defaultMaxPxPerRem = 20;
+const defaultMaxWidthInRem = "80.9rem";
+const defaultMaxPxPerRem = 16;
 
 const maxPxPerRem = Math.max(
   ...(brandTypeScales.length ? brandTypeScales : [defaultMaxPxPerRem]).map(
@@ -46,12 +46,12 @@ const maxPxPerRem = Math.max(
 );
 
 const maxWidthInPx = (
-  brandWidthsContexts.length ? brandWidthsContexts : []
+  brandWidthsContexts.length ? brandWidthsContexts : [{}]
 ).map((context) => {
   return context?.vars?.max
     ? toPx(context?.vars?.max, maxPxPerRem)
     : toPx(defaultMaxWidthInRem, maxPxPerRem);
-});
+})[0];
 
 export const imageOptionsDefaults = {
   // Only optimize images when they are requested in the browser.
