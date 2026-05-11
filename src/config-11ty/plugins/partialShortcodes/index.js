@@ -53,6 +53,7 @@ export default async function (eleventyConfig, pluginOptions) {
     "twoColumnsItem",
     "sectionCollection",
     "collection",
+    "collectionWrapper",
     "collectionItem",
     "sectionReel",
     "reel",

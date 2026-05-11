@@ -53,8 +53,8 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
   const isFile = type === "file" || isFileUrl(urlRef);
   const isExternal =
     type === "external" ||
-    urlRef.startsWith("http") ||
-    urlRef.startsWith("www.");
+    (urlRef || "").startsWith("http") ||
+    (urlRef || "").startsWith("www.");
   const isInternal =
     type === "internal" || (!isEmail && !isExternal && !isFile);
 

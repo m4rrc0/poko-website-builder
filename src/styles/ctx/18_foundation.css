@@ -92,7 +92,11 @@
   /* Step 9: 92.876px → 149.0116px */
   --step-9: clamp(5.8048rem, 4.3695rem + 6.379vw, 9.3132rem);
 
+  /* ⚠️ 1rem stays at 16px for our step calculations to remain consistant */
+  /* TODO: Would be nice to find a way to overwrite the rem unit to match our scale.
+    This needs some other calculation... */
   --width-prose: 50rem;
+  /*--width-prose: calc(50 * var(--step-0));*/
   --width-body: calc(var(--width-prose) * 1.618); /* 80,98 */
   --width-max: var(--width-body); /* (alias for width-body) */
   /*--width-outset: ;*/

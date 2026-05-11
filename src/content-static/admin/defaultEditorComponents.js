@@ -397,17 +397,19 @@ const extractAllSectionAreaDataMultipleTags = (contentString, tagNames) => {
   // Sort by position to maintain order
   allMatches.sort((a, b) => a.index - b.index);
 
-  // Process attributes for each match
+  // Process attributes for each match.
+  // NOTE: only `class` is promoted to top-level here. `type` MUST be left in
+  // the remaining attributes string so that `parseLayoutAttrs` (called later
+  // by parseTwoColumnsBody/parseGridBody/parseFlowBody/parseReelBody/
+  // parseCollectionBody) can capture it as the `layoutOptions.type`
+  // discriminator (e.g. "switcher", "fixedFluid", "grid-fluid", ...).
   const items = allMatches.map(({ tagName, attributes, content }) => {
     const { extracted, remaining } = extractAttributes(attributes || "", [
-      "type",
       "class",
     ]);
     const className = extracted?.class || null;
-    const type = extracted?.type || null;
     return {
-      // tagName,
-      type: tagName,
+      tagName,
       class: className,
       attributes: remaining,
       content,
@@ -686,6 +688,7 @@ const parseCollectionBody = ({ attributes, content }) => {
       "filters",
       "sortCriterias",
       "exclusions",
+      "itemPartial",
     ]);
 
   // Then parse layout attrs from what remains
@@ -693,6 +696,8 @@ const parseCollectionBody = ({ attributes, content }) => {
     afterCollectionSpecific,
     GRID_LAYOUT_KEYS,
   );
+  // `itemPartial` was already pulled out into `collectionSpecific` above.
+  const itemPartial = collectionSpecific.itemPartial;
 
   const sortAndFilterOptions =
     filters.length || sortCriterias.length || collectionSpecific.exclusions
@@ -707,6 +712,7 @@ const parseCollectionBody = ({ attributes, content }) => {
     collection: collectionSpecific.collection,
     sortAndFilterOptions,
     class: className,
+    itemPartial,
     layoutOptions,
     attributes: afterCollectionSpecific,
   };
@@ -721,6 +727,7 @@ const buildCollectionBody = ({
   collection,
   sortAndFilterOptions,
   class: className,
+  itemPartial,
   layoutOptions,
   attributes,
 }) => {
@@ -736,6 +743,7 @@ const buildCollectionBody = ({
     columns,
     gap,
     class: className,
+    itemPartial,
     widthWrap,
   };
   const collAttrsStr = njkAttrsStringFromObj(collAttrs);
@@ -3212,11 +3220,12 @@ export const sectionCollection = {
             {
               name: "tag",
               label: "Filter by Tag",
+              summary: "{{value}}", // TODO: understand why this is not working
               fields: [
                 {
                   name: "value",
                   label: "Tag Name",
-                  hint: "Tags must first exist in the in [Data Files > Translated Data](/admin/#/collections/dataFiles/entries/translatedData)",
+                  hint: "Tags must first exist in [Data Files > Translated Data](/admin/#/collections/dataFiles/entries/translatedData)",
                   widget: "relation",
                   collection: "dataFiles",
                   file: "translatedData",
@@ -3290,6 +3299,15 @@ export const sectionCollection = {
       hint: "Class names added to the inner layout element ({% collection %}). For classes on the outer section element, use the Section Wrapper below.",
       required: false,
     },
+    {
+      name: "itemPartial",
+      label: "Item Partial",
+      hint: "Select a custom partial to be used to display items",
+      widget: "relation",
+      collection: "partials",
+      required: false,
+      value_field: "{{slug}}",
+    },
     sectionFooterField,
     sectionWrapperField,
   ],
@@ -3314,6 +3332,7 @@ export const sectionCollection = {
       sortAndFilterOptions: parsed?.sortAndFilterOptions,
       layoutOptions: parsed?.layoutOptions,
       class: parsed?.class,
+      itemPartial: parsed?.itemPartial,
       sectionWrapper: parseSectionWrapper(sectionAttributes),
     };
   },
@@ -3327,6 +3346,7 @@ export const sectionCollection = {
       collection: data?.collection,
       sortAndFilterOptions: data?.sortAndFilterOptions,
       class: data?.class,
+      itemPartial: data?.itemPartial,
       layoutOptions: data?.layoutOptions,
     });
 
@@ -3877,11 +3897,12 @@ export const sectionBuilder = {
 
     // Enrich complex area types with structured data.
     const processedAreas = areas.map((area) => {
-      if (area.type === "twoColumns") {
+      if (area.tagName === "twoColumns") {
         const parsed = parseTwoColumnsBody({
           attributes: area.attributes,
           content: area.content,
         });
+        console.log({ area, parsed });
         return {
           type: "twoColumns",
           class: area.class || parsed?.class,
@@ -3891,7 +3912,7 @@ export const sectionBuilder = {
           itemRight: parsed?.itemRight,
         };
       }
-      if (area.type === "grid") {
+      if (area.tagName === "grid") {
         const parsed = parseGridBody({
           attributes: area.attributes,
           content: area.content,
@@ -3904,7 +3925,7 @@ export const sectionBuilder = {
           items: parsed?.items || [],
         };
       }
-      if (area.type === "collection") {
+      if (area.tagName === "collection") {
         const parsed = parseCollectionBody({
           attributes: area.attributes,
           content: area.content,
@@ -3918,7 +3939,7 @@ export const sectionBuilder = {
           sortAndFilterOptions: parsed?.sortAndFilterOptions,
         };
       }
-      if (area.type === "flow") {
+      if (area.tagName === "flow") {
         const parsed = parseFlowBody(
           extractWithNunjucksTag(sectionInner, "flow"),
         );
@@ -3930,7 +3951,7 @@ export const sectionBuilder = {
           items: parsed?.items || [],
         };
       }
-      if (area.type === "reel") {
+      if (area.tagName === "reel") {
         const parsed = parseReelBody(
           extractWithNunjucksTag(sectionInner, "reel"),
         );

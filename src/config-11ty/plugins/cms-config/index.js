@@ -1111,6 +1111,7 @@ export const pages = {
   slug: "{{name | localize}}", // This allows the slug to be localized
   // slug: "{{fields._slug | localize}}",
   reorder: true,
+  summary: "{{order | default('x')}} - {{name}}",
 
   // MEDIAS
   media_folder: `/${CONTENT_DIR}/_images`,
@@ -1122,7 +1123,7 @@ export const pagesCollection = {
   path: "pages/{{slug}}",
   // summary:
   //   "{{name}} {{eleventyNavigation.order | ternary(' (nav ', '')}}{{eleventyNavigation.order}}{{eleventyNavigation.order | ternary(')', '')}}",
-  summary: "{{order | default('x')}} - {{name}}",
+  // summary: "{{order | default('x')}} - {{name}}",
   sortable_fields: {
     fields: [
       "eleventyNavigation.parent",
