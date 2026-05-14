@@ -1111,7 +1111,8 @@ export const pages = {
   slug: "{{name | localize}}", // This allows the slug to be localized
   // slug: "{{fields._slug | localize}}",
   reorder: true,
-  summary: "{{order | default('x')}} - {{name}}",
+  summary:
+    "{{order | default('x')}} - **{{name}}** {{tags.0 | ternary('- #', '')}}{{tags}}",
 
   // MEDIAS
   media_folder: `/${CONTENT_DIR}/_images`,
@@ -1146,14 +1147,15 @@ export const pagesCollection = {
   // index_file: {
   //   name: "pages",
   //   label: "Page Data",
-  //   path: "pages/{{slug}}",
   //   // path: "_index",
-  //   extension: "yaml",
+  //   // path: "pages/pages.yaml",
+  //   file: `${CONTENT_DIR}/{{locale}}/pages/pages.yaml`,
+  //   // extension: "yaml",
   //   // file: `${CONTENT_DIR}/_data/brand.yaml`,
   //   // format: "yaml",
   //   icon: "home",
   //   editor: { preview: false },
-  //   i18n: false,
+  //   // i18n: false,
   //   fields: [
   //     {
   //       name: "layout",
@@ -1183,6 +1185,63 @@ export function spreadPageSetup(collectionNameRaw) {
     path: `${collectionName}/{{slug}}`,
   };
 }
+// CREATIVE WORKS
+export const creativeWorkFields = [
+  ...commonCollectionFields,
+  {
+    name: "ldType",
+    label: "LD Type",
+    widget: "hidden",
+    required: false,
+    i18n: "duplicate",
+    default: COLLECTIONS["creativeWorks"].ldType,
+  },
+  ...spreadCommonPageFields({
+    simpleMetadata: {
+      ...simpleMetadataField,
+      fields: [
+        ...simpleMetadataField.fields,
+        {
+          name: "author",
+          label: "Author",
+          type: "text",
+          widget: "relation",
+          collection: "people",
+          multiple: true,
+          required: false,
+          i18n: "duplicate",
+        },
+        {
+          name: "datePublished",
+          label: "Date Published",
+          type: "datetime",
+          widget: "datetime",
+          format: "YYYY-MM-DDTHH:mm:ss",
+          required: false,
+          i18n: true,
+        },
+        {
+          name: "dateModified",
+          label: "Date Modified",
+          type: "datetime",
+          widget: "datetime",
+          format: "YYYY-MM-DDTHH:mm:ss",
+          required: false,
+          i18n: true,
+        },
+      ],
+    },
+  }),
+];
+export const creativeWorks = {
+  ...spreadPageSetup("creativeWorks"),
+  name: COLLECTIONS.creativeWorks.name,
+  label: COLLECTIONS.creativeWorks.label,
+  label_singular: COLLECTIONS.creativeWorks.label_singular,
+  icon: "wall_art",
+  fields: creativeWorkFields,
+};
+export const creativeWorksCollection = { ...creativeWorks };
 // ARTICLES
 export const articleFields = [
   ...commonCollectionFields,
@@ -1787,8 +1846,8 @@ export const projects = {
   fields: projectFields,
 };
 export const projectsCollection = { ...projects };
-// DOCUMENTATION -- HowTo in schema.org
-export const documentationFields = [
+// HowTo in schema.org
+export const howtoFields = [
   ...commonCollectionFields,
   {
     name: "ldType",
@@ -1796,21 +1855,22 @@ export const documentationFields = [
     widget: "hidden",
     required: false,
     i18n: "duplicate",
-    default: COLLECTIONS["documentations"].ldType,
+    default: COLLECTIONS["howtos"].ldType,
   },
   ...spreadCommonPageFields(),
 ];
-export const documentations = {
-  ...spreadPageSetup("documentations"),
-  name: COLLECTIONS.documentations.name,
-  label: COLLECTIONS.documentations.label,
-  label_singular: COLLECTIONS.documentations.label_singular,
+export const howtos = {
+  ...spreadPageSetup("howtos"),
+  name: COLLECTIONS.howtos.name,
+  label: COLLECTIONS.howtos.label,
+  label_singular: COLLECTIONS.howtos.label_singular,
   icon: "menu_book",
   fields: projectFields,
 };
-export const documentationCollection = { ...documentations };
+export const howtoCollection = { ...howtos };
 
 const optionalCollections = {
+  creativeWorks: creativeWorksCollection,
   articles: articlesCollection,
   services: servicesCollection,
   events: eventsCollection,
@@ -1822,7 +1882,7 @@ const optionalCollections = {
   places: placesCollection,
   reviews: reviewsCollection,
   faqs: faqsCollection,
-  documentations: documentationCollection, //HowTo in schema.org
+  howtos: howtoCollection, //HowTo in schema.org
 };
 export function getSelectedCollections() {
   const selectedOptionalCollections = (selectedCollections || [])
