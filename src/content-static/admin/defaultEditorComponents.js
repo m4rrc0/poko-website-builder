@@ -3179,6 +3179,12 @@ export const sectionCollection = {
                 },
               ],
             },
+            {
+              name: "random",
+              label: "Randomize",
+              collapsed: true,
+              fields: [],
+            },
             // {
             //   name: "direction",
             //   label: "Sort Direction",

@@ -537,6 +537,10 @@ export const mostCommonMarkdownCollectionConfig = {
         field: "eleventyNavigation.add",
         value: "Nav",
       },
+      {
+        label: "Tags",
+        field: "tags",
+      },
     ],
     default: "eleventyNavigation.add",
   },

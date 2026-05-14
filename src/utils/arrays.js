@@ -118,6 +118,16 @@ export function sortCollection(collection, sortCriteriasRaw) {
       ? [{ direction: "asc", by: "order" }]
       : sortCriterias;
 
+  // If any criteria requests randomization, shuffle and short-circuit.
+  if (sortCriterias.some((sc) => sc?.by === "random")) {
+    const shuffled = [...collection];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
   const sortedCollection = sort(collection).by(
     sortCriterias
       .filter((sc) => sc?.by && sc?.direction)

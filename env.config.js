@@ -306,7 +306,7 @@ export const COLLECTIONS = {
     ldType: "Service",
   },
   creativeWorks: {
-    name: "creativeWorks",
+    name: "creative-works",
     label: "Creative Works",
     label_singular: "Creative Work",
     ldType: "CreativeWork",
