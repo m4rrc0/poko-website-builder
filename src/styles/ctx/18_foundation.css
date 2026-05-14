@@ -292,7 +292,7 @@ html:focus-within {
 
 /* Try an nuke browser extensions added at the end of the body */
 /* TODO: Find a better way */
-body > footer ~ div {
+body > footer ~ div:not([class*="poko"]) {
   all: revert;
   margin: 0;
   padding: 0;

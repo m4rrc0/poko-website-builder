@@ -53,12 +53,6 @@ export default async function ({
   const itemsStr = (
     await Promise.all(
       items.map(async (item, index) => {
-        console.log(Object.keys(item));
-        //       "template", "rawInput", "groupNumber", "data", "page", "inputPath", "fileSlug", "filePathStem",
-        // "date", "outputPath", "url", "templateContent", "content"
-
-        //         "data", "page", "inputPath", "fileSlug", "filePathStem",
-        // "date", "outputPath", "url", "templateContent", "content"
         return await partialSc.call(this, itemPartial || "_collectionItem", {
           index,
           ...item.data,
