@@ -17,6 +17,8 @@ import {
 
 const processEnv = typeof process !== "undefined" ? process.env : {};
 
+export default { ...processEnv };
+
 // GENERAL
 export const DEBUG = processEnv.DEBUG === "true" ? true : false;
 export const NODE_ENV = processEnv.NODE_ENV || "production";
@@ -243,10 +245,10 @@ export const COLLECTIONS = {
     label_singular: "Course",
     ldType: "Course",
   },
-  documentations: {
-    name: "documentations",
-    label: "Documentations",
-    label_singular: "Documentation",
+  howtos: {
+    name: "howtos",
+    label: "How Tos",
+    label_singular: "How To",
     ldType: "HowTo",
   },
   events: {
@@ -302,6 +304,12 @@ export const COLLECTIONS = {
     label: "Services",
     label_singular: "Service",
     ldType: "Service",
+  },
+  creativeWorks: {
+    name: "creativeWorks",
+    label: "Creative Works",
+    label_singular: "Creative Work",
+    ldType: "CreativeWork",
   },
 };
 

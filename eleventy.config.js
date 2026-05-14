@@ -47,7 +47,7 @@ import markdownItLinkAttributes from "markdown-it-link-attributes";
 import markdownItAttrs from "markdown-it-attrs";
 import markdownItBracketedSpans from "markdown-it-bracketed-spans";
 // -------- Env Variables
-import * as env from "./env.config.js";
+import * as envConf from "./env.config.js";
 import {
   DEBUG,
   CMS_IMPORT,
@@ -84,6 +84,9 @@ import {
 import { getSelectedCollections } from "./src/config-11ty/plugins/cms-config/index.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
 import ldWebSite from "./src/data/structured-data/ldWebSite.js";
+
+const env = { ...envConf.default, ...envConf };
+delete env.default;
 
 // Eleventy Config
 import {
