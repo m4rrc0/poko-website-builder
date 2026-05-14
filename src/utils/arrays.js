@@ -18,6 +18,17 @@ export function filterCollection(collection, filtersRaw, exclusions = false) {
   const filteredCollection = filters.reduce((acc, { by, value } = {}) => {
     switch (by) {
       // NOTE: Match some special keywords first
+      case "name": {
+        const needles = toArrayOfStrings(value)
+          .map((v) => v.trim().toLowerCase())
+          .filter(Boolean);
+        if (needles.length === 0) return acc;
+        return filterAcc(acc, (item) => {
+          const name = toString(item.data?.name).toLowerCase();
+          if (!name) return false;
+          return needles.some((n) => name.includes(n));
+        });
+      }
       case "last":
         return acc.slice(-toInt(value));
       case "first":

@@ -3237,6 +3237,25 @@ export const sectionCollection = {
               ],
             },
             {
+              name: "name",
+              label: "Filter by Name",
+              fields: [
+                {
+                  name: "value",
+                  label: "Name matches",
+                  hint: "Case-insensitive, partial match. Provide one or more values; an item matches if any value is found in its name.",
+                  widget: "list",
+                  allow_add: true,
+                  required: true,
+                  field: {
+                    name: "value",
+                    label: "Value",
+                    widget: "string",
+                  },
+                },
+              ],
+            },
+            {
               name: "first",
               label: "First",
               fields: [
@@ -3642,6 +3661,25 @@ export const sectionBuilder = {
                           display_fields: ["tagsList.*.name"],
                           required: true,
                           multiple: true,
+                        },
+                      ],
+                    },
+                    {
+                      name: "name",
+                      label: "Filter by Name",
+                      fields: [
+                        {
+                          name: "value",
+                          label: "Name matches",
+                          hint: "Case-insensitive, partial match. Provide one or more values; an item matches if any value is found in its name.",
+                          widget: "list",
+                          allow_add: true,
+                          required: true,
+                          field: {
+                            name: "value",
+                            label: "Value",
+                            widget: "string",
+                          },
                         },
                       ],
                     },
