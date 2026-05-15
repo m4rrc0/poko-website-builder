@@ -36,7 +36,17 @@ const njkAttrsStringFromObj = (obj) =>
     .join(", ");
 
 const njkAttrsStringFromSectionAreaData = (areaData) => {
-  const { content, attributes, ...isolatedAttrs } = areaData || {};
+  // `type` is a CMS-side discriminator for the sectionBuilder areas list
+  // (e.g. "areaRaw", "area"). It must NOT be serialized onto the tag.
+  // `tagName` is an internal helper produced when parsing existing markup
+  // and must also not be serialized.
+  const {
+    content,
+    attributes,
+    type: _type,
+    tagName: _tagName,
+    ...isolatedAttrs
+  } = areaData || {};
   const constructedAttrs = njkAttrsStringFromObj(isolatedAttrs);
   const attrs = [constructedAttrs, attributes || ""].filter(Boolean).join(", ");
 
@@ -3750,6 +3760,15 @@ export const sectionBuilder = {
               ],
             },
             {
+              name: "itemPartial",
+              label: "Item Partial",
+              hint: "Select a custom partial to be used to display items",
+              widget: "relation",
+              collection: "htmlPartials",
+              required: false,
+              value_field: "{{slug}}",
+            },
+            {
               name: "attributes",
               label: "Area Raw Attributes",
               widget: "hidden",
@@ -3946,7 +3965,7 @@ export const sectionBuilder = {
           attributes: area.attributes,
           content: area.content,
         });
-        console.log({ area, parsed });
+
         return {
           type: "twoColumns",
           class: area.class || parsed?.class,
@@ -3981,6 +4000,7 @@ export const sectionBuilder = {
           attributes: parsed?.attributes,
           collection: parsed?.collection,
           sortAndFilterOptions: parsed?.sortAndFilterOptions,
+          itemPartial: parsed?.itemPartial,
         };
       }
       if (area.tagName === "flow") {
@@ -4005,6 +4025,16 @@ export const sectionBuilder = {
           layoutOptions: parsed?.layoutOptions || {},
           attributes: parsed?.attributes,
           items: parsed?.items || [],
+        };
+      }
+      // `area` and `areaRaw`: map `tagName` (parser output) onto `type`
+      // (the sectionBuilder areas-list discriminator expected by Decap).
+      if (area.tagName === "area" || area.tagName === "areaRaw") {
+        return {
+          type: area.tagName,
+          class: area.class || undefined,
+          attributes: area.attributes || undefined,
+          content: area.content,
         };
       }
       return area;
@@ -4051,6 +4081,7 @@ export const sectionBuilder = {
                   class: area.class,
                   layoutOptions: area.layoutOptions,
                   attributes: area.attributes,
+                  itemPartial: area.itemPartial,
                 });
 
               case "flow":

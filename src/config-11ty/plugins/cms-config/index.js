@@ -850,6 +850,7 @@ export const partialsCollection = {
       label: "Content",
       widget: "markdown",
       required: false,
+      i18n: true,
 
       // widget: "code",
       // required: false,
@@ -875,6 +876,7 @@ export const htmlPartialsCollection = {
       output_code_only: true,
       allow_language_selection: false,
       language: "html",
+      i18n: true,
     },
   ],
 };
