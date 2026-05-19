@@ -275,22 +275,23 @@ export const pageLayoutRelationField = {
 // };
 export const eleventyNavigationField = {
   name: "eleventyNavigation",
-  label: "Main Navigation",
+  label: "to Main Navigation",
   widget: "object",
   collapsed: true,
   required: false,
   // summary: "Position: {{fields.order}} | Nav Title: {{fields.title}}",
   summary:
     "Custom order: {{fields.order}} | Nav Title: {{fields.title}}{{fields.title | ternary('', '(Page Name)')}}",
-  i18n: true,
+  i18n: "duplicate",
   preview: false,
   fields: [
     {
       name: "add",
       label: "Add to Navigation",
-      widget: "string",
+      widget: "hidden",
       default: "Nav",
-      required: false,
+      required: true,
+      i18n: "duplicate",
     },
     {
       name: "title",
