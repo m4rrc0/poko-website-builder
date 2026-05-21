@@ -52,9 +52,10 @@ export default async function ({
 
   const itemsStr = (
     await Promise.all(
-      items.map(async (item, index) => {
+      items.map(async (item, index, items) => {
         return await partialSc.call(this, itemPartial || "_collectionItem", {
           index,
+          items,
           ...item.data,
           rawInput: item.rawInput ?? item.template?.inputContent ?? "",
           // rawInput: item.rawInput,

@@ -34,6 +34,7 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
     body,
     cc,
     bcc,
+    preload,
     // TODO: implement the following?
     // download,
     // target,
@@ -42,6 +43,11 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
     ...attrs
   } = optionalAttrsObj || unnamedAttrOrObj;
   const type = typeTemp || linkType;
+  let instantAttrStr =
+    preload === false || preload === "false" ? "data-no-instant" : "";
+  instantAttrStr =
+    instantAttrStr ||
+    (preload === true || preload === "true" ? "data-instant" : "");
 
   const htmlContent = content || text;
 
@@ -81,7 +87,7 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
 
     if (typeof pageData === "object") {
       const anchorStr = anchor ? `#${slugify(anchor)}` : "";
-      return `<a href="${pageData.url}${anchorStr}" ${attrsStr}>${htmlContent || pageData.name || pageData.url}</a>`;
+      return `<a href="${pageData.url}${anchorStr}" ${attrsStr} ${instantAttrStr}>${htmlContent || pageData.name || pageData.url}</a>`;
     }
   }
 
@@ -90,7 +96,7 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
       .map(([key, value]) => `${key}="${value}"`)
       .join(" ");
 
-    return `<a href="${urlRef}" ${attrsStr}>${htmlContent || urlRef}</a>`;
+    return `<a href="${urlRef}" ${attrsStr} ${instantAttrStr}>${htmlContent || urlRef}</a>`;
   }
 
   if (isEmail) {
@@ -109,7 +115,7 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
       .map(([key, value]) => `${key}="${value}"`)
       .join(" ");
 
-    return `<a href="${urlRef}" ${attrsStr}>${htmlContent || urlRef}</a>`;
+    return `<a href="${urlRef}" ${attrsStr} ${instantAttrStr}>${htmlContent || urlRef}</a>`;
   }
 
   return "";

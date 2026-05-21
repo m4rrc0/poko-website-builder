@@ -108,15 +108,19 @@ const sortCb = (collectionItem, by) => {
   return typeof value === "string" ? value.toLowerCase() : value;
 };
 
-export function sortCollection(collection, sortCriteriasRaw) {
+export function sortCollection(collection, sortCriteriasRaw = []) {
   let sortCriterias = Array.isArray(sortCriteriasRaw)
-    ? sortCriteriasRaw
+    ? [...sortCriteriasRaw]
     : [sortCriteriasRaw];
 
+  sortCriterias = sortCriterias.filter((sc) => sc);
   sortCriterias =
     sortCriterias.length === 0
       ? [{ direction: "asc", by: "order" }]
       : sortCriterias;
+
+  // TODO: remove this after check on hosting build...
+  console.log({ sortCriterias, sortCriteriasRaw });
 
   // If any criteria requests randomization, shuffle and short-circuit.
   if (sortCriterias.some((sc) => sc?.by === "random")) {
