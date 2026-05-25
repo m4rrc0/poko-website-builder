@@ -368,7 +368,7 @@ body > footer ~ div:not([class*="poko"]) {
 
 :where(button, input, textarea),
 ::scroll-button(*) {
-  background: inherit;
+  /* background: inherit; */
   padding-inline: 0.3em;
   transition:
     background-color var(--animation-duration, 0.1s) linear,
