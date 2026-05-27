@@ -1,9 +1,10 @@
 {% wrapper tag="section", class="hero-section" %}
+
 # Compelling Here
 
 Welcome message, tagline or elevator speech. Who do you serve and what do you offer them?
 
-{% link url="undefined", text="Call to Action", linkType="internal", collection="undefined" %}
+{% link url="undefined", text="Call to Action", linkType="internal", collection="undefined" %}{% endlink %}
 {% endwrapper %}
 
   <section>
@@ -60,6 +61,7 @@ Welcome message, tagline or elevator speech. Who do you serve and what do you of
       </div>
       <h4>SERVICE THREE</h4>
     </article>
+
   </section>
 
   <section>

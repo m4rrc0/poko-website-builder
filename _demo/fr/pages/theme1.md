@@ -6,22 +6,24 @@ uuid: 4bebefcke99a
 localizationKey: 49e6ae09fa58
 name: Theme 1
 eleventyNavigation:
-  title: ''
-  parent: ''
+  title: ""
+  parent: ""
   order: 1
 status: noindex
 vars: null
 ---
 
 {% wrapper tag="section", class="hero-section text-center" %}
+
 # Compelling Here
 
 Welcome message, tagline or elevator speech. Who do you serve and what do you offer them?
 
-{% link url="index", text="Call to Action", linkType="internal", collection="pages" %}
+{% link url="index", text="Call to Action", linkType="internal", collection="pages" %}{% endlink %}
 {% endwrapper %}
 
 {% wrapper tag="section", class="prose" %}
+
 ## Engaging Subheading, Address Your Visitors Problems
 
 It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.
@@ -70,6 +72,7 @@ It is a long established fact that a reader will be distracted by the readable c
       </div>
       <h4>SERVICE THREE</h4>
     </article>
+
   </section>
 
   <section>

@@ -1,31 +1,75 @@
 ---
 translationKey: test
+order: null
 lang: fr
 createdAt: 2025-07-21T21:32:00.000Z
-uuid: 67aafa1236a4
-localizationKey: c7f9edeffc0c
 name: Test
-eleventyNavigation:
-  title: ''
-  parent: ''
-  order: 1
+sections:
+  - type: sectionRaw
+    content: raw section content
+  - type: sectionGrid
+    header:
+      content: '## My Grid Header'
+      class: palette--contrast
+    items:
+      - content: Item 1
+      - content: '{% image src="/_images/pexels-ella-wei-10655130.webp" %}'
+      - content: Item 3
+        class: palette--pop
+    footer:
+      content: And a footer for good measure
+  - type: sectionTwoColumns
+    header:
+      content: '## Two columns header'
+    layoutOptions:
+      type: fixedFluid
+      fixedSide: fixedLeft
+      widthFixed: 10rem
+    itemLeft:
+      content: LEFT
+    itemRight:
+      content: RIGHT
+  - type: sectionFlow
+    header:
+      content: '## Flow Section'
+    items:
+      - content: Flow 1
+      - content: Flow 2
+  - type: sectionReel
+    header:
+      content: '## Section Reel'
+    items:
+      - content: '{% image src="/_images/POKO-logo-RVB-01.jpg" %}'
+      - content: '{% image src="/_images/pexels-andrea-devillier-32709984.webp" %}'
+    layoutOptions:
+      type: reel
+      itemWidth: 20rem
+      noBar: false
+  - type: sectionCollection
+    header:
+      content: '## Collection'
+    collection: articles
+  - type: sectionBuilder
+    header:
+      content: Builder
+    areas:
+      - type: areaRaw
+        content: Raw section content inside builder
+        class: trs
+      - type: twoColumns
+        itemLeft:
+          content: LEFT
+        itemRight:
+          content: RIGHT
+        layoutOptions:
+          type: fixedFluid
+          fixedSide: fixedRight
+          widthFixed: 20rem
 status: published
-vars: null
-body:data: null
+eleventyNavigation:
+  order: 1
 ---
 
 # Page Test
 
-Avec contenu
-
-{% link url="mon-article", text="article", linkType="internal", collection="articles" %}
-
-{% link url="mon-event", text="event", linkType="internal", collection="events" %}
-
-{% link url="faq", text="faq", linkType="internal", collection="faqs" %}
-
-{% link url="organisations-de-bouquet-de-fleurs", text="organisation", linkType="internal", collection="organizations" %}
-
-{% link url="moi", text="people", linkType="internal", collection="people" %}
-
-{% link url="service", text="service", linkType="internal", collection="services" %}
+{% sections %}{% endsections %}

@@ -9,18 +9,18 @@ eleventyNavigation: null
 metadata: null
 preview: null
 tags: []
-status: ''
-pageLayout: ''
-generatePage: ''
+status: ""
+pageLayout: ""
+generatePage: ""
 vars: null
 dataList: []
 ---
 
 ## Navigation rapide
 
-- {% link url="article-les-fleurs", text="Article: Les fleurs", linkType="internal", collection="articles" %}
-- {% link url="organisations-de-bouquet-de-fleurs", text="Organisation: Parcours pédagogique", linkType="internal", collection="organizations" %}
-- {% link url="bouquet-de-fleurs", text="Produit: Bouquet de fleurs", linkType="internal", collection="products" %}
+- {% link url="article-les-fleurs", text="Article: Les fleurs", linkType="internal", collection="articles" %}{% endlink %}
+- {% link url="organisations-de-bouquet-de-fleurs", text="Organisation: Parcours pédagogique", linkType="internal", collection="organizations" %}{% endlink %}
+- {% link url="bouquet-de-fleurs", text="Produit: Bouquet de fleurs", linkType="internal", collection="products" %}{% endlink %}
 
 # Projet - Les bouquets de fleurs
 
@@ -38,29 +38,29 @@ inspiration, pédagogie, organisation et mise en valeur des produits.
 ### 1. Découvrir l’univers des fleurs
 
 - Lire l’article principal :
-  {% link url="article-les-fleurs", text="Lire l'article sur les fleurs (diversité,bienfaits, ...)", linkType="internal", collection="articles" %}
+  {% link url="article-les-fleurs", text="Lire l'article sur les fleurs (diversité,bienfaits, ...)", linkType="internal", collection="articles" %}{% endlink %}
 - Objectifs :
-    - Comprendre la diversité des fleurs
-    - Introduire l’idée de bienfaits (bien‑être, émotions, lien à la nature)
+  - Comprendre la diversité des fleurs
+  - Introduire l’idée de bienfaits (bien‑être, émotions, lien à la nature)
 
 ### 2. Explorer l’organisation de l’espace
 
 - Découvrir comment l’école est structurée autour des fleurs :
-  {% link url="organisations-de-bouquet-de-fleurs", text="Voir l'organisation autour des fleurs (espaces thématique, pédagogie,...)", linkType="internal", collection="organizations" %}
+  {% link url="organisations-de-bouquet-de-fleurs", text="Voir l'organisation autour des fleurs (espaces thématique, pédagogie,...)", linkType="internal", collection="organizations" %}{% endlink %}
 - Points clés de cette page :
-    - Différents espaces thématiques (salle de botanique, atelier créatif, serre, jardin, etc.)
-    - Possibilités de parcours guidés ou libres
+  - Différents espaces thématiques (salle de botanique, atelier créatif, serre, jardin, etc.)
+  - Possibilités de parcours guidés ou libres
 
 ### 3. Mettre en avant les produits
 
 - Présenter la page produit principale :
-  {% link url="bouquet-de-fleurs", text="Découvrir le catalogue sur les bouquets de fleurs (avec une réductions spéciale cette semaine)", linkType="internal", collection="products" %}
+  {% link url="bouquet-de-fleurs", text="Découvrir le catalogue sur les bouquets de fleurs (avec une réductions spéciale cette semaine)", linkType="internal", collection="products" %}{% endlink %}
 - Idées de mise en avant :
-    - Associer chaque bouquet à une ambiance (fête, remerciement, décoration de classe, etc.)
-    - Lier certains bouquets à des activités pédagogiques (atelier créatif floral)
+  - Associer chaque bouquet à une ambiance (fête, remerciement, décoration de classe, etc.)
+  - Lier certains bouquets à des activités pédagogiques (atelier créatif floral)
 
 ## Navigation rapide
 
-- {% link url="article-les-fleurs", text="Article : Les fleurs", linkType="internal", collection="articles" %}
-- {% link url="organisations-de-bouquet-de-fleurs", text="Organisation : Parcours pédagogique", linkType="internal", collection="organizations" %}
-- {% link url="bouquet-de-fleurs", text="Produit : Bouquet de fleurs", linkType="internal", collection="products" %}
+- {% link url="article-les-fleurs", text="Article : Les fleurs", linkType="internal", collection="articles" %}{% endlink %}
+- {% link url="organisations-de-bouquet-de-fleurs", text="Organisation : Parcours pédagogique", linkType="internal", collection="organizations" %}{% endlink %}
+- {% link url="bouquet-de-fleurs", text="Produit : Bouquet de fleurs", linkType="internal", collection="products" %}{% endlink %}
