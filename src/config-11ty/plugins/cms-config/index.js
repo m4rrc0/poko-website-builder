@@ -18,6 +18,26 @@ import {
   userCmsConfig,
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
+import {
+  sectionHeaderField,
+  sectionFooterField,
+  sectionWrapperField,
+  layoutTypeSwitcher,
+  layoutTypeGridFluid,
+  layoutTypeCluster,
+  layoutTypeFixedFluid,
+  layoutTypeFlow,
+  layoutTypeReel,
+  layoutTypeFlowGap,
+  gridItemFields,
+  flowItemFields,
+  reelItemFields,
+  twoColumnsItemFields,
+  collectionSelectField,
+  sortAndFilterOptionsField,
+  itemPartialField,
+  buildAreasField,
+} from "./section-primitives.js";
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
 
 const isDev = NODE_ENV === "development";
@@ -1026,6 +1046,230 @@ export const bodyMarkdownField = {
     ...userEditorComponentNames,
   ],
 };
+// Per-project collection options for the `collection` select widget. Mirrors
+// the shape produced by `defaultEditorComponents.js` from `activeCollections`.
+const collectionSelectOptions = (selectedCollections || [])
+  .map((name) => ({
+    value: name,
+    label: COLLECTIONS?.[name]?.label || name,
+  }))
+  .filter((o) => o.value && o.value !== "pages");
+
+export const sectionsField = {
+  name: "sections",
+  label: "Sections",
+  widget: "list",
+  required: false,
+  i18n: true,
+  collapsed: true,
+  types: [
+    {
+      name: "sectionRaw",
+      label: "Section Raw",
+      fields: [
+        {
+          ...bodyMarkdownField,
+          name: "content",
+        },
+        sectionWrapperField,
+      ],
+    },
+    {
+      name: "sectionGrid",
+      label: "Section > Grid",
+      fields: [
+        sectionHeaderField,
+        {
+          name: "items",
+          label: "Grid Items",
+          widget: "list",
+          required: true,
+          default: [{ content: "" }, { content: "" }, { content: "" }],
+          summary: "{{content | truncate(50)}}",
+          fields: gridItemFields,
+        },
+        {
+          name: "layoutOptions",
+          label: "Layout Options",
+          hint: "Manually select a layout and related options",
+          widget: "object",
+          required: false,
+          collapsed: true,
+          i18n: true,
+          types: [layoutTypeSwitcher, layoutTypeGridFluid, layoutTypeCluster],
+        },
+        {
+          name: "class",
+          label: "Layout Class Names",
+          widget: "string",
+          hint: "Class names added to the inner layout element ({% grid %}). For classes on the outer section element, use the Section Wrapper below.",
+          required: false,
+        },
+        sectionFooterField,
+        sectionWrapperField,
+      ],
+    },
+    {
+      name: "sectionFlow",
+      label: "Section > Flow",
+      fields: [
+        sectionHeaderField,
+        {
+          name: "items",
+          label: "Flow Items",
+          widget: "list",
+          required: true,
+          default: [{ content: "" }, { content: "" }],
+          summary: "{{content | truncate(50)}}",
+          fields: flowItemFields,
+        },
+        {
+          name: "layoutOptions",
+          label: "Layout Options",
+          hint: "Manually select a layout and related options",
+          widget: "object",
+          required: false,
+          collapsed: true,
+          i18n: true,
+          types: [layoutTypeFlowGap],
+        },
+        {
+          name: "class",
+          label: "Layout Class Names",
+          widget: "string",
+          hint: "Class names added to the inner layout element ({% flow %}). For classes on the outer section element, use the Section Wrapper below.",
+          required: false,
+        },
+        sectionFooterField,
+        sectionWrapperField,
+      ],
+    },
+    {
+      name: "sectionTwoColumns",
+      label: "Section > Two Columns",
+      fields: [
+        sectionHeaderField,
+        {
+          name: "itemLeft",
+          label: "Column Left",
+          widget: "object",
+          required: true,
+          i18n: true,
+          summary: "{{content | truncate(50)}}",
+          fields: twoColumnsItemFields("Left"),
+        },
+        {
+          name: "itemRight",
+          label: "Column Right",
+          widget: "object",
+          required: true,
+          i18n: true,
+          summary: "{{content | truncate(50)}}",
+          fields: twoColumnsItemFields("Right"),
+        },
+        {
+          name: "layoutOptions",
+          label: "Layout Options",
+          hint: "Manually select a layout and related options",
+          widget: "object",
+          required: false,
+          collapsed: true,
+          i18n: true,
+          types: [layoutTypeSwitcher, layoutTypeFixedFluid],
+        },
+        {
+          name: "class",
+          label: "Layout Class Names",
+          widget: "string",
+          hint: "Class names added to the inner layout element ({% twoColumns %}). For classes on the outer section element, use the Section Wrapper below.",
+          required: false,
+        },
+        sectionFooterField,
+        sectionWrapperField,
+      ],
+    },
+    {
+      name: "sectionReel",
+      label: "Section > Reel",
+      fields: [
+        sectionHeaderField,
+        {
+          name: "items",
+          label: "Reel Items",
+          widget: "list",
+          required: true,
+          default: [{ content: "" }, { content: "" }],
+          summary: "{{content | truncate(50)}}",
+          fields: reelItemFields,
+        },
+        {
+          name: "layoutOptions",
+          label: "Layout Options",
+          hint: "Manually select a layout and related options",
+          widget: "object",
+          required: false,
+          collapsed: true,
+          i18n: true,
+          types: [layoutTypeReel],
+        },
+        {
+          name: "class",
+          label: "Layout Class Names",
+          widget: "string",
+          hint: "Class names added to the inner layout element ({% reel %}). For classes on the outer section element, use the Section Wrapper below.",
+          required: false,
+        },
+        sectionFooterField,
+        sectionWrapperField,
+      ],
+    },
+    {
+      name: "sectionCollection",
+      label: "Section > Collection List",
+      fields: [
+        sectionHeaderField,
+        collectionSelectField(collectionSelectOptions),
+        sortAndFilterOptionsField,
+        {
+          name: "layoutOptions",
+          label: "Layout Options",
+          hint: "Manually select a layout and related options",
+          widget: "object",
+          required: false,
+          collapsed: true,
+          i18n: true,
+          types: [
+            layoutTypeSwitcher,
+            layoutTypeGridFluid,
+            layoutTypeCluster,
+            layoutTypeFlow,
+            layoutTypeReel,
+          ],
+        },
+        {
+          name: "class",
+          label: "Layout Class Names",
+          widget: "string",
+          hint: "Class names added to the inner layout element ({% collection %}). For classes on the outer section element, use the Section Wrapper below.",
+          required: false,
+        },
+        itemPartialField,
+        sectionFooterField,
+        sectionWrapperField,
+      ],
+    },
+    {
+      name: "sectionBuilder",
+      label: "Section > Builder",
+      fields: [
+        sectionHeaderField,
+        buildAreasField(collectionSelectOptions),
+        sectionFooterField,
+        sectionWrapperField,
+      ],
+    },
+  ],
+};
 
 // export const commonPageFields = [
 //   {
@@ -1079,6 +1323,7 @@ export function spreadCommonPageFields(modFields) {
     // },
     // { name: "path", label: "Page URL path", widget: "string", required: true, pattern: ['^(?![\s\/\-]*$)(?!\/)[a-z0-9\/\-]*[a-z0-9\-]$', "URL must contain only letters, numbers, dashes, and forward slashes (not starting or ending with a slash or dash), and at least one letter or number"], hint: "URL-friendly slug or path (may contain '/' and '-'). NOTE: The homepage must be called 'index'"},
     bodyMarkdown: bodyMarkdownField,
+    sections: sectionsField,
     eleventyNavigation: eleventyNavigationField,
     order: orderField,
     simpleMetadata: simpleMetadataField,

@@ -38,32 +38,81 @@ export default async function (eleventyConfig, pluginOptions) {
   }
 
   // prettier-ignore
-  for (const partialName of [
-    "wrapper",
+  const sectionPartialNames = [
+    "sectionRaw",
     "sectionHeader",
     "sectionFooter",
     "sectionFlow",
+    "sectionGrid",
+    "sectionTwoColumns",
+    "sectionCollection",
+    "sectionReel",
+    "sectionBuilder",
+  ];
+
+  // prettier-ignore
+  const otherPartialNames = [
+    "wrapper",
     "flow",
     "flowItem",
-    "sectionGrid",
     "grid",
     "gridItem",
-    "sectionTwoColumns",
     "twoColumns",
     "twoColumnsItem",
-    "sectionCollection",
     "collection",
     "collectionWrapper",
     "collectionItem",
-    "sectionReel",
     "reel",
     "reelItem",
-    "sectionBuilder",
     "area",
     "areaRaw",
-  ]) {
-    await eleventyConfig.addPairedAsyncShortcode(partialName, async function(content, dataManual, templateEngineOverride) {
-      return renderNamedPartial.call(this, `_${partialName}`, content, dataManual, templateEngineOverride);
-    });
+  ];
+
+  for (const partialName of [...sectionPartialNames, ...otherPartialNames]) {
+    await eleventyConfig.addPairedAsyncShortcode(
+      partialName,
+      async function (content, dataManual, templateEngineOverride) {
+        return renderNamedPartial.call(
+          this,
+          `_${partialName}`,
+          content,
+          dataManual,
+          templateEngineOverride,
+        );
+      },
+    );
   }
+
+  // Frontmatter-driven sections: `{% sections %}…{% endsections %}` dispatches
+  // each item in `ctx.sections` to its matching `_${type}` partial, with the
+  // same content-rendering semantics as the inline paired shortcodes above.
+  // Registered as a *paired* shortcode (inner content is ignored) because
+  // Nunjucks fails to parse zero-arg non-paired shortcode tags like
+  // `{% sections %}` (`SyntaxError: Unexpected token ','` in generated code).
+  await eleventyConfig.addPairedAsyncShortcode(
+    "sections",
+    async function (_ignoredContent) {
+      const items = this.ctx?.sections;
+      if (!Array.isArray(items) || items.length === 0) return "";
+
+      const rendered = await Promise.all(
+        items.map(async (section, index) => {
+          if (!section || typeof section !== "object") return "";
+          const { type, content, ...dataManual } = section;
+          if (!type) {
+            console.warn(`sections[${index}] is missing a "type"; skipping.`);
+            return "";
+          }
+          return renderNamedPartial.call(
+            this,
+            `_${type}`,
+            content ?? "",
+            dataManual,
+          );
+        }),
+      );
+
+      return rendered.join("\n");
+    },
+  );
 }

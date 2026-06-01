@@ -713,6 +713,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
   eleventyConfig.addShortcode("image", image);
   eleventyConfig.addShortcode("gallery", gallery);
   // eleventyConfig.addPairedShortcode("wrapper", wrapper);
+  // Note: `sections` shortcode is registered by the partialShortcodes plugin.
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);
   // eleventyConfig.addShortcode("ogImageSelected", ogImageSelected);
   // eleventyConfig.addShortcode(

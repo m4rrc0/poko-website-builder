@@ -133,6 +133,15 @@ Stack	fg	bg	read-theme	neutral-theme	pop-theme	tone-theme
  * ============================================================= */
 
 @layer color.elements {
+  /* TODO: Some color properties do not inherit by default */
+  /* TODO: text-decoration-color need more specificity because of a:-webkit-any-link or similar !!! */
+  /* * {
+    border-color: inherit;
+    outline-color: inherit;
+    text-decoration-color: inherit;
+    text-emphasis-color: inherit;
+    column-rule-color: inherit;
+  } */
   /* Root color application.
    * Re-declared on every palette-carrying element so the var
    * chain is re-evaluated in that context. */
