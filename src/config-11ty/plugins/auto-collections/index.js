@@ -1,4 +1,4 @@
-import { COLLECTIONS } from "../../../../env.config.js";
+import { COLLECTIONS, userCmsConfig } from "../../../../env.config.js";
 
 // export const tags = (data) => {
 //   data.lang;
@@ -27,7 +27,25 @@ import { COLLECTIONS } from "../../../../env.config.js";
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
 
-  for (const [key, col] of Object.entries(COLLECTIONS)) {
+  // Merge built-in collection definitions with user-defined ones from
+  // `_config/index.js`. Dedupe by `name`: built-ins are iterated first,
+  // so a user collection that reuses a built-in name is skipped (the
+  // built-in's auto-collection definition wins, which avoids users
+  // accidentally clobbering core collections by spreading `...articles`
+  // etc. into a redefinition).
+  const userConfig = await userCmsConfig();
+  const seen = new Set();
+  const allCollectionDefs = [];
+  for (const col of [
+    ...Object.values(COLLECTIONS),
+    ...(userConfig?.collections || []),
+  ]) {
+    if (!col?.name || seen.has(col.name)) continue;
+    seen.add(col.name);
+    allCollectionDefs.push(col);
+  }
+
+  for (const col of allCollectionDefs) {
     eleventyConfig.addCollection(col.name, function (collectionsApi) {
       return collectionsApi
         .getAllSorted()

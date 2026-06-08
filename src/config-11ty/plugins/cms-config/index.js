@@ -1048,228 +1048,256 @@ export const bodyMarkdownField = {
 };
 // Per-project collection options for the `collection` select widget. Mirrors
 // the shape produced by `defaultEditorComponents.js` from `activeCollections`.
-const collectionSelectOptions = (selectedCollections || [])
-  .map((name) => ({
-    value: name,
-    label: COLLECTIONS?.[name]?.label || name,
-  }))
-  .filter((o) => o.value && o.value !== "pages");
+//
+// Accepts either an array of collection-name strings (legacy: the
+// `selectedCollections` env export) or an array of full collection-definition
+// objects with `{ name, label }` (the shape merged at render time from
+// `getSelectedCollections()` + `userCmsConfig().collections`). The `pages`
+// pseudo-collection is excluded since it has its own dedicated branch.
+function buildCollectionSelectOptions(activeCollections) {
+  return (activeCollections || [])
+    .map((c) =>
+      typeof c === "string"
+        ? { value: c, label: COLLECTIONS?.[c]?.label || c }
+        : { value: c?.name, label: c?.label || c?.name },
+    )
+    .filter((o) => o.value && o.value !== "pages");
+}
 
-export const sectionsField = {
-  name: "sections",
-  label: "Sections",
-  widget: "list",
-  required: false,
-  i18n: true,
-  collapsed: true,
-  types: [
-    {
-      name: "sectionRaw",
-      label: "Section Raw",
-      fields: [
-        {
-          ...bodyMarkdownField,
-          name: "content",
-        },
-        sectionWrapperField,
-      ],
-    },
-    {
-      name: "sectionGrid",
-      label: "Section > Grid",
-      fields: [
-        sectionHeaderField,
-        {
-          name: "items",
-          label: "Grid Items",
-          widget: "list",
-          required: true,
-          default: [{ content: "" }, { content: "" }, { content: "" }],
-          summary: "{{content | truncate(50)}}",
-          fields: gridItemFields,
-        },
-        {
-          name: "layoutOptions",
-          label: "Layout Options",
-          hint: "Manually select a layout and related options",
-          widget: "object",
-          required: false,
-          collapsed: true,
-          i18n: true,
-          types: [layoutTypeSwitcher, layoutTypeGridFluid, layoutTypeCluster],
-        },
-        {
-          name: "class",
-          label: "Layout Class Names",
-          widget: "string",
-          hint: "Class names added to the inner layout element ({% grid %}). For classes on the outer section element, use the Section Wrapper below.",
-          required: false,
-        },
-        sectionFooterField,
-        sectionWrapperField,
-      ],
-    },
-    {
-      name: "sectionFlow",
-      label: "Section > Flow",
-      fields: [
-        sectionHeaderField,
-        {
-          name: "items",
-          label: "Flow Items",
-          widget: "list",
-          required: true,
-          default: [{ content: "" }, { content: "" }],
-          summary: "{{content | truncate(50)}}",
-          fields: flowItemFields,
-        },
-        {
-          name: "layoutOptions",
-          label: "Layout Options",
-          hint: "Manually select a layout and related options",
-          widget: "object",
-          required: false,
-          collapsed: true,
-          i18n: true,
-          types: [layoutTypeFlowGap],
-        },
-        {
-          name: "class",
-          label: "Layout Class Names",
-          widget: "string",
-          hint: "Class names added to the inner layout element ({% flow %}). For classes on the outer section element, use the Section Wrapper below.",
-          required: false,
-        },
-        sectionFooterField,
-        sectionWrapperField,
-      ],
-    },
-    {
-      name: "sectionTwoColumns",
-      label: "Section > Two Columns",
-      fields: [
-        sectionHeaderField,
-        {
-          name: "itemLeft",
-          label: "Column Left",
-          widget: "object",
-          required: true,
-          i18n: true,
-          summary: "{{content | truncate(50)}}",
-          fields: twoColumnsItemFields("Left"),
-        },
-        {
-          name: "itemRight",
-          label: "Column Right",
-          widget: "object",
-          required: true,
-          i18n: true,
-          summary: "{{content | truncate(50)}}",
-          fields: twoColumnsItemFields("Right"),
-        },
-        {
-          name: "layoutOptions",
-          label: "Layout Options",
-          hint: "Manually select a layout and related options",
-          widget: "object",
-          required: false,
-          collapsed: true,
-          i18n: true,
-          types: [layoutTypeSwitcher, layoutTypeFixedFluid],
-        },
-        {
-          name: "class",
-          label: "Layout Class Names",
-          widget: "string",
-          hint: "Class names added to the inner layout element ({% twoColumns %}). For classes on the outer section element, use the Section Wrapper below.",
-          required: false,
-        },
-        sectionFooterField,
-        sectionWrapperField,
-      ],
-    },
-    {
-      name: "sectionReel",
-      label: "Section > Reel",
-      fields: [
-        sectionHeaderField,
-        {
-          name: "items",
-          label: "Reel Items",
-          widget: "list",
-          required: true,
-          default: [{ content: "" }, { content: "" }],
-          summary: "{{content | truncate(50)}}",
-          fields: reelItemFields,
-        },
-        {
-          name: "layoutOptions",
-          label: "Layout Options",
-          hint: "Manually select a layout and related options",
-          widget: "object",
-          required: false,
-          collapsed: true,
-          i18n: true,
-          types: [layoutTypeReel],
-        },
-        {
-          name: "class",
-          label: "Layout Class Names",
-          widget: "string",
-          hint: "Class names added to the inner layout element ({% reel %}). For classes on the outer section element, use the Section Wrapper below.",
-          required: false,
-        },
-        sectionFooterField,
-        sectionWrapperField,
-      ],
-    },
-    {
-      name: "sectionCollection",
-      label: "Section > Collection List",
-      fields: [
-        sectionHeaderField,
-        collectionSelectField(collectionSelectOptions),
-        sortAndFilterOptionsField,
-        {
-          name: "layoutOptions",
-          label: "Layout Options",
-          hint: "Manually select a layout and related options",
-          widget: "object",
-          required: false,
-          collapsed: true,
-          i18n: true,
-          types: [
-            layoutTypeSwitcher,
-            layoutTypeGridFluid,
-            layoutTypeCluster,
-            layoutTypeFlow,
-            layoutTypeReel,
-          ],
-        },
-        {
-          name: "class",
-          label: "Layout Class Names",
-          widget: "string",
-          hint: "Class names added to the inner layout element ({% collection %}). For classes on the outer section element, use the Section Wrapper below.",
-          required: false,
-        },
-        itemPartialField,
-        sectionFooterField,
-        sectionWrapperField,
-      ],
-    },
-    {
-      name: "sectionBuilder",
-      label: "Section > Builder",
-      fields: [
-        sectionHeaderField,
-        buildAreasField(collectionSelectOptions),
-        sectionFooterField,
-        sectionWrapperField,
-      ],
-    },
-  ],
-};
+// Factory: builds the `sections` field config for the given active
+// collections. The two collection-aware branches (`sectionCollection` and
+// `sectionBuilder`'s collection area) draw their select options from
+// `activeCollections`. All other branches are static.
+//
+// The module-eval `sectionsField` export below uses the legacy built-in
+// list (`selectedCollections`) so existing collection-shape exports
+// (`pages`, `articles`, …) keep working. The `config.11ty.js` render
+// rebuilds with the full active list and patches each generated CMS
+// collection's `fields` array — see that file for details.
+export function buildSectionsField(activeCollections) {
+  const collectionSelectOptions =
+    buildCollectionSelectOptions(activeCollections);
+  return {
+    name: "sections",
+    label: "Sections",
+    widget: "list",
+    required: false,
+    i18n: true,
+    collapsed: true,
+    types: [
+      {
+        name: "sectionRaw",
+        label: "Section Raw",
+        fields: [
+          {
+            ...bodyMarkdownField,
+            name: "content",
+          },
+          sectionWrapperField,
+        ],
+      },
+      {
+        name: "sectionGrid",
+        label: "Section > Grid",
+        fields: [
+          sectionHeaderField,
+          {
+            name: "items",
+            label: "Grid Items",
+            widget: "list",
+            required: true,
+            default: [{ content: "" }, { content: "" }, { content: "" }],
+            summary: "{{content | truncate(50)}}",
+            fields: gridItemFields,
+          },
+          {
+            name: "layoutOptions",
+            label: "Layout Options",
+            hint: "Manually select a layout and related options",
+            widget: "object",
+            required: false,
+            collapsed: true,
+            i18n: true,
+            types: [layoutTypeSwitcher, layoutTypeGridFluid, layoutTypeCluster],
+          },
+          {
+            name: "class",
+            label: "Layout Class Names",
+            widget: "string",
+            hint: "Class names added to the inner layout element ({% grid %}). For classes on the outer section element, use the Section Wrapper below.",
+            required: false,
+          },
+          sectionFooterField,
+          sectionWrapperField,
+        ],
+      },
+      {
+        name: "sectionFlow",
+        label: "Section > Flow",
+        fields: [
+          sectionHeaderField,
+          {
+            name: "items",
+            label: "Flow Items",
+            widget: "list",
+            required: true,
+            default: [{ content: "" }, { content: "" }],
+            summary: "{{content | truncate(50)}}",
+            fields: flowItemFields,
+          },
+          {
+            name: "layoutOptions",
+            label: "Layout Options",
+            hint: "Manually select a layout and related options",
+            widget: "object",
+            required: false,
+            collapsed: true,
+            i18n: true,
+            types: [layoutTypeFlowGap],
+          },
+          {
+            name: "class",
+            label: "Layout Class Names",
+            widget: "string",
+            hint: "Class names added to the inner layout element ({% flow %}). For classes on the outer section element, use the Section Wrapper below.",
+            required: false,
+          },
+          sectionFooterField,
+          sectionWrapperField,
+        ],
+      },
+      {
+        name: "sectionTwoColumns",
+        label: "Section > Two Columns",
+        fields: [
+          sectionHeaderField,
+          {
+            name: "itemLeft",
+            label: "Column Left",
+            widget: "object",
+            required: true,
+            i18n: true,
+            summary: "{{content | truncate(50)}}",
+            fields: twoColumnsItemFields("Left"),
+          },
+          {
+            name: "itemRight",
+            label: "Column Right",
+            widget: "object",
+            required: true,
+            i18n: true,
+            summary: "{{content | truncate(50)}}",
+            fields: twoColumnsItemFields("Right"),
+          },
+          {
+            name: "layoutOptions",
+            label: "Layout Options",
+            hint: "Manually select a layout and related options",
+            widget: "object",
+            required: false,
+            collapsed: true,
+            i18n: true,
+            types: [layoutTypeSwitcher, layoutTypeFixedFluid],
+          },
+          {
+            name: "class",
+            label: "Layout Class Names",
+            widget: "string",
+            hint: "Class names added to the inner layout element ({% twoColumns %}). For classes on the outer section element, use the Section Wrapper below.",
+            required: false,
+          },
+          sectionFooterField,
+          sectionWrapperField,
+        ],
+      },
+      {
+        name: "sectionReel",
+        label: "Section > Reel",
+        fields: [
+          sectionHeaderField,
+          {
+            name: "items",
+            label: "Reel Items",
+            widget: "list",
+            required: true,
+            default: [{ content: "" }, { content: "" }],
+            summary: "{{content | truncate(50)}}",
+            fields: reelItemFields,
+          },
+          {
+            name: "layoutOptions",
+            label: "Layout Options",
+            hint: "Manually select a layout and related options",
+            widget: "object",
+            required: false,
+            collapsed: true,
+            i18n: true,
+            types: [layoutTypeReel],
+          },
+          {
+            name: "class",
+            label: "Layout Class Names",
+            widget: "string",
+            hint: "Class names added to the inner layout element ({% reel %}). For classes on the outer section element, use the Section Wrapper below.",
+            required: false,
+          },
+          sectionFooterField,
+          sectionWrapperField,
+        ],
+      },
+      {
+        name: "sectionCollection",
+        label: "Section > Collection List",
+        fields: [
+          sectionHeaderField,
+          collectionSelectField(collectionSelectOptions),
+          sortAndFilterOptionsField,
+          {
+            name: "layoutOptions",
+            label: "Layout Options",
+            hint: "Manually select a layout and related options",
+            widget: "object",
+            required: false,
+            collapsed: true,
+            i18n: true,
+            types: [
+              layoutTypeSwitcher,
+              layoutTypeGridFluid,
+              layoutTypeCluster,
+              layoutTypeFlow,
+              layoutTypeReel,
+            ],
+          },
+          {
+            name: "class",
+            label: "Layout Class Names",
+            widget: "string",
+            hint: "Class names added to the inner layout element ({% collection %}). For classes on the outer section element, use the Section Wrapper below.",
+            required: false,
+          },
+          itemPartialField,
+          sectionFooterField,
+          sectionWrapperField,
+        ],
+      },
+      {
+        name: "sectionBuilder",
+        label: "Section > Builder",
+        fields: [
+          sectionHeaderField,
+          buildAreasField(collectionSelectOptions),
+          sectionFooterField,
+          sectionWrapperField,
+        ],
+      },
+    ],
+  };
+}
+
+// Backward-compat module-eval-time value. Uses only the built-in selected
+// collections — `userCmsConfig()` is async so user-defined collections are
+// merged at render time by `config.11ty.js` via `buildSectionsField()`.
+export const sectionsField = buildSectionsField(selectedCollections);
 
 // export const commonPageFields = [
 //   {
@@ -1814,6 +1842,20 @@ export const personFields = [
           i18n: true,
         },
         {
+          name: "email",
+          label: "Email",
+          widget: "string",
+          required: false,
+          i18n: "duplicate",
+        },
+        {
+          name: "telephone",
+          label: "Phone number",
+          widget: "string",
+          required: false,
+          i18n: "duplicate",
+        },
+        {
           name: "links",
           label: "Links",
           widget: "list",
@@ -2141,6 +2183,21 @@ export function getSelectedCollections() {
     .map((collectionName) => optionalCollections[collectionName])
     .filter(Boolean);
   return selectedOptionalCollections;
+}
+
+/**
+ * Single source of truth for the merged "active collections" list (built-in
+ * collections enabled via `selectedCollections` + user-defined collections
+ * from `_config/index.js`). Returns the full collection-definition objects.
+ *
+ * Async because `userCmsConfig()` performs a dynamic import of the user's
+ * project-local config file. Use this anywhere the merged list is needed
+ * (e.g. `env.11ty.js`, `config.11ty.js` render) to keep the merge logic in
+ * one place.
+ */
+export async function getActiveCollections() {
+  const userConfig = await userCmsConfig();
+  return [...getSelectedCollections(), ...(userConfig?.collections || [])];
 }
 // const selectedOptionalCollections = (selectedCollections || [])
 //   .map((collectionName) => optionalCollections[collectionName])
@@ -3205,12 +3262,28 @@ class CmsConfig {
     );
 
     const userConfig = await userCmsConfig();
+    const activeCollections = await getActiveCollections();
 
-    const selectedOptionalCollections = getSelectedCollections();
-    const allSelectedCollections = [
-      ...selectedOptionalCollections,
-      ...userConfig?.collections,
-    ];
+    // Rebuild the `sections` field with the fully merged active collections
+    // (built-in selected + user-defined) so the section-collection select
+    // widget shows every collection the user can actually pick. Then patch
+    // each generated CMS collection so its `fields` array uses the fresh
+    // sections field instead of the module-eval-time default (which only
+    // knew about built-in `selectedCollections`).
+    const freshSectionsField = buildSectionsField(activeCollections);
+    const patchCollectionSections = (c) => {
+      if (!Array.isArray(c?.fields)) return c;
+      const idx = c.fields.findIndex((f) => f?.name === "sections");
+      if (idx === -1) return c;
+      const nextFields = c.fields.slice();
+      nextFields[idx] = freshSectionsField;
+      return { ...c, fields: nextFields };
+    };
+
+    const allSelectedCollections = activeCollections.map(
+      patchCollectionSections,
+    );
+    // const allSelectedCollections = activeCollections;
     const allSelectedCollectionNames = allSelectedCollections?.map(
       ({ name }) => name,
     );
@@ -3286,9 +3359,12 @@ class CmsConfig {
         ...(mustSetup
           ? []
           : [
-              pagesCollection,
-              ...selectedOptionalCollections,
-              ...userConfig.collections,
+              // `pagesCollection` + `allSelectedCollections` = built-in
+              // pages + selected + user-defined, each with its `sections`
+              // field patched to know about every active collection (see
+              // `freshSectionsField` above).
+              patchCollectionSections(pagesCollection),
+              ...allSelectedCollections,
               { divider: true },
               // {
               //   divider: Boolean(!mustSetup && userConfig.collections?.length),

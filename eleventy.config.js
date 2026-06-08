@@ -78,10 +78,9 @@ import {
   inlineAllStyles,
   brandStyles,
   fontPreloadTags,
-  userCmsConfig,
   userHtmlClasses,
 } from "./env.config.js";
-import { getSelectedCollections } from "./src/config-11ty/plugins/cms-config/index.js";
+import { getActiveCollections } from "./src/config-11ty/plugins/cms-config/index.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
 import ldWebSite from "./src/data/structured-data/ldWebSite.js";
 
@@ -587,15 +586,10 @@ export default async function (eleventyConfig) {
   eleventyConfig.addTemplate(
     "env.11ty.js",
     async function (data) {
-      const userCmsConfigImport = await userCmsConfig();
-      const selectedCollections = getSelectedCollections();
-      const activeCollections = [
-        ...selectedCollections,
-        ...(userCmsConfigImport?.collections || []),
-      ];
-      const activeCollectionNames = activeCollections?.collections?.map(
-        ({ name }) => name,
-      );
+      const activeCollections = await getActiveCollections();
+      const activeCollectionNames = activeCollections
+        .map((c) => c?.name)
+        .filter(Boolean);
 
       const envVars = { CONTENT_DIR };
 
