@@ -109,5 +109,5 @@ export default async function (data, customData) {
   return pageNav
     ? // ? await partialSc.call({ ...data }, pageNav, { ...data })
       await partialSc.call({ ...data }, "_page-nav", { ...data })
-    : await partialSc.call({ ...data }, "_page-nav", { ...data });
+    : await partialSc.call({ ...data }, "_main-nav", { ...data });
 }
