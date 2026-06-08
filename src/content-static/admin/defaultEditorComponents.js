@@ -4239,6 +4239,22 @@ ${footerContent}
   },
 };
 
+export const sections = {
+  id: "sections",
+  label: "Sections",
+  icon: "open_jam",
+  fields: [],
+  pattern:
+    /^{%\s*sections\s*([^>]*?)\s*%}\s*([\S\s]*?)\s*{%\s*endsections\s*%}$/gm,
+  fromBlock: function (match) {
+    return {};
+  },
+  toBlock: function (data) {
+    return `{% sections %}{% endsections %}`;
+  },
+  toPreview: (data) => `<span>SECTIONS</span>`,
+};
+
 // Example for project specific component def
 
 // export const homeHeader = {
