@@ -89,6 +89,7 @@ export const varsField = {
   i18n: true,
   required: false,
   preview: false,
+  dataField: true,
 };
 export const imageFields = [
   {
@@ -162,6 +163,7 @@ export const dataListField = {
   i18n: "duplicate",
   allow_reorder: true,
   preview: false,
+  dataField: true,
   types: [
     {
       name: "text",
@@ -221,6 +223,7 @@ export const statusField = {
   required: false,
   i18n: true,
   preview: false,
+  dataField: true,
 };
 export const generatePageField = {
   name: "generatePage",
@@ -236,6 +239,7 @@ export const generatePageField = {
   required: false,
   i18n: "duplicate",
   preview: false,
+  dataField: true,
 };
 export const pageLayoutRelationField = {
   name: "pageLayout",
@@ -246,6 +250,7 @@ export const pageLayoutRelationField = {
   required: false,
   i18n: "duplicate",
   preview: false,
+  dataField: true,
 };
 
 // footer defined page by page (in the CMS)
@@ -358,6 +363,7 @@ export const simpleMetadataField = {
   collapsed: "auto",
   i18n: true,
   preview: false,
+  dataField: true,
   fields: [
     {
       name: "title",
@@ -410,6 +416,7 @@ export const pagePreviewField = {
   i18n: true,
   hint: "Fields to be used when linking to this page or listing it",
   preview: false,
+  dataField: true,
   fields: [
     {
       name: "title",
@@ -456,6 +463,7 @@ export const tagsField = {
   required: false,
   i18n: "duplicate",
   preview: false,
+  dataField: true,
 };
 export const brandColorField = {
   widget: "relation",
@@ -1928,6 +1936,9 @@ export const courseFields = [
     required: false,
     i18n: "duplicate",
     default: COLLECTIONS["courses"].ldType,
+    dataField: {
+      widget: "string",
+    },
   },
   ...spreadCommonPageFields(),
 ];
@@ -1950,6 +1961,9 @@ export const placeFields = [
     required: false,
     i18n: "duplicate",
     default: COLLECTIONS["places"].ldType,
+    dataField: {
+      widget: "string",
+    },
   },
   ...spreadCommonPageFields(),
 ];
@@ -1972,6 +1986,9 @@ export const productFields = [
     required: false,
     i18n: "duplicate",
     default: COLLECTIONS["products"].ldType,
+    dataField: {
+      widget: "string",
+    },
   },
   ...spreadCommonPageFields(),
 ];
@@ -1994,6 +2011,9 @@ export const reviewFields = [
     required: false,
     i18n: "duplicate",
     default: COLLECTIONS["reviews"].ldType,
+    dataField: {
+      widget: "string",
+    },
   },
   ...spreadCommonPageFields(),
 ];
@@ -2016,6 +2036,9 @@ export const faqFields = [
     required: false,
     i18n: "duplicate",
     default: COLLECTIONS["faqs"].ldType,
+    dataField: {
+      widget: "string",
+    },
   },
   ...spreadCommonPageFields({
     simpleMetadata: {
@@ -2068,6 +2091,9 @@ export const projectFields = [
     required: false,
     i18n: "duplicate",
     default: COLLECTIONS["projects"].ldType,
+    dataField: {
+      widget: "string",
+    },
   },
   ...spreadCommonPageFields(),
 ];
@@ -2090,6 +2116,9 @@ export const howtoFields = [
     required: false,
     i18n: "duplicate",
     default: COLLECTIONS["howtos"].ldType,
+    dataField: {
+      widget: "string",
+    },
   },
   ...spreadCommonPageFields(),
 ];
@@ -2549,24 +2578,20 @@ function createNavLevels(allSelectedCollections, currentLevel, maxLevels) {
 //   ],
 // });
 
-export function removeNonDataFields(fields, moreFieldNamesToDrop) {
+export function removeNonDataFields(fields) {
+  // Uses a hook on field config named `dataField` which can be true or an object to be merged as the field config
   // TODO: Might want to do something smarter with `ldType` or add custom fields for more precise metadata management
-  const fieldNamesToDrop = [
-    "title",
-    "slug",
-    "lang",
-    "createdAt",
-    "uuid",
-    "localizationKey",
-    "name",
-    "body",
-    "sections",
-    "eleventyNavigation",
-    "order",
-    "ldType",
-    ...(moreFieldNamesToDrop || []),
-  ];
-  return fields.filter((field) => !fieldNamesToDrop.includes(field.name));
+  return fields
+    .map((field) => {
+      if (field.dataField === true) {
+        return field;
+      }
+      if (typeof field.dataField === Object) {
+        return { ...field, ...field.dataField };
+      }
+      return null;
+    })
+    .filter(Boolean);
 }
 
 export const dataFilesCollection = {
@@ -2594,7 +2619,6 @@ export const dataFilesCollection = {
       file: `${CONTENT_DIR}/{{locale}}/pages/pages.yaml`,
       // format: "yaml",
       i18n: true,
-      // fields: [tagsListField, varsField, dataListField],
       fields: removeNonDataFields(pageFields),
     },
     // ... More data files are added programmatically later
@@ -3287,8 +3311,9 @@ class CmsConfig {
         ...dataFilesCollection.files,
         ...activeCollections
           .map((collection) => {
-            // console.log({ collection });
-            // return null;
+            if (collection.dataFile === false) {
+              return null;
+            }
             return {
               name: collection.name + "Data",
               label: collection.label + " Data",
