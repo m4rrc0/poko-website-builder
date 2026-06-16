@@ -82,7 +82,8 @@ export function filterCollection(collection, filtersRaw, exclusions = false) {
               acc,
               (item) => tryMatchNestedVariable(item, by) === value,
             );
-          } else if (typeof value === "boolean") {
+            // We only match `true` here. `false` is ok to be matched as falsy value?
+          } else if (value === true) {
             return filterAcc(acc, (item) => tryMatchNestedVariable(item, by));
           } else if (!value) {
             return filterAcc(acc, (item) => {

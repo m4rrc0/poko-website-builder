@@ -12,10 +12,11 @@ export const filterCollection = (array, filtersRaw, exclusions = false) => {
 };
 
 /** Returns the first x elements of the given array. */
-export const first = (array, x = 1) => array.slice(0, x);
+export const first = (array, x) => (!x && array?.[0]) || array.slice(0, x || 1);
 
 /** Returns the last x elements of the given array. */
-export const last = (array, x = 1) => array.slice(-x);
+export const last = (array, x = 1) =>
+  (!x && array?.[array.length - 1]) || array.slice(x ? -x : -1);
 
 /** Returns a random x elements of the given array, keeping the original order. */
 export const randomFilter = (array, x = 1) => {
