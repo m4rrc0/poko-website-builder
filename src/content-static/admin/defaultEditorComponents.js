@@ -1270,7 +1270,8 @@ export const link = {
   id: "link",
   label: "Link",
   icon: "link",
-  dialog: true,
+  mode: "dialog",
+  // dialog: true, // Legacy
   summary:
     "🔗 {{content | truncate(20)}}{{content | ternary(': ', '')}}{{linkType.url | truncate(30)}}",
   fields: [
@@ -1400,7 +1401,7 @@ export const link = {
               required: true,
               // TODO: ⚠️ Overriding media_folder and public_folder does not work!
               media_folder: `/${CONTENT_DIR}/_files`,
-              public_folder: "/_files",
+              public_folder: "/assets/files",
             },
           ],
         },
@@ -1565,7 +1566,8 @@ export const icon = {
   id: "icon",
   label: "Icon",
   icon: "triangle_circle",
-  dialog: true,
+  mode: "dialog",
+  // dialog: true, // Legacy
   summary: "🔅 {{icon.iconLib.iconName}}",
   fields: [
     {
