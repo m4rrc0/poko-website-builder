@@ -504,6 +504,44 @@ export const styleContextRelationField = (valField) => ({
   value_field: `${valField}.*.name`,
 });
 
+export const postalAddressFields = [
+  {
+    name: "streetAddress",
+    label: "Street Address",
+    widget: "string",
+    required: false,
+    i18n: true,
+  },
+  {
+    name: "postalCode",
+    label: "Postal Code",
+    widget: "string",
+    required: false,
+    i18n: "duplicate",
+  },
+  {
+    name: "addressLocality",
+    label: "City",
+    widget: "string",
+    required: false,
+    i18n: true,
+  },
+  {
+    name: "addressRegion",
+    label: "State/Province",
+    widget: "string",
+    required: false,
+    i18n: true,
+  },
+  {
+    name: "addressCountry",
+    label: "Country",
+    widget: "string",
+    required: false,
+    i18n: true,
+  },
+];
+
 export const commonCollectionFields = [
   {
     name: "lang",
@@ -604,34 +642,13 @@ export const stylesheetsCollection = {
   ],
 };
 
-export const dataFilesCollection = {
-  // ...mostCommonMarkdownCollectionConfig,
-  // i18n: false,
-  icon: "table_edit",
-  name: "dataFiles",
-  label: "Data Files",
-  editor: { preview: false },
-  i18n: true,
-  files: [
-    {
-      name: "translatedData",
-      label: "Translated Data",
-      icon: "translate",
-      file: `${CONTENT_DIR}/{{locale}}/{{locale}}.yaml`,
-      // format: "yaml",
-      i18n: true,
-      fields: [tagsListField, varsField, dataListField],
-    },
-  ],
-};
-
 export const advancedDataFilesCollection = {
   // ...mostCommonMarkdownCollectionConfig,
   // i18n: false,
   icon: "hardware",
   name: "advancedDataFiles",
-  label: "Files",
-  label_singular: "File",
+  label: "Advanced Files",
+  label_singular: "Advanced File",
   editor: { preview: false },
   i18n: true,
   files: [
@@ -680,60 +697,6 @@ export const advancedDataFilesCollection = {
           required: false,
           output_code_only: true,
           allow_language_selection: false,
-        },
-      ],
-    },
-    {
-      name: "publicFiles",
-      label: "Public Files",
-      icon: "attach_file",
-      file: `${CONTENT_DIR}/_files/none.yaml`,
-      media_folder: `/${CONTENT_DIR}/_files`,
-      public_folder: "/assets/files",
-      fields: [
-        {
-          label: "Notice",
-          name: "notice",
-          widget: "boolean",
-          default: false,
-          readonly: true,
-          before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_files) to manage public files.`,
-        },
-      ],
-    },
-    {
-      name: "globalPartials",
-      label: "Global Partials",
-      icon: "code_blocks",
-      file: `${CONTENT_DIR}/_partials/none.yaml`,
-      media_folder: `/${CONTENT_DIR}/_partials`,
-      public_folder: "/_partials",
-      fields: [
-        {
-          label: "Notice",
-          name: "notice",
-          widget: "boolean",
-          default: false,
-          readonly: true,
-          before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_partials) to manage and edit global partials.`,
-        },
-      ],
-    },
-    {
-      name: "dataFiles",
-      label: "Data Files",
-      icon: "code",
-      file: `${CONTENT_DIR}/_data/none.yaml`,
-      media_folder: `/${CONTENT_DIR}/_data`,
-      public_folder: "/_data",
-      fields: [
-        {
-          label: "Notice",
-          name: "notice",
-          widget: "boolean",
-          default: false,
-          readonly: true,
-          before_input: `See the [dedicated assets directory](/admin/#/assets/_content/_data) to manage and edit advanced data files.`,
         },
       ],
     },
@@ -1688,44 +1651,9 @@ export const eventFields = [
               label: "Address",
               widget: "object",
               required: false,
-              i18n: true,
-              fields: [
-                {
-                  name: "streetAddress",
-                  label: "Street Address",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                },
-                {
-                  name: "addressLocality",
-                  label: "City",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                },
-                {
-                  name: "addressCountry",
-                  label: "Country",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                },
-                {
-                  name: "postalCode",
-                  label: "Postal Code",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                },
-                {
-                  name: "addressRegion",
-                  label: "State/Province",
-                  widget: "string",
-                  required: false,
-                  i18n: true,
-                },
-              ],
+              i18n: "duplicate",
+              collapsed: "auto",
+              fields: postalAddressFields,
             },
           ],
         },
@@ -1908,57 +1836,69 @@ export const organizationFields = [
       fields: [
         ...simpleMetadataField.fields,
         {
+          name: "legalName",
+          label: "Legal Name",
+          widget: "string",
+          required: false,
+          i18n: "duplicate",
+        },
+        {
           name: "email",
           label: "Email",
           widget: "string",
           required: false,
-          i18n: "duplicate",
+          i18n: true,
         },
         {
           name: "telephone",
           label: "Telephone",
           widget: "string",
           required: false,
-          i18n: "duplicate",
+          i18n: true,
         },
         {
           name: "address",
           label: "Address",
           widget: "object",
           required: false,
+          i18n: "duplicate",
+          collapsed: "auto",
+          fields: postalAddressFields,
+        },
+        {
+          name: "legalAddress",
+          label: "Legal Address",
+          widget: "object",
+          required: false,
+          i18n: "duplicate",
+          collapsed: "auto",
+          fields: postalAddressFields,
+        },
+        {
+          name: "vatID",
+          label: "VAT ID",
+          widget: "string",
+          required: false,
+          i18n: "duplicate",
+        },
+        {
+          name: "links",
+          label: "Links",
+          widget: "list",
+          required: false,
           i18n: true,
+          collapsed: "auto",
           fields: [
             {
-              name: "streetAddress",
-              label: "Street Address",
+              name: "name",
+              label: "Name",
               widget: "string",
               required: false,
               i18n: true,
             },
             {
-              name: "addressLocality",
-              label: "City",
-              widget: "string",
-              required: false,
-              i18n: true,
-            },
-            {
-              name: "addressCountry",
-              label: "Country",
-              widget: "string",
-              required: false,
-              i18n: true,
-            },
-            {
-              name: "addressRegion",
-              label: "State/Province",
-              widget: "string",
-              required: false,
-              i18n: true,
-            },
-            {
-              name: "postalCode",
-              label: "Postal Code",
+              name: "url",
+              label: "URL",
               widget: "string",
               required: false,
               i18n: true,
@@ -2608,6 +2548,58 @@ function createNavLevels(allSelectedCollections, currentLevel, maxLevels) {
 //     },
 //   ],
 // });
+
+export function removeNonDataFields(fields, moreFieldNamesToDrop) {
+  // TODO: Might want to do something smarter with `ldType` or add custom fields for more precise metadata management
+  const fieldNamesToDrop = [
+    "title",
+    "slug",
+    "lang",
+    "createdAt",
+    "uuid",
+    "localizationKey",
+    "name",
+    "body",
+    "sections",
+    "eleventyNavigation",
+    "order",
+    "ldType",
+    ...(moreFieldNamesToDrop || []),
+  ];
+  return fields.filter((field) => !fieldNamesToDrop.includes(field.name));
+}
+
+export const dataFilesCollection = {
+  // ...mostCommonMarkdownCollectionConfig,
+  // i18n: false,
+  icon: "table_edit",
+  name: "dataFiles",
+  label: "Data Files",
+  editor: { preview: false },
+  i18n: true,
+  files: [
+    {
+      name: "translatedData",
+      label: "Translated Data",
+      icon: "translate",
+      file: `${CONTENT_DIR}/{{locale}}/{{locale}}.yaml`,
+      // format: "yaml",
+      i18n: true,
+      fields: [tagsListField, varsField, dataListField],
+    },
+    {
+      name: "pagesData",
+      label: "Pages Data",
+      icon: "description",
+      file: `${CONTENT_DIR}/{{locale}}/pages/pages.yaml`,
+      // format: "yaml",
+      i18n: true,
+      // fields: [tagsListField, varsField, dataListField],
+      fields: removeNonDataFields(pageFields),
+    },
+    // ... More data files are added programmatically later
+  ],
+};
 
 const globalSettingsSingleton = {
   name: "globalSettings",
@@ -3288,6 +3280,30 @@ class CmsConfig {
       ({ name }) => name,
     );
 
+    // TODO: HERE
+    const allDataFilesCollection = {
+      ...dataFilesCollection,
+      files: [
+        ...dataFilesCollection.files,
+        ...activeCollections
+          .map((collection) => {
+            // console.log({ collection });
+            // return null;
+            return {
+              name: collection.name + "Data",
+              label: collection.label + " Data",
+              icon: collection.icon,
+              file: `${CONTENT_DIR}/{{locale}}/${collection.name}/${collection.name}.yaml`,
+              // format: "yaml",
+              i18n: true,
+              // fields: [tagsListField, varsField, dataListField],
+              fields: removeNonDataFields(collection.fields),
+            };
+          })
+          .filter(Boolean),
+      ],
+    };
+
     const generalConfig = {
       backend: {
         name: CMS_BACKEND,
@@ -3319,6 +3335,29 @@ class CmsConfig {
       // MEDIAS
       media_folder: `/${CONTENT_DIR}/_images`,
       public_folder: "/_images",
+      asset_collections: [
+        {
+          name: "publicFiles",
+          label: "Public Files",
+          icon: "attach_file",
+          media_folder: `/${CONTENT_DIR}/_files`,
+          public_folder: "/assets/files",
+        },
+        {
+          name: "globalPartials",
+          label: "Global Partials",
+          icon: "code_blocks",
+          media_folder: `/${CONTENT_DIR}/_partials`,
+          public_folder: "/_partials",
+        },
+        {
+          name: "dataFiles",
+          label: "Data Files",
+          icon: "code",
+          media_folder: `/${CONTENT_DIR}/_data`,
+          public_folder: "/_data",
+        },
+      ],
       media_libraries: {
         // stock_assets: { providers: [] },
         default: {
@@ -3381,7 +3420,7 @@ class CmsConfig {
               stylesConfigCollection(fontsourceFonts),
               stylesheetsCollection,
               { divider: true },
-              dataFilesCollection,
+              allDataFilesCollection,
               advancedDataFilesCollection,
             ]),
       ],

@@ -136,6 +136,7 @@ export async function ldWebPage(data) {
     ...(validLinks.length > 0 ? { sameAs: validLinks } : {}),
     location: asPlace(metadata.location),
     address: asPostalAddress(metadata.address),
+    legalAddress: asPostalAddress(metadata.legalAddress),
     author: await resolvePeople(metadata.author),
     performer: await resolvePeople(metadata.performer),
     organizer: await resolvePeople(metadata.organizer),
