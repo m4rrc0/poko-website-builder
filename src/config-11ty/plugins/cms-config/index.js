@@ -981,6 +981,15 @@ try {
   );
 }
 
+// Export a function that lists editor components
+export function getActiveEditorComponents() {
+  return [
+    "code-block",
+    ...defaultEditorComponentNames,
+    ...userEditorComponentNames,
+  ];
+}
+
 export const bodyMarkdownField = {
   name: "body",
   label: "Content",

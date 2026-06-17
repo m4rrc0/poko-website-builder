@@ -1,6 +1,7 @@
 import {
   env,
   activeCollections,
+  editorComponents,
   // activeCollectionNames,
   iconLists,
 } from "./env.js";
@@ -13,6 +14,7 @@ const SECTION_WRAPPER_STYLE = `background-color: hsl(var(--sui-background-color-
 const AREA_ITEM_PREVIEW_STYLE = `border: 1px dashed hsl(var(--sui-background-color-4-hsl) / 1); margin-block-start: .5rem; padding: 0 1rem .5rem;`;
 const AREA_PREVIEW_STYLE = `border: 1px dashed hsl(var(--sui-background-color-4-hsl) / 1); margin-block-start: .5rem; padding: 0 .5rem .5rem;`;
 
+const ec = (idExcl) => editorComponents.filter((id) => id !== idExcl);
 const multilineToInline = (multi) => {
   return multi?.replace(/\n/g, "\\n")?.replace(/"/g, '\\"');
 };
@@ -1049,7 +1051,7 @@ const imageFields = [
 ];
 
 // Section fields
-const sectionHeaderField = {
+const sectionHeaderField = (parentCompName) => ({
   name: "header",
   label: "Section Header",
   widget: "object",
@@ -1064,6 +1066,7 @@ const sectionHeaderField = {
       widget: "markdown",
       required: false,
       i18n: true,
+      editor_components: ec(parentCompName),
     },
     {
       name: "class",
@@ -1080,8 +1083,8 @@ const sectionHeaderField = {
       i18n: true,
     },
   ],
-};
-const sectionFooterField = {
+});
+const sectionFooterField = (parentCompName) => ({
   name: "footer",
   label: "Section Footer",
   widget: "object",
@@ -1096,6 +1099,7 @@ const sectionFooterField = {
       widget: "markdown",
       required: false,
       i18n: true,
+      editor_components: ec(parentCompName),
     },
     {
       name: "class",
@@ -1112,7 +1116,7 @@ const sectionFooterField = {
       i18n: true,
     },
   ],
-};
+});
 
 // Layout options
 const layoutTypeGridFluid = {
@@ -1989,12 +1993,20 @@ export const htmlPartial = {
   },
 };
 
+console.log({ editorComponents });
+
 export const wrapper = {
   id: "wrapper",
   label: "Wrapper",
   icon: "lunch_dining",
   fields: [
-    { name: "content", label: "Content", widget: "markdown", required: false },
+    {
+      name: "content",
+      label: "Content",
+      widget: "markdown",
+      required: false,
+      editor_components: ec("wrapper"),
+    },
     {
       name: "wrapperTag",
       label: "Wrapper Tag",
@@ -2622,7 +2634,7 @@ export const sectionFlow = {
   label: "Section > Flow",
   icon: "flex_direction",
   fields: [
-    sectionHeaderField,
+    sectionHeaderField("sectionFlow"),
     {
       name: "items",
       label: "Flow Items",
@@ -2636,6 +2648,7 @@ export const sectionFlow = {
           label: "Flow Item Content",
           widget: "markdown",
           required: false,
+          editor_components: ec("sectionFlow"),
         },
         {
           name: "class",
@@ -2683,7 +2696,7 @@ export const sectionFlow = {
       hint: "Class names added to the inner layout element ({% flow %}). For classes on the outer section element, use the Section Wrapper below.",
       required: false,
     },
-    sectionFooterField,
+    sectionFooterField("sectionFlow"),
     sectionWrapperField,
   ],
   pattern:
@@ -2753,7 +2766,7 @@ export const sectionGrid = {
   // icon: "flex_wrap",
   icon: "grid_view",
   fields: [
-    sectionHeaderField,
+    sectionHeaderField("sectionGrid"),
     {
       name: "items",
       label: "Grid Items",
@@ -2768,6 +2781,7 @@ export const sectionGrid = {
           label: "Grid Item Content",
           widget: "markdown",
           required: false,
+          editor_components: ec("sectionGrid"),
         },
         {
           name: "class",
@@ -2802,7 +2816,7 @@ export const sectionGrid = {
       hint: "Class names added to the inner layout element ({% grid %}). For classes on the outer section element, use the Section Wrapper below.",
       required: false,
     },
-    sectionFooterField,
+    sectionFooterField("sectionGrid"),
     sectionWrapperField,
     // {
     //   name: "itemsAttributes",
@@ -2882,7 +2896,7 @@ export const sectionTwoColumns = {
   icon: "view_column_2",
   icon: "vertical_split",
   fields: [
-    sectionHeaderField,
+    sectionHeaderField("sectionTwoColumns"),
     {
       name: "itemLeft",
       label: "Column Left",
@@ -2897,6 +2911,7 @@ export const sectionTwoColumns = {
           label: "Column Left Content",
           widget: "markdown",
           required: false,
+          editor_components: ec("sectionTwoColumns"),
         },
         {
           name: "class",
@@ -2926,6 +2941,7 @@ export const sectionTwoColumns = {
           label: "Column Right Content",
           widget: "markdown",
           required: false,
+          editor_components: ec("sectionTwoColumns"),
         },
         {
           name: "class",
@@ -2958,7 +2974,7 @@ export const sectionTwoColumns = {
       hint: "Class names added to the inner layout element ({% twoColumns %}). For classes on the outer section element, use the Section Wrapper below.",
       required: false,
     },
-    sectionFooterField,
+    sectionFooterField("sectionTwoColumns"),
     sectionWrapperField,
   ],
   pattern:
@@ -3034,7 +3050,7 @@ export const sectionReel = {
   // icon: "view_week",
   icon: "flex_no_wrap",
   fields: [
-    sectionHeaderField,
+    sectionHeaderField("sectionReel"),
     {
       name: "items",
       label: "Reel Items",
@@ -3048,6 +3064,7 @@ export const sectionReel = {
           label: "Reel Item Content",
           widget: "markdown",
           required: false,
+          editor_components: ec("sectionReel"),
         },
         {
           name: "class",
@@ -3080,7 +3097,7 @@ export const sectionReel = {
       hint: "Class names added to the inner layout element ({% reel %}). For classes on the outer section element, use the Section Wrapper below.",
       required: false,
     },
-    sectionFooterField,
+    sectionFooterField("sectionReel"),
     sectionWrapperField,
   ],
   pattern:
@@ -3149,7 +3166,7 @@ export const sectionCollection = {
   label: "Section > Collection List",
   icon: "bookmark_stacks",
   fields: [
-    sectionHeaderField,
+    sectionHeaderField("sectionCollection"),
     {
       name: "collection",
       label: "Select a collection to display",
@@ -3375,7 +3392,7 @@ export const sectionCollection = {
       required: false,
       value_field: "{{slug}}",
     },
-    sectionFooterField,
+    sectionFooterField("sectionCollection"),
     sectionWrapperField,
   ],
   pattern:
@@ -3433,7 +3450,7 @@ export const sectionBuilder = {
   label: "Section > Builder",
   icon: "brick",
   fields: [
-    sectionHeaderField,
+    sectionHeaderField("sectionBuilder"),
     {
       name: "areas",
       label: "Areas",
@@ -3484,6 +3501,7 @@ export const sectionBuilder = {
                   label: "Column Left Content",
                   widget: "markdown",
                   required: false,
+                  editor_components: ec("sectionBuilder"),
                 },
                 {
                   name: "class",
@@ -3513,6 +3531,7 @@ export const sectionBuilder = {
                   label: "Column Right Content",
                   widget: "markdown",
                   required: false,
+                  editor_components: ec("sectionBuilder"),
                 },
                 {
                   name: "class",
@@ -3571,6 +3590,7 @@ export const sectionBuilder = {
                   label: "Item Content",
                   widget: "markdown",
                   required: false,
+                  editor_components: ec("sectionBuilder"),
                 },
                 {
                   name: "class",
@@ -3833,6 +3853,7 @@ export const sectionBuilder = {
                   label: "Item Content",
                   widget: "markdown",
                   required: false,
+                  editor_components: ec("sectionBuilder"),
                 },
                 {
                   name: "class",
@@ -3891,6 +3912,7 @@ export const sectionBuilder = {
                   label: "Item Content",
                   widget: "markdown",
                   required: false,
+                  editor_components: ec("sectionBuilder"),
                 },
                 {
                   name: "class",
@@ -3976,7 +3998,7 @@ export const sectionBuilder = {
         // },
       ],
     },
-    sectionFooterField,
+    sectionFooterField("sectionBuilder"),
     sectionWrapperField,
   ],
   pattern:

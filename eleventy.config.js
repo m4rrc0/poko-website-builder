@@ -80,7 +80,10 @@ import {
   fontPreloadTags,
   userHtmlClasses,
 } from "./env.config.js";
-import { getActiveCollections } from "./src/config-11ty/plugins/cms-config/index.js";
+import {
+  getActiveCollections,
+  getActiveEditorComponents,
+} from "./src/config-11ty/plugins/cms-config/index.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
 import ldWebSite from "./src/data/structured-data/ldWebSite.js";
 
@@ -530,7 +533,7 @@ export default async function (eleventyConfig) {
     },
   });
 
-  eleventyConfig.addPlugin(pluginCodeblocks([pluginCodeBlocksCharts]));
+  // eleventyConfig.addPlugin(pluginCodeblocks([pluginCodeBlocksCharts]));
 
   // Add classes to specific elements depending on the project
   const userHtmlClassesImport = await userHtmlClasses();
@@ -587,6 +590,7 @@ export default async function (eleventyConfig) {
     "env.11ty.js",
     async function (data) {
       const activeCollections = await getActiveCollections();
+      const editorComponents = getActiveEditorComponents();
       const activeCollectionNames = activeCollections
         .map((c) => c?.name)
         .filter(Boolean);
@@ -596,6 +600,7 @@ export default async function (eleventyConfig) {
       return `
 export const env = ${JSON.stringify(envVars)};
 export const activeCollections = ${JSON.stringify(activeCollections)};
+export const editorComponents = ${JSON.stringify(editorComponents)};
 export const activeCollectionNames = ${JSON.stringify(activeCollectionNames)};
 export const iconLists = ${JSON.stringify(iconLists)};
 `;
