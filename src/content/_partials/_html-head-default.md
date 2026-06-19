@@ -48,7 +48,7 @@
 
 {% if inlineAllStyles %}
 
-<style>
+<style eleventy:ignore>
 /* CTX CSS Styles */
 {{CtxCssInline | safe}}
 /* UnoCSS Styles */
@@ -64,7 +64,7 @@
 {{htmlExternalCtxCssTag | safe}}
 
 <!-- UnoCSS Styles -->
-<style>
+<style eleventy:ignore>
 .noop-load-uno{}
 </style>
 <!-- Project Stylesheets -->
@@ -84,7 +84,7 @@
 <link rel="stylesheet" href="{% getBundleFileUrl 'css', 'external' %}" fetchpriority="low" data-forced-external-css>
 {% endif %}
 
-<style>
+<style eleventy:ignore>
 /* globalSettings.cssHead */
 {{ globalSettings.cssHead | safe }}
 /* CSS template bundles */

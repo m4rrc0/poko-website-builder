@@ -13,7 +13,7 @@ import {
 } from "../../env.config.js";
 
 const { pages, spreadPageSetup } = await import(
-  `../${SRC_DIR_FROM_WORKING_DIR}/config-11ty/plugins/cms-config/index.js`
+  `../${SRC_DIR_FROM_WORKING_DIR}/config-11ty/plugins/cms-config/config.js`
 );
 
 export const collections = [

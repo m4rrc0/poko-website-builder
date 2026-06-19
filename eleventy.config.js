@@ -23,6 +23,7 @@ import pluginSitemap from "@quasibit/eleventy-plugin-sitemap";
 import pluginIcons from "eleventy-plugin-icons";
 import pluginCodeblocks from "@code-blocks/eleventy-plugin";
 import pluginCodeBlocksCharts from "@code-blocks/charts";
+import embedYouTube from "eleventy-plugin-youtube-embed";
 
 // -------- Plugins Internal
 import { imageTransformOptions } from "./src/config-11ty/plugins/imageTransform.js";
@@ -80,10 +81,6 @@ import {
   fontPreloadTags,
   userHtmlClasses,
 } from "./env.config.js";
-import {
-  getActiveCollections,
-  getActiveEditorComponents,
-} from "./src/config-11ty/plugins/cms-config/index.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
 import ldWebSite from "./src/data/structured-data/ldWebSite.js";
 
@@ -100,6 +97,7 @@ import {
   slugifyPath,
   locale_url,
   locale_links,
+  tagLabel,
   filterCollection,
   join,
   first,
@@ -127,6 +125,7 @@ import {
   image,
   gallery,
   wrapper,
+  youtube,
 } from "./src/config-11ty/shortcodes/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
 
@@ -379,6 +378,49 @@ export default async function (eleventyConfig) {
 
   // --------------------- Bundles
   eleventyConfig.addBundle("html");
+  eleventyConfig.addBundle("js");
+  eleventyConfig.addBundle("css", {
+    // File extension used for bundle file output, defaults to bundle name
+    outputFileExtension: "css",
+    // Name of shortcode for use in templates, defaults to bundle name
+    shortcodeName: "css",
+    // shortcodeName: false, // disable this feature.
+
+    // Optional subfolder (relative to output directory) files will write to
+    toFileDirectory: "assets/styles",
+
+    // Modify bundle content
+    transforms: [
+      async function (content) {
+        let { type, page } = this;
+
+        if (type === "css") {
+          let { code, map } = lightningTransform({
+            // filename: 'style.css',
+            code: Buffer.from(content),
+            minify: MINIFY,
+            // sourceMap: true
+          });
+
+          return code;
+        }
+        return content;
+      },
+    ],
+
+    // If two identical code blocks exist in non-default buckets, they’ll be hoisted to the first bucket in common.
+    hoist: true,
+
+    // Bundle content from nodes selected by an arbitrary selector
+    // e.g. "script" would bundle `<script>` content
+    // Use an eleventy:ignore attribute on a node to opt-out.
+    // Supported selectors: https://www.npmjs.com/package/posthtml-match-helper
+    bundleHtmlContentFromSelector: "style",
+
+    // In 11ty.js templates, having a named export of `bundle` will populate your bundles.
+    bundleExportKey: "bundle",
+    // bundleExportKey: false, // disable this feature.
+  });
 
   // --------------------- Global Data
   eleventyConfig.addGlobalData("env", { ...env });
@@ -467,36 +509,40 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(eleventyNavigationPlugin);
   eleventyConfig.addPlugin(eleventyImageTransformPlugin, imageTransformOptions);
   eleventyConfig.addPlugin(yamlData);
-  eleventyConfig.addPlugin(cmsConfigPlugin);
-  eleventyConfig.addPlugin(autoCollections);
-  // TODO: reinstate this if 11ty Transform proves to be stable
-  eleventyConfig.addPlugin(pluginWebc, {
-    components: [
-      "npm:@11ty/eleventy-img/*.webc",
-      "src/components/**/*.webc",
-      `${WORKING_DIR}/_components/**/*.webc`,
-    ],
-    useTransform: true,
-    bundlePluginOptions: {
-      transforms: [
-        async function (content) {
-          let { type, page } = this;
-
-          if (type === "css") {
-            let { code, map } = lightningTransform({
-              // filename: 'style.css',
-              code: Buffer.from(content),
-              minify: MINIFY,
-              // sourceMap: true
-            });
-
-            return code;
-          }
-          return content;
-        },
-      ],
-    },
+  await eleventyConfig.addPlugin(cmsConfigPlugin, {
+    CMS_IMPORT,
+    CONTENT_DIR,
+    iconLists,
   });
+  eleventyConfig.addPlugin(autoCollections);
+  // TODO: we want to remove webC entirely
+  // eleventyConfig.addPlugin(pluginWebc, {
+  //   components: [
+  //     "npm:@11ty/eleventy-img/*.webc",
+  //     "src/components/**/*.webc",
+  //     `${WORKING_DIR}/_components/**/*.webc`,
+  //   ],
+  //   useTransform: true,
+  //   bundlePluginOptions: {
+  //     transforms: [
+  //       async function (content) {
+  //         let { type, page } = this;
+
+  //         if (type === "css") {
+  //           let { code, map } = lightningTransform({
+  //             // filename: 'style.css',
+  //             code: Buffer.from(content),
+  //             minify: MINIFY,
+  //             // sourceMap: true
+  //           });
+
+  //           return code;
+  //         }
+  //         return content;
+  //       },
+  //     ],
+  //   },
+  // });
   console.log({ BUILD_LEVEL, BASE_URL });
   /** @type {import("eleventy-plugin-robotstxt/typedefs.js").EleventyPluginRobotsTxtOptions} */
   const eleventyPluginRobotsTxtOptions =
@@ -533,6 +579,20 @@ export default async function (eleventyConfig) {
     },
   });
 
+  eleventyConfig.addPlugin(embedYouTube, {
+    embedClass: "youtube-embed",
+    titleOptions: {
+      download: true,
+    },
+    lite: {
+      css: { inline: true },
+      js: { inline: true },
+      thumbnailFormat: "webp",
+      responsive: true,
+      thumbnailQuality: "maxresdefault",
+    },
+  });
+
   // eleventyConfig.addPlugin(pluginCodeblocks([pluginCodeBlocksCharts]));
 
   // Add classes to specific elements depending on the project
@@ -566,51 +626,6 @@ export default async function (eleventyConfig) {
     [`${WORKING_DIR}/*.css`]: "/assets/styles/",
     "assets/js/instant-page.js": "assets/js/instant-page.js",
   });
-  // Copy Sveltia CMS if not using CDN
-  if (CMS_IMPORT === "npm") {
-    eleventyConfig.addPassthroughCopy({
-      "node_modules/@sveltia/cms/dist/sveltia-cms.js":
-        "assets/js/sveltia-cms.js",
-      "node_modules/@sveltia/cms/dist/sveltia-cms.mjs":
-        "assets/js/sveltia-cms.mjs",
-    });
-  } else if (CMS_IMPORT.startsWith("../../")) {
-    eleventyConfig.addPassthroughCopy({
-      [CMS_IMPORT + "sveltia-cms.js"]: "assets/js/sveltia-cms.js",
-      [CMS_IMPORT + "sveltia-cms.mjs"]: "assets/js/sveltia-cms.mjs",
-    });
-  } else if (CMS_IMPORT === "local") {
-    eleventyConfig.addPassthroughCopy({
-      "assets/js/sveltia-cms.js": "assets/js/sveltia-cms.js",
-      "assets/js/sveltia-cms.mjs": "assets/js/sveltia-cms.mjs",
-    });
-  }
-
-  eleventyConfig.addTemplate(
-    "env.11ty.js",
-    async function (data) {
-      const activeCollections = await getActiveCollections();
-      const editorComponents = getActiveEditorComponents();
-      const activeCollectionNames = activeCollections
-        .map((c) => c?.name)
-        .filter(Boolean);
-
-      const envVars = { CONTENT_DIR };
-
-      return `
-export const env = ${JSON.stringify(envVars)};
-export const activeCollections = ${JSON.stringify(activeCollections)};
-export const editorComponents = ${JSON.stringify(editorComponents)};
-export const activeCollectionNames = ${JSON.stringify(activeCollectionNames)};
-export const iconLists = ${JSON.stringify(iconLists)};
-`;
-    },
-    {
-      permalink: "/admin/env.js",
-      eleventyExcludeFromCollections: true,
-      layout: null,
-    },
-  );
 
   // Populate Default Content with virtual templates
   await eleventyConfig.addPlugin(populateInputDir, {
@@ -664,6 +679,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
   eleventyConfig.addFilter("locale_url", locale_url);
   eleventyConfig.addFilter("link", locale_url); // Alias for locale_url
   eleventyConfig.addFilter("locale_links", locale_links);
+  eleventyConfig.addFilter("tagLabel", tagLabel);
   // Date
   eleventyConfig.addFilter("toIsoString", toISOString);
   eleventyConfig.addFilter("formatDate", formatDate);
@@ -712,6 +728,7 @@ export const iconLists = ${JSON.stringify(iconLists)};
   eleventyConfig.addShortcode("image", image);
   eleventyConfig.addShortcode("gallery", gallery);
   // eleventyConfig.addPairedShortcode("wrapper", wrapper);
+  eleventyConfig.addShortcode("youtube", youtube);
   // Note: `sections` shortcode is registered by the partialShortcodes plugin.
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);
   // eleventyConfig.addShortcode("ogImageSelected", ogImageSelected);
