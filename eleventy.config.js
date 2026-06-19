@@ -125,7 +125,7 @@ import {
   image,
   gallery,
   wrapper,
-  youtube,
+  embed,
 } from "./src/config-11ty/shortcodes/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
 
@@ -728,7 +728,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addShortcode("image", image);
   eleventyConfig.addShortcode("gallery", gallery);
   // eleventyConfig.addPairedShortcode("wrapper", wrapper);
-  eleventyConfig.addShortcode("youtube", youtube);
+  eleventyConfig.addShortcode("embed", embed);
   // Note: `sections` shortcode is registered by the partialShortcodes plugin.
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);
   // eleventyConfig.addShortcode("ogImageSelected", ogImageSelected);
