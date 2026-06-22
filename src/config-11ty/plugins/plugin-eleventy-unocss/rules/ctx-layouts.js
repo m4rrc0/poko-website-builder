@@ -10,7 +10,7 @@ export default [
         display: "block",
         padding:
           "var(--padding-box, var(--padding, calc(var(--gap, 1em) / 2)))",
-        border: "var(--border-width-box, 0) solid",
+        border: "var(--border-width-box, var(--thickness, 0)) solid",
       };
     },
   ],

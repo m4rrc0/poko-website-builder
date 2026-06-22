@@ -1,7 +1,6 @@
 import { CmsConfig } from "./config.js";
 import { CmsPage } from "./page.js";
 import { getActiveCollections, getActiveEditorComponents } from "./config.js";
-import fglob from "fast-glob";
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");

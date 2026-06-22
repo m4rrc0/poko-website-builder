@@ -417,7 +417,7 @@ export const brandFontStacksContexts = transformFontStacksContexts(
 );
 export const brandFontStacksContextsStyles = mapStyleStringsToClassDef(
   brandFontStacksContexts,
-  ".font-stacks-",
+  ".fonts-",
 );
 
 // Type Scale

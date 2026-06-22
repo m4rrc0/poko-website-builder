@@ -176,6 +176,12 @@
   /* background-color: #fdfdfe; */
 }
 
+/* Necessary for context classes change so the var is re-applied. */
+/* Otherwise the var on the body is used and redefinition has no effect. */
+:where([class*="fonts-"]) {
+  font-family: var(--font-stack-body, system-ui, sans-serif);
+}
+
 /* 1.2 Headings */
 /* prettier-ignore */
 :where(.h8, .h7, h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1, .h0, .h-1, .h-2, .h-3, .h-4) {

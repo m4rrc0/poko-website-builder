@@ -139,6 +139,8 @@
 
 /* Avoid previous defaults in some situations */
 /* prettier-ignore */
+:where(.no-flow),
+:where(.no-flow) > *,
 :where(address) > *,
 :where(p, h1, h2, h3, h4, h5, h6, li, figure, figcaption, td, th, dt, dd, button, label, input, summary) :where(img, picture, video),
 :where(:where(.layout, .switcher, .grid-fluid, .cluster, .fixed-fluid, .center, cover, reel) > *),
