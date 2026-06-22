@@ -7,7 +7,7 @@ export default function (data) {
   if (!ldData) return "";
 
   // Inject the final block
-  return `<script type="application/ld+json">
+  return `<script type="application/ld+json" eleventy:ignore>
 ${JSON.stringify(ldData, null, 2)}
 </script>`;
 }

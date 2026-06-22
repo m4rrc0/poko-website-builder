@@ -378,7 +378,22 @@ export default async function (eleventyConfig) {
 
   // --------------------- Bundles
   eleventyConfig.addBundle("html");
-  eleventyConfig.addBundle("js");
+  eleventyConfig.addBundle("js", {
+    // Optional subfolder (relative to output directory) files will write to
+    toFileDirectory: "assets/js",
+    // If two identical code blocks exist in non-default buckets, they’ll be hoisted to the first bucket in common.
+    hoist: true,
+
+    // Bundle content from nodes selected by an arbitrary selector
+    // e.g. "script" would bundle `<script>` content
+    // Use an eleventy:ignore attribute on a node to opt-out.
+    // Supported selectors: https://www.npmjs.com/package/posthtml-match-helper
+    bundleHtmlContentFromSelector: "script",
+
+    // In 11ty.js templates, having a named export of `bundle` will populate your bundles.
+    bundleExportKey: "js",
+    // bundleExportKey: false, // disable this feature.
+  });
   eleventyConfig.addBundle("css", {
     // File extension used for bundle file output, defaults to bundle name
     outputFileExtension: "css",
@@ -418,8 +433,9 @@ export default async function (eleventyConfig) {
     bundleHtmlContentFromSelector: "style",
 
     // In 11ty.js templates, having a named export of `bundle` will populate your bundles.
-    bundleExportKey: "bundle",
+    bundleExportKey: "css",
     // bundleExportKey: false, // disable this feature.
+    // Examples: https://github.com/11ty/eleventy-plugin-bundle/issues/28
   });
 
   // --------------------- Global Data

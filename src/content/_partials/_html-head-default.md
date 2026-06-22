@@ -93,14 +93,14 @@
 
 {# JS: detection + bundle #}
 
-<script>
+<script eleventy:ignore>
 (function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement)
 {% getBundle "js" %}
 </script>
 
-<script src="{% getBundleFileUrl 'js', 'async' %}" async fetchpriority="low"></script>
-<script src="{% getBundleFileUrl 'js', 'defer' %}" defer fetchpriority="low"></script>
+<script src="{% getBundleFileUrl 'js', 'async' %}" async fetchpriority="low" eleventy:ignore></script>
+<script src="{% getBundleFileUrl 'js', 'defer' %}" defer fetchpriority="low" eleventy:ignore></script>
 
 {% partial "_metadata-jsonld" %}
 
-<script src="/assets/js/instant-page.js" type="module"></script>
+<script src="/assets/js/instant-page.js" type="module" eleventy:ignore></script>
