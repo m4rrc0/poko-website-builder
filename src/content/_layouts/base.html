@@ -13,4 +13,10 @@
     <!-- Footer -->
     {% partial "headless/page-footer.11ty.js" %}
   </body>
+  <!-- Injected page styles -->
+  {% if pageStyles %}
+  <style>
+    {{pageStyles}}
+  </style>
+  {% endif %}
 </html>

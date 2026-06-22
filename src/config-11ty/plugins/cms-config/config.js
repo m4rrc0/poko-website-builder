@@ -206,6 +206,19 @@ export const dataListField = {
     },
   ],
 };
+export const pageStylesField = {
+  name: "pageStyles",
+  label: "Page Styles",
+  hint: "Custom CSS to apply to the page",
+  widget: "code",
+  required: false,
+  output_code_only: true,
+  default_language: "css",
+  allow_language_selection: false,
+  i18n: "duplicate",
+  preview: false,
+  dataField: true,
+};
 export const statusField = {
   name: "status",
   label: "Status",
@@ -1346,6 +1359,7 @@ export function spreadCommonPageFields(modFields) {
     generatePage: generatePageField,
     vars: varsField,
     dataList: dataListField,
+    pageStyles: pageStylesField,
     ...modFields,
   };
   return Object.values(defaultFields);
