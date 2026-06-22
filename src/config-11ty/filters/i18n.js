@@ -139,3 +139,12 @@ export function locale_links(input, inclusionOption = "others") {
 
   return templateTranslations;
 }
+
+export function tagLabel(tagSlug) {
+  const tag =
+    this?.ctx?.tagsList &&
+    this?.ctx?.tagsList?.length &&
+    this?.ctx?.tagsList.find((tag) => tag.slug === tagSlug);
+  const label = tag?.label || tag?.name || tagSlug;
+  return label;
+}
