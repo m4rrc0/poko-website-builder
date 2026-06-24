@@ -22,6 +22,7 @@ import {
   sectionHeaderField,
   sectionFooterField,
   sectionWrapperField,
+  layoutTypeCustom,
   layoutTypeSwitcher,
   layoutTypeGridFluid,
   layoutTypeCluster,
@@ -1113,7 +1114,12 @@ export function buildSectionsField(activeCollections) {
             required: false,
             collapsed: true,
             i18n: true,
-            types: [layoutTypeSwitcher, layoutTypeGridFluid, layoutTypeCluster],
+            types: [
+              layoutTypeSwitcher,
+              layoutTypeGridFluid,
+              layoutTypeCluster,
+              layoutTypeCustom,
+            ],
           },
           {
             name: "class",
@@ -1148,7 +1154,7 @@ export function buildSectionsField(activeCollections) {
             required: false,
             collapsed: true,
             i18n: true,
-            types: [layoutTypeFlowGap],
+            types: [layoutTypeFlowGap, layoutTypeCustom],
           },
           {
             name: "class",
@@ -1192,7 +1198,7 @@ export function buildSectionsField(activeCollections) {
             required: false,
             collapsed: true,
             i18n: true,
-            types: [layoutTypeSwitcher, layoutTypeFixedFluid],
+            types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeCustom],
           },
           {
             name: "class",
@@ -1227,7 +1233,7 @@ export function buildSectionsField(activeCollections) {
             required: false,
             collapsed: true,
             i18n: true,
-            types: [layoutTypeReel],
+            types: [layoutTypeReel, layoutTypeCustom],
           },
           {
             name: "class",
@@ -1261,6 +1267,7 @@ export function buildSectionsField(activeCollections) {
               layoutTypeCluster,
               layoutTypeFlow,
               layoutTypeReel,
+              layoutTypeCustom,
             ],
           },
           {
