@@ -126,7 +126,10 @@ export default async function (eleventyConfig, pluginOptions) {
     let html = mdContent;
 
     if (mdContent) {
-      html = await renderContentFilterFn.call(this, mdContent, "njk,md", data);
+      html = await renderContentFilterFn.call(this, mdContent, "njk,md", {
+        ...this.ctx,
+        ...data,
+      });
     }
 
     return safeFilter(html);
@@ -171,7 +174,7 @@ export default async function (eleventyConfig, pluginOptions) {
             this,
             itemMarkdownLayout,
             "njk,md",
-            { link: l },
+            { ...this.ctx, link: l },
           );
 
           return linkStr;
@@ -200,7 +203,7 @@ export default async function (eleventyConfig, pluginOptions) {
         this,
         wrapperMarkdownLayout,
         "njk,md",
-        { links: uniqueLinks, htmlLinks },
+        { ...this.ctx, links: uniqueLinks, htmlLinks },
       );
 
       return rendered;

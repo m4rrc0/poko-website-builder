@@ -17,12 +17,10 @@ export default async function (eleventyConfig, pluginOptions) {
   ) {
     const contentTrimmed = typeof content === "string" ? content.trim() : "";
     const contentRendered = contentTrimmed
-      ? await renderContentFilterFn.call(
-          this,
-          contentTrimmed,
-          "njk,md",
-          dataManual,
-        )
+      ? await renderContentFilterFn.call(this, contentTrimmed, "njk,md", {
+          ...this.ctx,
+          ...dataManual,
+        })
       : "";
 
     return partialShortcodeFn.call(

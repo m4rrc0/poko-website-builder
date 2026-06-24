@@ -31,7 +31,8 @@ function lookupTemplateTranslations(
     (lang) => lang.prefix,
   );
   const langPrefixRegex = new RegExp(`^\/*(${langPrefixes.join("|")})\/`);
-  const collectionNames = Object.keys(this.ctx.collections);
+  const eleventyCollections = this.ctx.collections;
+  const collectionNames = Object.keys(eleventyCollections);
   const collectionNamesRegex = new RegExp(
     `^\/*(${collectionNames.join("|")})\/`,
   );
@@ -39,8 +40,8 @@ function lookupTemplateTranslations(
 
   const allTemplates =
     templates ||
-    this.ctx.collections?.[collectionName] ||
-    this.ctx.collections.all ||
+    eleventyCollections?.[collectionName] ||
+    eleventyCollections.all ||
     [];
 
   // Find matching template in any language
