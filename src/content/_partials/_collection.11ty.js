@@ -28,14 +28,19 @@ export default async function ({
   columns,
   widthColumnMin,
   widthColumnMax,
+  itemWidth,
+  height,
+  noBar,
   class: className,
   tag,
   itemPartial,
   wrapperPartial,
+  content: itemMarkup,
 }) {
   const filterCollection = this.filterCollection;
   const sortCollection = this.sortCollection;
   const partialSc = this.partial;
+  const renderContentFn = this.renderContent;
   // const partialWrapperSc = this.partialWrapper;
 
   // 1. Get the collection of items
@@ -50,16 +55,30 @@ export default async function ({
     items = filterCollection(items, filters, exclusions);
   }
 
+  const itemMarkupTrimmed =
+    typeof itemMarkup === "string" ? itemMarkup.trim() : "";
+
   const itemsStr = (
     await Promise.all(
       items.map(async (item, index, items) => {
+        // If inline item markup was provided as paired-shortcode content,
+        // render it per item with `item` in scope instead of using a partial.
+        if (itemMarkupTrimmed) {
+          return await renderContentFn.call(this, itemMarkupTrimmed, "njk,md", {
+            ...this.ctx,
+            ...item.data,
+            item,
+            index,
+            items,
+          });
+        }
         return await partialSc.call(this, itemPartial || "_collectionItem", {
           index,
           items,
           ...item.data,
           rawInput: item.rawInput ?? item.template?.inputContent ?? "",
           // rawInput: item.rawInput,
-          // content: item?.content, // Error: render template oo early
+          // content: item?.content, // Error: render template too early
         });
       }),
     )
@@ -77,19 +96,22 @@ export default async function ({
   // const childrenNb = (content?.match(gridItemRegex) || []).length;
   const layoutClass = items.length > 3 ? "grid-fluid" : "switcher";
   // const layoutClass = "grid-fluid";
+  const isFlow = type === "flow";
   const styles = {
     "--columns": columns,
-    "--gap": gap,
+    [isFlow ? "--flow-space" : "--gap"]: gap,
     "--width-column-min": widthColumnMin,
     "--width-column-max": widthColumnMax,
     "--width-wrap": widthWrap,
+    "--item-width": itemWidth,
+    "--height": height,
   };
   let styleStr = Object.entries(styles)
     .filter(([key, value]) => value)
     .map(([key, value]) => `${key}: ${value};`)
     .join(" ");
   // styleStr = styleStr ? `style="${styleStr}"` : "";
-  const wrapperClasses = `layout area main list-collection ${type || layoutClass} ${className || ""}`;
+  const wrapperClasses = `layout area main list-collection ${type || layoutClass} ${noBar ? "no-bar" : ""} ${className || ""}`;
 
   // const wrapperStr = await partialWrapperSc.call(
   //   this,

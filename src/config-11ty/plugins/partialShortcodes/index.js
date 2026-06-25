@@ -57,7 +57,6 @@ export default async function (eleventyConfig, pluginOptions) {
     "gridItem",
     "twoColumns",
     "twoColumnsItem",
-    "collection",
     "collectionWrapper",
     "collectionItem",
     "reel",
@@ -80,6 +79,25 @@ export default async function (eleventyConfig, pluginOptions) {
       },
     );
   }
+
+  // `collection` is registered separately so its inner content is passed RAW
+  // (not pre-rendered in the parent context). The `_collection` partial renders
+  // it once per item with `item` in scope, enabling per-item templating like:
+  //   {% collection collection="pages" %}<li>{{ item.title }}</li>{% endcollection %}
+  await eleventyConfig.addPairedAsyncShortcode(
+    "collection",
+    async function (content, dataManual, templateEngineOverride) {
+      return partialShortcodeFn.call(
+        this,
+        "_collection",
+        {
+          content: typeof content === "string" ? content : "",
+          ...dataManual,
+        },
+        templateEngineOverride,
+      );
+    },
+  );
 
   // Frontmatter-driven sections: `{% sections %}…{% endsections %}` dispatches
   // each item in `ctx.sections` to its matching `_${type}` partial, with the

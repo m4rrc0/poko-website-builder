@@ -695,6 +695,34 @@ ${gridItemsStr}
 };
 
 /**
+ * Strip a single surrounding `{% raw %}…{% endraw %}` pair (with optional
+ * whitespace) from the captured body, so the editor stores only the meaningful
+ * per-item markup. Returns `undefined` for empty/whitespace-only input.
+ */
+const stripRawTags = (content) => {
+  if (typeof content !== "string") return undefined;
+  const trimmed = content.trim();
+  if (!trimmed) return undefined;
+  const match = trimmed.match(/^\{%\s*raw\s*%\}([\s\S]*?)\{%\s*endraw\s*%\}$/);
+  return match ? match[1].trim() : trimmed;
+};
+
+/**
+ * Wrap the stored item template back into `{% raw %}…{% endraw %}` so the
+ * paired `{% collection %}` shortcode receives it unrendered.
+ */
+const wrapInRawTags = (itemTemplate) => {
+  const t = typeof itemTemplate === "string" ? itemTemplate.trim() : "";
+  return t
+    ? `
+{% raw %}
+${t}
+{% endraw %}
+`
+    : "";
+};
+
+/**
  * Parse a collection area's body content and attributes into structured data.
  * Extracts collection-specific fields (collection, filters, sortCriterias, exclusions)
  * and layout options from the {% collection %} tag.
@@ -713,11 +741,14 @@ const parseCollectionBody = ({ attributes, content }) => {
       "itemPartial",
     ]);
 
-  // Then parse layout attrs from what remains
-  const { class: className, layoutOptions } = parseLayoutAttrs(
-    afterCollectionSpecific,
-    COLLECTION_LAYOUT_KEYS,
-  );
+  // Then parse layout attrs from what remains. `remaining` here holds any
+  // unknown leftover attributes (e.g. `tag="ul"`) that we round-trip via the
+  // hidden `attributes` field.
+  const {
+    class: className,
+    layoutOptions,
+    attributes: remainingAttributes,
+  } = parseLayoutAttrs(afterCollectionSpecific, COLLECTION_LAYOUT_KEYS);
   // `itemPartial` was already pulled out into `collectionSpecific` above.
   const itemPartial = collectionSpecific.itemPartial;
 
@@ -735,8 +766,9 @@ const parseCollectionBody = ({ attributes, content }) => {
     sortAndFilterOptions,
     class: className,
     itemPartial,
+    itemTemplate: stripRawTags(content),
     layoutOptions,
-    attributes: afterCollectionSpecific,
+    attributes: remainingAttributes,
   };
 };
 
@@ -750,6 +782,7 @@ const buildCollectionBody = ({
   sortAndFilterOptions,
   class: className,
   itemPartial,
+  itemTemplate,
   layoutOptions,
   attributes,
 }) => {
@@ -764,9 +797,12 @@ const buildCollectionBody = ({
     class: className,
     itemPartial,
   };
-  const collAttrsStr = njkAttrsStringFromObj(collAttrs);
+  const collAttrsStr = [njkAttrsStringFromObj(collAttrs), attributes || ""]
+    .filter(Boolean)
+    .join(", ");
+  const body = wrapInRawTags(itemTemplate);
 
-  return `{% collection ${collAttrsStr} %}{% endcollection %}`;
+  return `{% collection ${collAttrsStr} %}${body}{% endcollection %}`;
 };
 
 /**
@@ -3408,6 +3444,22 @@ export const sectionCollection = {
       required: false,
       value_field: "{{slug}}",
     },
+    {
+      name: "itemTemplate",
+      label: "Item Template (raw)",
+      widget: "hidden",
+      // widget: "markdown",
+      // editor_components: ec("sectionCollection"),
+      required: false,
+      i18n: true,
+    },
+    {
+      name: "attributes",
+      label: "Collection Raw Attributes",
+      widget: "hidden",
+      required: false,
+      i18n: true,
+    },
     sectionFooterField("sectionCollection"),
     sectionWrapperField,
   ],
@@ -3433,6 +3485,8 @@ export const sectionCollection = {
       layoutOptions: parsed?.layoutOptions,
       class: parsed?.class,
       itemPartial: parsed?.itemPartial,
+      itemTemplate: parsed?.itemTemplate,
+      attributes: parsed?.attributes,
       sectionWrapper: parseSectionWrapper(sectionAttributes),
     };
   },
@@ -3447,7 +3501,9 @@ export const sectionCollection = {
       sortAndFilterOptions: data?.sortAndFilterOptions,
       class: data?.class,
       itemPartial: data?.itemPartial,
+      itemTemplate: data?.itemTemplate,
       layoutOptions: data?.layoutOptions,
+      attributes: data?.attributes,
     });
 
     const sectionAttrsStr = buildSectionWrapperString(data?.sectionWrapper);
