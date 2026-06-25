@@ -9,6 +9,7 @@ export async function image(args) {
     src: srcRaw,
     alt,
     aspectRatio,
+    objectPosition,
     width,
     title,
     loading,
@@ -16,7 +17,7 @@ export async function image(args) {
     fetchpriority,
     sizes,
     wrapper,
-    class: className,
+    class: classNameExplicit,
     id,
     style,
     imgAttributes,
@@ -63,6 +64,15 @@ export async function image(args) {
   //
   // TODO: If we have some 'full-bleed' class on the image, we need sizes to be "100vw"?? We might want to account for a max bleed nonetheless
 
+  const className = [
+    classNameExplicit,
+    imgAttributes?.class,
+    aspectRatio && `aspect-ratio-${aspectRatio}`,
+    objectPosition && `object-[${objectPosition.trim().replace(" ", "_")}]`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   const options = deepmerge.all(
     [
       imageTransformOptions,
@@ -83,12 +93,7 @@ export async function image(args) {
             }),
             ...(width && { sizes: null }), // TODO: right?
             ...(sizes && { sizes }),
-            ...((aspectRatio && {
-              class: `${className || imgAttributes?.class || ""} aspect-ratio-${aspectRatio}`,
-            }) ||
-              ((className || imgAttributes?.class) && {
-                class: className || imgAttributes?.class || "",
-              })),
+            ...(className && { class: className }),
             ...(id && { id }),
             ...((width && {
               style: `inline-size:${width}px;${style || ""}`,

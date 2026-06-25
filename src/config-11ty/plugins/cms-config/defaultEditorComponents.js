@@ -1415,6 +1415,7 @@ export const link = {
               label: "Select File",
               widget: "file",
               required: true,
+              multiple: false,
               // TODO: ⚠️ Overriding media_folder and public_folder does not work!
               media_folder: `/${CONTENT_DIR}/_files`,
               public_folder: "/assets/files",
@@ -1789,6 +1790,13 @@ export const imageShortcode = {
               required: false,
             },
             {
+              name: "objectPosition",
+              label: "Image Position",
+              widget: "string",
+              required: false,
+              hint: "Position the image vertically and horizontally with CSS object-position (e.g., 'center', 'top left', 'center 75%')",
+            },
+            {
               name: "wrapper",
               label: "Wrapper",
               widget: "string",
@@ -1823,6 +1831,7 @@ export const imageShortcode = {
         "id",
         "title",
         "loading",
+        "objectPosition",
         "wrapper",
       ],
     );
@@ -1835,6 +1844,7 @@ export const imageShortcode = {
       id,
       title,
       loading,
+      objectPosition,
       wrapper,
     } = extracted;
 
@@ -1849,6 +1859,7 @@ export const imageShortcode = {
           ...(id && { id }),
           ...(title && { title }),
           ...(loading && { loading }),
+          ...(objectPosition && { objectPosition }),
           ...(wrapper && { wrapper }),
           ...(imgAttrs && { imgAttrs }),
         },
@@ -1863,6 +1874,7 @@ export const imageShortcode = {
       id,
       title,
       loading,
+      objectPosition,
       wrapper,
       imgAttrs,
     } = advanced || {};
@@ -1876,6 +1888,7 @@ export const imageShortcode = {
       ...(id && { id }),
       ...(title && { title }),
       ...(loading && { loading }),
+      ...(objectPosition && { objectPosition }),
       ...(wrapper && { wrapper }),
       // ...(imgAttrs && { imgAttrs }),
     };
