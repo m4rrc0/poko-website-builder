@@ -558,6 +558,16 @@ const TWO_COLUMNS_LAYOUT_KEYS = [
 ];
 const GRID_LAYOUT_KEYS = ["type", "gap", "widthWrap", "columns"];
 const REEL_LAYOUT_KEYS = ["type", "itemWidth", "height", "gap", "noBar"];
+// Union of all layout keys supported by the collection component
+const COLLECTION_LAYOUT_KEYS = [
+  "type",
+  "gap",
+  "widthWrap",
+  "columns",
+  "itemWidth",
+  "height",
+  "noBar",
+];
 
 /**
  * Parse a `{% twoColumns %}...{% endtwoColumns %}` block into structured data.
@@ -706,7 +716,7 @@ const parseCollectionBody = ({ attributes, content }) => {
   // Then parse layout attrs from what remains
   const { class: className, layoutOptions } = parseLayoutAttrs(
     afterCollectionSpecific,
-    GRID_LAYOUT_KEYS,
+    COLLECTION_LAYOUT_KEYS,
   );
   // `itemPartial` was already pulled out into `collectionSpecific` above.
   const itemPartial = collectionSpecific.itemPartial;
@@ -744,19 +754,15 @@ const buildCollectionBody = ({
   attributes,
 }) => {
   const { filters, sortCriterias, exclusions } = sortAndFilterOptions || {};
-  const { type, gap, widthWrap, columns } = layoutOptions || {};
 
   const collAttrs = {
     collection: collection || "all",
     filters,
     exclusions,
     sortCriterias,
-    type,
-    columns,
-    gap,
+    ...(layoutOptions || {}),
     class: className,
     itemPartial,
-    widthWrap,
   };
   const collAttrsStr = njkAttrsStringFromObj(collAttrs);
 
@@ -1119,6 +1125,12 @@ const sectionFooterField = (parentCompName) => ({
 });
 
 // Layout options
+const layoutTypeNone = {
+  name: "layout-none",
+  label: "No Layout",
+  required: false,
+  fields: [],
+};
 const layoutTypeGridFluid = {
   name: "grid-fluid",
   // label: "Fluid Grid: Fluid sized blocks wrap automatically",
@@ -2672,22 +2684,7 @@ export const sectionFlow = {
       required: false,
       collapsed: true,
       i18n: true,
-      types: [
-        {
-          name: "gap",
-          label: "Gap",
-          fields: [
-            {
-              name: "gap",
-              label: "Gap",
-              widget: "string",
-              hint: "The gap between flow items (e.g. 1em [default], var(--step-2) [fluid type scale], 0 [no gap])",
-              default: "1em",
-              required: false,
-            },
-          ],
-        },
-      ],
+      types: [layoutTypeFlow, layoutTypeNone],
     },
     {
       name: "class",
@@ -2807,7 +2804,12 @@ export const sectionGrid = {
       required: false,
       collapsed: true,
       i18n: true,
-      types: [layoutTypeSwitcher, layoutTypeGridFluid, layoutTypeCluster],
+      types: [
+        layoutTypeSwitcher,
+        layoutTypeGridFluid,
+        layoutTypeCluster,
+        layoutTypeNone,
+      ],
     },
     {
       name: "class",
@@ -2965,7 +2967,7 @@ export const sectionTwoColumns = {
       required: false,
       collapsed: true,
       i18n: true,
-      types: [layoutTypeSwitcher, layoutTypeFixedFluid],
+      types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeNone],
     },
     {
       name: "class",
@@ -3088,7 +3090,7 @@ export const sectionReel = {
       required: false,
       collapsed: true,
       i18n: true,
-      types: [layoutTypeReel],
+      types: [layoutTypeReel, layoutTypeNone],
     },
     {
       name: "class",
@@ -3374,6 +3376,7 @@ export const sectionCollection = {
         layoutTypeCluster,
         layoutTypeFlow,
         layoutTypeReel,
+        layoutTypeNone,
       ],
     },
     {
@@ -3561,7 +3564,7 @@ export const sectionBuilder = {
               required: false,
               collapsed: true,
               i18n: true,
-              types: [layoutTypeSwitcher, layoutTypeFixedFluid],
+              types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeNone],
             },
             {
               name: "attributes",
@@ -3624,6 +3627,7 @@ export const sectionBuilder = {
                 layoutTypeSwitcher,
                 layoutTypeGridFluid,
                 layoutTypeCluster,
+                layoutTypeNone,
               ],
             },
             {
@@ -3815,6 +3819,7 @@ export const sectionBuilder = {
                 layoutTypeSwitcher,
                 layoutTypeGridFluid,
                 layoutTypeCluster,
+                layoutTypeNone,
               ],
             },
             {
@@ -3883,7 +3888,7 @@ export const sectionBuilder = {
               required: false,
               collapsed: true,
               i18n: true,
-              types: [layoutTypeFlow],
+              types: [layoutTypeFlow, layoutTypeNone],
             },
             {
               name: "attributes",
@@ -3942,7 +3947,7 @@ export const sectionBuilder = {
               required: false,
               collapsed: true,
               i18n: true,
-              types: [layoutTypeReel],
+              types: [layoutTypeReel, layoutTypeNone],
             },
             {
               name: "attributes",

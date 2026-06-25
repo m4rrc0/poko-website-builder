@@ -22,7 +22,7 @@ import {
   sectionHeaderField,
   sectionFooterField,
   sectionWrapperField,
-  layoutTypeCustom,
+  layoutTypeNone,
   layoutTypeSwitcher,
   layoutTypeGridFluid,
   layoutTypeCluster,
@@ -1118,7 +1118,7 @@ export function buildSectionsField(activeCollections) {
               layoutTypeSwitcher,
               layoutTypeGridFluid,
               layoutTypeCluster,
-              layoutTypeCustom,
+              layoutTypeNone,
             ],
           },
           {
@@ -1154,7 +1154,7 @@ export function buildSectionsField(activeCollections) {
             required: false,
             collapsed: true,
             i18n: true,
-            types: [layoutTypeFlowGap, layoutTypeCustom],
+            types: [layoutTypeFlowGap, layoutTypeNone],
           },
           {
             name: "class",
@@ -1198,7 +1198,7 @@ export function buildSectionsField(activeCollections) {
             required: false,
             collapsed: true,
             i18n: true,
-            types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeCustom],
+            types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeNone],
           },
           {
             name: "class",
@@ -1233,7 +1233,7 @@ export function buildSectionsField(activeCollections) {
             required: false,
             collapsed: true,
             i18n: true,
-            types: [layoutTypeReel, layoutTypeCustom],
+            types: [layoutTypeReel, layoutTypeNone],
           },
           {
             name: "class",
@@ -1267,7 +1267,7 @@ export function buildSectionsField(activeCollections) {
               layoutTypeCluster,
               layoutTypeFlow,
               layoutTypeReel,
-              layoutTypeCustom,
+              layoutTypeNone,
             ],
           },
           {
@@ -2618,7 +2618,7 @@ export function removeNonDataFields(fields) {
       if (field.dataField === true) {
         return field;
       }
-      if (typeof field.dataField === Object) {
+      if (typeof field.dataField === "object") {
         return { ...field, ...field.dataField };
       }
       return null;
@@ -3343,7 +3343,8 @@ export class CmsConfig {
         ...dataFilesCollection.files,
         ...activeCollections
           .map((collection) => {
-            if (collection.dataFile === false) {
+            const dataFields = removeNonDataFields(collection.fields);
+            if (collection.dataFile === false || dataFields.length === 0) {
               return null;
             }
             return {
@@ -3354,7 +3355,7 @@ export class CmsConfig {
               // format: "yaml",
               i18n: true,
               // fields: [tagsListField, varsField, dataListField],
-              fields: removeNonDataFields(collection.fields),
+              fields: dataFields,
             };
           })
           .filter(Boolean),

@@ -103,9 +103,9 @@ export const sectionWrapperField = {
 
 // ---- Layout-option "types" (tagged union variants under `layoutOptions`) --
 
-export const layoutTypeCustom = {
-  name: "layout-custom",
-  label: "Custom Layout",
+export const layoutTypeNone = {
+  name: "layout-none",
+  label: "No Layout",
   required: false,
   fields: [],
 };
@@ -543,7 +543,7 @@ export const twoColumnsAreaFields = [
     required: false,
     collapsed: true,
     i18n: true,
-    types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeCustom],
+    types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeNone],
   },
   {
     name: "attributes",
@@ -578,7 +578,7 @@ export const gridAreaFields = [
       layoutTypeSwitcher,
       layoutTypeGridFluid,
       layoutTypeCluster,
-      layoutTypeCustom,
+      layoutTypeNone,
     ],
   },
   {
@@ -610,7 +610,7 @@ export const flowAreaFields = [
     required: false,
     collapsed: true,
     i18n: true,
-    types: [layoutTypeFlow, layoutTypeCustom],
+    types: [layoutTypeFlow, layoutTypeNone],
   },
   {
     name: "attributes",
@@ -641,7 +641,7 @@ export const reelAreaFields = [
     required: false,
     collapsed: true,
     i18n: true,
-    types: [layoutTypeReel, layoutTypeCustom],
+    types: [layoutTypeReel, layoutTypeNone],
   },
   {
     name: "attributes",
@@ -671,7 +671,7 @@ export const collectionAreaFields = (extraOptions = []) => [
       layoutTypeSwitcher,
       layoutTypeGridFluid,
       layoutTypeCluster,
-      layoutTypeCustom,
+      layoutTypeNone,
     ],
   },
   itemPartialField,
