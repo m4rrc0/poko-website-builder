@@ -178,7 +178,8 @@
 
 /* METHOD 3: Tracking depth and apply only the first time we encounter non structural elements */
 /* Initialize the flag */
-:where(body) {
+:where(body),
+.px-restore {
   --px-applied: 0;
 }
 

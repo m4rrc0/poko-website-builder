@@ -423,6 +423,8 @@ export default [
           "--gap-reel": "var(--gap, 1em)",
           display: "flex",
           "block-size": "var(--height, auto)",
+          // "max-inline-size": "100%",
+          // "min-inline-size": "0",
           "overflow-x": "auto",
           "overflow-y": "hidden",
           "scrollbar-color":
@@ -431,6 +433,7 @@ export default [
         {
           [symbols.selector]: () => `:where(.reel) > *`,
           flex: "0 0 var(--item-width, auto)",
+          // "min-inline-size": "0",
         },
         {
           [symbols.selector]: () => `:where(.reel) > img`,

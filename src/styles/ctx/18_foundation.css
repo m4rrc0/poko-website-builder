@@ -170,6 +170,9 @@
 
 /* 1.1 Base typography */
 :where(body) {
+  /* NOTE: This is needed on Chrome to avoid .reel overflowing the viewport */
+  overflow-x: clip;
+
   font-size: var(--step-0);
   font-family: var(--font-stack-body, system-ui, sans-serif);
   /* color: #100c08; */
