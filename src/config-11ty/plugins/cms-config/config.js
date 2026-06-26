@@ -3421,7 +3421,7 @@ export class CmsConfig {
         default: {
           config: {
             slugify_filename: true, // default: false
-            max_file_size: 500000000, // 500MB // TODO: What if people need larger files? Need to find a place to offload large files.
+            max_file_size: 100000000, // 100MB is the max on Github // TODO: What if people need larger files? Need to find a place to offload large files.
             transformations: {
               raster_image: {
                 format: "webp",
