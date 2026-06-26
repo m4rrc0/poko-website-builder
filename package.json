@@ -75,7 +75,7 @@
   "scripts": {
     "build-archive": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy",
     "build": "bun --bun run eleventy",
-    "cf-build": "bun i && bun run build",
+    "cf-build": "bun --bun run eleventy",
     "build:gh-pages": "bun --bun run eleventy",
     "dev:script": "bun --bun scripts/dev.ts",
     "dev": "bun --bun run eleventy --serve",
