@@ -603,7 +603,7 @@ export default async function (eleventyConfig) {
     lite: {
       css: { inline: true },
       js: { inline: true },
-      thumbnailFormat: "webp",
+      // thumbnailFormat: "webp", // not available for older videos. Would be nice to fallback to jpg when not available.
       responsive: true,
       thumbnailQuality: "maxresdefault",
     },

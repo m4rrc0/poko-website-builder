@@ -16,7 +16,7 @@
   <!-- Injected page styles -->
   {% if pageStyles %}
   <style>
-    {{pageStyles}}
+    {{pageStyles | safe}}
   </style>
   {% endif %}
 </html>
