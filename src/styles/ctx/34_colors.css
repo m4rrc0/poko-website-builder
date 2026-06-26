@@ -94,6 +94,13 @@
     --color-tone-theme: var(--color-tone);
   }
 
+  .palette--read {
+    --color-fg-theme: var(--color-read);
+    --color-bg-theme: var(--color-neutral);
+    --color-read-theme: var(--color-read);
+    --color-neutral-theme: var(--color-neutral);
+  }
+
   /* Contrast: swap fg <-> bg. */
   .palette--contrast {
     --color-fg-theme: var(--color-neutral);
@@ -117,6 +124,38 @@
     --color-read-theme: var(--color-pop);
     --color-pop-theme: var(--color-read);
   }
+
+  .palette--bg-tone {
+    --color-bg-theme: var(--color-tone);
+    --color-neutral-theme: var(--color-tone);
+    --color-tone-theme: var(--color-neutral);
+  }
+
+  .palette--bg-pop {
+    --color-bg-theme: var(--color-pop);
+    --color-neutral-theme: var(--color-pop);
+    --color-pop-theme: var(--color-neutral);
+  }
+
+  .palette--tone-contrast,
+  .palette--contrast.palette--tone {
+    --color-fg-theme: var(--color-neutral);
+    --color-bg-theme: var(--color-tone);
+    --color-read-theme: var(--color-neutral);
+    --color-tone-theme: var(--color-read);
+    --color-neutral-theme: var(--color-tone);
+  }
+
+  .palette--pop-contrast,
+  .palette--contrast.palette--pop {
+    --color-fg-theme: var(--color-neutral);
+    --color-bg-theme: var(--color-pop);
+    --color-read-theme: var(--color-neutral);
+    --color-pop-theme: var(--color-read);
+    --color-neutral-theme: var(--color-pop);
+  }
+
+  /* TODO: Not quite what I want. We can still not apply palette variants on children of palette reliably */
 }
 /* 
 Stack	fg	bg	read-theme	neutral-theme	pop-theme	tone-theme
@@ -135,6 +174,7 @@ Stack	fg	bg	read-theme	neutral-theme	pop-theme	tone-theme
 @layer color.elements {
   /* TODO: Some color properties do not inherit by default */
   /* TODO: text-decoration-color need more specificity because of a:-webkit-any-link or similar !!! */
+  /* TODO: Issue is present in mookai website */
   /* * {
     border-color: inherit;
     outline-color: inherit;
