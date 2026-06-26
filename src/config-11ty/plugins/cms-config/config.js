@@ -65,7 +65,7 @@ export const tagsListField = {
   collapsed: true,
   i18n: true,
   allow_reorder: true,
-  summary: "{{slug}}: {{name}}",
+  summary: "{{slug}}: {{label}}",
   fields: [
     {
       name: "slug",
@@ -473,7 +473,7 @@ export const tagsField = {
   collection: "dataFiles",
   file: "translatedData",
   value_field: "tagsList.*.slug",
-  display_fields: ["tagsList.*.name"],
+  display_fields: ["tagsList.*.label"],
   required: false,
   i18n: "duplicate",
   preview: false,
@@ -3421,7 +3421,7 @@ export class CmsConfig {
         default: {
           config: {
             slugify_filename: true, // default: false
-            max_file_size: 10000000,
+            max_file_size: 500000000, // 500MB // TODO: What if people need larger files? Need to find a place to offload large files.
             transformations: {
               raster_image: {
                 format: "webp",

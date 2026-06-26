@@ -250,6 +250,22 @@ const extractAttributes = (attributesString, propNames) => {
   let remaining = attributesString;
 
   for (const propName of propNames) {
+    // Fast-path: bracket/brace values (e.g. filters=[...]) cannot be matched by
+    // the regex below. Delegate to extractProperty which does balanced parsing.
+    const jsonValue = extractProperty(remaining, propName);
+    if (jsonValue !== null) {
+      extracted[propName] = JSON.parse(jsonValue);
+      const token = propName + "=" + jsonValue;
+      const idx = remaining.indexOf(token);
+      const before = remaining.slice(0, idx);
+      const after = remaining.slice(idx + token.length);
+      remaining = (before + after)
+        .replace(/^[,\s]+|[,\s]+$/g, "")
+        .replace(/\s*,\s*,\s*/g, ", ")
+        .trim();
+      continue;
+    }
+
     // Pattern handles:
     // - Double quoted: attr="value" (with escape support)
     // - Single quoted: attr='value' (with escape support)
@@ -3345,7 +3361,7 @@ export const sectionCollection = {
                   collection: "dataFiles",
                   file: "translatedData",
                   value_field: "tagsList.*.slug",
-                  display_fields: ["tagsList.*.name"],
+                  display_fields: ["tagsList.*.label"],
                   required: true,
                   multiple: true,
                 },
@@ -3804,7 +3820,7 @@ export const sectionBuilder = {
                           collection: "dataFiles",
                           file: "translatedData",
                           value_field: "tagsList.*.slug",
-                          display_fields: ["tagsList.*.name"],
+                          display_fields: ["tagsList.*.label"],
                           required: true,
                           multiple: true,
                         },
