@@ -168,6 +168,17 @@ jobs:
         run: bun install
         working-directory: ${{ env.BUILD_PATH }}
 
+      # Exposes every GitHub Actions secret as an env var for subsequent steps,
+      # so any secret you add in repo settings is available in process.env at build time.
+      # Multiline-safe; values remain masked in logs. Excludes the auto github_token.
+      - name: Export secrets to environment
+        env:
+          SECRETS_JSON: ${{ toJson(secrets) }}
+        run: |
+          echo "$SECRETS_JSON" \
+            | jq -r 'to_entries[] | select(.key != "github_token") | "\(.key)<<__POKO_EOF__\n\(.value)\n__POKO_EOF__"' \
+            >> "$GITHUB_ENV"
+
       - name: Build with 11ty
         run: bun run build
         working-directory: ${{ env.BUILD_PATH }}
@@ -240,6 +251,14 @@ jobs:
           branch: ${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: "3"
+      # For using wrangler-action instead of pages-action (deprecated):
+      # - name: Deploy to Cloudflare Pages
+      #   id: deploy
+      #   uses: cloudflare/wrangler-action@v3
+      #   with:
+      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      #     command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
 
   # Report skipped builds
   report-skipped:
