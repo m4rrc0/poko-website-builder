@@ -1121,10 +1121,10 @@ const sectionHeaderField = (parentCompName) => ({
     {
       name: "content",
       label: "Header Content",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
       i18n: true,
-      editor_components: ec(parentCompName),
+      // editor_components: ec(parentCompName),
     },
     {
       name: "class",
@@ -1154,10 +1154,10 @@ const sectionFooterField = (parentCompName) => ({
     {
       name: "content",
       label: "Footer Content",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
       i18n: true,
-      editor_components: ec(parentCompName),
+      // editor_components: ec(parentCompName),
     },
     {
       name: "class",
@@ -1486,7 +1486,7 @@ export const link = {
     {
       name: "content",
       label: "Content",
-      widget: "markdown",
+      widget: "richtext",
       minimal: true,
       buttons: ["bold", "italic", "strikethrough", "code"],
       editor_components: ["icon", "imageShortcode"],
@@ -2080,9 +2080,9 @@ export const wrapper = {
     {
       name: "content",
       label: "Content",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
-      editor_components: ec("wrapper"),
+      // editor_components: ec("wrapper"),
     },
     {
       name: "wrapperTag",
@@ -2343,7 +2343,7 @@ ${content}
 //           fields: [
 //             {
 //               name: "value",
-//               widget: "markdown",
+//               widget: "richtext",
 //               required: false,
 //             },
 //           ],
@@ -2595,7 +2595,7 @@ ${content}
 //           fields: [
 //             {
 //               name: "value",
-//               widget: "markdown",
+//               widget: "richtext",
 //               required: false,
 //             },
 //           ],
@@ -2635,7 +2635,7 @@ ${content}
 //           fields: [
 //             {
 //               name: "value",
-//               widget: "markdown",
+//               widget: "richtext",
 //               required: false,
 //               default:
 //                 "<ul>{% for link in links %}<li>{{link.html | safe}}</li>{% endfor %}<ul>",
@@ -2723,9 +2723,9 @@ export const sectionFlow = {
         {
           name: "content",
           label: "Flow Item Content",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
-          editor_components: ec("sectionFlow"),
+          // editor_components: ec("sectionFlow"),
         },
         {
           name: "class",
@@ -2841,9 +2841,9 @@ export const sectionGrid = {
         {
           name: "content",
           label: "Grid Item Content",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
-          editor_components: ec("sectionGrid"),
+          // editor_components: ec("sectionGrid"),
         },
         {
           name: "class",
@@ -2976,9 +2976,9 @@ export const sectionTwoColumns = {
         {
           name: "content",
           label: "Column Left Content",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
-          editor_components: ec("sectionTwoColumns"),
+          // editor_components: ec("sectionTwoColumns"),
         },
         {
           name: "class",
@@ -3006,9 +3006,9 @@ export const sectionTwoColumns = {
         {
           name: "content",
           label: "Column Right Content",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
-          editor_components: ec("sectionTwoColumns"),
+          // editor_components: ec("sectionTwoColumns"),
         },
         {
           name: "class",
@@ -3129,9 +3129,9 @@ export const sectionReel = {
         {
           name: "content",
           label: "Reel Item Content",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
-          editor_components: ec("sectionReel"),
+          // editor_components: ec("sectionReel"),
         },
         {
           name: "class",
@@ -3464,7 +3464,7 @@ export const sectionCollection = {
       name: "itemTemplate",
       label: "Item Template (raw)",
       widget: "hidden",
-      // widget: "markdown",
+      // widget: "richtext",
       // editor_components: ec("sectionCollection"),
       required: false,
       i18n: true,
@@ -3587,7 +3587,7 @@ export const sectionBuilder = {
                 {
                   name: "content",
                   label: "Column Left Content",
-                  widget: "markdown",
+                  widget: "richtext",
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
@@ -3617,7 +3617,7 @@ export const sectionBuilder = {
                 {
                   name: "content",
                   label: "Column Right Content",
-                  widget: "markdown",
+                  widget: "richtext",
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
@@ -3676,7 +3676,7 @@ export const sectionBuilder = {
                 {
                   name: "content",
                   label: "Item Content",
-                  widget: "markdown",
+                  widget: "richtext",
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
@@ -3941,7 +3941,7 @@ export const sectionBuilder = {
                 {
                   name: "content",
                   label: "Item Content",
-                  widget: "markdown",
+                  widget: "richtext",
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
@@ -4000,7 +4000,7 @@ export const sectionBuilder = {
                 {
                   name: "content",
                   label: "Item Content",
-                  widget: "markdown",
+                  widget: "richtext",
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
@@ -4391,7 +4391,7 @@ export const sections = {
 //     {
 //       name: "bottom",
 //       label: "Bottom",
-//       widget: "markdown",
+//       widget: "richtext",
 //       required: false,
 //     },
 //   ],

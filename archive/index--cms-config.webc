@@ -364,7 +364,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
       //       default: "role='listitem'",
       //     },
       //     { name: "data", label: "Data", widget: "string" },
-      //     { name: "content", label: "Content", widget: "markdown" },
+      //     { name: "content", label: "Content", widget: "richtext" },
       //   ],
       //   pattern:
       //     /^(?:<([^>]+)>)?{% for item in (.*?)(?=\s*%}) %}(?:<([^>]+)>([\S\s]*?)<\/\w+>|([\S\s]*?)){% endfor %}(?:<\/\w+>)?$/ms,
@@ -453,7 +453,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
       // CMS.registerEditorComponent({
       //   id: "test",
       //   label: "Test",
-      //   fields: [{ name: "content", label: "Content", widget: "markdown" }],
+      //   fields: [{ name: "content", label: "Content", widget: "richtext" }],
       //   pattern: /^{% test %}\s*([\S\s]*?)\s*{% \/test %}$/ms,
       //   fromBlock: function (match) {
       //     return {
@@ -482,7 +482,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
       //     {
       //       name: "contents",
       //       label: "Contents",
-      //       widget: "markdown",
+      //       widget: "richtext",
       //     },
       //   ],
       //   // Regex pattern used to search for instances of this block in the markdown document.
@@ -555,7 +555,7 @@ const currentCollections = JSON.parse('${currentCollections || "[]"}')
       //       CMS.registerEditorComponent({
       //         id: "callout",
       //         label: "Callout",
-      //         fields: [{ name: "content", label: "Content", widget: "markdown" }],
+      //         fields: [{ name: "content", label: "Content", widget: "richtext" }],
       //         pattern: /^\{\% callout \%\}\s*([\S\s]*?)\s*\{\% \/callout \%\}$/m,
       //         fromBlock: function (match) {
       //           console.log({ match });

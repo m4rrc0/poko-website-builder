@@ -24,7 +24,7 @@ export const DEBUG = processEnv.DEBUG === "true" ? true : false;
 export const NODE_ENV = processEnv.NODE_ENV || "production";
 export const ELEVENTY_RUN_MODE = processEnv.ELEVENTY_RUN_MODE;
 // Can be "cdn", "npm", "<relative-path>", local // Default should be npm
-export const CMS_IMPORT = processEnv.CMS_IMPORT || "local";
+export const CMS_IMPORT = processEnv.CMS_IMPORT || "npm";
 
 // DIRECTORIES
 // Output directory

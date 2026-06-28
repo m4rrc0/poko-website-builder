@@ -12,7 +12,7 @@
   "type": "module",
   "module": "index.ts",
   "dependencies": {
-    "@sveltia/cms": "git+https://github.com/m4rrc0/sveltia-cms.git#feat/inline-editor-components"
+    "@sveltia/cms": "^0.168.0"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",

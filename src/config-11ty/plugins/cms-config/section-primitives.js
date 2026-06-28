@@ -22,7 +22,7 @@ export const sectionHeaderField = {
     {
       name: "content",
       label: "Header Content",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
       i18n: true,
     },
@@ -54,7 +54,7 @@ export const sectionFooterField = {
     {
       name: "content",
       label: "Footer Content",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
       i18n: true,
     },
@@ -226,7 +226,7 @@ export const gridItemFields = [
   {
     name: "content",
     label: "Grid Item Content",
-    widget: "markdown",
+    widget: "richtext",
     required: false,
   },
   {
@@ -247,7 +247,7 @@ export const reelItemFields = [
   {
     name: "content",
     label: "Reel Item Content",
-    widget: "markdown",
+    widget: "richtext",
     required: false,
   },
   {
@@ -268,7 +268,7 @@ export const flowItemFields = [
   {
     name: "content",
     label: "Flow Item Content",
-    widget: "markdown",
+    widget: "richtext",
     required: false,
   },
   {
@@ -475,7 +475,7 @@ export const twoColumnsItemFields = (side) => [
   {
     name: "content",
     label: `Column ${side} Content`,
-    widget: "markdown",
+    widget: "richtext",
     required: false,
   },
   {

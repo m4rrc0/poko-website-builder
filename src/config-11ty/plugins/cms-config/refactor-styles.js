@@ -162,7 +162,7 @@ const dataListField = {
         {
           name: "value",
           label: "Value",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
           i18n: true,
         },
@@ -220,7 +220,7 @@ const pageLayoutRelationField = {
 const bodyMarkdownField = {
   name: "body",
   label: "Content",
-  widget: "markdown",
+  widget: "richtext",
   required: false,
   i18n: true,
   editor_components: [
@@ -325,7 +325,7 @@ const pagePreviewField = {
       name: "description",
       label: "Description",
       // widget: "text",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
       // hint: "Default: Metadata description",
       i18n: true,
@@ -464,7 +464,7 @@ class CmsConfig {
   }
   render(data) {
     const fontsourceFonts = (data.fontServices?.fontsource?.fonts || []).map(
-      ({ family: value }) => ({ value, label: value })
+      ({ family: value }) => ({ value, label: value }),
     );
 
     const globalSettingsSingleton = {
@@ -1242,7 +1242,7 @@ class CmsConfig {
         {
           name: "body",
           label: "Content",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
 
           // widget: "code",
@@ -1292,7 +1292,7 @@ class CmsConfig {
     //           {
     //             name: "value",
     //             label: "Value",
-    //             widget: "markdown",
+    //             widget: "richtext",
     //             required: false,
     //           },
     //         ],
@@ -1637,7 +1637,7 @@ class CmsConfig {
               advancedDataFilesCollection,
               {
                 divider: Boolean(
-                  !mustSetup && data.userConfig.collections?.length
+                  !mustSetup && data.userConfig.collections?.length,
                 ),
               },
               ...data.userConfig.collections,
@@ -1671,7 +1671,7 @@ export default async function (eleventyConfig, pluginOptions) {
     };
   } catch (error) {
     console.warn(
-      `WARN: Could not import user config from "${WORKING_DIR_ABSOLUTE}/_config/index.js"`
+      `WARN: Could not import user config from "${WORKING_DIR_ABSOLUTE}/_config/index.js"`,
     );
   }
 
@@ -1691,7 +1691,7 @@ export default async function (eleventyConfig, pluginOptions) {
 // - { label: "Publish Date", name: "date", widget: "datetime", required: false }
 // - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
 // - { label: "Rating (scale of 1-5)", name: "rating", widget: "number", required: false }
-// - { label: "Body", name: "body", widget: "markdown", required: false }
+// - { label: "Body", name: "body", widget: "richtext", required: false }
 
 // ADVANCED LINK FIELD WIP
 // {

@@ -192,7 +192,7 @@ export const dataListField = {
         {
           name: "value",
           label: "Value",
-          widget: "markdown",
+          widget: "richtext",
           required: false,
           i18n: true,
         },
@@ -299,7 +299,7 @@ export const pageLayoutRelationField = {
 // const bodyMarkdownField = {
 //   name: "body",
 //   label: "Content",
-//   widget: "markdown",
+//   widget: "richtext",
 //   required: false,
 //   i18n: true,
 //   editor_components: [
@@ -444,7 +444,7 @@ export const pagePreviewField = {
       name: "description",
       label: "Description",
       // widget: "text",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
       // hint: "Default: Metadata description",
       i18n: true,
@@ -854,7 +854,7 @@ export const partialsCollection = {
     {
       name: "body",
       label: "Content",
-      widget: "markdown",
+      widget: "richtext",
       required: false,
       i18n: true,
 
@@ -926,7 +926,7 @@ export const htmlPartialsCollection = {
 //           {
 //             name: "value",
 //             label: "Value",
-//             widget: "markdown",
+//             widget: "richtext",
 //             required: false,
 //           },
 //         ],
@@ -1006,12 +1006,8 @@ export function getActiveEditorComponents() {
   ];
 }
 
-export const bodyMarkdownField = {
-  name: "body",
-  label: "Content",
-  widget: "markdown",
-  required: false,
-  i18n: true,
+export const defaultMarkdownOptions = {
+  allow_nested_components: "exclude_self",
   buttons: [
     "bold",
     "italic",
@@ -1041,6 +1037,15 @@ export const bodyMarkdownField = {
     ...defaultEditorComponentNames,
     ...userEditorComponentNames,
   ],
+};
+
+export const bodyMarkdownField = {
+  name: "body",
+  label: "Content",
+  widget: "richtext",
+  required: false,
+  i18n: true,
+  // ...defaultMarkdownOptions, // defined at global level in field_defaults
 };
 // Per-project collection options for the `collection` select widget. Mirrors
 // the shape produced by `defaultEditorComponents.js` from `activeCollections`.
@@ -3421,7 +3426,7 @@ export class CmsConfig {
         default: {
           config: {
             slugify_filename: true, // default: false
-            max_file_size: 100000000, // 100MB is the max on Github // TODO: What if people need larger files? Need to find a place to offload large files.
+            max_file_size: 25000000, // 25MB is max on CF pages. 100MB is the max on Github // TODO: What if people need larger files? Need to find a place to offload large files.
             transformations: {
               raster_image: {
                 format: "webp",
@@ -3451,6 +3456,11 @@ export class CmsConfig {
       slug: {
         encoding: "ascii",
         clean_accents: true, // Transliterate accented characters to their closest ASCII equivalent
+      },
+      field_defaults: {
+        richtext: {
+          ...defaultMarkdownOptions,
+        },
       },
       collections: [
         ...(mustSetup
@@ -3521,7 +3531,7 @@ export class CmsConfig {
 //     {
 //       name: "body",
 //       label: "Content",
-//       widget: "markdown",
+//       widget: "richtext",
 //       required: false,
 //       i18n: true, // each language has its own body
 //     },
@@ -3557,7 +3567,7 @@ export class CmsConfig {
 //     {
 //       name: "body",
 //       label: "Content",
-//       widget: "markdown",
+//       widget: "richtext",
 //       required: false,
 //       i18n: true, // each language has its own body
 //     },
@@ -3577,7 +3587,7 @@ export class CmsConfig {
 // - { label: "Publish Date", name: "date", widget: "datetime", required: false }
 // - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
 // - { label: "Rating (scale of 1-5)", name: "rating", widget: "number", required: false }
-// - { label: "Body", name: "body", widget: "markdown", required: false }
+// - { label: "Body", name: "body", widget: "richtext", required: false }
 
 // ADVANCED LINK FIELD WIP
 // {
