@@ -76,7 +76,7 @@ function fromQuotableString(text) {
 }
 
 // Helper function to extract property values with balanced brackets/braces
-const extractProperty = (argumentsString, propName) => {
+const extractProperty = (argumentsString = "", propName) => {
   const startIndex = argumentsString.indexOf(propName + "=");
   if (startIndex === -1) return null;
 

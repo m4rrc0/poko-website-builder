@@ -51,10 +51,12 @@
 /* ----- Max Width ----- */
 
 :where(body) {
+  --max-width: min(100%, var(--width-body));
   max-inline-size: min(100%, var(--width-body));
   margin-inline: auto;
 }
 /*:where(img, picture, video) {
+    --max-width: min(100%, var(--width-prose));
     max-inline-size: min(100%, var(--width-prose));
     margin-inline: auto;
 }*/
@@ -63,6 +65,7 @@
 :where(.prose, .featured, .card, p, h1, h2, h3, h4, h5, h6, hgroup, address, :where(ul, ol):not([role="list"]):not(.reset), menu, search),
 :where(figure,figcaption,form,fieldset),
 :where(dl,dt,dd,blockquote,details) {
+    --max-width: min(100%, var(--width-prose));
     max-inline-size: min(100%, var(--width-prose));
     margin-inline: auto;
 
@@ -81,9 +84,11 @@
     margin-block-start: 0;
 }
 :where(.featured) {
+  --max-width: min(100%, var(--width-featured, var(--width-prose)));
   max-inline-size: min(100%, var(--width-featured, var(--width-prose)));
 }
 :where(.card) {
+  --max-width: min(100%, var(--width-card, var(--width-prose)));
   max-inline-size: min(100%, var(--width-card, var(--width-prose)));
 }
 :where(:where(.card, .box, [class*="width-"]) *) {
@@ -143,7 +148,7 @@
 :where(.no-flow) > *,
 :where(address) > *,
 :where(p, h1, h2, h3, h4, h5, h6, li, figure, figcaption, td, th, dt, dd, button, label, input, summary) :where(img, picture, video),
-:where(:where(.layout, .switcher, .grid-fluid, .cluster, .fixed-fluid, .center, cover, reel) > *),
+:where(:where(.layout, .switcher, .grid-fluid, .cluster, .fixed-fluid, cover, reel) > *),
 :where(hgroup > *) {
     margin-block-start: 0;
 }

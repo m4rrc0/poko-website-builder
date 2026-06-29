@@ -1,7 +1,16 @@
+const cssKeywordNames = [
+  "auto",
+  "inherit",
+  "initial",
+  "unset",
+  "none",
+  "normal",
+];
+
 const resolveNamedValue = (name, varPrefix) =>
   name.startsWith("-")
     ? `var(-${name})`
-    : /\d/.test(name)
+    : /\d/.test(name) || cssKeywordNames.includes(name)
       ? name
       : `var(${varPrefix}${name})`;
 
@@ -19,6 +28,14 @@ export default [
   [
     /^aspect-ratio-(\d+(?:\.\d+)?)$/,
     ([, d]) => ({ "aspect-ratio": d, "object-fit": "var(--fit, cover)" }),
+  ],
+  // View Trnasition Name
+  [
+    /^vt-name-([a-zA-Z0-9-]+)$/,
+    ([, name], { symbols }) => ({
+      [symbols.selector]: (selector) => `:where(${selector})`,
+      "view-transition-name": name,
+    }),
   ],
   // Width utility
   // E.g. width-prose, width-body, width-card, width-300px, ...
@@ -47,7 +64,7 @@ export default [
         pie: ["padding-inline-end", "--px-"],
       };
       const [prop, varPrefix] = propMap[prefix];
-      const value = /\d/.test(name) ? name : `var(${varPrefix}${name})`;
+      const value = resolveNamedValue(name, varPrefix);
       return {
         [symbols.selector]: () => `:where(.${prefix}-${name})`,
         [prop]: value,
@@ -57,11 +74,26 @@ export default [
   // Vertical margin utility
   // E.g. my-prose, my-body, my-card, my-1rem, ...
   [
-    /^my-([a-zA-Z0-9\-]+)$/,
-    ([, name], { symbols }) => ({
-      [symbols.selector]: () => `:where(.my-${name})`,
-      "margin-block": resolveNamedValue(name, "--py-"),
-    }),
+    /^(m|my|mb|mx|mi|mbs|mbe|mis|mie)-([a-zA-Z0-9]+)$/,
+    ([, prefix, name], { symbols }) => {
+      const propMap = {
+        m: ["margin", "--p-"],
+        my: ["margin-block", "--py-"],
+        mb: ["margin-block", "--py-"],
+        mx: ["margin-inline", "--px-"],
+        mi: ["margin-inline", "--px-"],
+        mbs: ["margin-block-start", "--py-"],
+        mbe: ["margin-block-end", "--py-"],
+        mis: ["margin-inline-start", "--px-"],
+        mie: ["margin-inline-end", "--px-"],
+      };
+      const [prop, varPrefix] = propMap[prefix];
+      const value = resolveNamedValue(name, varPrefix);
+      return {
+        [symbols.selector]: () => `:where(.${prefix}-${name})`,
+        [prop]: value,
+      };
+    },
   ],
   [
     /^breathe$/,
@@ -80,7 +112,7 @@ export default [
   [
     /^flow-([a-zA-Z0-9\-]+)$/,
     ([, name], { symbols }) => ({
-      [symbols.selector]: () => `:where(.flow-${name})`,
+      [symbols.selector]: (selector) => `:where(${selector} > * + *)`,
       "margin-block-start": resolveNamedValue(name, "--flow-"),
     }),
   ],
