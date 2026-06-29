@@ -135,8 +135,18 @@ export function transformPalette(palette) {
       delete unifiedPalette[key];
     }
   });
+
+  // const stylesString = Object.entries(unifiedPalette)
+  //   .map(([key, value]) => `--color-${key}:var(--${value});`)
+  //   .join("");
+
   const stylesString = Object.entries(unifiedPalette)
-    .map(([key, value]) => `--color-${key}:var(--${value});`)
+    .map(([key, value]) => {
+      console.log({ key, test: /read|neutral|pop|tone/.test(key), value });
+      const varPrefix = /read|neutral|pop|tone/.test(key) ? "" : "color-";
+      const varPostfix = /read|neutral|pop|tone/.test(key) ? "-palette" : "";
+      return `--${varPrefix}${key}${varPostfix}:var(--${value});`;
+    })
     .join("");
 
   return {

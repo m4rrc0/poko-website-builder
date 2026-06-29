@@ -1,171 +1,151 @@
-/* :root {
-  color-scheme: light dark;
-} */
 /* =============================================================
  * COLOR SYSTEM
  * =============================================================
- * Five-stage cascade, top-down:
+ * Five-layer stack, top-down:
  *
- *   1. Tokens        raw named colors                (project)
- *   2. Palettes      map tokens -> 4 roles           (project)
- *                    roles: read, neutral, pop, tone
- *   3. Variants     roles -> fg/bg theme slots       (framework)
- *                   composable; see stacking below
- *   4. Intent vars  theme slots -> --color-text,     (project)
- *                   --color-bg, etc.
- *   5. Elements     intent vars -> CSS properties    (framework)
+ *   1. Tokens        raw named colors                (--gray, --white, ...)
+ *   2. Palettes      token -> per-palette role       (--read-palette, --neutral-palette, --pop-palette, --tone-palette)
+ *   3. Slots         active permutation (public)     (--read, --neutral, --pop, --tone)
+ *   4. Intent        semantic, namespaced            (--color-text, --color-bg, --color-accent, ...)
+ *   5. Elements      CSS properties                  (color: var(--color-text))
  *
  * ROLES
- *   --color-read      dominant foreground (the text you read)
- *   --color-neutral   default background surface
- *   --color-pop       highlight / call attention
- *   --color-tone      supporting tone / secondary
+ *   --read-palette / --read      dominant foreground (the text you read)
+ *   --neutral-palette / --neutral   default background surface
+ *   --pop-palette / --pop        highlight / call attention
+ *   --tone-palette / --tone      supporting tone / secondary
  *
- * VARIANTS
- *   .palette--default, .palette--reset
- *                       explicit default mapping (breaks ancestor
- *                       variant leak on this subtree)
- *   .palette--contrast  swap fg and bg (full inversion)
- *   .palette--pop       foreground = pop   (alias: .palette--accent)
- *   .palette--tone      foreground = tone  (alias: .palette--alt)
+ * VARIANTS (absolute permutations)
+ *   Each variant is a COMPLETE 4-slot permutation. It reads from the
+ *   *-palette identity source and writes all 4 bare slots. Variants never
+ *   reference other slots — only *-palette values — so there are no cycles.
  *
- * STACKING
- *   Variants compose on --color-fg-theme / --color-bg-theme.
- *   e.g. .palette--contrast.palette--pop  ->  fg=pop,  bg=read
- *        .palette--contrast.palette--tone ->  fg=tone, bg=read
- *   Combining two foreground-writing variants (pop + tone) is
- *   undefined; the last declared in this file wins.
+ *   .palette--default, .palette--reset  identity          (r n p t)
+ *   .palette--contrast                  swap r <-> n      (n r p t)
+ *   .palette--pop                       swap r <-> p      (p n r t)
+ *   .palette--tone                      swap r <-> t      (t n p r)
+ *   .palette--bg-pop                    swap n <-> p      (r p n t)
+ *   .palette--bg-tone                   swap n <-> t      (r t p n)
+ *   .palette--pop-contrast             r=n, n=p, p=r     (n p r t)
+ *   .palette--tone-contrast            r=n, n=t, t=r     (n t p r)
  *
- * VARIANT SCOPE (was "leak policy" — revised)
- *   Variants apply on the element carrying the variant class.
- *   They do NOT automatically "leak" into descendants that
- *   switch palette identifier, because CSS resolves var() in
- *   a custom property EAGERLY on the declaring element; the
- *   resolved value is what inherits. Any palette-carrying
- *   descendant re-declares all theme vars in its own context
- *   (identity mapping), which effectively resets to default
- *   variant unless the descendant also carries the variant
- *   class itself.
+ * STACKING TABLE
+ *   Variant                       read    neutral  pop     tone
+ *   (default / reset)             read    neutral  pop     tone
+ *   .palette--contrast            neutral read     pop     tone
+ *   .palette--pop                 pop     neutral  read    tone
+ *   .palette--tone                tone    neutral  pop     read
+ *   .palette--bg-pop              read    pop      neutral tone
+ *   .palette--bg-tone              read    tone     pop     neutral
+ *   .palette--pop-contrast        neutral pop      read    tone
+ *   .palette--tone-contrast        neutral tone     pop     read
  *
- *   Pattern: to apply "contrast" to a nested palette-two,
- *   write <div class="palette-two palette--contrast">,
- *   not <div class="palette--contrast"><div class="palette-two">.
+ * NESTED / RELATIVE VARIANTS
+ *   Relative/cumulative variants (e.g. "apply contrast to this subtree and
+ *   let descendants resolve against their own palette") are impossible without
+ *   JavaScript because CSS cannot know the ancestor-chain context at the point
+ *   where a descendant re-declares its slots. The identity reset is therefore
+ *   re-issued on every palette-carrying element so var() resolves in that
+ *   element's own palette context. To apply a variant to a nested palette,
+ *   add the variant class directly to the nested palette element.
+ *
+ * SURFACE-PRESERVING "RECOLOR TEXT ONLY"
+ *   Out of scope. The inherit trick for recoloring text without changing the
+ *   background is a separate concern.
  *
  * CASCADE
- *   Framework rules live in @layer color.variant and
- *   @layer color.elements. Project-level blocks at the bottom
- *   are unlayered so they always win without specificity tricks.
+ *   Framework rules live in @layer color.variant and @layer color.elements.
+ *   Project-level blocks are unlayered so they always win without specificity
+ *   tricks.
  * ============================================================= */
 
 @layer color.variant, color.elements;
 
 /* =============================================================
- * VARIANT LAYER — map palette roles to composable fg/bg slots
+ * VARIANT LAYER — identity reset + absolute permutations
  * ============================================================= */
 
 @layer color.variant {
-  /* Reset: identity mapping.
+  /* Identity reset.
    *
-   * Must match EVERY palette-carrying element (body + anything with
-   * "palette" in a class name, which covers both palette identifiers
-   * like .palette-vermillon and variants like .palette--contrast).
-   *
-   * Why: custom properties have their var() references resolved
-   * EAGERLY at the declaring element, and children inherit the
-   * already-resolved computed value. For --color-fg-theme to
-   * resolve against a descendant's own --color-read (e.g. under
-   * .palette-vermillon), the declaration must be re-issued on
-   * that descendant. Inheritance alone is not enough. */
+   * Re-declared on body + every palette-carrying element so var() references
+   * resolve against that element's own *-palette values. Custom properties are
+   * eagerly resolved at the declaring element; inherited values are already
+   * computed, so a descendant needs its own declaration to pick up its local
+   * palette context. */
   body,
-  [class*="palette"] {
-    /* Composable slots — always correct under any single variant */
-    --color-fg-theme: var(--color-read);
-    --color-bg-theme: var(--color-neutral);
-
-    /* Role-tracked slots — "which color currently plays role X
-     * in this context". Correct under any single variant. Under
-     * stacked variants, --color-read-theme reflects the last-
-     * declared swap (source order in this file); the other three
-     * role-theme vars remain unambiguous unless two variants
-     * touch the same one. */
-    --color-read-theme: var(--color-read);
-    --color-neutral-theme: var(--color-neutral);
-    --color-pop-theme: var(--color-pop);
-    --color-tone-theme: var(--color-tone);
-  }
-
+  [class*="palette"],
+  .palette--default,
+  .palette--reset,
   .palette--read {
-    --color-fg-theme: var(--color-read);
-    --color-bg-theme: var(--color-neutral);
-    --color-read-theme: var(--color-read);
-    --color-neutral-theme: var(--color-neutral);
+    --read: var(--read-palette);
+    --neutral: var(--neutral-palette);
+    --pop: var(--pop-palette);
+    --tone: var(--tone-palette);
   }
 
-  /* Contrast: swap fg <-> bg. */
+  /* Contrast: swap r <-> n. */
   .palette--contrast {
-    --color-fg-theme: var(--color-neutral);
-    --color-bg-theme: var(--color-read);
-    --color-read-theme: var(--color-neutral);
-    --color-neutral-theme: var(--color-read);
+    --read: var(--neutral-palette);
+    --neutral: var(--read-palette);
+    --pop: var(--pop-palette);
+    --tone: var(--tone-palette);
   }
 
-  /* Tone: fg = tone; swap read <-> tone so "tone" elsewhere stays distinct. */
-  .palette--tone,
-  .palette--alt {
-    --color-fg-theme: var(--color-tone);
-    --color-read-theme: var(--color-tone);
-    --color-tone-theme: var(--color-read);
-  }
-
-  /* Pop: fg = pop; swap read <-> pop so "pop" elsewhere stays distinct. */
+  /* Pop: swap r <-> p. */
   .palette--pop,
   .palette--accent {
-    --color-fg-theme: var(--color-pop);
-    --color-read-theme: var(--color-pop);
-    --color-pop-theme: var(--color-read);
+    --read: var(--pop-palette);
+    --neutral: var(--neutral-palette);
+    --pop: var(--read-palette);
+    --tone: var(--tone-palette);
   }
 
-  .palette--bg-tone {
-    --color-bg-theme: var(--color-tone);
-    --color-neutral-theme: var(--color-tone);
-    --color-tone-theme: var(--color-neutral);
+  /* Tone: swap r <-> t. */
+  .palette--tone,
+  .palette--alt {
+    --read: var(--tone-palette);
+    --neutral: var(--neutral-palette);
+    --pop: var(--pop-palette);
+    --tone: var(--read-palette);
   }
 
+  /* Background pop: swap n <-> p. */
   .palette--bg-pop {
-    --color-bg-theme: var(--color-pop);
-    --color-neutral-theme: var(--color-pop);
-    --color-pop-theme: var(--color-neutral);
+    --read: var(--read-palette);
+    --neutral: var(--pop-palette);
+    --pop: var(--neutral-palette);
+    --tone: var(--tone-palette);
   }
 
-  .palette--tone-contrast,
-  .palette--contrast.palette--tone {
-    --color-fg-theme: var(--color-neutral);
-    --color-bg-theme: var(--color-tone);
-    --color-read-theme: var(--color-neutral);
-    --color-tone-theme: var(--color-read);
-    --color-neutral-theme: var(--color-tone);
+  /* Background tone: swap n <-> t. */
+  .palette--bg-tone {
+    --read: var(--read-palette);
+    --neutral: var(--tone-palette);
+    --pop: var(--pop-palette);
+    --tone: var(--neutral-palette);
   }
 
+  /* Pop-contrast: r=n, n=p, p=r. */
   .palette--pop-contrast,
+  .palette--contrast-pop,
   .palette--contrast.palette--pop {
-    --color-fg-theme: var(--color-neutral);
-    --color-bg-theme: var(--color-pop);
-    --color-read-theme: var(--color-neutral);
-    --color-pop-theme: var(--color-read);
-    --color-neutral-theme: var(--color-pop);
+    --read: var(--neutral-palette);
+    --neutral: var(--pop-palette);
+    --pop: var(--read-palette);
+    --tone: var(--tone-palette);
   }
 
-  /* TODO: Not quite what I want. We can still not apply palette variants on children of palette reliably */
+  /* Tone-contrast: r=n, n=t, t=r. */
+  .palette--tone-contrast,
+  .palette--contrast-tone,
+  .palette--contrast.palette--tone {
+    --read: var(--neutral-palette);
+    --neutral: var(--tone-palette);
+    --pop: var(--pop-palette);
+    --tone: var(--read-palette);
+  }
 }
-/* 
-Stack	fg	bg	read-theme	neutral-theme	pop-theme	tone-theme
-(default)	read	neutral	read	neutral	pop	tone
-.palette--contrast	neutral	read	neutral	read	pop	tone
-.palette--pop	pop	neutral	pop	neutral	read	tone
-.palette--tone	tone	neutral	tone	neutral	pop	read
-.palette--contrast.palette--pop	pop	read	pop (pop wins)	read	read	tone
-.palette--contrast.palette--tone	tone	read	tone (tone wins)	read	pop	read
-*/
 
 /* =============================================================
  * ELEMENT LAYER — intent vars applied to CSS properties
@@ -182,9 +162,10 @@ Stack	fg	bg	read-theme	neutral-theme	pop-theme	tone-theme
     text-emphasis-color: inherit;
     column-rule-color: inherit;
   } */
+
   /* Root color application.
-   * Re-declared on every palette-carrying element so the var
-   * chain is re-evaluated in that context. */
+   * Re-declared on every palette-carrying element so the var chain is
+   * re-evaluated in that context. */
   :root,
   body,
   [class*="palette"] {
@@ -223,16 +204,19 @@ Stack	fg	bg	read-theme	neutral-theme	pop-theme	tone-theme
   }
 
   a {
-    color: var(--color-text__a, var(--color-text));
+    /* color: var(--color-text__a, var(--color-text)); */
+    /* Important to inherit in case a is inside an hoverable element */
+    color: var(--color-text__a, inherit);
     background-color: var(--color-bg__a);
-    border-color: var(--color-border__a, var(--color-border, currentcolor));
+    border-color: var(--color-border__a, var(--color-border, inherit));
   }
   a:hover {
-    color: var(--color-text__a--hover, var(--color-text__a, var(--color-text)));
+    /* color: var(--color-text__a--hover, var(--color-text__a, var(--color-text))); */
+    color: var(--color-text__a--hover, var(--color-text__a, inherit));
     background-color: var(--color-bg__a--hover);
     border-color: var(
       --color-border__a--hover,
-      var(--color-border__a, currentcolor)
+      var(--color-border__a, inherit)
     );
   }
 
@@ -292,30 +276,73 @@ Stack	fg	bg	read-theme	neutral-theme	pop-theme	tone-theme
 }
 
 /* =============================================================
- * PROJECT-SPECIFIC (unlayered — move out later)
- * ============================================================= */
+ * PROJECT-SPECIFIC DEFAULT INTENT MAPPING (unlayered — move out later)
+ * =============================================================
+ * Maps semantic L4 intent vars to the active L3 bare slots.
+ * Re-declared on :root, body, and every palette-carrying element so the value
+ * is computed in each element's own palette context.
+ *
+ * A project can override any of these by re-declaring the --color-* variable
+ * in its own palette classes or in an unlayered block. */
 
 /* TODO: move to project later */
-/* Intent mapping: composable theme slots -> semantic CSS vars.
- * Re-applied on every palette-carrying element so the value is
- * computed in each element's own palette context. */
-/* User or designer can set up all necessary vars from ELEMENT LAYER */
-/* :where(:root, body, [class*="palette"]) {
-  --color-text: var(--color-fg-theme);
-  --color-bg: var(--color-bg-theme);
-  --color-text__a--hover: var(--color-pop-theme);
-  ...
-} */
+:where(:root, body, [class*="palette"]) {
+  /* --color-text: var(--read); */
+  /* --color-bg: var(--neutral); */
+  /* --color-text__a--hover: var(--pop); */
+
+  /* --- Optional defaults / examples --- */
+  /* --color-border: var(--read); */
+  /* --color-outline: var(--read); */
+  /* --color-text-decoration: var(--read); */
+  /* --color-accent: var(--pop); */
+  /* --color-text-emphasis: var(--read); */
+  /* --color-shadow has to be used manually in box-shadow definitions */
+  /*--color-shadow: var();*/
+  /* --color-caret: var(--pop); */
+  /* --color-column-rule: var(--read); */
+  /* --color-fill: var(--pop); */
+  /* --color-stroke: var(--read); */
+  /* --- FOCUS --- */
+  /* --color-outline--focus: var(); */
+  /* --- SELECTION --- */
+  /*--color-text--selection: var();
+    --color-bg--selection: var();*/
+  /* --- A --- */
+  /* --color-text__a: var(); */
+  /* --color-bg__a: transparent; */
+  /* --color-text__a--hover: var(--pop); HERE !!!!!!!!!!!!! */
+  /* --color-bg__a--hover: var(); */
+  /* --- BUTTON --- */
+  /*--color-text__button: var();*/
+  /*--color-bg__button: var();*/
+  /*--color-border__button: var();*/
+  /* --color-text__button--hover: var(--pop); */
+  /*--color-bg__button--hover: var();*/
+  /*--color-border__button--hover: var();*/
+  /* --color-text__button--disabled: var(); */
+  /* --color-bg__button--disabled: var(); */
+
+  /* --- CODE --- */
+  /* --color-text__code: var(); */
+  /* --color-bg__code: var(); */
+  /* --color-border__code: var(); */
+
+  /* --- MARK --- */
+  /* --color-text__mark: var(); */
+  /*--color-bg__mark: var();*/
+  /* --color-border__mark: var(); */
+}
 
 /* TODO: move to project later */
 /* Default palette bound on :root so the document has working
  * colors without any palette class. Mirrors .palette-one. */
 /* :root,
 .palette-one {
-  --color-read: var(--gray);
-  --color-tone: var(--cooper);
-  --color-pop: var(--vermillon);
-  --color-neutral: var(--white);
+  --read-palette: var(--gray);
+  --tone-palette: var(--cooper);
+  --pop-palette: var(--vermillon);
+  --neutral-palette: var(--white);
 } */
 
 /* TODO: move to project later */

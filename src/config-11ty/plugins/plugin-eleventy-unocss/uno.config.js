@@ -16,6 +16,7 @@ import { createLocalFontProcessor } from "@unocss/preset-web-fonts/local";
 import layoutRules from "./rules/ctx-layouts.js";
 import utilitiesRules from "./rules/ctx-utilities.js";
 import atomsRules from "./rules/ctx-atoms.js";
+import { colorsRules, colorsShortcuts } from "./rules/ctx-colors.js";
 
 import { CACHE_DIR, brandConfig, brandStyles } from "../../../../env.config.js";
 
@@ -90,10 +91,8 @@ const computedConfig = defineConfig({
     { getCSS: () => `a[href^="mailto:"] b {display: none;}` },
     { getCSS: () => brandStyles || "" },
   ],
-  rules: [...layoutRules, ...utilitiesRules, ...atomsRules],
-  // shortcuts: [
-  //   // ...
-  // ],
+  rules: [...layoutRules, ...colorsRules, ...utilitiesRules, ...atomsRules],
+  // shortcuts: [...colorsShortcuts], // TODO: could reinstate when system tested BUT delete the css rules doing the same then!
   // theme: {
   //   colors: {
   //     // ...
