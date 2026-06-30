@@ -18,6 +18,10 @@ export function filterCollection(collection, filtersRaw, exclusions = false) {
   const filteredCollection = filters.reduce((acc, { by, value } = {}) => {
     switch (by) {
       // NOTE: Match some special keywords first
+      case "truthy": {
+        const valueMatch = value === "false" ? false : Boolean(value);
+        return filterAcc(acc, (item) => Boolean(item) === valueMatch);
+      }
       case "slug": {
         const needles = toArrayOfStrings(value)
           .map((v) => v.trim().toLowerCase())

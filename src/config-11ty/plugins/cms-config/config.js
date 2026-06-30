@@ -3070,8 +3070,10 @@ const stylesConfigCollection = (fontsourceFonts) => ({
               summary: "From step '{{startStep}}' to '{{endStep}}'",
               fields: [
                 // prettier-ignore
-                { name: "startStep", label: "Start Step", widget: "select", required: true, options: ['-2', '-1', '0', '1', '2', '3', '4', '5', '6'] }, // prettier-ignore
-                { name: "endStep", label: "End Step", widget: "select", required: true, options: ['-2', '-1', '0', '1', '2', '3', '4', '5', '6'] }, // prettier-ignore
+                // { name: "startStep", label: "Start Step", widget: "select", required: true, options: ['-2', '-1', '0', '1', '2', '3', '4', '5', '6'] }, // prettier-ignore
+                // { name: "endStep", label: "End Step", widget: "select", required: true, options: ['-2', '-1', '0', '1', '2', '3', '4', '5', '6'] }, // prettier-ignore
+                { name: "startStep", label: "Start Step", widget: "number", value_type: "int/string", required: true }, // prettier-ignore
+                { name: "endStep", label: "End Step", widget: "number", value_type: "int/string", required: true }, // prettier-ignore
               ],
             },
           ],

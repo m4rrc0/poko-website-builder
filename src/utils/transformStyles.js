@@ -142,7 +142,6 @@ export function transformPalette(palette) {
 
   const stylesString = Object.entries(unifiedPalette)
     .map(([key, value]) => {
-      console.log({ key, test: /read|neutral|pop|tone/.test(key), value });
       const varPrefix = /read|neutral|pop|tone/.test(key) ? "" : "color-";
       const varPostfix = /read|neutral|pop|tone/.test(key) ? "-palette" : "";
       return `--${varPrefix}${key}${varPostfix}:var(--${value});`;
