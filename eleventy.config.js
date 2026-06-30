@@ -94,6 +94,7 @@ import {
   formatDate,
   dateToSlug,
   toLocaleString,
+  formatDateLocalized,
   slugifyPath,
   locale_url,
   locale_links,
@@ -701,6 +702,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter("formatDate", formatDate);
   eleventyConfig.addFilter("dateToSlug", dateToSlug);
   eleventyConfig.addFilter("toLocaleString", toLocaleString);
+  eleventyConfig.addFilter("formatDateLocalized", formatDateLocalized);
   // Array
   eleventyConfig.addFilter("filterCollection", filterCollection);
   eleventyConfig.addFilter("join", join);

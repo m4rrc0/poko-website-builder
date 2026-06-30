@@ -3,6 +3,7 @@ export {
   formatDate,
   dateToSlug,
   toLocaleString,
+  formatDateLocalized,
 } from "./dates.js";
 export { slugifyPath } from "./slugify.js";
 export { glob } from "./files.js";
