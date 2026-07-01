@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { DateTime } from "luxon";
 
+// Luxon formats: https://moment.github.io/luxon/#/formatting
+
 const luxonShortcuts = {
   full: "DATETIME_FULL",
   long: "DATETIME_MED",
@@ -15,11 +17,11 @@ const luxonShortcuts = {
   "time-long": "TIME_WITH_LONG_OFFSET",
   "time-medium": "TIME_WITH_SHORT_OFFSET",
   "time-short": "TIME_SIMPLE",
-  "datetime-full": "DATETIME_FULL",
-  "datetime-long": "DATETIME_MED",
-  "datetime-medium": "DATETIME_MED_WITH_WEEKDAY",
-  "datetime-short": "DATETIME_SHORT",
-  "datetime-huge": "DATETIME_HUGE",
+  "datetime-s": "DATETIME_SHORT", // 08/07/2026 14:30
+  "datetime-m": "DATETIME_MED", // 8 juil. 2026, 14:30
+  "datetime-l": "DATETIME_MED_WITH_WEEKDAY", // mer. 8 juil. 2026, 14:30
+  "datetime-xl": "DATETIME_FULL", // 8 juillet 2026 à 14:30 UTC+2
+  "datetime-xxl": "DATETIME_HUGE", // mercredi 8 juillet 2026 à 14:30 heure d’été d’Europe centrale
 };
 
 /** Converts the given date string to ISO8610 format. */
@@ -84,7 +86,7 @@ export function formatDateLocalized(date, format, langOverride) {
     if (luxonShortcuts[format]) {
       const result = dt
         .setLocale(lang)
-        .toFormat(DateTime[luxonShortcuts[format]]);
+        .toLocaleString(DateTime[luxonShortcuts[format]]);
       return result;
     }
 

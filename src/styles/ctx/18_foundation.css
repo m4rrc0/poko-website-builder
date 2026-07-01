@@ -106,6 +106,8 @@
   --width-card: calc(var(--width-prose) / 2.618); /* 19 */
   --width-token: calc(var(--width-prose) / 4.2358); /* 11.8 */
 
+  --full-bleed-max-width: calc(var(--width-body) * 2);
+
   --radius-round: 1e5px;
   /* --radius-body: 0rem; */
   /* --radius-section: 0rem; */
