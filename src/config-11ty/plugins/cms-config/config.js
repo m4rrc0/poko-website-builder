@@ -15,6 +15,7 @@ import {
   COLLECTIONS,
   selectedCollections,
   allLanguages,
+  initialCmsSetup,
   userCmsConfig,
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
@@ -43,7 +44,6 @@ import {
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
 
 const isDev = NODE_ENV === "development";
-const mustSetup = !allLanguages?.length;
 
 const default_locale = allLanguages.find((lang) => lang.isCmsDefault)?.code;
 const locales = allLanguages
@@ -2193,9 +2193,18 @@ const optionalCollections = {
   howtos: howtoCollection, //HowTo in schema.org
 };
 export function getSelectedCollections() {
-  const selectedOptionalCollections = (selectedCollections || [])
-    .map((collectionName) => optionalCollections[collectionName])
-    .filter(Boolean);
+  // NOTE: previously we were filtering collections inside of hiding them but makes relations crash cms config
+  // const selectedOptionalCollections = (selectedCollections || [])
+  //   .map((collectionName) => optionalCollections[collectionName])
+  //   .filter(Boolean);
+  const selectedOptionalCollections = Object.entries(optionalCollections).map(
+    ([key, val]) => {
+      return {
+        ...val,
+        hide: selectedCollections.includes(key) ? false : true,
+      };
+    },
+  );
   return selectedOptionalCollections;
 }
 
@@ -2686,6 +2695,7 @@ const globalSettingsSingleton = {
       name: "productionUrl",
       label: "Production URL",
       widget: "string",
+      default: "https://",
       pattern: [
         "^(http|https)://[\\w\\-._~:/?#[\\]@!$&'()*+,;=%]+$",
         "Must be a URL starting with http:// or https://",
@@ -3501,7 +3511,7 @@ export class CmsConfig {
         },
       },
       collections: [
-        ...(mustSetup
+        ...(initialCmsSetup
           ? []
           : [
               // `pagesCollection` + `allSelectedCollections` = built-in
@@ -3512,7 +3522,7 @@ export class CmsConfig {
               ...allSelectedCollections,
               { divider: true },
               // {
-              //   divider: Boolean(!mustSetup && userConfig.collections?.length),
+              //   divider: Boolean(!initialCmsSetup && userConfig.collections?.length),
               // },
               // navCollection(allSelectedCollections),
               // navCollection2,
@@ -3531,10 +3541,10 @@ export class CmsConfig {
             ]),
       ],
       singletons: [
-        // ...(mustSetup ? [] : [styleTokensSingleton]),
+        // ...(initialCmsSetup ? [] : [styleTokensSingleton]),
         globalSettingsSingleton,
-        { divider: Boolean(!mustSetup && userConfig.singletons?.length) },
-        ...(mustSetup ? [] : [...userConfig.singletons]),
+        { divider: Boolean(!initialCmsSetup && userConfig.singletons?.length) },
+        ...(initialCmsSetup ? [] : [...userConfig.singletons]),
       ],
     };
 

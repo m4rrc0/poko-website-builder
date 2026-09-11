@@ -14,9 +14,12 @@ export class CmsPage {
         : "/assets/js/sveltia-cms.js";
 
     // TODO: not sure it is useful anymore ??
-    const currentCollections = JSON.stringify(data?.globalSettings?.collections || []);
+    const currentCollections = JSON.stringify(
+      data?.globalSettings?.collections || [],
+    );
 
-    return `
+    return (
+      `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,10 +29,14 @@ export class CmsPage {
     <title>Admin Panel | poko</title>
     
     <script src=${sveltiaScriptSrc} eleventy:ignore></script>
+    <link href="config.json" type="application/json" rel="cms-config-url" />
     <script eleventy:ignore>
       const currentCollections = JSON.parse('${currentCollections || "[]"}')
       </script>
-      <link href="config.json" type="application/json" rel="cms-config-url" />
+      ` +
+      (data.env.initialCmsSetup
+        ? ""
+        : `
       <script type="module" eleventy:ignore>
         import * as defaultEditorComponents from "./defaultEditorComponents.js";
         const decNames = Object.keys(defaultEditorComponents)
@@ -46,12 +53,15 @@ export class CmsPage {
           CMS.registerEditorComponent(userEditorComponents[name]);
         })
       </script>
+      `) +
+      `
   </head>
   <body>
 
 
   </body>
 </html>    
-`;
+`
+    );
   }
 }
