@@ -11,9 +11,26 @@
 // …)` from inside an 11ty.js partial — exactly like 11ty itself does for
 // shortcodes/filters. That keeps the original render context (`this`)
 // flowing through every nested partial call without the helpers having to
-// know what's on it. Callers can therefore reach `this.ctx`, `this.page`,
-// `this.partial`, `this.renderTemplate`, etc. inside any `renderInner`
-// callback.
+// know what's on it. Callers can therefore reach `this.page`, `this.partial`,
+// `this.renderTemplate`, etc. inside any `renderInner` callback.
+//
+// What `this` does NOT carry is the data cascade: inside an 11ty.js partial
+// `this.ctx` is undefined (Eleventy augments the instance with `page`/
+// `eleventy` only). The cascade travels through the reserved `__cascade` prop
+// instead — injected by `renderPartial` (plugins/partials/index.js) into every
+// partial's data, and threaded on by the helpers below as their `cascade`
+// option. Every nested string render must receive it, otherwise shortcodes
+// like `link` lose `collections` / `globalSettings` and throw.
+//
+// Layering rule: always `{ ...cascade, ...localProps }`, so the more specific
+// value wins (e.g. a collection item's own data beats the page's).
+
+// Emitted by the `_collection` partial when the filtered collection is empty
+// and no `keepVisible` option was set. It lets the enclosing section detect the
+// emptiness even in inline mode, where the section body (header + `{% collection
+// %}` + footer) reaches `_sectionCollection` already rendered as a single HTML
+// string. Consumers strip it (or drop their whole output).
+export const COLLECTION_EMPTY_MARKER = "<!--poko:collection-empty-->";
 
 /**
  * Must be invoked as `renderStructuredSection.call(this, data, opts)`.
@@ -28,8 +45,11 @@
  *   partial's `this` so it can use `this.partial`, `this.ctx`, etc. directly.
  */
 export async function renderStructuredSection(data, opts) {
+  const cascade = data?.__cascade ?? {};
   const renderMarkdown = (src) =>
-    src ? this.renderTemplate.call(this, src, "njk,md") : Promise.resolve("");
+    src
+      ? this.renderTemplate.call(this, src, "njk,md", { ...cascade })
+      : Promise.resolve("");
 
   const {
     // Legacy / inline: pre-rendered HTML wrapped as-is.
@@ -52,6 +72,7 @@ export async function renderStructuredSection(data, opts) {
       const html = await renderMarkdown(header.content);
       parts.push(
         await this.partial.call(this, "_sectionHeader", {
+          __cascade: cascade,
           content: html,
           class: header.class,
         }),
@@ -65,6 +86,7 @@ export async function renderStructuredSection(data, opts) {
       const html = await renderMarkdown(footer.content);
       parts.push(
         await this.partial.call(this, "_sectionFooter", {
+          __cascade: cascade,
           content: html,
           class: footer.class,
         }),
@@ -98,17 +120,21 @@ export async function renderItemsListInner({
   itemPartial,
   wrapperPartial,
   wrapperProps,
+  cascade = {},
 }) {
   if (!Array.isArray(items) || items.length === 0) return "";
 
   const renderMarkdown = (src) =>
-    src ? this.renderTemplate.call(this, src, "njk,md") : Promise.resolve("");
+    src
+      ? this.renderTemplate.call(this, src, "njk,md", { ...cascade })
+      : Promise.resolve("");
 
   const itemsHtml = (
     await Promise.all(
       items.map(async (item) => {
         const html = await renderMarkdown(item?.content);
         return await this.partial.call(this, itemPartial, {
+          __cascade: cascade,
           content: html,
           class: item?.class,
         });
@@ -117,6 +143,7 @@ export async function renderItemsListInner({
   ).join("\n");
 
   return await this.partial.call(this, wrapperPartial, {
+    __cascade: cascade,
     content: itemsHtml,
     ...(wrapperProps || {}),
   });
@@ -130,12 +157,19 @@ export async function renderItemsListInner({
  * Supported area types: areaRaw, area (legacy parser-only), twoColumns,
  * grid, flow, reel, collection.
  */
-export async function renderAreasInner({ areas, collections, lang }) {
+export async function renderAreasInner({
+  areas,
+  collections,
+  lang,
+  cascade = {},
+}) {
   if (!Array.isArray(areas) || areas.length === 0) return "";
 
   const self = this;
   const renderMarkdown = (src) =>
-    src ? self.renderTemplate.call(self, src, "njk,md") : Promise.resolve("");
+    src
+      ? self.renderTemplate.call(self, src, "njk,md", { ...cascade })
+      : Promise.resolve("");
 
   const rendered = await Promise.all(
     areas.map(async (area) => {
@@ -145,6 +179,7 @@ export async function renderAreasInner({ areas, collections, lang }) {
           const partialName = area.type === "areaRaw" ? "_areaRaw" : "_area";
           const html = await renderMarkdown(area.content);
           return await self.partial.call(self, partialName, {
+            __cascade: cascade,
             content: html,
             class: area.class,
           });
@@ -152,6 +187,7 @@ export async function renderAreasInner({ areas, collections, lang }) {
 
         case "twoColumns":
           return await renderColumnsPairInner.call(self, {
+            cascade,
             itemLeft: area.itemLeft,
             itemRight: area.itemRight,
             itemPartial: "_twoColumnsItem",
@@ -169,6 +205,7 @@ export async function renderAreasInner({ areas, collections, lang }) {
 
         case "grid":
           return await renderItemsListInner.call(self, {
+            cascade,
             items: area.items,
             itemPartial: "_gridItem",
             wrapperPartial: "_grid",
@@ -183,6 +220,7 @@ export async function renderAreasInner({ areas, collections, lang }) {
 
         case "flow":
           return await renderItemsListInner.call(self, {
+            cascade,
             items: area.items,
             itemPartial: "_flowItem",
             wrapperPartial: "_flow",
@@ -194,6 +232,7 @@ export async function renderAreasInner({ areas, collections, lang }) {
 
         case "reel":
           return await renderItemsListInner.call(self, {
+            cascade,
             items: area.items,
             itemPartial: "_reelItem",
             wrapperPartial: "_reel",
@@ -207,14 +246,16 @@ export async function renderAreasInner({ areas, collections, lang }) {
             },
           });
 
-        case "collection":
-          return await self.partial.call(self, "_collection", {
+        case "collection": {
+          const html = await self.partial.call(self, "_collection", {
+            __cascade: cascade,
             collections,
             lang,
             collection: area.collection,
             sortCriterias: area.sortAndFilterOptions?.sortCriterias,
             filters: area.sortAndFilterOptions?.filters,
             exclusions: area.sortAndFilterOptions?.exclusions,
+            keepVisible: area.sortAndFilterOptions?.keepVisible,
             type: area.layoutOptions?.type,
             gap: area.layoutOptions?.gap,
             widthWrap: area.layoutOptions?.widthWrap,
@@ -227,6 +268,9 @@ export async function renderAreasInner({ areas, collections, lang }) {
             class: area.class,
             itemPartial: area.itemPartial,
           });
+          // An empty, non-`keepVisible` collection drops the area only.
+          return html.replace(COLLECTION_EMPTY_MARKER, "");
+        }
 
         default:
           // eslint-disable-next-line no-console
@@ -251,16 +295,20 @@ export async function renderColumnsPairInner({
   itemPartial,
   wrapperPartial,
   wrapperProps,
+  cascade = {},
 }) {
   if (!itemLeft && !itemRight) return "";
 
   const self = this;
   const renderMarkdown = (src) =>
-    src ? self.renderTemplate.call(self, src, "njk,md") : Promise.resolve("");
+    src
+      ? self.renderTemplate.call(self, src, "njk,md", { ...cascade })
+      : Promise.resolve("");
 
   const renderColumn = async (col) => {
     const html = await renderMarkdown(col?.content);
     return await self.partial.call(self, itemPartial, {
+      __cascade: cascade,
       content: html,
       class: col?.class,
     });
@@ -272,6 +320,7 @@ export async function renderColumnsPairInner({
   ].join("\n");
 
   return await self.partial.call(self, wrapperPartial, {
+    __cascade: cascade,
     content: colsHtml,
     ...(wrapperProps || {}),
   });

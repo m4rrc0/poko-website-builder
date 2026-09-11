@@ -22,6 +22,7 @@ export default async function (data) {
     outerClass: "section-two-columns",
     renderInner(d) {
       return renderColumnsPairInner.call(this, {
+        cascade: d?.__cascade,
         itemLeft: d?.itemLeft,
         itemRight: d?.itemRight,
         itemPartial: "_twoColumnsItem",

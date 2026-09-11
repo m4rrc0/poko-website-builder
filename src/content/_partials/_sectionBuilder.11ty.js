@@ -22,6 +22,7 @@ export default async function (data) {
     outerClass: "section-builder",
     renderInner(d) {
       return renderAreasInner.call(this, {
+        cascade: d?.__cascade,
         areas: d?.areas,
         // Forwarded from the page-level data cascade so the "collection"
         // area variant can call `_collection` without losing context.

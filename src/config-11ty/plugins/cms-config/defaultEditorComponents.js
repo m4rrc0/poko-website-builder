@@ -754,6 +754,7 @@ const parseCollectionBody = ({ attributes, content }) => {
       "filters",
       "sortCriterias",
       "exclusions",
+      "keepVisible",
       "itemPartial",
     ]);
 
@@ -768,12 +769,18 @@ const parseCollectionBody = ({ attributes, content }) => {
   // `itemPartial` was already pulled out into `collectionSpecific` above.
   const itemPartial = collectionSpecific.itemPartial;
 
+  const keepVisible = collectionSpecific.keepVisible;
+
   const sortAndFilterOptions =
-    filters.length || sortCriterias.length || collectionSpecific.exclusions
+    filters.length ||
+    sortCriterias.length ||
+    collectionSpecific.exclusions ||
+    keepVisible
       ? {
           filters,
           sortCriterias,
           exclusions: !!collectionSpecific.exclusions,
+          ...(keepVisible ? { keepVisible } : {}),
         }
       : undefined;
 
@@ -802,13 +809,15 @@ const buildCollectionBody = ({
   layoutOptions,
   attributes,
 }) => {
-  const { filters, sortCriterias, exclusions } = sortAndFilterOptions || {};
+  const { filters, sortCriterias, exclusions, keepVisible } =
+    sortAndFilterOptions || {};
 
   const collAttrs = {
     collection: collection || "all",
     filters,
     exclusions,
     sortCriterias,
+    keepVisible,
     ...(layoutOptions || {}),
     class: className,
     itemPartial,
@@ -1368,7 +1377,7 @@ export const link = {
   label: "Link",
   icon: "link",
   mode: "dialog",
-  // dialog: true, // Legacy
+  trigger: "button",
   summary:
     "🔗 {{content | truncate(20)}}{{content | ternary(': ', '')}}{{linkType.url | truncate(30)}}",
   fields: [
@@ -1725,7 +1734,7 @@ export const icon = {
   label: "Icon",
   icon: "triangle_circle",
   mode: "dialog",
-  // dialog: true, // Legacy
+  trigger: "button",
   summary: "🔅 {{icon.iconLib.iconName}}",
   fields: [
     {
@@ -1852,7 +1861,7 @@ export const imageShortcode = {
   id: "imageShortcode",
   label: "Image",
   icon: "image",
-  // dialog: true,
+  trigger: "button",
   // summary:
   //   "🖼️ {{attributes.alt | truncate(20)}}{{attributes.alt | ternary(': ', '')}}{{src | truncate(30)}}",
   fields: [
@@ -3318,6 +3327,36 @@ ${footerContent}
   },
 };
 
+// Mirror of `keepVisibleField` in `./section-primitives.js` — keep both in sync.
+// Optional object: when absent, an empty filtered collection removes the whole
+// section (header/footer included) from the output. The hidden `enabled`
+// subfield exists only so that an added-but-messageless object is not stripped
+// on save by `omit_empty_optional_fields`.
+const keepVisibleField = {
+  name: "keepVisible",
+  label: "Keep section visible when empty",
+  widget: "object",
+  required: false,
+  i18n: true,
+  collapsed: true,
+  fields: [
+    {
+      name: "enabled",
+      label: "Enabled",
+      widget: "hidden",
+      default: true,
+    },
+    {
+      name: "fallbackMessage",
+      label: "Fallback message",
+      hint: "Displayed in place of the items when the filtered collection is empty. Leave empty to keep the section visible without any message.",
+      widget: "richtext",
+      required: false,
+      i18n: true,
+    },
+  ],
+};
+
 export const sectionCollection = {
   id: "sectionCollection",
   label: "Section > Collection List",
@@ -3515,6 +3554,7 @@ export const sectionCollection = {
           default: false,
           hint: "When enabled, the defined filters will exclude items instead of including them. For example, if you set a Tag filter with 'example' value and enable Exclusions, items with 'example' tag will not be displayed in the section.",
         },
+        keepVisibleField,
       ],
     },
     {
@@ -3976,6 +4016,7 @@ export const sectionBuilder = {
                   default: false,
                   hint: "When enabled, the defined filters will exclude items instead of including them. For example, if you set a Tag filter with 'example' value and enable Exclusions, items with 'example' tag will not be displayed in the section.",
                 },
+                keepVisibleField,
               ],
             },
             {

@@ -90,7 +90,16 @@ export default async function (eleventyConfig, pluginOptions) {
     templateEngineOverride,
   ) {
     // const data = deepmerge(this.ctx, dataManual);
-    const data = { ...this.ctx, ...dataManual };
+    //
+    // `this.ctx` is the caller's data cascade, but only when the caller is a
+    // Nunjucks/Liquid template. Inside an 11ty.js partial it is undefined —
+    // Eleventy augments the instance with `page`/`eleventy` only (see
+    // `DATA_KEYS` in Engines/Util/ContextAugmenter.js) — so the cascade has to
+    // be handed over explicitly through the reserved `__cascade` prop.
+    // Whatever the caller is, children always receive it, which is what lets
+    // shortcodes like `link` reach `collections`/`globalSettings` at any depth.
+    const cascade = this.ctx ?? dataManual?.__cascade ?? {};
+    const data = { ...cascade, ...dataManual, __cascade: cascade };
     const filename = path.join(filenameRaw);
     // const cacheKey = hashSum({
     //   filename,

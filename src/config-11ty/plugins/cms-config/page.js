@@ -14,7 +14,7 @@ export class CmsPage {
         : "/assets/js/sveltia-cms.js";
 
     // TODO: not sure it is useful anymore ??
-    const currentCollections = JSON.stringify(data.globalSettings.collections);
+    const currentCollections = JSON.stringify(data?.globalSettings?.collections || []);
 
     return `
 <!DOCTYPE html>

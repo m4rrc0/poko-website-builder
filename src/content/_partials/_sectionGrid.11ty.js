@@ -24,6 +24,7 @@ export default async function (data) {
     outerClass: "section-grid",
     renderInner(d) {
       return renderItemsListInner.call(this, {
+        cascade: d?.__cascade,
         items: d?.items,
         itemPartial: "_gridItem",
         wrapperPartial: "_grid",
