@@ -12,6 +12,8 @@
 //     })
 //     .join(", ");
 
+import { COLLECTION_EMPTY_MARKER } from "../../config-11ty/plugins/partialShortcodes/render-structured-section.js";
+
 export default async function ({
   // Data from context template
   collections,
@@ -21,6 +23,7 @@ export default async function ({
   collection,
   filters,
   exclusions,
+  keepVisible,
   sortCriterias,
   type,
   gap,
@@ -53,6 +56,30 @@ export default async function ({
 
   if (filters && filters.length > 0) {
     items = filterCollection(items, filters, exclusions);
+  }
+
+  // 4. Nothing left to show: without an explicit `keepVisible` option the
+  // enclosing section must disappear entirely, which it cannot detect on its
+  // own in inline mode — hence the marker (stripped/consumed by the caller).
+  if (items.length === 0) {
+    if (!keepVisible) return COLLECTION_EMPTY_MARKER;
+
+    const fallback = keepVisible.fallbackMessage
+      ? await renderContentFn.call(
+          this,
+          keepVisible.fallbackMessage,
+          "njk,md",
+          {
+            ...this.ctx,
+          },
+        )
+      : "";
+
+    return fallback
+      ? `<div class="collection-empty">
+${fallback}
+</div>`
+      : "";
   }
 
   const itemMarkupTrimmed =

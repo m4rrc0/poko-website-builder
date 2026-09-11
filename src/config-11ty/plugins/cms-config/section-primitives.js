@@ -345,6 +345,30 @@ export const collectionSelectField = (extraOptions = []) => ({
 });
 
 /**
+ * Optional object: when absent the whole section is dropped from the output as
+ * soon as the filtered collection is empty. When present (even without a
+ * message) the section stays visible.
+ */
+export const keepVisibleField = {
+  name: "keepVisible",
+  label: "Keep section visible when empty",
+  widget: "object",
+  required: false,
+  i18n: true,
+  collapsed: true,
+  fields: [
+    {
+      name: "fallbackMessage",
+      label: "Fallback message",
+      hint: "Displayed in place of the items when the filtered collection is empty. Leave empty to keep the section visible without any message.",
+      widget: "richtext",
+      required: false,
+      i18n: true,
+    },
+  ],
+};
+
+/**
  * Sort & filter object used by collection-shaped fields. Mirrors the inline
  * editor's exact shape so frontmatter and inline modes round-trip identically.
  */
@@ -488,6 +512,7 @@ export const sortAndFilterOptionsField = {
       default: false,
       hint: "When enabled, the defined filters will exclude items instead of including them.",
     },
+    keepVisibleField,
   ],
 };
 

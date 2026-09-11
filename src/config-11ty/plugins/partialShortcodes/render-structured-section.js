@@ -15,6 +15,13 @@
 // `this.partial`, `this.renderTemplate`, etc. inside any `renderInner`
 // callback.
 
+// Emitted by the `_collection` partial when the filtered collection is empty
+// and no `keepVisible` option was set. It lets the enclosing section detect the
+// emptiness even in inline mode, where the section body (header + `{% collection
+// %}` + footer) reaches `_sectionCollection` already rendered as a single HTML
+// string. Consumers strip it (or drop their whole output).
+export const COLLECTION_EMPTY_MARKER = "<!--poko:collection-empty-->";
+
 /**
  * Must be invoked as `renderStructuredSection.call(this, data, opts)`.
  *
@@ -207,14 +214,15 @@ export async function renderAreasInner({ areas, collections, lang }) {
             },
           });
 
-        case "collection":
-          return await self.partial.call(self, "_collection", {
+        case "collection": {
+          const html = await self.partial.call(self, "_collection", {
             collections,
             lang,
             collection: area.collection,
             sortCriterias: area.sortAndFilterOptions?.sortCriterias,
             filters: area.sortAndFilterOptions?.filters,
             exclusions: area.sortAndFilterOptions?.exclusions,
+            keepVisible: area.sortAndFilterOptions?.keepVisible,
             type: area.layoutOptions?.type,
             gap: area.layoutOptions?.gap,
             widthWrap: area.layoutOptions?.widthWrap,
@@ -227,6 +235,9 @@ export async function renderAreasInner({ areas, collections, lang }) {
             class: area.class,
             itemPartial: area.itemPartial,
           });
+          // An empty, non-`keepVisible` collection drops the area only.
+          return html.replace(COLLECTION_EMPTY_MARKER, "");
+        }
 
         default:
           // eslint-disable-next-line no-console
