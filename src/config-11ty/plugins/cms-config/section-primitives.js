@@ -348,6 +348,12 @@ export const collectionSelectField = (extraOptions = []) => ({
  * Optional object: when absent the whole section is dropped from the output as
  * soon as the filtered collection is empty. When present (even without a
  * message) the section stays visible.
+ *
+ * `enabled` exists only to make that presence persistable. Sveltia's
+ * `omit_empty_optional_fields` (on by default) strips optional fields left
+ * empty, so an object whose every subfield is blank is never written to the
+ * entry — the checkbox would silently reset on reload. A hidden subfield with a
+ * non-empty default guarantees the object survives a save.
  */
 export const keepVisibleField = {
   name: "keepVisible",
@@ -357,6 +363,12 @@ export const keepVisibleField = {
   i18n: true,
   collapsed: true,
   fields: [
+    {
+      name: "enabled",
+      label: "Enabled",
+      widget: "hidden",
+      default: true,
+    },
     {
       name: "fallbackMessage",
       label: "Fallback message",
@@ -452,7 +464,7 @@ export const sortAndFilterOptionsField = {
               collection: "dataFiles",
               file: "translatedData",
               value_field: "tagsList.*.slug",
-              display_fields: ["tagsList.*.name"],
+              display_fields: ["tagsList.*.label"],
               required: true,
               multiple: true,
             },

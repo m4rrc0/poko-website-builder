@@ -14,32 +14,40 @@
 
 import { COLLECTION_EMPTY_MARKER } from "../../config-11ty/plugins/partialShortcodes/render-structured-section.js";
 
-export default async function ({
-  // Data from context template
-  collections,
-  lang,
-  // Data passed to the shortcode
-  // content,
-  collection,
-  filters,
-  exclusions,
-  keepVisible,
-  sortCriterias,
-  type,
-  gap,
-  widthWrap,
-  columns,
-  widthColumnMin,
-  widthColumnMax,
-  itemWidth,
-  height,
-  noBar,
-  class: className,
-  tag,
-  itemPartial,
-  wrapperPartial,
-  content: itemMarkup,
-}) {
+export default async function (data) {
+  const {
+    // Data from context template
+    collections,
+    lang,
+    // Data passed to the shortcode
+    // content,
+    collection,
+    filters,
+    exclusions,
+    keepVisible,
+    sortCriterias,
+    type,
+    gap,
+    widthWrap,
+    columns,
+    widthColumnMin,
+    widthColumnMax,
+    itemWidth,
+    height,
+    noBar,
+    class: className,
+    tag,
+    itemPartial,
+    wrapperPartial,
+    content: itemMarkup,
+  } = data;
+
+  // Data cascade for the nested renders below. `this.ctx` is undefined inside
+  // an 11ty.js partial, so the cascade travels through the reserved
+  // `__cascade` prop injected by `renderPartial`. Without it, shortcodes like
+  // `link` lose `collections` / `globalSettings` and throw.
+  const cascade = data?.__cascade ?? {};
+
   const filterCollection = this.filterCollection;
   const sortCollection = this.sortCollection;
   const partialSc = this.partial;
@@ -62,7 +70,11 @@ export default async function ({
   // enclosing section must disappear entirely, which it cannot detect on its
   // own in inline mode — hence the marker (stripped/consumed by the caller).
   if (items.length === 0) {
-    if (!keepVisible) return COLLECTION_EMPTY_MARKER;
+    // `keepVisible.enabled` is a hidden persistence flag (see `keepVisibleField`
+    // in the CMS config); an explicit `false` still means "hide".
+    if (!keepVisible || keepVisible.enabled === false) {
+      return COLLECTION_EMPTY_MARKER;
+    }
 
     const fallback = keepVisible.fallbackMessage
       ? await renderContentFn.call(
@@ -70,7 +82,7 @@ export default async function ({
           keepVisible.fallbackMessage,
           "njk,md",
           {
-            ...this.ctx,
+            ...cascade,
           },
         )
       : "";
@@ -92,7 +104,7 @@ ${fallback}
         // render it per item with `item` in scope instead of using a partial.
         if (itemMarkupTrimmed) {
           return await renderContentFn.call(this, itemMarkupTrimmed, "njk,md", {
-            ...this.ctx,
+            ...cascade,
             ...item.data,
             item,
             index,
@@ -100,6 +112,9 @@ ${fallback}
           });
         }
         return await partialSc.call(this, itemPartial || "_collectionItem", {
+          // Most precise cascade for this subtree: the item's own data
+          // cascade layered over the page's.
+          __cascade: { ...cascade, ...item.data },
           index,
           items,
           ...item.data,

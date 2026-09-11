@@ -3329,7 +3329,9 @@ ${footerContent}
 
 // Mirror of `keepVisibleField` in `./section-primitives.js` — keep both in sync.
 // Optional object: when absent, an empty filtered collection removes the whole
-// section (header/footer included) from the output.
+// section (header/footer included) from the output. The hidden `enabled`
+// subfield exists only so that an added-but-messageless object is not stripped
+// on save by `omit_empty_optional_fields`.
 const keepVisibleField = {
   name: "keepVisible",
   label: "Keep section visible when empty",
@@ -3338,6 +3340,12 @@ const keepVisibleField = {
   i18n: true,
   collapsed: true,
   fields: [
+    {
+      name: "enabled",
+      label: "Enabled",
+      widget: "hidden",
+      default: true,
+    },
     {
       name: "fallbackMessage",
       label: "Fallback message",

@@ -19,6 +19,7 @@ export default async function (data) {
     outerClass: "section-flow",
     renderInner(d) {
       return renderItemsListInner.call(this, {
+        cascade: d?.__cascade,
         items: d?.items,
         itemPartial: "_flowItem",
         wrapperPartial: "_flow",

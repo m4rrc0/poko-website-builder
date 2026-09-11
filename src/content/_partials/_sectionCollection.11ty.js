@@ -19,12 +19,12 @@ import {
 // The inner layout body is rendered by the existing `_collection` partial,
 // which handles sort/filter/exclusion application and per-item rendering.
 //
-// IMPORTANT: `collections` and `lang` must be forwarded explicitly from the
-// `data` function argument (NOT from `this.ctx`). When this partial is
-// rendered via the universal `partial` / `renderFile` shortcode, the page's
-// global data cascade is exposed to us only through `data` — `this.ctx`
-// inside the nested template does not inherit the caller's page-level ctx,
-// so a downstream `this.partial(...)` call would lose `collections`.
+// IMPORTANT: `collections`, `lang` and `__cascade` must be forwarded
+// explicitly from the `data` function argument (NOT from `this.ctx`). When
+// this partial is rendered via the universal `partial` / `renderFile`
+// shortcode, the page's global data cascade is exposed to us only through
+// `data` — `this.ctx` inside the nested template does not inherit the caller's
+// page-level ctx, so a downstream `this.partial(...)` call would lose it.
 //
 // When the filtered collection ends up empty, `_collection` emits
 // `COLLECTION_EMPTY_MARKER` unless `sortAndFilterOptions.keepVisible` is set.
@@ -42,6 +42,7 @@ export default async function (data) {
   }
 
   const inner = await this.partial.call(this, "_collection", {
+    __cascade: data?.__cascade,
     collections: data?.collections,
     lang: data?.lang,
     collection: data?.collection,
