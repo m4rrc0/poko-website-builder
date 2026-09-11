@@ -85,6 +85,7 @@
 {% endif %}
 
 <style eleventy:ignore>
+form .hp {position: absolute;left: -99999px;}
 /* globalSettings.cssHead */
 {{ globalSettings.cssHead | safe }}
 /* CSS template bundles */
