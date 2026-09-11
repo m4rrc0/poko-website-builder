@@ -145,7 +145,12 @@ export const REPO =
   (REPO_OWNER && REPO_NAME && `${REPO_OWNER}/${REPO_NAME}`) ||
   GITHUB_REPO_INFERRED;
 
-export const WEBSITE_PATH_PREFIX = GITHUB_PAGES_BUILD ? `/${REPO_NAME}/` : "";
+// Deployment target of the current build, when the CI knows it
+// ("github-pages", "cloudflare-pages", ...)
+export const DEPLOYMENT_TARGET = processEnv.DEPLOYMENT_TARGET;
+export const GITHUB_PAGES_DEPLOY = DEPLOYMENT_TARGET
+  ? DEPLOYMENT_TARGET === "github-pages"
+  : GITHUB_PAGES_BUILD;
 
 export const PROD_BRANCH = processEnv.PROD_BRANCH || "main";
 // BRANCH inferrence
@@ -175,6 +180,9 @@ function getGithubPagesUrl(repo) {
   return `https://${owner}.github.io/${name}`;
 }
 const GITHUB_DEFAULT_URL = getGithubPagesUrl(REPO_EARLY);
+// Exposed by `actions/configure-pages`, it reflects the Pages settings of the
+// repository and therefore already accounts for a custom domain
+const GITHUB_PAGES_URL = processEnv.GITHUB_PAGES_URL?.replace(/\/+$/, "");
 
 // TODO: Verify compat with supported hosts
 const HOST_SUBDOMAIN = BRANCH && BRANCH.replaceAll("/", "-");
@@ -183,7 +191,8 @@ const HOST_PREVIEW_URL =
   processEnv.CF_PAGES_URL ||
   (processEnv.VERCEL_BRANCH_URL && `https://${processEnv.VERCEL_BRANCH_URL}`) ||
   processEnv.DEPLOY_URL || // Netlify
-  GITHUB_DEFAULT_URL; // GitHub Pages
+  GITHUB_PAGES_URL || // GitHub Pages, custom domain aware
+  GITHUB_DEFAULT_URL; // GitHub Pages, default domain
 const HOST_BRANCH_URL =
   processEnv.HOST_BRANCH_URL ||
   (processEnv.CF_PAGES_URL &&
@@ -519,6 +528,23 @@ export const BASE_URL = (
 // DISPLAY_URL is for the CMS button to the deployed site (prefer current deploy against production)
 export const DISPLAY_URL =
   processEnv.DISPLAY_URL?.replace(/\/+$/, "") || BASE_URL || PROD_URL;
+
+// A GitHub Pages project site is served from a `/<repo>/` sub-folder, while a
+// custom domain (or a user/org site) is served from the root. The sub-folder is
+// part of the URL the site is deployed to, so we read it from there instead of
+// assuming every GitHub Pages build needs the repo name.
+function pathPrefixFromUrl(url) {
+  try {
+    const { pathname } = new URL(url);
+    const path = pathname.replace(/^\/+|\/+$/g, "");
+    return path ? `/${path}/` : "";
+  } catch (error) {
+    return "";
+  }
+}
+export const WEBSITE_PATH_PREFIX =
+  processEnv.WEBSITE_PATH_PREFIX ??
+  (GITHUB_PAGES_DEPLOY ? pathPrefixFromUrl(GITHUB_PAGES_URL || BASE_URL) : "");
 
 export const SITE_NAME =
   processEnv.SITE_NAME ||

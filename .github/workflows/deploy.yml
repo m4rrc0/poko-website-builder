@@ -179,9 +179,20 @@ jobs:
             | jq -r 'to_entries[] | select(.key != "github_token") | "\(.key)<<__POKO_EOF__\n\(.value)\n__POKO_EOF__"' \
             >> "$GITHUB_ENV"
 
+      # Exposes the URL configured in the repository Pages settings, custom
+      # domain included, so the build knows whether it is served from a
+      # `/<repo>/` sub-folder or from the root of a domain.
+      - name: Setup Pages
+        id: pages
+        if: needs.setup.outputs.deployment_target == 'github-pages'
+        uses: actions/configure-pages@v5
+
       - name: Build with 11ty
         run: bun run build
         working-directory: ${{ env.BUILD_PATH }}
+        env:
+          DEPLOYMENT_TARGET: ${{ needs.setup.outputs.deployment_target }}
+          GITHUB_PAGES_URL: ${{ steps.pages.outputs.base_url }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
