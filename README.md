@@ -53,6 +53,30 @@ For full license details, see the [LICENSE](./LICENSE) file and the complete lic
 
 For licensing inquiries: legal-a4g6@mookai.be
 
+## Using poko as a package
+
+poko is published as an npm package containing the whole engine. A website only
+needs a `package.json`, an `eleventy.config.js` and a `_content/` directory —
+see [`template/`](./template) for a working example.
+
+```sh
+bun add poko-website-builder
+```
+
+```js
+// eleventy.config.js
+export { default, config } from "poko-website-builder/eleventy";
+```
+
+```sh
+bun poko build   # write the site to dist/
+bun poko dev     # build, watch and serve
+```
+
+In this repository, the engine's own content lives next to it and is built with
+`bun run build:content` / `bun run dev:content` (and `:demo` for the demo site).
+Those directories are never published in the package.
+
 ## User Guide (draft)
 
 > ⚠️ Warning: This guide needs to be updated since the project is being reworked.

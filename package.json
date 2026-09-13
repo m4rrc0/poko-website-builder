@@ -10,11 +10,27 @@
     "url": "https://github.com/m4rrc0/poko-website-builder.git"
   },
   "type": "module",
-  "module": "index.ts",
-  "dependencies": {
-    "@sveltia/cms": "^0.189.0"
+  "main": "./eleventy.config.js",
+  "exports": {
+    ".": "./eleventy.config.js",
+    "./eleventy": "./eleventy.config.js",
+    "./env": "./env.config.js",
+    "./cms-config": "./src/config-11ty/plugins/cms-config/config.js",
+    "./cli": "./scripts/cli.js",
+    "./package.json": "./package.json"
   },
-  "devDependencies": {
+  "bin": {
+    "poko": "./scripts/cli.js"
+  },
+  "files": [
+    "assets",
+    "eleventy.config.js",
+    "env.config.js",
+    "scripts",
+    "src"
+  ],
+  "dependencies": {
+    "@sveltia/cms": "^0.189.0",
     "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-fetch": "^5.1.0",
     "@11ty/eleventy-img": "^6.0.3",
@@ -27,8 +43,6 @@
     "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
     "@sindresorhus/slugify": "^2.2.1",
     "@tabler/icons": "^3.34.0",
-    "@types/bun": "latest",
-    "bun": "1.3.13",
     "chalk": "^5.4.1",
     "dayjs": "^1.11.13",
     "deepmerge": "^4.3.1",
@@ -50,9 +64,13 @@
     "markdown-it-mark": "^4.0.0",
     "memoize": "^10.1.0",
     "simple-icons": "^15.5.0",
-    "typescript": "^5.8.2",
     "unocss": "^66.4.2",
-    "utopia-core": "^1.6.0",
+    "utopia-core": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun": "1.3.13",
+    "typescript": "^5.8.2",
     "wrangler": "^4.61.1"
   },
   "bugs": {
@@ -72,14 +90,18 @@
     "svelte"
   ],
   "license": "",
-  "private": true,
   "scripts": {
     "build-archive": "BRANCH=$(git symbolic-ref --short HEAD) GIT_REMOTES=$(git remote -v) bun --bun run eleventy",
-    "build": "bun --bun run eleventy",
-    "cf-build": "bun --bun run eleventy",
-    "build:gh-pages": "bun --bun run eleventy",
+    "build": "bun --bun scripts/cli.js build",
+    "cf-build": "bun --bun scripts/cli.js build",
+    "build:gh-pages": "bun --bun scripts/cli.js build",
+    "poko": "bun --bun scripts/cli.js",
+    "build:demo": "WORKING_DIR=_demo bun --bun scripts/cli.js build",
+    "build:content": "WORKING_DIR=_content bun --bun scripts/cli.js build",
+    "dev:demo": "WORKING_DIR=_demo bun --bun scripts/cli.js dev",
+    "dev:content": "WORKING_DIR=_content bun --bun scripts/cli.js dev",
     "dev:script": "bun --bun scripts/dev.ts",
-    "dev": "bun --bun run eleventy --serve",
+    "dev": "bun --bun scripts/cli.js dev",
     "start": "bunx --bun @11ty/eleventy@canary --serve",
     "watch": "bun --bun run eleventy --watch",
     "serve": "bun --bun eleventy-dev-server --dir=dist",

@@ -1,9 +1,8 @@
-import assert from "node:assert";
 import "dotenv/config";
 import { resolve, join, relative } from "node:path";
 import fs from "node:fs";
-import { $ } from "bun";
 import yaml from "js-yaml";
+import { PACKAGE_ROOT, packagePath } from "./src/utils/paths.js";
 import { transformLanguage } from "./src/utils/languages.js";
 import {
   mapStyleStringsToClassDef,
@@ -18,6 +17,13 @@ import {
 const processEnv = typeof process !== "undefined" ? process.env : {};
 
 export default { ...processEnv };
+
+// Root of the engine package. Engine paths resolve against it, content paths
+// stay relative to the consumer's working directory.
+export { PACKAGE_ROOT, packagePath };
+// Git inference and validation are explicit, see `initPokoEnv`. Importing this
+// module never shells out and never throws.
+export { initPokoEnv } from "./src/env/init.js";
 
 // GENERAL
 export const DEBUG = processEnv.DEBUG === "true" ? true : false;
@@ -51,9 +57,10 @@ export const WORKING_DIR =
 // WORKING_DIR_ABSOLUTE properly concatenate CONTENT_PATH_PREFIX and CONTENT_DIR
 export const WORKING_DIR_ABSOLUTE =
   processEnv.WORKING_DIR_ABSOLUTE ||
+  (processEnv.WORKING_DIR && resolve(processEnv.WORKING_DIR)) ||
   (CONTENT_DIR && resolve(CONTENT_PATH_PREFIX, CONTENT_DIR));
 
-export const SRC_DIR_ABSOLUTE = resolve(__dirname, "src");
+export const SRC_DIR_ABSOLUTE = packagePath("src");
 export const SRC_DIR_FROM_WORKING_DIR = WORKING_DIR_ABSOLUTE
   ? relative(WORKING_DIR_ABSOLUTE, SRC_DIR_ABSOLUTE)
   : null;
@@ -96,12 +103,7 @@ export const REPOSITORY_URL = processEnv.REPOSITORY_URL;
 
 const REPO_EARLY = processEnv.REPO || GITHUB_GIT_REPO || REPOSITORY_URL;
 
-const GIT_REMOTES = REPO_EARLY
-  ? ""
-  : processEnv.GIT_REMOTES ||
-    (await $`cd ${WORKING_DIR_ABSOLUTE}/../ && git remote -v`)
-      .text()
-      .replace(/\n$/, "");
+const GIT_REMOTES = REPO_EARLY ? "" : processEnv.GIT_REMOTES || "";
 const GITHUB_REPO_INFERRED = GIT_REMOTES
   ? GIT_REMOTES?.split("\n")
       ?.find((remote) => remote.includes("github.com"))
@@ -161,9 +163,7 @@ export const BRANCH =
   processEnv.CF_PAGES_BRANCH ||
   processEnv.VERCEL_GIT_COMMIT_REF ||
   processEnv.GIT_BRANCH ||
-  (await $`cd ${WORKING_DIR_ABSOLUTE}/../ && git symbolic-ref --short HEAD`)
-    .text()
-    .replace(/\n$/, "");
+  "";
 
 function getGithubPagesUrl(repo) {
   // repo = "owner/repo"
@@ -487,8 +487,9 @@ export const brandStyles = [
   brandPalettesStyles || "",
 ].join("\n");
 
-const unoCssConfig =
-  await import("./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js");
+const unoCssConfig = await import(
+  "./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js"
+);
 export const fontPreloadTags = unoCssConfig.fontPreloadTags;
 
 // TODO: Import ctx.css
@@ -560,7 +561,3 @@ if (DEBUG) {
     REPO,
   });
 }
-
-assert(BRANCH, "[env] BRANCH is required");
-// assert(CMS_AUTH_URL, "[env] CMS_AUTH_URL is required"); // Not required anymore with github personal token
-assert(BASE_URL, "[env] BASE_URL is required");

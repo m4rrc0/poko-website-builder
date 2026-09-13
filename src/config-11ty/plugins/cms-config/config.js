@@ -18,6 +18,7 @@ import {
   userCmsConfig,
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
+import { packagePath } from "../../../utils/paths.js";
 import {
   sectionHeaderField,
   sectionFooterField,
@@ -978,8 +979,9 @@ let userEditorComponentNames = [];
 
 try {
   // TODO: find a better way to pass this to config
-  const path =
-    "./src/config-11ty/plugins/cms-config/defaultEditorComponents.js";
+  const path = packagePath(
+    "src/config-11ty/plugins/cms-config/defaultEditorComponents.js",
+  );
   const code = await Bun.file(path).text();
   // Regex to find 'export const name', 'export function name', etc.
   defaultEditorComponentNames = [
