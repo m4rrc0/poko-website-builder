@@ -1,3 +1,3 @@
 [build]
   publish = "dist/"
-  command = "bun run build"
+  command = "if command -v bun >/dev/null 2>&1; then bun run build; else npm run build; fi"

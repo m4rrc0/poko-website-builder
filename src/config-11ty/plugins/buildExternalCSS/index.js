@@ -1,6 +1,6 @@
-import { build as bunBuild, plugin as bunPlugin } from "bun";
 import fglob from "fast-glob";
 import { MINIFY, brandConfig, POKO_THEME } from "../../../../env.config.js";
+import { buildCss } from "../../../utils/runtime.js";
 
 const mustImportCtxCss = !!brandConfig?.ctxCssImport;
 const ctxCssEntrypoint = `./src/styles/ctx/ctx.css`;
@@ -29,34 +29,18 @@ export default async function (eleventyConfig, pluginOptions) {
     // because CTX.css are the most global styles and the rest is project specific.
     // We need to load UnoCSS styles in between
     // entrypoints.unshift(ctxCssEntrypoint);
-    await bunBuild({
+    const outputs = await buildCss({
       entrypoints: [ctxCssEntrypoint],
-      // TODO: Bun v1.3.14 can now load content from memory instead of a file. See https://bun.com/docs/bundler#files
       outdir,
       naming: "ctx.css",
-      // naming: "index.css",
-      // plugins: [cssTransformPlugin],
       minify: MINIFY,
       cssChunking: true,
-    })
-      .catch((e) => {
-        console.error(e);
-        throw e;
-      })
-      .then(async ({ outputs, success, logs }) => {
-        // Read content of each output file
-        const fileContents = await Promise.all(
-          outputs.map(async (output) => {
-            const content = await Bun.file(output.path).text();
-            return {
-              path: output.path,
-              content,
-            };
-          }),
-        );
+    }).catch((e) => {
+      console.error(e);
+      throw e;
+    });
 
-        CtxCssInline = fileContents.map((file) => file.content).join("");
-      });
+    CtxCssInline = outputs.map((file) => file.content).join("");
   }
 
   const externalCssFiles = entrypoints.map((entrypoint) => {
@@ -73,35 +57,18 @@ export default async function (eleventyConfig, pluginOptions) {
     .join("\n");
 
   if (Array.isArray(entrypoints) && typeof entrypoints[0] === "string") {
-    await bunBuild({
+    const outputs = await buildCss({
       entrypoints,
       outdir,
       naming: "[name].css",
-      // naming: "index.css",
-      // plugins: [cssTransformPlugin],
       minify: MINIFY,
       cssChunking: true,
-    })
-      .catch((e) => {
-        console.error(e);
-        throw e;
-      })
-      .then(async ({ outputs, success, logs }) => {
-        // Read content of each output file
-        const fileContents = await Promise.all(
-          outputs.map(async (output) => {
-            const content = await Bun.file(output.path).text();
-            return {
-              path: output.path,
-              content,
-            };
-          }),
-        );
+    }).catch((e) => {
+      console.error(e);
+      throw e;
+    });
 
-        externalStylesInline = fileContents
-          .map((file) => file.content)
-          .join("");
-      });
+    externalStylesInline = outputs.map((file) => file.content).join("");
   }
 
   eleventyConfig.addGlobalData("htmlExternalCtxCssTag", htmlExternalCtxCssTag);

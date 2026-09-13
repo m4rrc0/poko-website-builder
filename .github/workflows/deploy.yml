@@ -148,7 +148,27 @@ jobs:
         with:
           bun-version: ${{ needs.setup.outputs.bun_version }}
 
+      # Keep the Bun execution stream when Bun is in context; fall back to
+      # npm/Node when it is not (e.g. this step or the action is removed).
+      - name: Detect runtime
+        id: runtime
+        run: |
+          if command -v bun >/dev/null 2>&1; then
+            echo "bun=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "bun=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        if: steps.runtime.outputs.bun != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ env.BUILD_PATH }}/package-lock.json
+
       - name: Cache Bun dependencies
+        if: steps.runtime.outputs.bun == 'true'
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
@@ -165,7 +185,14 @@ jobs:
             ${{ runner.os }}-assets-
 
       - name: Install dependencies
-        run: bun install
+        run: |
+          if command -v bun >/dev/null 2>&1; then
+            bun install
+          elif [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
         working-directory: ${{ env.BUILD_PATH }}
 
       # Exposes every GitHub Actions secret as an env var for subsequent steps,
@@ -188,7 +215,12 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build with 11ty
-        run: bun run build
+        run: |
+          if command -v bun >/dev/null 2>&1; then
+            bun run build
+          else
+            npm run build
+          fi
         working-directory: ${{ env.BUILD_PATH }}
         env:
           DEPLOYMENT_TARGET: ${{ needs.setup.outputs.deployment_target }}

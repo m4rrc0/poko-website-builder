@@ -1,7 +1,7 @@
 {
-    "installCommand": "bun install",
-    "buildCommand": "bun run build",
-    "devCommand": "bun run dev",
+    "installCommand": "if command -v bun >/dev/null 2>&1; then bun install; else npm install; fi",
+    "buildCommand": "if command -v bun >/dev/null 2>&1; then bun run build; else npm run build; fi",
+    "devCommand": "if command -v bun >/dev/null 2>&1; then bun run dev; else npm run dev; fi",
     "outputDirectory": "dist",
     "public": true
 }

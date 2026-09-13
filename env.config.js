@@ -1,8 +1,9 @@
 import assert from "node:assert";
 import "dotenv/config";
-import { resolve, join, relative } from "node:path";
+import { resolve, join, relative, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import fs from "node:fs";
-import { $ } from "bun";
+import { $, isBun } from "./src/utils/runtime.js";
 import yaml from "js-yaml";
 import { transformLanguage } from "./src/utils/languages.js";
 import {
@@ -53,7 +54,10 @@ export const WORKING_DIR_ABSOLUTE =
   processEnv.WORKING_DIR_ABSOLUTE ||
   (CONTENT_DIR && resolve(CONTENT_PATH_PREFIX, CONTENT_DIR));
 
-export const SRC_DIR_ABSOLUTE = resolve(__dirname, "src");
+export const SRC_DIR_ABSOLUTE = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "src",
+);
 export const SRC_DIR_FROM_WORKING_DIR = WORKING_DIR_ABSOLUTE
   ? relative(WORKING_DIR_ABSOLUTE, SRC_DIR_ABSOLUTE)
   : null;
@@ -487,9 +491,23 @@ export const brandStyles = [
   brandPalettesStyles || "",
 ].join("\n");
 
-const unoCssConfig =
-  await import("./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js");
-export const fontPreloadTags = unoCssConfig.fontPreloadTags;
+// uno.config.js imports this module: awaiting it here deadlocks under Node's
+// cyclic top-level-await rules, so Node resolves it lazily instead.
+export let fontPreloadTags = "";
+if (isBun) {
+  const unoCssConfig = await import(
+    "./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js"
+  );
+  fontPreloadTags = unoCssConfig.fontPreloadTags;
+} else {
+  import("./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js")
+    .then((unoCssConfig) => {
+      fontPreloadTags = unoCssConfig.fontPreloadTags;
+    })
+    .catch((error) => {
+      console.error("Could not load uno.config.js:", error);
+    });
+}
 
 // TODO: Import ctx.css
 // Once ctx.css is a proper library, we can import layers individually from node_modules
