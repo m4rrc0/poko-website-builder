@@ -143,13 +143,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ needs.setup.outputs.bun_version }}
-
-      # Keep the Bun execution stream when Bun is in context; fall back to
-      # npm/Node when it is not (e.g. this step or the action is removed).
+      # Select the runtime before provisioning Bun so the npm/Node fallback
+      # stays reachable: Setup Bun only runs when Bun is already in context
+      # (pinning its version); otherwise the job goes straight to Node.
       - name: Detect runtime
         id: runtime
         run: |
@@ -158,6 +154,12 @@ jobs:
           else
             echo "bun=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Setup Bun
+        if: steps.runtime.outputs.bun == 'true'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ needs.setup.outputs.bun_version }}
 
       - name: Setup Node
         if: steps.runtime.outputs.bun != 'true'
