@@ -8,7 +8,7 @@ async function loadNodeHTMLRewriter() {
   } catch (error) {
     console.error("HTMLRewriter not available without Bun.");
     console.error("Install `html-rewriter-wasm` to enable it under Node.", error);
-    return null;
+    throw error;
   }
 }
 
@@ -49,7 +49,6 @@ export default async function (eleventyConfig, pluginOptions) {
   }
 
   const NodeHTMLRewriter = await loadNodeHTMLRewriter();
-  if (!NodeHTMLRewriter) return;
 
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
