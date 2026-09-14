@@ -6,20 +6,20 @@ import { spawn, spawnSync } from "node:child_process";
 
 const commands = {
   build: {
-    bun: "bun --bun run eleventy",
-    node: "eleventy",
+    bun: ["bun", "--bun", "run", "eleventy"],
+    node: ["eleventy"],
   },
   "build:gh-pages": {
-    bun: "bun --bun run eleventy",
-    node: "eleventy",
+    bun: ["bun", "--bun", "run", "eleventy"],
+    node: ["eleventy"],
   },
   dev: {
-    bun: "bun --bun run eleventy --serve",
-    node: "eleventy --serve",
+    bun: ["bun", "--bun", "run", "eleventy", "--serve"],
+    node: ["eleventy", "--serve"],
   },
   start: {
-    bun: "bunx --bun @11ty/eleventy@canary --serve",
-    node: "npx --yes @11ty/eleventy@canary --serve",
+    bun: ["bunx", "--bun", "@11ty/eleventy@canary", "--serve"],
+    node: ["npx", "--yes", "@11ty/eleventy@canary", "--serve"],
   },
 };
 
@@ -36,14 +36,18 @@ const hasBun =
   typeof process.versions?.bun !== "undefined" ||
   spawnSync("bun", ["--version"], { stdio: "ignore" }).status === 0;
 
-// Args after `npm run <script> -- …` are forwarded to the command.
-const extraArgs = process.argv.slice(3).join(" ");
-const cmd = (hasBun ? command.bun : command.node) + (extraArgs && ` ${extraArgs}`);
+const [file, ...baseArgs] = hasBun ? command.bun : command.node;
+// Args after `npm run <script> -- …` are forwarded unchanged, keeping each
+// argument's boundaries intact.
+const args = [...baseArgs, ...process.argv.slice(3)];
 
-const proc = spawn(cmd, {
-  shell: true,
+const proc = spawn(file, args, {
   stdio: "inherit",
   env: process.env,
+  // node_modules/.bin and npx are .cmd shims: they cannot be spawned
+  // directly on Windows, so they go through cmd.exe there (Node escapes
+  // the args). POSIX spawns without a shell.
+  shell: process.platform === "win32",
 });
 proc.on("error", (error) => {
   console.error(error);
