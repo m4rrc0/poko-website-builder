@@ -51,10 +51,13 @@ export default async function (eleventyConfig, pluginOptions) {
       const rewriter = new NodeHTMLRewriter((chunk) => {
         html += decoder.decode(chunk, { stream: true });
       });
-      registerHandlers(rewriter);
-      await rewriter.write(encoder.encode(content));
-      await rewriter.end();
-      rewriter.free();
+      try {
+        registerHandlers(rewriter);
+        await rewriter.write(encoder.encode(content));
+        await rewriter.end();
+      } finally {
+        rewriter.free();
+      }
       html += decoder.decode();
 
       return html;
