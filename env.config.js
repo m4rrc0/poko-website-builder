@@ -3,7 +3,7 @@ import "dotenv/config";
 import { resolve, join, relative, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs";
-import { $, isBun } from "./src/utils/runtime.js";
+import { $ } from "./src/utils/runtime.js";
 import yaml from "js-yaml";
 import { transformLanguage } from "./src/utils/languages.js";
 import {
@@ -491,23 +491,17 @@ export const brandStyles = [
   brandPalettesStyles || "",
 ].join("\n");
 
-// uno.config.js imports this module: awaiting it here deadlocks under Node's
-// cyclic top-level-await rules, so Node resolves it lazily instead.
+// uno.config.js imports this module: awaiting it at top level deadlocks under
+// Node's cyclic top-level-await rules, so it resolves lazily on both runtimes.
+// Consumers must await `fontPreloadTagsReady` before reading `fontPreloadTags`.
 export let fontPreloadTags = "";
-if (isBun) {
+export const fontPreloadTagsReady = (async () => {
   const unoCssConfig = await import(
     "./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js"
   );
   fontPreloadTags = unoCssConfig.fontPreloadTags;
-} else {
-  import("./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js")
-    .then((unoCssConfig) => {
-      fontPreloadTags = unoCssConfig.fontPreloadTags;
-    })
-    .catch((error) => {
-      console.error("Could not load uno.config.js:", error);
-    });
-}
+  return fontPreloadTags;
+})();
 
 // TODO: Import ctx.css
 // Once ctx.css is a proper library, we can import layers individually from node_modules

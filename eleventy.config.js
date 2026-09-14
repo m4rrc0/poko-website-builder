@@ -79,6 +79,7 @@ import {
   inlineAllStyles,
   brandStyles,
   fontPreloadTags,
+  fontPreloadTagsReady,
   userHtmlClasses,
 } from "./env.config.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
@@ -463,6 +464,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addGlobalData("brandConfig", brandConfig);
   eleventyConfig.addGlobalData("inlineAllStyles", inlineAllStyles);
   eleventyConfig.addGlobalData("brandStyles", brandStyles);
+  await fontPreloadTagsReady;
   eleventyConfig.addGlobalData("fontPreloadTags", fontPreloadTags);
   // eleventyConfig.addGlobalData("pageFooter", "");
   // Computed Data
