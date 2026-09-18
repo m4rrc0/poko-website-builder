@@ -21,9 +21,10 @@ export default { ...processEnv };
 // Root of the engine package. Engine paths resolve against it, content paths
 // stay relative to the consumer's working directory.
 export { PACKAGE_ROOT, packagePath };
-// Git inference and validation are explicit, see `initPokoEnv`. Importing this
+// Git inference and validation live in `./src/env/init.js` (`initPokoEnv`) and
+// are deliberately not re-exported here: importing them from this module would
+// evaluate these constants before git values are inferred. Importing this
 // module never shells out and never throws.
-export { initPokoEnv } from "./src/env/init.js";
 
 // GENERAL
 export const DEBUG = processEnv.DEBUG === "true" ? true : false;

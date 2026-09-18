@@ -15,6 +15,7 @@
     ".": "./eleventy.config.js",
     "./eleventy": "./eleventy.config.js",
     "./env": "./env.config.js",
+    "./env/init": "./src/env/init.js",
     "./cms-config": "./src/config-11ty/plugins/cms-config/config.js",
     "./cli": "./scripts/cli.js",
     "./package.json": "./package.json"
