@@ -60,7 +60,7 @@ needs a `package.json`, an `eleventy.config.js` and a `_content/` directory —
 see [`template/`](./template) for a working example.
 
 ```sh
-bun add poko-website-builder
+npm install poko-website-builder   # or: bun add poko-website-builder
 ```
 
 ```js
@@ -69,12 +69,15 @@ export { default, config } from "poko-website-builder/eleventy";
 ```
 
 ```sh
-bun poko build   # write the site to dist/
-bun poko dev     # build, watch and serve
+npx poko build   # write the site to dist/
+npx poko dev     # build, watch and serve
 ```
 
+The CLI runs on Node or Bun: it uses Bun's APIs when running under Bun and the
+Node equivalents otherwise.
+
 In this repository, the engine's own content lives next to it and is built with
-`bun run build:content` / `bun run dev:content` (and `:demo` for the demo site).
+`npm run build:content` / `npm run dev:content` (and `:demo` for the demo site).
 Those directories are never published in the package.
 
 ## User Guide (draft)

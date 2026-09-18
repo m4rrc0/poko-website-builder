@@ -96,6 +96,17 @@ export function runCli(argv = process.argv.slice(2)) {
   });
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// `node_modules/.bin/poko` is a symlink to this file, so compare real paths.
+function isMainModule() {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    return import.meta.url === pathToFileURL(fs.realpathSync(entry)).href;
+  } catch (error) {
+    return false;
+  }
+}
+
+if (isMainModule()) {
   await runCli();
 }

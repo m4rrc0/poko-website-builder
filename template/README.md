@@ -16,8 +16,8 @@ Minimal website consuming the [`poko-website-builder`](https://github.com/m4rrc0
 ## Usage
 
 ```sh
-bun install
+npm install    # or: bun install
 cp .env.example .env
-bun run dev    # build, watch and serve on http://localhost:8080
-bun run build  # write the site to dist/
+npm run dev    # build, watch and serve on http://localhost:8080
+npm run build  # write the site to dist/
 ```
