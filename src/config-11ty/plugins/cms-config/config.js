@@ -15,6 +15,7 @@ import {
   COLLECTIONS,
   selectedCollections,
   allLanguages,
+  initialCmsSetup,
   userCmsConfig,
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
@@ -44,7 +45,6 @@ import {
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
 
 const isDev = NODE_ENV === "development";
-const mustSetup = !allLanguages?.length;
 
 const default_locale = allLanguages.find((lang) => lang.isCmsDefault)?.code;
 const locales = allLanguages
@@ -89,7 +89,8 @@ export const varsField = {
   name: "vars",
   label: "Variables (vars)",
   widget: "keyvalue",
-  i18n: true,
+  i18n: "duplicate_keys",
+  allow_reorder: true, // TODO: do not think this is working
   required: false,
   preview: false,
   dataField: true,
@@ -1395,6 +1396,7 @@ export const pageFields = [
   },
   ...spreadCommonPageFields(),
 ];
+// TODO: make pages a nestable collection: https://sveltiacms.app/en/docs/collections/entries#creating-editable-nested-structures
 export const pages = {
   ...mostCommonMarkdownCollectionConfig,
   name: COLLECTIONS.pages.name,
@@ -1511,7 +1513,7 @@ export const creativeWorkFields = [
         {
           name: "datePublished",
           label: "Date Published",
-          type: "datetime",
+          type: "datetime-local",
           widget: "datetime",
           format: "YYYY-MM-DDTHH:mm:ss",
           required: false,
@@ -1520,7 +1522,7 @@ export const creativeWorkFields = [
         {
           name: "dateModified",
           label: "Date Modified",
-          type: "datetime",
+          type: "datetime-local",
           widget: "datetime",
           format: "YYYY-MM-DDTHH:mm:ss",
           required: false,
@@ -1568,7 +1570,7 @@ export const articleFields = [
         {
           name: "datePublished",
           label: "Date Published",
-          type: "datetime",
+          type: "datetime-local",
           widget: "datetime",
           format: "YYYY-MM-DDTHH:mm:ss",
           required: false,
@@ -1577,7 +1579,7 @@ export const articleFields = [
         {
           name: "dateModified",
           label: "Date Modified",
-          type: "datetime",
+          type: "datetime-local",
           widget: "datetime",
           format: "YYYY-MM-DDTHH:mm:ss",
           required: false,
@@ -1653,7 +1655,7 @@ export const eventFields = [
           name: "startDate",
           label: "Start Date",
           widget: "datetime",
-          type: "datetime",
+          type: "datetime-local",
           hint: "Start date of the event",
           format: "YYYY-MM-DDTHH:mm:ss",
           required: false,
@@ -1663,7 +1665,7 @@ export const eventFields = [
           name: "endDate",
           label: "End Date",
           widget: "datetime",
-          type: "datetime",
+          type: "datetime-local",
           hint: "End date of the event",
           format: "YYYY-MM-DDTHH:mm:ss",
           required: false,
@@ -1761,7 +1763,7 @@ export const eventFields = [
               name: "validFrom",
               label: "Valid From",
               widget: "datetime",
-              type: "datetime",
+              type: "datetime-local",
               format: "YYYY-MM-DDTHH:mm:ss",
               required: false,
               i18n: true,
@@ -2194,9 +2196,18 @@ const optionalCollections = {
   howtos: howtoCollection, //HowTo in schema.org
 };
 export function getSelectedCollections() {
-  const selectedOptionalCollections = (selectedCollections || [])
-    .map((collectionName) => optionalCollections[collectionName])
-    .filter(Boolean);
+  // NOTE: previously we were filtering collections inside of hiding them but makes relations crash cms config
+  // const selectedOptionalCollections = (selectedCollections || [])
+  //   .map((collectionName) => optionalCollections[collectionName])
+  //   .filter(Boolean);
+  const selectedOptionalCollections = Object.entries(optionalCollections).map(
+    ([key, val]) => {
+      return {
+        ...val,
+        hide: selectedCollections.includes(key) ? false : true,
+      };
+    },
+  );
   return selectedOptionalCollections;
 }
 
@@ -2212,7 +2223,12 @@ export function getSelectedCollections() {
  */
 export async function getActiveCollections() {
   const userConfig = await userCmsConfig();
-  return [...getSelectedCollections(), ...(userConfig?.collections || [])];
+  return [
+    ...getSelectedCollections().filter(
+      (c) => !userConfig?.collections?.some((uc) => uc.name === c.name),
+    ),
+    ...(userConfig?.collections || []),
+  ];
 }
 // const selectedOptionalCollections = (selectedCollections || [])
 //   .map((collectionName) => optionalCollections[collectionName])
@@ -2687,6 +2703,7 @@ const globalSettingsSingleton = {
       name: "productionUrl",
       label: "Production URL",
       widget: "string",
+      default: "https://",
       pattern: [
         "^(http|https)://[\\w\\-._~:/?#[\\]@!$&'()*+,;=%]+$",
         "Must be a URL starting with http:// or https://",
@@ -3502,7 +3519,7 @@ export class CmsConfig {
         },
       },
       collections: [
-        ...(mustSetup
+        ...(initialCmsSetup
           ? []
           : [
               // `pagesCollection` + `allSelectedCollections` = built-in
@@ -3513,7 +3530,7 @@ export class CmsConfig {
               ...allSelectedCollections,
               { divider: true },
               // {
-              //   divider: Boolean(!mustSetup && userConfig.collections?.length),
+              //   divider: Boolean(!initialCmsSetup && userConfig.collections?.length),
               // },
               // navCollection(allSelectedCollections),
               // navCollection2,
@@ -3532,10 +3549,10 @@ export class CmsConfig {
             ]),
       ],
       singletons: [
-        // ...(mustSetup ? [] : [styleTokensSingleton]),
+        // ...(initialCmsSetup ? [] : [styleTokensSingleton]),
         globalSettingsSingleton,
-        { divider: Boolean(!mustSetup && userConfig.singletons?.length) },
-        ...(mustSetup ? [] : [...userConfig.singletons]),
+        { divider: Boolean(!initialCmsSetup && userConfig.singletons?.length) },
+        ...(initialCmsSetup ? [] : [...userConfig.singletons]),
       ],
     };
 
