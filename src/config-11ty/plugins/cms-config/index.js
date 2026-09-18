@@ -1,6 +1,7 @@
 import { CmsConfig } from "./config.js";
 import { CmsPage } from "./page.js";
 import { getActiveCollections, getActiveEditorComponents } from "./config.js";
+import { enginePath, dependencyEnginePath } from "../../../utils/paths.js";
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
@@ -14,9 +15,9 @@ export default async function (eleventyConfig, pluginOptions) {
   // Copy Sveltia CMS if not using CDN
   if (CMS_IMPORT === "npm") {
     eleventyConfig.addPassthroughCopy({
-      "node_modules/@sveltia/cms/dist/sveltia-cms.js":
+      [dependencyEnginePath("@sveltia/cms", "dist/sveltia-cms.js")]:
         "assets/js/sveltia-cms.js",
-      "node_modules/@sveltia/cms/dist/sveltia-cms.mjs":
+      [dependencyEnginePath("@sveltia/cms", "dist/sveltia-cms.mjs")]:
         "assets/js/sveltia-cms.mjs",
     });
   } else if (CMS_IMPORT.startsWith("../../")) {
@@ -26,14 +27,15 @@ export default async function (eleventyConfig, pluginOptions) {
     });
   } else if (CMS_IMPORT === "local") {
     eleventyConfig.addPassthroughCopy({
-      "assets/js/sveltia-cms.js": "assets/js/sveltia-cms.js",
-      "assets/js/sveltia-cms.mjs": "assets/js/sveltia-cms.mjs",
+      [enginePath("assets/js/sveltia-cms.js")]: "assets/js/sveltia-cms.js",
+      [enginePath("assets/js/sveltia-cms.mjs")]: "assets/js/sveltia-cms.mjs",
     });
   }
 
   eleventyConfig.addPassthroughCopy({
-    "src/config-11ty/plugins/cms-config/defaultEditorComponents.js":
-      "admin/defaultEditorComponents.js",
+    [enginePath(
+      "src/config-11ty/plugins/cms-config/defaultEditorComponents.js",
+    )]: "admin/defaultEditorComponents.js",
   });
 
   eleventyConfig.addTemplate(

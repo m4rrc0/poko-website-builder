@@ -1,9 +1,10 @@
 import fglob from "fast-glob";
 import { MINIFY, brandConfig, POKO_THEME } from "../../../../env.config.js";
+import { enginePath } from "../../../utils/paths.js";
 import { buildCss } from "../../../utils/runtime.js";
 
 const mustImportCtxCss = !!brandConfig?.ctxCssImport;
-const ctxCssEntrypoint = `./src/styles/ctx/ctx.css`;
+const ctxCssEntrypoint = enginePath("src/styles/ctx/ctx.css");
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
@@ -17,7 +18,7 @@ export default async function (eleventyConfig, pluginOptions) {
   let CtxCssInline = null;
 
   let entrypoints = await fglob([
-    `src/themes/${POKO_THEME}/_styles/*.css`,
+    enginePath(`src/themes/${POKO_THEME}/_styles/*.css`),
     `${dir.input}/${inputGlob}`,
   ]);
   // Remove entrypoint files that start with an underscore

@@ -49,6 +49,7 @@ import markdownItAttrs from "markdown-it-attrs";
 import markdownItBracketedSpans from "markdown-it-bracketed-spans";
 // -------- Env Variables
 import * as envConf from "./env.config.js";
+import { enginePath, dependencyEnginePath } from "./src/utils/paths.js";
 import {
   DEBUG,
   CMS_IMPORT,
@@ -174,33 +175,37 @@ function mRCTOptions(tagName) {
   };
 }
 
+const simpleIconsDir = dependencyEnginePath("simple-icons", "icons");
+const tablerOutlineDir = dependencyEnginePath("@tabler/icons", "icons/outline");
+const tablerFilledDir = dependencyEnginePath("@tabler/icons", "icons/filled");
+
 const iconSources = [
   {
     name: "simple",
-    path: "node_modules/simple-icons/icons",
+    path: simpleIconsDir,
     default: true,
   },
   {
     name: "tabler",
-    path: "node_modules/@tabler/icons/icons/outline",
+    path: tablerOutlineDir,
   },
   {
     name: "tablerOutline",
-    path: "node_modules/@tabler/icons/icons/outline",
+    path: tablerOutlineDir,
   },
   {
     name: "tablerFilled",
-    path: "node_modules/@tabler/icons/icons/filled",
+    path: tablerFilledDir,
   },
-];
+].filter((source) => Boolean(source.path));
 
-const simple = fglob.globSync("node_modules/simple-icons/icons/*.svg");
-const tablerOutline = fglob.globSync(
-  "node_modules/@tabler/icons/icons/outline/*.svg",
-);
-const tablerFilled = fglob.globSync(
-  "node_modules/@tabler/icons/icons/filled/*.svg",
-);
+function globIcons(pattern) {
+  return pattern ? fglob.globSync(pattern) : [];
+}
+
+const simple = globIcons(simpleIconsDir && `${simpleIconsDir}/*.svg`);
+const tablerOutline = globIcons(tablerOutlineDir && `${tablerOutlineDir}/*.svg`);
+const tablerFilled = globIcons(tablerFilledDir && `${tablerFilledDir}/*.svg`);
 
 const iconLists = {
   simple: simple.map((filePath) =>
@@ -244,15 +249,18 @@ export default async function (eleventyConfig) {
 
   eleventyConfig.setWatchThrottleWaitTime(500); // in milliseconds
 
-  eleventyConfig.addWatchTarget("./src/config-11ty/**/*", {
+  eleventyConfig.addWatchTarget(enginePath("src/config-11ty/**/*"), {
     resetConfig: true,
   });
-  eleventyConfig.addWatchTarget("./src/styles/**/*.css", {
+  eleventyConfig.addWatchTarget(enginePath("src/styles/**/*.css"), {
     resetConfig: true,
   });
-  // eleventyConfig.addWatchTarget("./src/**/*");
-  eleventyConfig.addWatchTarget("./env.config.js", { resetConfig: true });
-  eleventyConfig.addWatchTarget("./eleventy.config.js", { resetConfig: true });
+  eleventyConfig.addWatchTarget(enginePath("env.config.js"), {
+    resetConfig: true,
+  });
+  eleventyConfig.addWatchTarget(enginePath("eleventy.config.js"), {
+    resetConfig: true,
+  });
   eleventyConfig.addWatchTarget(`${WORKING_DIR}/**/*.css`, {
     resetConfig: true,
   });
@@ -637,14 +645,14 @@ export default async function (eleventyConfig) {
     [`${WORKING_DIR}/_config/editorComponents.js`]:
       "admin/userEditorComponents.js",
     // Populate Default Content: Copy `src/content-static/` to `dist`
-    "src/content-static": "/",
+    [enginePath("src/content-static")]: "/",
     // Copy User's files: `src/content-static/` to `dist`
     [`${WORKING_DIR}/_files`]: "/assets/files/",
     [`${WORKING_DIR}/_files/_redirects`]: "_redirects",
     [`${WORKING_DIR}/_files/_headers`]: "_headers",
     // All CSS files to assets
     [`${WORKING_DIR}/*.css`]: "/assets/styles/",
-    "assets/js/instant-page.js": "assets/js/instant-page.js",
+    [enginePath("assets/js/instant-page.js")]: "assets/js/instant-page.js",
     // TODO:
     // "node_modules/formbouncerjs/dist/bouncer.polyfills.min.js": "assets/js/formbouncer.js",
     // Add like this:
@@ -657,8 +665,8 @@ export default async function (eleventyConfig) {
     // logLevel: 'debug',
     sources: [
       // TODO: Make this selectable from the CMS
-      `src/themes/${POKO_THEME}`,
-      "src/content",
+      enginePath(`src/themes/${POKO_THEME}`),
+      enginePath("src/content"),
     ],
   });
   // Partials expand on the renderFile shortcode
@@ -670,8 +678,8 @@ export default async function (eleventyConfig) {
         resolveDiscriminant: (data) => (data?.lang ? `/${data.lang}/` : ""),
       },
       path.join(WORKING_DIR, PARTIALS_DIR),
-      path.join(`src/themes/${POKO_THEME}/_partials`),
-      path.join("src/content/_partials"),
+      enginePath(`src/themes/${POKO_THEME}/_partials`),
+      enginePath("src/content/_partials"),
     ],
     shortcodeAliases: [
       "partial",

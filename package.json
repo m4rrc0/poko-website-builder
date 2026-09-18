@@ -10,11 +10,33 @@
     "url": "https://github.com/m4rrc0/poko-website-builder.git"
   },
   "type": "module",
-  "module": "index.ts",
-  "dependencies": {
-    "@sveltia/cms": "^0.215.0"
+  "main": "./eleventy.config.js",
+  "exports": {
+    ".": "./eleventy.config.js",
+    "./eleventy": "./eleventy.config.js",
+    "./env": "./env.config.js",
+    "./env/init": "./src/env/init.js",
+    "./cms-config": "./src/config-11ty/plugins/cms-config/config.js",
+    "./cli": "./scripts/cli.js",
+    "./package.json": "./package.json"
   },
-  "devDependencies": {
+  "bin": {
+    "poko": "./scripts/cli.js"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "files": [
+    "LICENSES",
+    "assets",
+    "eleventy.config.js",
+    "env.config.js",
+    "scripts",
+    "src"
+  ],
+  "dependencies": {
+    "@sveltia/cms": "^0.215.0",
     "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-fetch": "^5.1.0",
     "@11ty/eleventy-img": "^6.0.3",
@@ -27,7 +49,6 @@
     "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
     "@sindresorhus/slugify": "^2.2.1",
     "@tabler/icons": "^3.34.0",
-    "@types/bun": "latest",
     "chalk": "^5.4.1",
     "dayjs": "^1.11.13",
     "deepmerge": "^4.3.1",
@@ -50,9 +71,12 @@
     "markdown-it-mark": "^4.0.0",
     "memoize": "^10.1.0",
     "simple-icons": "^15.5.0",
-    "typescript": "^5.8.2",
     "unocss": "^66.4.2",
-    "utopia-core": "^1.6.0",
+    "utopia-core": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.8.2",
     "wrangler": "^4.61.1"
   },
   "bugs": {
@@ -72,12 +96,25 @@
     "11ty",
     "svelte"
   ],
-  "license": "",
-  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "build": "node scripts/run.js build",
+    "cf-build": "node scripts/run.js build",
     "build:gh-pages": "node scripts/run.js build:gh-pages",
+    "build:demo": "node scripts/run.js build:demo",
+    "build:content": "node scripts/run.js build:content",
     "dev": "node scripts/run.js dev",
+    "dev:demo": "node scripts/run.js dev:demo",
+    "dev:content": "node scripts/run.js dev:content",
+    "dev:script": "node scripts/run.js dev:script",
+    "poko": "node scripts/cli.js",
+    "pack:check": "npm pack --dry-run",
+    "release:patch": "npm version patch",
+    "release:minor": "npm version minor",
+    "release:major": "npm version major",
+    "release:rc": "npm version prerelease --preid=rc",
+    "preversion": "npm run pack:check",
+    "postversion": "git push --follow-tags",
     "start": "node scripts/run.js start",
     "clean": "rm -rf dist",
     "clean:modules": "rm -rf dist node_modules",

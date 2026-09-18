@@ -4,18 +4,25 @@
 // command line when `bun` is on PATH, the npm-equivalent otherwise.
 import { spawn, spawnSync } from "node:child_process";
 
+// The `poko` CLI drives Eleventy programmatically, so both runtimes run the
+// same script; env-only variants pick the content directory to build.
+const poko = (args, env) => ({
+  bun: ["bun", "--bun", "scripts/cli.js", ...args],
+  node: ["node", "scripts/cli.js", ...args],
+  env,
+});
+
 const commands = {
-  build: {
-    bun: ["bun", "--bun", "run", "eleventy"],
-    node: ["eleventy"],
-  },
-  "build:gh-pages": {
-    bun: ["bun", "--bun", "run", "eleventy"],
-    node: ["eleventy"],
-  },
-  dev: {
-    bun: ["bun", "--bun", "run", "eleventy", "--serve"],
-    node: ["eleventy", "--serve"],
+  build: poko(["build"]),
+  "build:gh-pages": poko(["build"]),
+  "build:demo": poko(["build"], { WORKING_DIR: "_demo" }),
+  "build:content": poko(["build"], { WORKING_DIR: "_content" }),
+  dev: poko(["dev"]),
+  "dev:demo": poko(["dev"], { WORKING_DIR: "_demo" }),
+  "dev:content": poko(["dev"], { WORKING_DIR: "_content" }),
+  "dev:script": {
+    bun: ["bun", "--bun", "scripts/dev.ts"],
+    node: ["node", "scripts/dev.ts"],
   },
   start: {
     bun: ["bunx", "--bun", "@11ty/eleventy@canary", "--serve"],
@@ -43,7 +50,7 @@ const args = [...baseArgs, ...process.argv.slice(3)];
 
 const proc = spawn(file, args, {
   stdio: "inherit",
-  env: process.env,
+  env: { ...process.env, ...command.env },
   // node_modules/.bin and npx are .cmd shims: they cannot be spawned
   // directly on Windows, so they go through cmd.exe there (Node escapes
   // the args). POSIX spawns without a shell.
