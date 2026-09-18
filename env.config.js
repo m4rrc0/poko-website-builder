@@ -393,6 +393,8 @@ export const selectedCollections = globalSettings?.collections || [];
 export const allLanguages =
   globalSettings?.languages?.map(transformLanguage) || [];
 
+export const initialCmsSetup = !allLanguages?.length;
+
 export const languages = allLanguages.filter(
   (lang) => !statusesToUnrender.includes(lang.status),
 );

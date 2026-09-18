@@ -958,8 +958,8 @@ const parseSectionWrapper = (attrsString) => {
     "class",
   ]);
   return {
-    class: extracted?.class || undefined,
-    attributes: remaining || undefined,
+    ...(extracted?.class ? { class: extracted?.class } : {}),
+    ...(remaining ? { attributes: remaining } : {}),
   };
 };
 

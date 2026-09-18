@@ -16,7 +16,7 @@
         "@mdit/plugin-container": "^0.22.1",
         "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
         "@sindresorhus/slugify": "^2.2.1",
-        "@sveltia/cms": "^0.189.0",
+        "@sveltia/cms": "^0.210.2",
         "@tabler/icons": "^3.34.0",
         "chalk": "^5.4.1",
         "dayjs": "^1.11.13",
@@ -341,7 +341,7 @@
 
     "@speed-highlight/core": ["@speed-highlight/core@1.2.14", "", {}, "sha512-G4ewlBNhUtlLvrJTb88d2mdy2KRijzs4UhnlrOSRT4bmjh/IqNElZa3zkrZ+TC47TwtlDWzVLFADljF1Ijp5hA=="],
 
-    "@sveltia/cms": ["@sveltia/cms@0.189.0", "", {}, "sha512-icgquQLxDDMnCN9wE5Z5sNs1MvkBCRa+hC1JdjjT+qO/fA7FLSuLkQEpG8hWxF0nl78M1g9CuzxhW1zHU19k1w=="],
+    "@sveltia/cms": ["@sveltia/cms@0.210.3", "", {}, "sha512-EspVFwhUBqRVCG7YtfI6ftzPypruOQk1IcYV/VB7/OFRrcH0EgHTVsvBM6nHuRFXVLjJ9XRfn3WqohjgXoTD/Q=="],
 
     "@tabler/icons": ["@tabler/icons@3.34.0", "", {}, "sha512-jtVqv0JC1WU2TTEBN32D9+R6mc1iEBuPwLnBsWaR02SIEciu9aq5806AWkCHuObhQ4ERhhXErLEK7Fs+tEZxiA=="],
 
