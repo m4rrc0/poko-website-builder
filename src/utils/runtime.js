@@ -26,7 +26,8 @@ const shQuote = (value) => `'${String(value).replace(/'/g, `'\\''`)}'`;
  */
 const nodeShell = (strings, ...values) => {
   const command = strings.reduce(
-    (cmd, part, i) => cmd + part + (i < values.length ? shQuote(values[i]) : ""),
+    (cmd, part, i) =>
+      cmd + part + (i < values.length ? shQuote(values[i]) : ""),
     "",
   );
   const run = execAsync(command);

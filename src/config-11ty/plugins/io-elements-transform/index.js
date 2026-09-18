@@ -7,7 +7,10 @@ async function loadNodeHTMLRewriter() {
     return HTMLRewriter;
   } catch (error) {
     console.error("HTMLRewriter not available without Bun.");
-    console.error("Install `html-rewriter-wasm` to enable it under Node.", error);
+    console.error(
+      "Install `html-rewriter-wasm` to enable it under Node.",
+      error,
+    );
     throw error;
   }
 }

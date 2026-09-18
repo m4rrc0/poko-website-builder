@@ -498,9 +498,8 @@ export const brandStyles = [
 // Consumers must await `fontPreloadTagsReady` before reading `fontPreloadTags`.
 export let fontPreloadTags = "";
 export const fontPreloadTagsReady = (async () => {
-  const unoCssConfig = await import(
-    "./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js"
-  );
+  const unoCssConfig =
+    await import("./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js");
   fontPreloadTags = unoCssConfig.fontPreloadTags;
   return fontPreloadTags;
 })();
