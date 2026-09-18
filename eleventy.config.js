@@ -80,6 +80,7 @@ import {
   inlineAllStyles,
   brandStyles,
   fontPreloadTags,
+  fontPreloadTagsReady,
   userHtmlClasses,
 } from "./env.config.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
@@ -471,6 +472,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addGlobalData("brandConfig", brandConfig);
   eleventyConfig.addGlobalData("inlineAllStyles", inlineAllStyles);
   eleventyConfig.addGlobalData("brandStyles", brandStyles);
+  await fontPreloadTagsReady;
   eleventyConfig.addGlobalData("fontPreloadTags", fontPreloadTags);
   // eleventyConfig.addGlobalData("pageFooter", "");
   // Computed Data
@@ -623,7 +625,7 @@ export default async function (eleventyConfig) {
 
   // Add classes to specific elements depending on the project
   const userHtmlClassesImport = await userHtmlClasses();
-  eleventyConfig.addPlugin(htmlClassesTransform, {
+  await eleventyConfig.addPlugin(htmlClassesTransform, {
     classes: {
       // <selector>: "<class>",
       // html: "imported-html-class",
@@ -635,7 +637,7 @@ export default async function (eleventyConfig) {
   // await eleventyConfig.addPlugin(ctxCss);
   await eleventyConfig.addPlugin(buildExternalCSS);
   await eleventyConfig.addPlugin(pluginUnoCSS);
-  eleventyConfig.addPlugin(ioElementsTransform);
+  await eleventyConfig.addPlugin(ioElementsTransform);
 
   // --------------------- Populate files and default content
   eleventyConfig.addPassthroughCopy({

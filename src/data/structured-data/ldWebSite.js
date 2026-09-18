@@ -1,5 +1,5 @@
 import { PROD_URL, SITE_NAME } from "../../../env.config.js";
-import { getId } from "./utils";
+import { getId } from "./utils.js";
 
 export default function () {
   return {

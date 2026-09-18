@@ -1,7 +1,11 @@
 // Inspiration for Bun scripts: https://github.com/oven-sh/bun/issues/7589
 import { watch } from "fs";
-import { $ } from "bun";
+import {
+  spawn as nodeSpawn,
+  type SpawnOptions as NodeSpawnOptions,
+} from "node:child_process";
 import type { SpawnOptions } from "bun";
+import { isBun } from "../src/utils/runtime.js";
 import {
   DEBUG,
   CMS_IMPORT,
@@ -20,11 +24,18 @@ import {
   PROD_URL,
 } from "../env.config.js";
 
-const spawnOptions: SpawnOptions.OptionsObject = {
+const spawnOptions: SpawnOptions.OptionsObject & NodeSpawnOptions = {
   stdin: "inherit",
   stdout: "inherit",
   stderr: "inherit",
 };
+
+// Bun.spawn under Bun, node:child_process.spawn under Node.
+function spawnProc(command: string[], options: typeof spawnOptions) {
+  if (isBun) return Bun.spawn(command, options);
+  const [bin, ...args] = command;
+  return nodeSpawn(bin, args, options);
+}
 
 export class c {
   static normal = "\x1b[0m";
@@ -40,42 +51,40 @@ function runCommand(
   command: string[],
   envObj?: Record<string, string>,
 ) {
-  const proc = Bun.spawn(command, {
+  const proc = spawnProc(command, {
     stdout: "pipe",
     stderr: "pipe",
     ...envObj,
   });
 
-  pipeOutput(proc.stdout, prefix);
-  pipeOutput(proc.stderr, prefix);
+  if (proc.stdout) pipeOutput(proc.stdout as AsyncIterable<Uint8Array>, prefix);
+  if (proc.stderr) pipeOutput(proc.stderr as AsyncIterable<Uint8Array>, prefix);
 }
 
-async function pipeOutput(stream: ReadableStream<Uint8Array>, prefix: string) {
+async function pipeOutput(stream: AsyncIterable<Uint8Array>, prefix: string) {
   const decoder = new TextDecoder();
   for await (const chunk of stream) {
     console.log(`${prefix} ${decoder.decode(chunk).trimEnd()}`);
   }
 }
 
-const cmd11tyBuild = ["bun", "--bun", "run", "eleventy"];
-const cmd11tyServe = [
-  "bun",
-  "--bun",
-  "run",
-  "eleventy-dev-server",
-  "--dir=dist",
-];
+const cmd11tyBuild = isBun
+  ? ["bun", "--bun", "run", "eleventy"]
+  : ["npx", "eleventy"];
+const cmd11tyServe = isBun
+  ? ["bun", "--bun", "run", "eleventy-dev-server", "--dir=dist"]
+  : ["npx", "eleventy-dev-server", "--dir=dist"];
 
 const run = async () => {
   // const runBuild = runCommand(`[${c.yellow("Initial Build")}] `, cmd11tyBuild);
   // runCommand(`[${c.magenta("astro")}]`, ["bun", "run", "dev.astro"]);
 
   // TODO: Instead of starting them independently, I should wait for the initial build to complete before starting the dev server.
-  const buildProcess = Bun.spawn(cmd11tyBuild, spawnOptions);
-  const serveProcess = Bun.spawn(cmd11tyServe, spawnOptions);
+  const buildProcess = spawnProc(cmd11tyBuild, spawnOptions);
+  const serveProcess = spawnProc(cmd11tyServe, spawnOptions);
 
   const localWatcher = watch(
-    import.meta.dir,
+    import.meta.dirname,
     { recursive: true },
     (event, relativePath) => {
       console.log(`Detected ${event} in local dir: ${relativePath}`);

@@ -1,7 +1,7 @@
-import { build as bunBuild, plugin as bunPlugin } from "bun";
 // import fglob from "fast-glob";
 import { MINIFY } from "../../../../env.config.js";
 import { enginePath } from "../../../utils/paths.js";
+import { buildCss } from "../../../utils/runtime.js";
 
 // TODO: plugin not working. May be because
 // const cssTransformPlugin = {
@@ -44,14 +44,12 @@ export default async function (eleventyConfig, pluginOptions) {
   const outdir = enginePath("src/styles");
   const entrypoints = [enginePath("src/styles/ctx/ctx.css")];
 
-  await bunBuild({
+  await buildCss({
     entrypoints,
     outdir,
-    // naming: '[name].css',
     naming: "ctx.css",
-    // plugins: [cssTransformPlugin],
     minify: MINIFY,
-    // cssChunking: true,
+    cssChunking: false,
   }).catch((e) => {
     console.error(e);
     throw e;

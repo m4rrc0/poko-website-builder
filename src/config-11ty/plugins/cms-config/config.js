@@ -20,6 +20,7 @@ import {
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
 import { packagePath } from "../../../utils/paths.js";
+import { readTextFile } from "../../../utils/runtime.js";
 import {
   sectionHeaderField,
   sectionFooterField,
@@ -983,7 +984,7 @@ try {
   const path = packagePath(
     "src/config-11ty/plugins/cms-config/defaultEditorComponents.js",
   );
-  const code = await Bun.file(path).text();
+  const code = await readTextFile(path);
   // Regex to find 'export const name', 'export function name', etc.
   defaultEditorComponentNames = [
     ...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/gm),
@@ -993,7 +994,7 @@ try {
 }
 try {
   const path = `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`;
-  const code = await Bun.file(path).text();
+  const code = await readTextFile(path);
   // Regex to find 'export const name', 'export function name', etc.
   userEditorComponentNames = [
     ...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/gm),

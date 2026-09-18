@@ -490,10 +490,16 @@ export const brandStyles = [
   brandPalettesStyles || "",
 ].join("\n");
 
-const unoCssConfig = await import(
-  "./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js"
-);
-export const fontPreloadTags = unoCssConfig.fontPreloadTags;
+// uno.config.js imports this module: awaiting it at top level deadlocks under
+// Node's cyclic top-level-await rules, so it resolves lazily on both runtimes.
+// Consumers must await `fontPreloadTagsReady` before reading `fontPreloadTags`.
+export let fontPreloadTags = "";
+export const fontPreloadTagsReady = (async () => {
+  const unoCssConfig =
+    await import("./src/config-11ty/plugins/plugin-eleventy-unocss/uno.config.js");
+  fontPreloadTags = unoCssConfig.fontPreloadTags;
+  return fontPreloadTags;
+})();
 
 // TODO: Import ctx.css
 // Once ctx.css is a proper library, we can import layers individually from node_modules
