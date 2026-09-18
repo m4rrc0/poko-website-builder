@@ -56,8 +56,9 @@ For licensing inquiries: legal-a4g6@mookai.be
 ## Using poko as a package
 
 poko is published as an npm package containing the whole engine. A website only
-needs a `package.json`, an `eleventy.config.js` and a `_content/` directory —
-see [`template/`](./template) for a working example.
+needs a `package.json` (with `"type": "module"`, since the configuration below is
+ESM), an `eleventy.config.js` and a `_content/` directory — see
+[`template/`](./template) for a working example.
 
 ```sh
 npm install poko-website-builder   # or: bun add poko-website-builder
@@ -69,8 +70,8 @@ export { default, config } from "poko-website-builder/eleventy";
 ```
 
 ```sh
-npx poko build   # write the site to dist/
-npx poko dev     # build, watch and serve
+npx poko build   # write the site to dist/ (bun: bunx poko build)
+npx poko dev     # build, watch and serve   (bun: bunx poko dev)
 ```
 
 The CLI runs on Node or Bun: it uses Bun's APIs when running under Bun and the
