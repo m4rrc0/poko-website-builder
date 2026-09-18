@@ -77,6 +77,7 @@ import {
   defaultLangCode,
   unrenderedLanguages,
   brandConfig,
+  hasUserEditorComponents,
   inlineAllStyles,
   brandStyles,
   fontPreloadTags,
@@ -204,7 +205,9 @@ function globIcons(pattern) {
 }
 
 const simple = globIcons(simpleIconsDir && `${simpleIconsDir}/*.svg`);
-const tablerOutline = globIcons(tablerOutlineDir && `${tablerOutlineDir}/*.svg`);
+const tablerOutline = globIcons(
+  tablerOutlineDir && `${tablerOutlineDir}/*.svg`,
+);
 const tablerFilled = globIcons(tablerFilledDir && `${tablerFilledDir}/*.svg`);
 
 const iconLists = {
@@ -642,8 +645,12 @@ export default async function (eleventyConfig) {
   // --------------------- Populate files and default content
   eleventyConfig.addPassthroughCopy({
     // Copy User's editorComponents.js to be used in the CMS
-    [`${WORKING_DIR}/_config/editorComponents.js`]:
-      "admin/userEditorComponents.js",
+    ...(hasUserEditorComponents
+      ? {
+          [`${WORKING_DIR}/_config/editorComponents.js`]:
+            "admin/userEditorComponents.js",
+        }
+      : {}),
     // Populate Default Content: Copy `src/content-static/` to `dist`
     [enginePath("src/content-static")]: "/",
     // Copy User's files: `src/content-static/` to `dist`

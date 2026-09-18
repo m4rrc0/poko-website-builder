@@ -371,6 +371,10 @@ export const userCmsConfig = async function () {
   return userCmsConfigTemp;
 };
 
+export const hasUserEditorComponents = fs.existsSync(
+  `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`,
+);
+
 export const userHtmlClasses = async function () {
   let userHtmlClassesTemp = {};
   try {
