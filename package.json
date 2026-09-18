@@ -23,7 +23,12 @@
   "bin": {
     "poko": "./scripts/cli.js"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "files": [
+    "LICENSES",
     "assets",
     "eleventy.config.js",
     "env.config.js",
@@ -91,7 +96,7 @@
     "11ty",
     "svelte"
   ],
-  "license": "",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "build": "node scripts/run.js build",
     "cf-build": "node scripts/run.js build",
@@ -103,6 +108,13 @@
     "dev:content": "node scripts/run.js dev:content",
     "dev:script": "node scripts/run.js dev:script",
     "poko": "node scripts/cli.js",
+    "pack:check": "npm pack --dry-run",
+    "release:patch": "npm version patch",
+    "release:minor": "npm version minor",
+    "release:major": "npm version major",
+    "release:rc": "npm version prerelease --preid=rc",
+    "preversion": "npm run pack:check",
+    "postversion": "git push --follow-tags",
     "start": "node scripts/run.js start",
     "clean": "rm -rf dist",
     "clean:modules": "rm -rf dist node_modules",

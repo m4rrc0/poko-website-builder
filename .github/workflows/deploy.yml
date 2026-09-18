@@ -20,6 +20,8 @@ on:
   # Runs on pushes to any branch (unless commit contains [skip ci]).
   # main -> production deploy; any other branch -> Cloudflare preview URL.
   push:
+    branches:
+      - "**"
   # Manual deployment with platform selection
   workflow_dispatch:
     inputs:

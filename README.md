@@ -81,6 +81,51 @@ In this repository, the engine's own content lives next to it and is built with
 `npm run build:content` / `npm run dev:content` (and `:demo` for the demo site).
 Those directories are never published in the package.
 
+### Working on the engine from a website
+
+To try unreleased engine changes in a website without publishing:
+
+```sh
+cd path/to/poko-website-builder && npm link
+cd path/to/my-website && npm link poko-website-builder
+# undo with: npm unlink poko-website-builder && npm install
+```
+
+For a check closer to a real install, pack the tarball instead — it contains
+exactly what npm would publish:
+
+```sh
+npm run pack:check    # list the files that would ship
+npm pack              # -> poko-website-builder-<version>.tgz
+cd path/to/my-website && npm install ../poko-website-builder/poko-website-builder-<version>.tgz
+```
+
+### Releasing
+
+Releases are cut from a tag and published by
+[`.github/workflows/release.yml`](./.github/workflows/release.yml). One command
+does everything:
+
+```sh
+npm run release:patch   # 0.1.0 -> 0.1.1   bug fixes
+npm run release:minor   # 0.1.0 -> 0.2.0   new features, backwards compatible
+npm run release:major   # 0.1.0 -> 1.0.0   breaking changes
+npm run release:rc      # 0.1.0 -> 0.1.1-rc.0, published under the `next` tag
+```
+
+Each one verifies the tarball contents, bumps `package.json`, commits, tags
+`v<version>` and pushes the tag. CI then publishes to npm with
+[provenance](https://docs.npmjs.com/generating-provenance-statements) and opens
+a GitHub release whose notes are generated from the commits and PRs since the
+previous tag — so commit and PR titles are the changelog. Prereleases publish
+under the `next` dist-tag and are marked as prereleases on GitHub.
+
+Until 1.0.0 the minor number carries breaking changes, as usual for `0.x`.
+
+One-time setup: an `NPM_TOKEN` repository secret holding an npm
+[granular access token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
+with publish rights on the package.
+
 ## User Guide (draft)
 
 > ⚠️ Warning: This guide needs to be updated since the project is being reworked.
