@@ -18,6 +18,14 @@ export class CmsPage {
       data?.globalSettings?.collections || [],
     );
 
+    // Same stylesheets as the site's <head> so the CMS preview pane matches the site
+    const previewStyleUrls = Array.from(
+      `${data.htmlExternalCtxCssTag || ""}\n${data.htmlExternalCssTags || ""}`.matchAll(
+        /href="([^"]+)"/g,
+      ),
+      (m) => m[1],
+    );
+
     return (
       `
 <!DOCTYPE html>
@@ -32,6 +40,9 @@ export class CmsPage {
     <link href="config.json" type="application/json" rel="cms-config-url" />
     <script eleventy:ignore>
       const currentCollections = JSON.parse('${currentCollections || "[]"}')
+      </script>
+      <script eleventy:ignore>
+        ${JSON.stringify(previewStyleUrls)}.forEach((url) => CMS.registerPreviewStyle(url));
       </script>
       ` +
       (data.env.initialCmsSetup
