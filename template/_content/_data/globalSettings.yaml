@@ -1,16 +1,1 @@
-siteName: My Poko Website
-productionUrl: https://example.com
-logo: ''
-htmlHead: ''
-cssHead: ''
-languages:
-  - code: en
-    status: published
-    name: English
-    isCmsDefault: true
-    isWebsiteDefault: true
-    customUrlPrefix:
-      prefix: ''
-collections: []
-metadata:
-  image: ''
+
