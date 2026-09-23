@@ -5,14 +5,18 @@ import {
   // activeCollectionNames,
   iconLists,
 } from "./env.js";
+import {
+  asyncPreview,
+  getRenderer,
+  sectionsSlots,
+  previewState,
+  setHtml,
+  SECTIONS_EMPTY_NOTE,
+} from "./preview-runtime.js";
 
 const { CONTENT_DIR } = env;
 // const iconLists = env?.iconLists || {};
 const iconLibs = Object.keys(iconLists) || [];
-
-const SECTION_WRAPPER_STYLE = `background-color: hsl(var(--sui-background-color-3-hsl) / 0.3);`;
-const AREA_ITEM_PREVIEW_STYLE = `border: 1px dashed hsl(var(--sui-background-color-4-hsl) / 1); margin-block-start: .5rem; padding: 0 1rem .5rem;`;
-const AREA_PREVIEW_STYLE = `border: 1px dashed hsl(var(--sui-background-color-4-hsl) / 1); margin-block-start: .5rem; padding: 0 .5rem .5rem;`;
 
 const ec = (idExcl) => editorComponents.filter((id) => id !== idExcl);
 const multilineToInline = (multi) => {
@@ -452,29 +456,6 @@ const extractAllSectionAreaDataMultipleTags = (contentString, tagNames) => {
 // Shared building blocks for section fromBlock/toBlock implementations.
 // ---------------------------------------------------------------------------
 
-const buildBodyPreview = ({ items }) => {
-  const itemsStr = items?.length
-    ? items
-        .map((item) => {
-          return item?.content
-            ? `<div style="${AREA_ITEM_PREVIEW_STYLE}">
-
-${item.content}
-</div>`
-            : "";
-        })
-        .filter(Boolean)
-        .join("\n")
-    : "";
-
-  if (!itemsStr) return "";
-
-  return `<div style="${AREA_PREVIEW_STYLE}">
-
-${itemsStr}
-</div>`;
-};
-
 /**
  * Parse sectionHeader and sectionFooter from a section's inner content.
  * Returns `undefined` for empty header/footer so callers can spread directly.
@@ -505,24 +486,6 @@ ${header.content}
     ? `{% sectionFooter ${footerAttrs} %}
 ${footer.content}
 {% endsectionFooter %}`
-    : "";
-
-  return { headerContent, footerContent };
-};
-
-const buildSectionHeaderFooterMarkupPreview = ({ header, footer }) => {
-  const headerContent = header?.content
-    ? `<header>
-
-${header.content}
-</header>`
-    : "";
-
-  const footerContent = footer?.content
-    ? `<footer>
-
-${footer.content}
-</footer>`
     : "";
 
   return { headerContent, footerContent };
@@ -2897,27 +2860,10 @@ ${flowContent}
 ${footerContent}
 {% endsectionFlow %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-flow" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Flow</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({ type: "sectionFlow", ...(data || {}) }),
+    ),
 };
 
 export const sectionGrid = {
@@ -3033,27 +2979,10 @@ ${gridContent}
 ${footerContent}
 {% endsectionGrid %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-grid" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Grid</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({ type: "sectionGrid", ...(data || {}) }),
+    ),
 };
 
 export const sectionTwoColumns = {
@@ -3185,29 +3114,13 @@ ${twoColumnsContent}
 ${footerContent}
 {% endsectionTwoColumns %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({
-      items: [data?.itemLeft, data?.itemRight],
-    });
-
-    return `<section class="section-two-columns" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Two Columns</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({
+        type: "sectionTwoColumns",
+        ...(data || {}),
+      }),
+    ),
 };
 
 export const sectionReel = {
@@ -3304,27 +3217,10 @@ ${reelContent}
 ${footerContent}
 {% endsectionReel %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-reel" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Reel</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({ type: "sectionReel", ...(data || {}) }),
+    ),
 };
 
 // Mirror of `keepVisibleField` in `./section-primitives.js` — keep both in sync.
@@ -3661,7 +3557,13 @@ ${collectionContent}
 ${footerContent}
 {% endsectionCollection %}`;
   },
-  toPreview: (data) => `<span>COLLECTION SECTION</span>`,
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({
+        type: "sectionCollection",
+        ...(data || {}),
+      }),
+    ),
 };
 
 export const sectionBuilder = {
@@ -4343,6 +4245,7 @@ export const sectionBuilder = {
 
     const areasStr = data?.areas?.length
       ? data.areas
+          .filter(Boolean)
           .map((area) => {
             switch (area.type) {
               case "twoColumns":
@@ -4418,73 +4321,13 @@ ${areasStr}
 ${footerContent}
 {% endsectionBuilder %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    let itemStr = "";
-    const wrapItemStr = ({ itemStr: str, label }) => `<div>
-<small style="float:right;clear:both;margin-right:.5rem;">${label}</small>
-
-${str}
-</div>`;
-
-    const areasStr = data?.areas?.length
-      ? data.areas
-          .map((area) => {
-            switch (area.type) {
-              case "twoColumns":
-                itemStr = buildBodyPreview({
-                  items: [area.itemLeft, area.itemRight],
-                });
-                return wrapItemStr({ itemStr, label: "Two Columns" });
-
-              case "grid":
-                itemStr = buildBodyPreview({ items: area?.items });
-                return wrapItemStr({ itemStr, label: "Grid" });
-
-              case "collection":
-                itemStr = "<COLLECTION>";
-                return wrapItemStr({ itemStr, label: "Collection" });
-
-              case "flow":
-                itemStr = buildBodyPreview({ items: area?.items });
-                return wrapItemStr({ itemStr, label: "Flow" });
-
-              case "reel":
-                itemStr = buildBodyPreview({ items: area?.items });
-                return wrapItemStr({ itemStr, label: "Reel" });
-
-              case "areaRaw":
-              case "area":
-              default: {
-                if (!area.content) return "";
-                itemStr = buildBodyPreview({ items: [area] });
-                return wrapItemStr({ itemStr, label: "Raw" });
-              }
-            }
-          })
-          .filter(Boolean)
-          .join("\n")
-      : "";
-
-    // const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-builder" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Builder</small>
-
-${headerContent}
-
-${areasStr}
-
-${footerContent}
-
-</section>
-`;
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({
+        type: "sectionBuilder",
+        ...(data || {}),
+      }),
+    ),
 };
 
 export const sections = {
@@ -4500,7 +4343,13 @@ export const sections = {
   toBlock: function (data) {
     return `{% sections %}{% endsections %}`;
   },
-  toPreview: (data) => `<span>SECTIONS</span>`,
+  toPreview: () => {
+    const el = document.createElement("div");
+    el.className = "cms-sections-slot";
+    sectionsSlots.add(el);
+    setHtml(el, previewState.sectionsHtml || SECTIONS_EMPTY_NOTE);
+    return el;
+  },
 };
 
 // Example for project specific component def
