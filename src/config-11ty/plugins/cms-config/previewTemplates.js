@@ -15,7 +15,12 @@ const toCollectionItem = (entry, getAsset) => {
     image,
   };
   return {
-    data: { ...d, lang: previewState.lang, pagePreview, url: "#" },
+    data: {
+      ...d,
+      lang: d.lang ?? d.page?.lang ?? previewState.lang,
+      pagePreview,
+      url: "#",
+    },
     url: "#",
     page: { fileSlug: entry?.slug ?? "" },
   };
