@@ -64,6 +64,10 @@ export class CmsPage {
           CMS.registerEditorComponent(userEditorComponents[name]);
         })
       </script>
+      <script type="module" eleventy:ignore>
+        import { registerPreviewTemplates } from "./previewTemplates.js";
+        registerPreviewTemplates(CMS);
+      </script>
       `) +
       `
   </head>

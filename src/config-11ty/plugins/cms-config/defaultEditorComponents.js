@@ -5,6 +5,14 @@ import {
   // activeCollectionNames,
   iconLists,
 } from "./env.js";
+import {
+  asyncPreview,
+  getRenderer,
+  sectionsSlots,
+  previewState,
+  setHtml,
+  SECTIONS_EMPTY_NOTE,
+} from "./preview-runtime.js";
 
 const { CONTENT_DIR } = env;
 // const iconLists = env?.iconLists || {};
@@ -448,205 +456,6 @@ const extractAllSectionAreaDataMultipleTags = (contentString, tagNames) => {
 // Shared building blocks for section fromBlock/toBlock implementations.
 // ---------------------------------------------------------------------------
 
-const escapeAttr = (v) =>
-  String(v ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;");
-const classAttr = (...parts) =>
-  ` class="${escapeAttr(parts.filter(Boolean).join(" "))}"`;
-const styleAttr = (styles) => {
-  const s = Object.entries(styles || {})
-    .filter(([, v]) => v)
-    .map(([k, v]) => `${k}: ${v};`)
-    .join(" ");
-  return s ? ` style="${escapeAttr(s)}"` : "";
-};
-
-const buildItemsPreview = ({ items, itemClass }) =>
-  (Array.isArray(items) ? items : [])
-    .filter((item) => item?.content)
-    .map(
-      (item) =>
-        `<div${classAttr("cell", itemClass, item.class)}>\n\n${item.content}\n</div>`,
-    )
-    .join("\n");
-
-const wrapPreview = ({ tag = "div", className, styles, content }) =>
-  content
-    ? `<${tag}${classAttr(className)}${styleAttr(styles)}>\n\n${content}\n</${tag}>`
-    : "";
-
-const buildFlowPreview = ({ items, layoutOptions, class: className }) => {
-  const content = buildItemsPreview({ items, itemClass: "item-flow" });
-  return wrapPreview({
-    className: ["layout area main list-flow", layoutOptions?.type, className]
-      .filter(Boolean)
-      .join(" "),
-    styles: { "--flow-space": layoutOptions?.gap },
-    content,
-  });
-};
-
-const buildGridPreview = ({ items, layoutOptions, class: className }) => {
-  const content = buildItemsPreview({ items, itemClass: "item-grid" });
-  if (!content) return "";
-
-  const renderedItemCount = (Array.isArray(items) ? items : []).filter(
-    (item) => item?.content,
-  ).length;
-  const type =
-    layoutOptions?.type ||
-    (renderedItemCount > 3 ? "grid-fluid" : "switcher");
-
-  return wrapPreview({
-    className: ["layout area main list-grid", type, className]
-      .filter(Boolean)
-      .join(" "),
-    styles: {
-      "--columns": layoutOptions?.columns,
-      "--gap": layoutOptions?.gap,
-      "--width-column-min": layoutOptions?.widthColumnMin,
-      "--width-column-max": layoutOptions?.widthColumnMax,
-      "--width-wrap": layoutOptions?.widthWrap,
-      "--columns-faux-masonry":
-        layoutOptions?.type === "faux-masonry"
-          ? [layoutOptions?.widthColumnMin, layoutOptions?.columns]
-              .filter(Boolean)
-              .join(" ")
-          : undefined,
-    },
-    content,
-  });
-};
-
-const buildTwoColumnsPreview = ({
-  itemLeft,
-  itemRight,
-  layoutOptions,
-  class: className,
-}) => {
-  const content = buildItemsPreview({
-    items: [itemLeft, itemRight],
-    itemClass: "item-two-columns",
-  });
-  const layoutClass =
-    layoutOptions?.type === "fixedFluid" ? "fixed-fluid" : "switcher";
-  const modifierClass =
-    layoutOptions?.fixedSide === "fixedRight" ? "fixed-right" : "";
-
-  return wrapPreview({
-    className: [
-      "layout area main two-columns",
-      layoutClass,
-      modifierClass,
-      className,
-    ]
-      .filter(Boolean)
-      .join(" "),
-    styles: {
-      "--width-fixed": layoutOptions?.widthFixed,
-      "--width-fluid-min": layoutOptions?.widthFluidMin,
-      "--gap-fixed-fluid": layoutOptions?.gap,
-      "--width-wrap": layoutOptions?.widthWrap,
-      "--gap-switcher": layoutOptions?.gap,
-    },
-    content,
-  });
-};
-
-const buildReelPreview = ({ items, layoutOptions, class: className }) => {
-  const content = buildItemsPreview({ items, itemClass: "item-reel" });
-  return wrapPreview({
-    className: [
-      "layout area main list-reel",
-      layoutOptions?.type || "reel",
-      layoutOptions?.noBar ? "no-bar" : "",
-      className,
-    ]
-      .filter(Boolean)
-      .join(" "),
-    styles: {
-      "--gap": layoutOptions?.gap,
-      "--item-width": layoutOptions?.itemWidth,
-      "--height": layoutOptions?.height,
-    },
-    content,
-  });
-};
-
-const collectionLabel = (name) => {
-  if (name === "all") return "All Collections";
-  if (name === "pages") return "Pages";
-  const collection = (activeCollections || []).find(
-    (item) => item?.name === name,
-  );
-  return collection?.label || collection?.name || name || "All Collections";
-};
-
-const buildCollectionPreview = ({
-  collection,
-  sortAndFilterOptions,
-  layoutOptions,
-  class: className,
-  itemPartial,
-  filters,
-}) => {
-  const filterList = sortAndFilterOptions?.filters || filters || [];
-  const countFilter = filterList.find(
-    (filter) => filter?.by === "first" || filter?.by === "last",
-  );
-  const parsedCount = Number(countFilter?.value);
-  const count = Number.isFinite(parsedCount)
-    ? Math.min(6, Math.max(1, Math.trunc(parsedCount)))
-    : 3;
-  const cards = Array.from(
-    { length: count },
-    (_, index) =>
-      `<article${classAttr("cell item-collection breakout-clickable")}>\n\n<h3>${escapeAttr(collectionLabel(collection))} item ${index + 1}</h3>\n<p>Placeholder — real entries render on the published site.</p>\n</article>`,
-  ).join("\n");
-  const partialMarkup = itemPartial
-    ? `\n<p><small>Item partial: ${escapeAttr(itemPartial)}</small></p>`
-    : "";
-
-  return wrapPreview({
-    className: [
-      "layout area main list-collection",
-      collection || "all",
-      layoutOptions?.type || "switcher",
-      layoutOptions?.noBar ? "no-bar" : "",
-      className,
-    ]
-      .filter(Boolean)
-      .join(" "),
-    styles: {
-      "--columns": layoutOptions?.columns,
-      "--gap": layoutOptions?.gap,
-      "--width-column-min": layoutOptions?.widthColumnMin,
-      "--width-column-max": layoutOptions?.widthColumnMax,
-      "--width-wrap": layoutOptions?.widthWrap,
-      "--item-width": layoutOptions?.itemWidth,
-      "--height": layoutOptions?.height,
-    },
-    content: `${cards}${partialMarkup}`,
-  });
-};
-
-const buildSectionPreview = ({
-  outerClass,
-  sectionWrapper,
-  headerContent,
-  innerContent,
-  footerContent,
-}) =>
-  `<section${classAttr(outerClass, sectionWrapper?.class)}>\n${[
-    headerContent,
-    innerContent,
-    footerContent,
-  ]
-    .filter(Boolean)
-    .join("\n")}\n</section>\n`;
-
 /**
  * Parse sectionHeader and sectionFooter from a section's inner content.
  * Returns `undefined` for empty header/footer so callers can spread directly.
@@ -677,24 +486,6 @@ ${header.content}
     ? `{% sectionFooter ${footerAttrs} %}
 ${footer.content}
 {% endsectionFooter %}`
-    : "";
-
-  return { headerContent, footerContent };
-};
-
-const buildSectionHeaderFooterMarkupPreview = ({ header, footer }) => {
-  const headerContent = header?.content
-    ? `<header${classAttr("area header", header.class)}>
-
-${header.content}
-</header>`
-    : "";
-
-  const footerContent = footer?.content
-    ? `<footer${classAttr("area footer", footer.class)}>
-
-${footer.content}
-</footer>`
     : "";
 
   return { headerContent, footerContent };
@@ -3069,25 +2860,10 @@ ${flowContent}
 ${footerContent}
 {% endsectionFlow %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    return buildSectionPreview({
-      outerClass: "section-flow",
-      sectionWrapper: data?.sectionWrapper,
-      headerContent,
-      innerContent: buildFlowPreview({
-        items: data?.items,
-        layoutOptions: data?.layoutOptions,
-        class: data?.class,
-      }),
-      footerContent,
-    });
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({ type: "sectionFlow", ...(data || {}) }),
+    ),
 };
 
 export const sectionGrid = {
@@ -3203,25 +2979,10 @@ ${gridContent}
 ${footerContent}
 {% endsectionGrid %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    return buildSectionPreview({
-      outerClass: "section-grid",
-      sectionWrapper: data?.sectionWrapper,
-      headerContent,
-      innerContent: buildGridPreview({
-        items: data?.items,
-        layoutOptions: data?.layoutOptions,
-        class: data?.class,
-      }),
-      footerContent,
-    });
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({ type: "sectionGrid", ...(data || {}) }),
+    ),
 };
 
 export const sectionTwoColumns = {
@@ -3353,26 +3114,13 @@ ${twoColumnsContent}
 ${footerContent}
 {% endsectionTwoColumns %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    return buildSectionPreview({
-      outerClass: "section-two-columns",
-      sectionWrapper: data?.sectionWrapper,
-      headerContent,
-      innerContent: buildTwoColumnsPreview({
-        itemLeft: data?.itemLeft,
-        itemRight: data?.itemRight,
-        layoutOptions: data?.layoutOptions,
-        class: data?.class,
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({
+        type: "sectionTwoColumns",
+        ...(data || {}),
       }),
-      footerContent,
-    });
-  },
+    ),
 };
 
 export const sectionReel = {
@@ -3469,25 +3217,10 @@ ${reelContent}
 ${footerContent}
 {% endsectionReel %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    return buildSectionPreview({
-      outerClass: "section-reel",
-      sectionWrapper: data?.sectionWrapper,
-      headerContent,
-      innerContent: buildReelPreview({
-        items: data?.items,
-        layoutOptions: data?.layoutOptions,
-        class: data?.class,
-      }),
-      footerContent,
-    });
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({ type: "sectionReel", ...(data || {}) }),
+    ),
 };
 
 // Mirror of `keepVisibleField` in `./section-primitives.js` — keep both in sync.
@@ -3824,28 +3557,13 @@ ${collectionContent}
 ${footerContent}
 {% endsectionCollection %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    return buildSectionPreview({
-      outerClass: "section-collection",
-      sectionWrapper: data?.sectionWrapper,
-      headerContent,
-      innerContent: buildCollectionPreview({
-        collection: data?.collection,
-        sortAndFilterOptions: data?.sortAndFilterOptions,
-        layoutOptions: data?.layoutOptions,
-        class: data?.class,
-        itemPartial: data?.itemPartial,
-        filters: data?.filters,
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({
+        type: "sectionCollection",
+        ...(data || {}),
       }),
-      footerContent,
-    });
-  },
+    ),
 };
 
 export const sectionBuilder = {
@@ -4602,78 +4320,13 @@ ${areasStr}
 ${footerContent}
 {% endsectionBuilder %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areasStr = data?.areas?.length
-      ? data.areas
-          .map((area) => {
-            switch (area.type) {
-              case "twoColumns":
-                return buildTwoColumnsPreview({
-                  itemLeft: area.itemLeft,
-                  itemRight: area.itemRight,
-                  layoutOptions: area.layoutOptions,
-                  class: area.class,
-                });
-
-              case "grid":
-                return buildGridPreview({
-                  items: area.items,
-                  layoutOptions: area.layoutOptions,
-                  class: area.class,
-                });
-
-              case "collection":
-                return buildCollectionPreview({
-                  collection: area.collection,
-                  sortAndFilterOptions: area.sortAndFilterOptions,
-                  layoutOptions: area.layoutOptions,
-                  class: area.class,
-                  itemPartial: area.itemPartial,
-                  filters: area.filters,
-                });
-
-              case "flow":
-                return buildFlowPreview({
-                  items: area.items,
-                  layoutOptions: area.layoutOptions,
-                  class: area.class,
-                });
-
-              case "reel":
-                return buildReelPreview({
-                  items: area.items,
-                  layoutOptions: area.layoutOptions,
-                  class: area.class,
-                });
-
-              case "areaRaw":
-              case "area":
-              default: {
-                return wrapPreview({
-                  className: ["area", area?.class].filter(Boolean).join(" "),
-                  content: area?.content,
-                });
-              }
-            }
-          })
-          .filter(Boolean)
-          .join("\n")
-      : "";
-
-    return buildSectionPreview({
-      outerClass: "section-builder",
-      sectionWrapper: data?.sectionWrapper,
-      headerContent,
-      innerContent: areasStr,
-      footerContent,
-    });
-  },
+  toPreview: (data) =>
+    asyncPreview(
+      getRenderer().renderSection({
+        type: "sectionBuilder",
+        ...(data || {}),
+      }),
+    ),
 };
 
 export const sections = {
@@ -4689,8 +4342,13 @@ export const sections = {
   toBlock: function (data) {
     return `{% sections %}{% endsections %}`;
   },
-  toPreview: (data) =>
-    `<div class="sections-placeholder">\n\n*Page sections (from the Sections field) render here.*\n</div>`,
+  toPreview: () => {
+    const el = document.createElement("div");
+    el.className = "cms-sections-slot";
+    sectionsSlots.add(el);
+    setHtml(el, previewState.sectionsHtml || SECTIONS_EMPTY_NOTE);
+    return el;
+  },
 };
 
 // Example for project specific component def

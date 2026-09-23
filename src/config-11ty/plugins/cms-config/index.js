@@ -1,3 +1,5 @@
+import { build as bunBuild } from "bun";
+import { MINIFY } from "../../../../env.config.js";
 import { CmsConfig } from "./config.js";
 import { CmsPage } from "./page.js";
 import { getActiveCollections, getActiveEditorComponents } from "./config.js";
@@ -34,7 +36,39 @@ export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.addPassthroughCopy({
     "src/config-11ty/plugins/cms-config/defaultEditorComponents.js":
       "admin/defaultEditorComponents.js",
+    "src/config-11ty/plugins/cms-config/preview-runtime.js":
+      "admin/preview-runtime.js",
+    "src/config-11ty/plugins/cms-config/previewTemplates.js":
+      "admin/previewTemplates.js",
   });
+
+  const previewRendererEntryPath = `${import.meta.dirname}/preview-renderer.entry.js`;
+  let previewRendererCode;
+  try {
+    const { outputs } = await bunBuild({
+      entrypoints: [previewRendererEntryPath],
+      target: "browser",
+      format: "esm",
+      minify: MINIFY,
+    });
+    previewRendererCode = await outputs[0].text();
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+
+  eleventyConfig.addTemplate(
+    "admin/preview-renderer.11ty.js",
+    {
+      data: () => ({
+        permalink: "/admin/preview-renderer.js",
+        eleventyExcludeFromCollections: true,
+        layout: null,
+      }),
+      render: () => previewRendererCode,
+    },
+    {},
+  );
 
   eleventyConfig.addTemplate(
     "env.11ty.js",
