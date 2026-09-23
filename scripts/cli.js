@@ -78,20 +78,33 @@ export async function run(argv) {
     runMode: serve ? "serve" : "build",
   });
 
-  await elev.init();
+  // Eleventy wraps failures in errors whose message only names the file at
+  // fault (e.g. "Error in your Eleventy config file '…'"); the real cause
+  // lives on the `originalError` chain. Routing through its own error
+  // handler reports the whole chain, like `npx eleventy` does.
+  try {
+    await elev.init();
 
-  if (!serve) {
-    await elev.write();
-    return;
+    if (!serve) {
+      await elev.write();
+      return;
+    }
+
+    await elev.watch();
+    elev.serve(Number(options.port) || 8080);
+  } catch (error) {
+    elev.errorHandler.fatal(error, "Eleventy error");
+    if (error instanceof Error) error.eleventyReported = true;
+    throw error;
   }
-
-  await elev.watch();
-  elev.serve(Number(options.port) || 8080);
 }
 
 export function runCli(argv = process.argv.slice(2)) {
   return run(argv).catch((error) => {
-    console.error(error?.message || error);
+    // Errors already reported by elev.errorHandler are not printed twice.
+    if (!error?.eleventyReported) {
+      console.error(error?.stack || error?.message || error);
+    }
     process.exitCode = 1;
   });
 }
