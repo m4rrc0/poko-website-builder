@@ -50,10 +50,9 @@ const partials = {
 
 const previewFilterCollection = (collection, filtersRaw, exclusions = false) => {
   const filters = Array.isArray(filtersRaw) ? filtersRaw : [filtersRaw];
-  const normalizedFilters = filters.map((filter) =>
-    filter?.by === "lang" && filter.value === ""
-      ? { ...filter, value: undefined }
-      : filter,
+  // No known lang in the preview: skip the lang filter instead of matching nothing
+  const normalizedFilters = filters.filter(
+    (filter) => !(filter?.by === "lang" && !filter.value),
   );
   return filterCollection(collection, normalizedFilters, exclusions);
 };

@@ -37,6 +37,7 @@ const PagePreview = window.createClass({
     const seq = (this.seq = (this.seq || 0) + 1);
     const { entry, getCollection, getAsset } = this.props;
     const data = toJs(entry)?.data ?? {};
+    previewState.lang = data.lang ?? data.page?.lang ?? "";
     const names = activeCollections
       .filter((c) => c.folder)
       .map((c) => c.name);
