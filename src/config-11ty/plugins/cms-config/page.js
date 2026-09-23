@@ -56,6 +56,9 @@ export class CmsPage {
           CMS.registerEditorComponent(defaultEditorComponents[name]);
         })
       </script>
+      ` +
+          (data.env.hasUserEditorComponents
+            ? `
       <script type="module" eleventy:ignore>
         import * as userEditorComponents from "./userEditorComponents.js";
         const uecNames = Object.keys(userEditorComponents)
@@ -64,6 +67,9 @@ export class CmsPage {
           CMS.registerEditorComponent(userEditorComponents[name]);
         })
       </script>
+      `
+            : "") +
+          `
       <script type="module" eleventy:ignore>
         import { registerPreviewTemplates } from "./previewTemplates.js";
         registerPreviewTemplates(CMS);

@@ -1,0 +1,13 @@
+{
+  "name": "my-poko-website",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "poko build",
+    "dev": "poko dev"
+  },
+  "dependencies": {
+    "poko-website-builder": "^0.0.1"
+  }
+}
