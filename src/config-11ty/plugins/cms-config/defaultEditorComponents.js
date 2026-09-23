@@ -4245,8 +4245,9 @@ export const sectionBuilder = {
 
     const areasStr = data?.areas?.length
       ? data.areas
+          .filter(Boolean)
           .map((area) => {
-            switch (area?.type) {
+            switch (area.type) {
               case "twoColumns":
                 return buildTwoColumnsBody({
                   class: area.class,

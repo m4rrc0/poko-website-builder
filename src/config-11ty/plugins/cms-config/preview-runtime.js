@@ -3,13 +3,16 @@ import { createRenderer } from "./preview-renderer.js";
 export const previewState = { collections: {}, lang: "", sectionsHtml: "" };
 export const sectionsSlots = new Set();
 
-const sanitize = (html) =>
-  window.DOMPurify?.sanitize ? window.DOMPurify.sanitize(html) : html;
 const escapeHtml = (s) =>
   String(s ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+// Sveltia exposes its DOMPurify instance on `window`; never insert unsanitized HTML without it
+const sanitize = (html) =>
+  window.DOMPurify?.sanitize
+    ? window.DOMPurify.sanitize(html)
+    : `<pre>${escapeHtml(html)}</pre>`;
 export const renderMarkdown = (src) =>
   window.marked?.parse
     ? window.marked.parse(String(src ?? ""))
