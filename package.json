@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/m4rrc0/poko-website-builder.git"
+    "url": "git+https://github.com/m4rrc0/poko-website-builder.git"
   },
   "type": "module",
   "main": "./eleventy.config.js",
@@ -21,7 +21,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "poko": "./scripts/cli.js"
+    "poko": "scripts/cli.js"
   },
   "publishConfig": {
     "access": "public",
