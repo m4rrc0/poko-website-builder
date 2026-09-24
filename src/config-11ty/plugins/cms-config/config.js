@@ -621,7 +621,7 @@ export const mostCommonMarkdownCollectionConfig = {
         name: "navItems",
         label: "Nav Items",
         field: "eleventyNavigation.add",
-        value: "Nav",
+        eq: "Nav",
       },
       {
         name: "tags",
@@ -629,7 +629,7 @@ export const mostCommonMarkdownCollectionConfig = {
         field: "tags",
       },
     ],
-    default: "eleventyNavigation.add",
+    default: "navItems",
   },
   // editor: {
   //   preview: false,
@@ -2946,7 +2946,7 @@ const stylesConfigCollection = (fontsourceFonts) => ({
           summary:
             "{{name}}: {{widthsContext}} | {{fontStacksContext}} | {{typeScale}} | {{palette}}",
           hint: "You can group styles in different contexts to be used across the website using a class name like '.ctx-[name]'.",
-          default: [{ name: "main", value: "ctx" }],
+          default: [{ name: "main" }],
           fields: [
             {
               name: "name",
@@ -3123,8 +3123,12 @@ export class CmsConfig {
         initial_locales: "default", // default: "all" // Allows for setting the initial locales
       },
       slug: {
-        encoding: "ascii",
+        encoding: "unicode", // Default "unicode" to accept all unicode characters. Or "ascii" to only accept ASCII characters
         clean_accents: true, // Transliterate accented characters to their closest ASCII equivalent
+        maxlength: 32,
+        trim: true,
+        lowercase: true,
+        timezone: "local", // default: "utc"
       },
       field_defaults: {
         richtext: {

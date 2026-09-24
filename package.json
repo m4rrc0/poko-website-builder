@@ -47,7 +47,7 @@
     "@mdit/plugin-container": "^0.22.1",
     "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
     "@sindresorhus/slugify": "^2.2.1",
-    "@sveltia/cms": "^0.215.0",
+    "@sveltia/cms": "^0.220.0",
     "@tabler/icons": "^3.34.0",
     "chalk": "^5.4.1",
     "dayjs": "^1.11.13",
