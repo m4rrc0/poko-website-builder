@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="http://localhost:8080" target="_blank" />
+    <link rel="stylesheet" href="http://localhost:8080/assets/styles/ctx.css" />
+    <link rel="stylesheet" href="http://localhost:8080/admin/preview.css" />
+    <link
+      rel="stylesheet"
+      href="http://localhost:8080/assets/styles/main.css"
+    />
+    <style id="svelte-s650n2">
+      [role="document"] section.svelte-s650n2 {
+        overflow: hidden;
+        /* Don’t set margin here because it makes scroll sync bumpy */
+        padding: 12px 0;
+        h4:where(.svelte-s650n2) {
+          color: var(--sui-secondary-foreground-color);
+          font-size: var(--sui-font-size-small);
+          &:not(:last-child) {
+            margin-bottom: 8px;
+          }
+        }
+        & > * {
+          margin-inline: auto;
+          max-width: 768px;
+        }
+        p {
+          margin: 8px auto 0;
+          -webkit-user-select: text;
+          user-select: text;
+        }
+        img {
+          max-height: 800px !important;
+        }
+        .sui.alert {
+          margin-block: 16px;
+        }
+      }
+
+      @media (width < 768px) {
+        [role="document"] {
+          &
+            > section.svelte-s650n2:is(
+              [data-field-type="file"]:where(.svelte-s650n2),
+              [data-field-type="image"]:where(.svelte-s650n2)
+            ):has(img),
+          &
+            > section.svelte-s650n2:is(
+              [data-field-type="string"]:where(.svelte-s650n2)
+            ):has(iframe) {
+            overflow: visible;
+          }
+          &
+            > section.svelte-s650n2:is(
+              [data-field-type="file"]:where(.svelte-s650n2),
+              [data-field-type="image"]:where(.svelte-s650n2)
+            )
+            img {
+            width: 100%;
+            max-height: none !important;
+          }
+        }
+      }
+    </style>
+    <style id="svelte-14tuh7g">
+      [role="document"] div.svelte-14tuh7g {
+        :is(h1, h2, h3, h4, h5, h6, p, ul, ol) {
+          margin: 1em 0 0;
+        }
+        :is(video, img) {
+          max-width: 100%;
+          max-height: 100%;
+        }
+        :is(a:has(img)) {
+          display: inline-block;
+          img {
+            pointer-events: none;
+          }
+        }
+        pre.shiki {
+          background-color: var(--sui-code-background-color) !important;
+        }
+      }
+      div.svelte-14tuh7g {
+        [data-component-key] {
+          display: contents;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cms-page-preview">
+      <div>
+        <!---->
+        <section
+          role="group"
+          tabindex="0"
+          class="svelte-s650n2"
+          data-field-type="richtext"
+          data-key-path="body"
+          data-typed-key-path=""
+        >
+          <!---->
+          <!---->
+          <div role="none" data-rich-text-preview="" class="svelte-14tuh7g">
+            <!----><!---->
+            <h1 dir="auto">Contact</h1>
+            <!---->
+            <p dir="auto">
+              <span data-component-key="6e287f98"
+                ><div class="cms-sections-slot">
+                  <section class="section-grid width-prose">
+                    <div
+                      class="layout area main list-grid grid-fluid width-prose"
+                      style="--columns: 2; --gap: var(--step-4)"
+                    >
+                      <div class="cell item-grid text-center flow">
+                        <h2 dir="auto">Direction artistique { .h3 }</h2>
+                        <p dir="auto">
+                          {% sectionCollection class="flow space:--step--4",
+                          tag="div" %}
+                        </p>
+                        <p dir="auto">
+                          {% collection collection="people",
+                          filters=[{"by":"tag","value":["art-direction"]}],
+                          sortCriterias=[], type="flow",
+                          itemPartial="card-person-contact-info" %}{%
+                          endcollection %}
+                        </p>
+                        <p dir="auto">{% endsectionCollection %}</p>
+                      </div>
+                      <div class="cell item-grid text-center flow">
+                        <h2 dir="auto">Coordination générale { .h3 }</h2>
+                        <p dir="auto">
+                          {% sectionCollection class="flow space:--step--4",
+                          tag="div" %}
+                        </p>
+                        <p dir="auto">
+                          {% collection collection="people",
+                          filters=[{"by":"tag","value":["coordination"]}],
+                          sortCriterias=[], type="flow",
+                          itemPartial="card-person-contact-info" %}{%
+                          endcollection %}
+                        </p>
+                        <p dir="auto">{% endsectionCollection %}</p>
+                      </div>
+                      <div class="cell item-grid text-center flow">
+                        <h2 dir="auto">Diffusion { .h3 }</h2>
+                        <p dir="auto">
+                          {% sectionCollection class="flow space:--step--4",
+                          tag="div" %}
+                        </p>
+                        <p dir="auto">
+                          {% collection collection="people",
+                          filters=[{"by":"tag","value":["diffusion"]}],
+                          sortCriterias=[], type="flow",
+                          itemPartial="card-person-contact-info" %}{%
+                          endcollection %}
+                        </p>
+                        <p dir="auto">{% endsectionCollection %}</p>
+                      </div>
+                      <div class="cell item-grid text-center flow">
+                        <h2 dir="auto">Régie générale { .h3 }</h2>
+                        <p dir="auto">
+                          {% htmlPartial "card-person-contact-info.njk",
+                          {"email":"<a href="mailto:technique@compagnie3637.be"
+                            >technique@compagnie3637.be</a
+                          >","name":""} %}
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+                </div></span
+              >
+            </p>
+            <!---->
+            <div class="">
+              <p dir="auto">::: cluster</p>
+              <p dir="auto">
+                <a href="https://www.facebook.com/Compagnie3637/"
+                  ><span>ICON</span></a
+                >
+              </p>
+              <p dir="auto">
+                <a href="https://www.instagram.com/compagnie3637/"
+                  ><span>ICON</span></a
+                >
+              </p>
+              <p dir="auto">
+                <a href="https://www.youtube.com/@Compagnie3637"
+                  ><span>ICON</span></a
+                >
+              </p>
+              <p dir="auto">:::</p>
+              <p dir="auto">
+                {% if vars.newsletterSubEmail %}<br />{% link
+                vars.newsletterSubEmail, type="email",
+                subject=vars.newsletterSubSubject, class="button uppercase"
+                %}<br />Newsletter{% endlink %}<br />{% endif %}
+              </p>
+            </div>
+            <!----><img
+              src="{{src}}"
+              alt="{{alt}}"
+              width="300"
+              data-processed="true"
+            /><!---->
+            <div class="">
+              <p dir="auto">Compagnie 3637 ASBL { .h1 }</p>
+              <p dir="auto">
+                Siège social: Rue de Charleroi 17 – 1470 Genappe - Belgique<br />Bureau:
+                c/o Le Bocal – Av. Brugmann 482 - 1180 Uccle - Belgique
+              </p>
+              <p dir="auto">N°ENTREPRISE: 0807 233 604 – RPM NIVELLES</p>
+            </div>
+            <!---->
+          </div>
+          <!---->
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

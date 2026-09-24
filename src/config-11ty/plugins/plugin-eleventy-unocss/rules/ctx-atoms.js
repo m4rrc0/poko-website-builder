@@ -158,7 +158,7 @@ export default [
   // Positioned border radius utility
   // E.g. radius-top-card, radius-tr-card, radius-tl-card, radius-r-card, radius-tr-8px, ...
   [
-    /^radius-([a-zA-Z]+)-([a-zA-Z0-9]+)$/,
+    /^radius-(top-left|top-right|bottom-left|bottom-right|tl|tr|bl|br|top|right|bottom|left|t|r|b|l)-([a-zA-Z0-9]+)$/,
     ([, position, name], { symbols }) => {
       const positionMap = {
         t: ["top-left", "top-right"],
@@ -213,7 +213,7 @@ export default [
   // Positioned border width utility
   // E.g. border-top-card, border-tr-card, border-tl-card, border-r-card, border-tr-8px, ...
   [
-    /^border-([a-zA-Z]+)-([a-zA-Z0-9]+)$/,
+    /^border-(top-left|top-right|bottom-left|bottom-right|tl|tr|bl|br|top|right|bottom|left|t|r|b|l)-([a-zA-Z0-9]+)$/,
     ([, position, name], { symbols }) => {
       const positionMap = {
         t: ["top"],

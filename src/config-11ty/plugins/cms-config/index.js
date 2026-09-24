@@ -1,9 +1,16 @@
+import fglob from "fast-glob";
+import { readFile } from "node:fs/promises";
 import { MINIFY } from "../../../../env.config.js";
 import { CmsConfig } from "./config.js";
 import { CmsPage } from "./page.js";
-import { getActiveCollections, getActiveEditorComponents } from "./config.js";
+import {
+  pagesCollection,
+  getActiveCollections,
+  getActiveEditorComponents,
+} from "./config.js";
 import { enginePath, dependencyEnginePath } from "../../../utils/paths.js";
 import { buildJs } from "../../../utils/runtime.js";
+import { getUnoGenerator } from "../plugin-eleventy-unocss/generator.js";
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
@@ -76,6 +83,7 @@ export default async function (eleventyConfig, pluginOptions) {
 
       return `
   export const env = ${JSON.stringify(envVars)};
+  export const pagesCollection = ${JSON.stringify(pagesCollection)};
   export const activeCollections = ${JSON.stringify(activeCollections)};
   export const editorComponents = ${JSON.stringify(editorComponents)};
   export const activeCollectionNames = ${JSON.stringify(activeCollectionNames)};
@@ -87,6 +95,60 @@ export default async function (eleventyConfig, pluginOptions) {
       eleventyExcludeFromCollections: true,
       layout: null,
     },
+  );
+
+  // Styles for the CMS preview iframe: the UnoCSS layer that pages get via the
+  // .noop-load-uno{} transform, generated once from a corpus of everything the
+  // preview can render (the brand preflight ships with every generate() call).
+  const previewCssCorpusGlobs = [
+    enginePath("src/content/_partials/**/*.{11ty.js,njk,md}"),
+    enginePath("src/config-11ty/plugins/partialShortcodes/**/*.js"),
+    enginePath("src/config-11ty/plugins/plugin-eleventy-unocss/rules/*.js"),
+    `${import.meta.dirname}/{preview-runtime,previewTemplates,section-primitives}.js`,
+    `${CONTENT_DIR}/**/*.{11ty.js,njk,md}`,
+  ];
+  // Tokens only ever produced from CMS data values, never literal in the corpus
+  const previewCssSafelist = [
+    "palette--default",
+    "palette--reset",
+    "palette--contrast",
+    "palette--pop",
+    "palette--accent",
+    "palette--tone",
+    "palette--alt",
+    "palette--bg-pop",
+    "palette--bg-tone",
+    "palette--pop-contrast",
+    "palette--tone-contrast",
+  ];
+
+  eleventyConfig.addWatchTarget(enginePath("src/content/_partials/"));
+  eleventyConfig.addWatchTarget(
+    enginePath("src/config-11ty/plugins/partialShortcodes/"),
+  );
+  eleventyConfig.addWatchTarget(`./${CONTENT_DIR}/`);
+
+  eleventyConfig.addTemplate(
+    "admin/preview-css.11ty.js",
+    {
+      data: () => ({
+        permalink: "/admin/preview.css",
+        eleventyExcludeFromCollections: true,
+        layout: null,
+      }),
+      render: async () => {
+        const files = await fglob(previewCssCorpusGlobs);
+        const contents = await Promise.all(
+          files.map((file) => readFile(file, "utf-8")),
+        );
+        const generator = await getUnoGenerator();
+        const { css } = await generator.generate(
+          [...contents, ...previewCssSafelist].join("\n"),
+        );
+        return css;
+      },
+    },
+    {},
   );
 
   eleventyConfig.addTemplate("admin/config.11ty.js", CmsConfig, {});

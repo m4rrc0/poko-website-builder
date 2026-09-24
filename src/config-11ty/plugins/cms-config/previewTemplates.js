@@ -1,5 +1,9 @@
-import { activeCollections } from "./env.js";
-import { previewState, getRenderer, pushSectionsHtml } from "./preview-runtime.js";
+import { pagesCollection, activeCollections } from "./env.js";
+import {
+  previewState,
+  getRenderer,
+  pushSectionsHtml,
+} from "./preview-runtime.js";
 
 const toJs = (v) => (v && typeof v.toJS === "function" ? v.toJS() : v);
 
@@ -10,8 +14,7 @@ const toCollectionItem = (entry, getAsset) => {
   if (asset?.url) image = { ...image, src: asset.url };
   const pagePreview = {
     title: d.preview?.title || d.title || d.name || null,
-    description:
-      d.preview?.description || d.metadata?.description || null,
+    description: d.preview?.description || d.metadata?.description || null,
     image,
   };
   return {
@@ -38,9 +41,7 @@ const PagePreview = window.createClass({
     const { entry, getCollection, getAsset } = this.props;
     const data = toJs(entry)?.data ?? {};
     previewState.lang = data.lang ?? data.page?.lang ?? "";
-    const names = activeCollections
-      .filter((c) => c.folder)
-      .map((c) => c.name);
+    const names = activeCollections.filter((c) => c.folder).map((c) => c.name);
     const collections = {};
     await Promise.all(
       names.map(async (name) => {
@@ -71,7 +72,7 @@ const PagePreview = window.createClass({
 });
 
 export function registerPreviewTemplates(CMS) {
-  activeCollections
+  [pagesCollection, ...activeCollections]
     .filter((c) => c.fields?.some((f) => f.name === "sections"))
     .forEach((c) => CMS.registerPreviewTemplate(c.name, PagePreview));
 }

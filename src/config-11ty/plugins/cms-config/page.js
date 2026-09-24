@@ -25,6 +25,11 @@ export class CmsPage {
       ),
       (m) => m[1],
     );
+    // UnoCSS layer (brand preflight + preview utility classes) between ctx and project styles
+    const ctxIndex = previewStyleUrls.findIndex((url) =>
+      url.endsWith("ctx.css"),
+    );
+    previewStyleUrls.splice(ctxIndex + 1, 0, "/admin/preview.css");
 
     return (
       `
