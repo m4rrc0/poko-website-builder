@@ -36,7 +36,6 @@
     "src"
   ],
   "dependencies": {
-    "@sveltia/cms": "^0.215.0",
     "@11ty/eleventy": "^3.1.2",
     "@11ty/eleventy-fetch": "^5.1.0",
     "@11ty/eleventy-img": "^6.0.3",
@@ -48,6 +47,7 @@
     "@mdit/plugin-container": "^0.22.1",
     "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
     "@sindresorhus/slugify": "^2.2.1",
+    "@sveltia/cms": "^0.215.0",
     "@tabler/icons": "^3.34.0",
     "chalk": "^5.4.1",
     "dayjs": "^1.11.13",
@@ -56,6 +56,7 @@
     "eleventy-plugin-icons": "^4.5.3",
     "eleventy-plugin-robotstxt": "^1.0.2",
     "eleventy-plugin-youtube-embed": "^1.13.2",
+    "esbuild": "^0.28.2",
     "fast-glob": "^3.3.3",
     "fast-sort": "^3.4.1",
     "hash-sum": "^2.0.0",

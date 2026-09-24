@@ -1,9 +1,9 @@
-import { build as bunBuild } from "bun";
 import { MINIFY } from "../../../../env.config.js";
 import { CmsConfig } from "./config.js";
 import { CmsPage } from "./page.js";
 import { getActiveCollections, getActiveEditorComponents } from "./config.js";
 import { enginePath, dependencyEnginePath } from "../../../utils/paths.js";
+import { buildJs } from "../../../utils/runtime.js";
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
@@ -45,19 +45,10 @@ export default async function (eleventyConfig, pluginOptions) {
   });
 
   const previewRendererEntryPath = `${import.meta.dirname}/preview-renderer.entry.js`;
-  let previewRendererCode;
-  try {
-    const { outputs } = await bunBuild({
-      entrypoints: [previewRendererEntryPath],
-      target: "browser",
-      format: "esm",
-      minify: MINIFY,
-    });
-    previewRendererCode = await outputs[0].text();
-  } catch (e) {
-    console.error(e);
-    throw e;
-  }
+  const [{ content: previewRendererCode }] = await buildJs({
+    entrypoints: [previewRendererEntryPath],
+    minify: MINIFY,
+  });
 
   eleventyConfig.addTemplate(
     "admin/preview-renderer.11ty.js",

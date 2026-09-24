@@ -94,3 +94,36 @@ export async function buildCss({
     }),
   );
 }
+
+/**
+ * Bundle JS entrypoints for the browser: `Bun.build` under Bun,
+ * `esbuild` under Node. Returns `[{ path, content }]` like `buildCss`.
+ */
+export async function buildJs({ entrypoints, minify = false }) {
+  if (isBun) {
+    const { build: bunBuild } = await import("bun");
+    const { outputs } = await bunBuild({
+      entrypoints,
+      target: "browser",
+      format: "esm",
+      minify,
+    });
+    return Promise.all(
+      outputs.map(async (output) => ({
+        path: output.path,
+        content: await output.text(),
+      })),
+    );
+  }
+
+  const { build } = await import("esbuild");
+  const { outputFiles } = await build({
+    entryPoints: entrypoints,
+    bundle: true,
+    write: false,
+    format: "esm",
+    platform: "browser",
+    minify,
+  });
+  return outputFiles.map((file) => ({ path: file.path, content: file.text }));
+}
