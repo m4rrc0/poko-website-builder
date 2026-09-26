@@ -5,14 +5,14 @@ import {
   // activeCollectionNames,
   iconLists,
 } from "./env.js";
-import {
-  asyncPreview,
-  getRenderer,
-  sectionsSlots,
-  previewState,
-  setHtml,
-  SECTIONS_EMPTY_NOTE,
-} from "./preview-runtime.js";
+// import {
+//   asyncPreview,
+//   getRenderer,
+//   sectionsSlots,
+//   previewState,
+//   setHtml,
+//   SECTIONS_EMPTY_NOTE,
+// } from "./preview-runtime.js";
 
 const { CONTENT_DIR } = env;
 // const iconLists = env?.iconLists || {};
@@ -1677,19 +1677,19 @@ export const link = {
     return `{% link ${attrsStr}${otherAttrsString} %}${content || ""}{% endlink %}`;
   },
 
-  toPreview: (data) => {
-    const content = data?.content || data?.text || "";
-    let type = data?.linkType?.type;
-    const url = data?.linkType?.url;
-    const isInternal =
-      type !== "external" && type !== "email" && type !== "file";
-    // For internal link, lead to the relevant page in the CMS
-    const href = isInternal
-      ? `/admin/#/collections/pages/entries/${type}/${url}`
-      : url;
+  // toPreview: (data) => {
+  //   const content = data?.content || data?.text || "";
+  //   let type = data?.linkType?.type;
+  //   const url = data?.linkType?.url;
+  //   const isInternal =
+  //     type !== "external" && type !== "email" && type !== "file";
+  //   // For internal link, lead to the relevant page in the CMS
+  //   const href = isInternal
+  //     ? `/admin/#/collections/pages/entries/${type}/${url}`
+  //     : url;
 
-    return `<a href="${href}">${content || url}${isInternal ? ` <sup>🢱${url}</sup>` : ""}</a>`;
-  },
+  //   return `<a href="${href}">${content || url}${isInternal ? ` <sup>🢱${url}</sup>` : ""}</a>`;
+  // },
 };
 
 export const icon = {
@@ -1817,7 +1817,7 @@ export const icon = {
     return `{% icon ${parts.join(", ")} %}`;
   },
 
-  toPreview: (data) => `<span>ICON</span>`,
+  // toPreview: (data) => `<span>ICON</span>`,
 };
 
 export const imageShortcode = {
@@ -2009,9 +2009,9 @@ export const imageShortcode = {
 
     return `{% image ${attrsStr}${imgAttrs ? ", " + imgAttrs : ""} %}`;
   },
-  toPreview: function () {
-    return `<img src="{{src}}" alt="{{alt}}" width="300" />`;
-  },
+  // toPreview: function () {
+  //   return `<img src="{{src}}" alt="{{alt}}" width="300" />`;
+  // },
 };
 
 export const partial = {
@@ -2068,9 +2068,9 @@ export const partial = {
   toBlock: function (data) {
     return stringifyPartial(data, ".md", "partial");
   },
-  toPreview: function (data) {
-    return `<PARTIAL>`;
-  },
+  // toPreview: function (data) {
+  //   return `<PARTIAL>`;
+  // },
 };
 
 export const htmlPartial = {
@@ -2126,9 +2126,9 @@ export const htmlPartial = {
   toBlock: function (data) {
     return stringifyPartial(data, ".njk", "htmlPartial");
   },
-  toPreview: function (data) {
-    return `<HTML PARTIAL>`;
-  },
+  // toPreview: function (data) {
+  //   return `<HTML PARTIAL>`;
+  // },
 };
 
 console.log({ editorComponents });
@@ -2208,14 +2208,14 @@ export const wrapper = {
 ${content}
 {% endwrapper %}`;
   },
-  toPreview: function (data) {
-    const { content, tag, class: className } = data;
+  //   toPreview: function (data) {
+  //     const { content, tag, class: className } = data;
 
-    return `<${tag || "div"} class="${className || ""}">
+  //     return `<${tag || "div"} class="${className || ""}">
 
-${content}
-</${tag || "div"}>`;
-  },
+  // ${content}
+  // </${tag || "div"}>`;
+  //   },
 };
 
 // export const section = {
@@ -2860,10 +2860,10 @@ ${flowContent}
 ${footerContent}
 {% endsectionFlow %}`;
   },
-  toPreview: (data) =>
-    asyncPreview(
-      getRenderer().renderSection({ type: "sectionFlow", ...(data || {}) }),
-    ),
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({ type: "sectionFlow", ...(data || {}) }),
+  //   ),
 };
 
 export const sectionGrid = {
@@ -2979,10 +2979,10 @@ ${gridContent}
 ${footerContent}
 {% endsectionGrid %}`;
   },
-  toPreview: (data) =>
-    asyncPreview(
-      getRenderer().renderSection({ type: "sectionGrid", ...(data || {}) }),
-    ),
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({ type: "sectionGrid", ...(data || {}) }),
+  //   ),
 };
 
 export const sectionTwoColumns = {
@@ -3114,13 +3114,13 @@ ${twoColumnsContent}
 ${footerContent}
 {% endsectionTwoColumns %}`;
   },
-  toPreview: (data) =>
-    asyncPreview(
-      getRenderer().renderSection({
-        type: "sectionTwoColumns",
-        ...(data || {}),
-      }),
-    ),
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({
+  //       type: "sectionTwoColumns",
+  //       ...(data || {}),
+  //     }),
+  //   ),
 };
 
 export const sectionReel = {
@@ -3217,10 +3217,10 @@ ${reelContent}
 ${footerContent}
 {% endsectionReel %}`;
   },
-  toPreview: (data) =>
-    asyncPreview(
-      getRenderer().renderSection({ type: "sectionReel", ...(data || {}) }),
-    ),
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({ type: "sectionReel", ...(data || {}) }),
+  //   ),
 };
 
 // Mirror of `keepVisibleField` in `./section-primitives.js` — keep both in sync.
@@ -3557,13 +3557,13 @@ ${collectionContent}
 ${footerContent}
 {% endsectionCollection %}`;
   },
-  toPreview: (data) =>
-    asyncPreview(
-      getRenderer().renderSection({
-        type: "sectionCollection",
-        ...(data || {}),
-      }),
-    ),
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({
+  //       type: "sectionCollection",
+  //       ...(data || {}),
+  //     }),
+  //   ),
 };
 
 export const sectionBuilder = {
@@ -4321,13 +4321,13 @@ ${areasStr}
 ${footerContent}
 {% endsectionBuilder %}`;
   },
-  toPreview: (data) =>
-    asyncPreview(
-      getRenderer().renderSection({
-        type: "sectionBuilder",
-        ...(data || {}),
-      }),
-    ),
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({
+  //       type: "sectionBuilder",
+  //       ...(data || {}),
+  //     }),
+  //   ),
 };
 
 export const sections = {
@@ -4343,13 +4343,13 @@ export const sections = {
   toBlock: function (data) {
     return `{% sections %}{% endsections %}`;
   },
-  toPreview: () => {
-    const el = document.createElement("div");
-    el.className = "cms-sections-slot";
-    sectionsSlots.add(el);
-    setHtml(el, previewState.sectionsHtml || SECTIONS_EMPTY_NOTE);
-    return el;
-  },
+  // toPreview: () => {
+  //   const el = document.createElement("div");
+  //   el.className = "cms-sections-slot";
+  //   sectionsSlots.add(el);
+  //   setHtml(el, previewState.sectionsHtml || SECTIONS_EMPTY_NOTE);
+  //   return el;
+  // },
 };
 
 // Example for project specific component def
