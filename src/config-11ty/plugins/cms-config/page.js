@@ -45,7 +45,29 @@ export class CmsPage {
           CMS.registerEditorComponent(defaultEditorComponents[name]);
         })
       </script>
+      <script type="module" eleventy:ignore>
+        import * as defaultFieldTypes from "./defaultFieldTypes.js";
+        const dftNames = Object.keys(defaultFieldTypes)
+        console.log(dftNames, defaultFieldTypes);
+        dftNames.forEach(name => {
+          const { name: fieldTypeName, control, preview, schema } = defaultFieldTypes[name];
+          CMS.registerWidget(fieldTypeName, control, preview, schema);
+        })
+      </script>
       ` +
+          (data.env.hasUserFieldTypes
+            ? `
+      <script type="module" eleventy:ignore>
+        import * as userFieldTypes from "./userFieldTypes.js";
+        const uftNames = Object.keys(userFieldTypes)
+        console.log(uftNames, userFieldTypes);
+        uftNames.forEach(name => {
+          const { name: fieldTypeName, control, preview, schema } = userFieldTypes[name];
+          CMS.registerWidget(fieldTypeName, control, preview, schema);
+        })
+      </script>
+      `
+            : "") +
           (data.env.hasUserEditorComponents
             ? `
       <script type="module" eleventy:ignore>

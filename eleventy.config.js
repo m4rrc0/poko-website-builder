@@ -78,6 +78,7 @@ import {
   unrenderedLanguages,
   brandConfig,
   hasUserEditorComponents,
+  hasUserFieldTypes,
   inlineAllStyles,
   brandStyles,
   fontPreloadTags,
@@ -649,6 +650,12 @@ export default async function (eleventyConfig) {
       ? {
           [`${WORKING_DIR}/_config/editorComponents.js`]:
             "admin/userEditorComponents.js",
+        }
+      : {}),
+    ...(hasUserFieldTypes
+      ? {
+          [`${WORKING_DIR}/_config/fieldTypes.js`]:
+            "admin/userFieldTypes.js",
         }
       : {}),
     // Populate Default Content: Copy `src/content-static/` to `dist`

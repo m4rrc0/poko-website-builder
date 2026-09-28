@@ -36,6 +36,9 @@ export default async function (eleventyConfig, pluginOptions) {
     [enginePath(
       "src/config-11ty/plugins/cms-config/defaultEditorComponents.js",
     )]: "admin/defaultEditorComponents.js",
+    [enginePath(
+      "src/config-11ty/plugins/cms-config/defaultFieldTypes.js",
+    )]: "admin/defaultFieldTypes.js",
   });
 
   eleventyConfig.addTemplate(

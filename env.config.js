@@ -375,6 +375,10 @@ export const hasUserEditorComponents = fs.existsSync(
   `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`,
 );
 
+export const hasUserFieldTypes = fs.existsSync(
+  `${WORKING_DIR_ABSOLUTE}/_config/fieldTypes.js`,
+);
+
 export const userHtmlClasses = async function () {
   let userHtmlClassesTemp = {};
   try {
