@@ -5,20 +5,25 @@
 // `h` (React.createElement), `rf` (React.Fragment) and `createClass` on
 // `window` so components can be written without a build step or JSX.
 //
-// `select-other` mirrors the built-in `select` field but appends an "Other"
-// choice which reveals a free-form input below, so editors can fall back to
-// a custom value. The stored value stays a plain scalar (or an array with
-// `multiple: true`), exactly like `select`, so consumers of the content see
-// no difference. A stored value that matches none of `options` is shown as
-// the "other" choice with the value pre-filled in the free input.
+// `select-other` composes the built-in `select` field type via
+// `CMS.getFieldType('select')` (see "Reusing a Built-In Field Type" in the
+// Sveltia docs) and appends an "Other" choice which reveals a second
+// built-in control below, so editors can fall back to a custom value. The
+// stored value stays a plain scalar (or an array with `multiple: true`),
+// exactly like `select`, so consumers of the content see no difference: a
+// stored value that matches none of `options` is shown as the "other"
+// choice with the value pre-filled in the free input.
 //
 // Field options — in addition to the ones `select` already supports
-// (`options`, `multiple`, `dropdown_threshold`, `default`, `required`...):
+// (`options`, `multiple`, `dropdown_threshold`, `default`, `required`,
+// `min`, `max`, ...):
 // - `other_label` (string, default "Other"): label of the extra choice. It
 //   is also used as the label of the free input it reveals.
-// - `other_widget` (string, default "string"): widget type used for the
-//   free input — one of `string`, `text`, `number`, `boolean`, `color`,
-//   `date`, `datetime`. Any other value falls back to `string`.
+// - `other_widget` (string, default "string"): built-in field type used for
+//   the free input — one of `string`, `text`, `number`, `boolean`, `color`,
+//   `datetime`, `map`, `uuid`. Any other value falls back to `string`.
+//   (These are the built-in controls Sveltia allows outside the entry
+//   editor via `getFieldType`.)
 //
 // Example:
 //   {
@@ -32,36 +37,30 @@
 
 const { h, createClass } = window;
 
-// Value assigned to the "other" choice in the native <select> rendering path.
+// Value appended as the "other" choice in the options handed to the
+// built-in select control. It never reaches the stored value — the control
+// intercepts it in `onChange` — but it is compared against stored values on
+// load, so it should be a string unlikely to be used as a real option.
 const OTHER_OPTION_VALUE = "__other__";
 
-// Match the look of Sveltia's own textboxes.
-const textboxStyles = {
-  width: "100%",
-  padding: "8px 16px",
-  border:
-    "var(--sui-textbox-border-width, 1px) solid var(--sui-textbox-border-color, #b3b3b3)",
-  borderRadius: "var(--sui-textbox-border-radius, 4px)",
-  backgroundColor: "var(--sui-textbox-background-color, transparent)",
-  color: "var(--sui-textbox-foreground-color, inherit)",
-  fontFamily: "var(--sui-textbox-font-family, inherit)",
-  fontSize: "var(--sui-textbox-font-size, inherit)",
-  lineHeight: "var(--sui-textbox-multiline-line-height, inherit)",
-  boxSizing: "border-box",
-};
+// Built-in field types Sveltia can render outside the entry editor, i.e.
+// the names `getFieldType` accepts (excluding `select`, which would nest).
+const REUSABLE_OTHER_WIDGETS = [
+  "boolean",
+  "color",
+  "datetime",
+  "map",
+  "number",
+  "string",
+  "text",
+  "uuid",
+];
 
-const listStyles = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "4px",
-};
-
-const choiceStyles = {
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
-  cursor: "pointer",
-  fontWeight: "400",
+const otherLabelStyles = {
+  display: "block",
+  fontSize: "12px",
+  fontWeight: "600",
+  marginBottom: "4px",
 };
 
 // `field` is an Immutable Map per the Sveltia API; tolerate a plain object.
@@ -72,91 +71,24 @@ const fieldGet = (field, key, fallback) => {
   return raw && typeof raw.toJS === "function" ? raw.toJS() : raw;
 };
 
+const fieldConfig = (field) =>
+  field && typeof field.toJS === "function" ? field.toJS() : { ...field };
+
 // Options can be scalars or `{ label, value }` objects.
-const toOption = (option) =>
-  option !== null && typeof option === "object"
-    ? {
-        label:
-          option.label === undefined
-            ? String(option.value)
-            : String(option.label),
-        value: option.value,
-      }
-    : { label: String(option), value: option };
+const optionValue = (option) =>
+  option !== null && typeof option === "object" ? option.value : option;
 
 const isEmptyValue = (value) =>
   value === undefined || value === null || value === "";
 
-// Free-form input shown when "other" is selected. The `other_widget` field
-// option selects which control renders; unknown names fall back to `string`.
-function OtherValueInput({ id, label, widgetType, value, onChange }) {
-  const shared = {
-    id,
-    style: textboxStyles,
-    "aria-label": label,
-  };
-  switch (widgetType) {
-    case "text":
-      return h("textarea", {
-        ...shared,
-        rows: 4,
-        value: value ?? "",
-        onChange: (e) => onChange(e.target.value),
-      });
-    case "number":
-      return h("input", {
-        ...shared,
-        type: "number",
-        value: value ?? "",
-        onChange: (e) =>
-          onChange(e.target.value === "" ? null : Number(e.target.value)),
-      });
-    case "boolean":
-      return h("input", {
-        id,
-        type: "checkbox",
-        "aria-label": label,
-        checked: Boolean(value),
-        onChange: (e) => onChange(e.target.checked),
-      });
-    case "color":
-      return h("input", {
-        ...shared,
-        style: { ...shared.style, padding: "0 4px", height: "40px" },
-        type: "color",
-        value: value || "#000000",
-        onChange: (e) => onChange(e.target.value),
-      });
-    case "date":
-      return h("input", {
-        ...shared,
-        type: "date",
-        value: value ?? "",
-        onChange: (e) => onChange(e.target.value),
-      });
-    case "datetime":
-      return h("input", {
-        ...shared,
-        type: "datetime-local",
-        value: value ?? "",
-        onChange: (e) => onChange(e.target.value),
-      });
-    case "string":
-    default:
-      return h("input", {
-        ...shared,
-        type: "text",
-        value: value ?? "",
-        onChange: (e) => onChange(e.target.value),
-      });
-  }
-}
+const getFieldType = (name) =>
+  window.CMS?.getFieldType?.(name) ?? window.CMS?.getWidget?.(name);
 
 const selectOtherControl = createClass({
   getInitialState() {
-    // `otherActive` tracks the "selected but still empty" case: once the user
-    // types, the value itself marks the field as "other" and this flag is
-    // only needed while the free input is shown with no value yet.
+    // `otherActive` tracks the "selected but still empty" case: once the
+    // user types, the value itself marks the field as "other" and this flag
+    // is only needed while the free input is shown with no value yet.
     return { otherActive: false };
   },
 
@@ -176,20 +108,20 @@ const selectOtherControl = createClass({
     return Boolean(fieldGet(this.props.field, "multiple", false));
   },
 
-  getOptions() {
-    return (fieldGet(this.props.field, "options", []) || []).map(toOption);
+  getOptionValues() {
+    return (fieldGet(this.props.field, "options", []) || []).map(optionValue);
   },
 
   isKnown(value) {
-    return this.getOptions().some((option) => option.value === value);
+    return this.getOptionValues().includes(value);
   },
 
   isOtherValue(value) {
-    return !isEmptyValue(value) && !this.isKnown(value);
+    return !isEmptyValue(value) && value !== OTHER_OPTION_VALUE && !this.isKnown(value);
   },
 
   // Every stored value that matches no option is the custom "other" value.
-  getOtherContext(options) {
+  getOtherContext() {
     const { value } = this.props;
     if (this.isMultiple()) {
       const values = Array.isArray(value) ? value : [];
@@ -204,6 +136,7 @@ const selectOtherControl = createClass({
     const otherActive = this.state.otherActive || this.isOtherValue(value);
     return {
       values: [],
+      unknowns: [],
       otherActive,
       otherText: this.isOtherValue(value) ? value : "",
     };
@@ -220,182 +153,94 @@ const selectOtherControl = createClass({
     }
   },
 
-  selectOption(optionValue) {
-    this.setState({ otherActive: false });
-    this.props.onChange(optionValue);
-  },
-
-  selectOther() {
-    this.setState({ otherActive: true });
-    // Clear a previously selected concrete option so the draft matches the UI.
-    if (!this.isMultiple()) {
-      if (this.isKnown(this.props.value)) this.props.onChange(null);
+  // onChange of the inner select control. The sentinel never reaches the
+  // stored value: it only toggles the free input.
+  handleSelectChange(next) {
+    const { value, onChange } = this.props;
+    if (this.isMultiple()) {
+      const arr = Array.isArray(next) ? next : isEmptyValue(next) ? [] : [next];
+      const hasOther = arr.includes(OTHER_OPTION_VALUE);
+      const clean = arr.filter((v) => v !== OTHER_OPTION_VALUE);
+      const { unknowns } = this.getOtherContext();
+      this.setState({ otherActive: hasOther });
+      // While "other" stays checked, keep the stored custom values.
+      onChange(hasOther ? [...clean, ...unknowns] : clean);
+    } else if (next === OTHER_OPTION_VALUE) {
+      this.setState({ otherActive: true });
+      // Clear a previously selected concrete option so the draft matches
+      // the UI (otherwise the old option would still be saved).
+      if (this.isKnown(value)) onChange(null);
+    } else {
+      this.setState({ otherActive: false });
+      onChange(next ?? null);
     }
-  },
-
-  renderOptionChoice(option, otherActive, value) {
-    return h(
-      "label",
-      { key: String(option.value), style: choiceStyles },
-      h("input", {
-        type: "radio",
-        name: this.props.forID,
-        checked: !otherActive && value === option.value,
-        onChange: () => this.selectOption(option.value),
-      }),
-      h("span", null, option.label),
-    );
-  },
-
-  renderDropdown(options, otherActive, value, required, otherLabel) {
-    const { forID } = this.props;
-    return h(
-      "select",
-      {
-        id: forID,
-        style: textboxStyles,
-        value: otherActive
-          ? OTHER_OPTION_VALUE
-          : isEmptyValue(value)
-            ? ""
-            : value,
-        onChange: (e) => {
-          const raw = e.target.value;
-          if (raw === "") {
-            this.setState({ otherActive: false });
-            this.props.onChange(null);
-            return;
-          }
-          if (raw === OTHER_OPTION_VALUE) {
-            this.selectOther();
-            return;
-          }
-          // e.target.value is always a string; recover the original typed
-          // option value (options may be numbers or booleans).
-          const option = options.find((o) => String(o.value) === raw);
-          if (option) this.selectOption(option.value);
-        },
-      },
-      // An empty row keeps the select honest when nothing is picked yet, and
-      // lets non-required fields be cleared; disabled so it can't be picked
-      // manually on required fields.
-      h(
-        "option",
-        { key: "__none__", value: "", disabled: required },
-        required ? "" : "None",
-      ),
-      ...options.map((option) =>
-        h("option", { key: String(option.value), value: option.value }, option.label),
-      ),
-      h("option", { key: OTHER_OPTION_VALUE, value: OTHER_OPTION_VALUE }, otherLabel),
-    );
-  },
-
-  renderCheckboxChoice(option, values) {
-    return h(
-      "label",
-      { key: String(option.value), style: choiceStyles },
-      h("input", {
-        type: "checkbox",
-        checked: values.includes(option.value),
-        onChange: (e) => {
-          const known = values.filter((v) => this.isKnown(v));
-          const unknowns = values.filter((v) => this.isOtherValue(v));
-          const next = e.target.checked
-            ? [...known, option.value]
-            : known.filter((v) => v !== option.value);
-          this.props.onChange([...next, ...unknowns]);
-        },
-      }),
-      h("span", null, option.label),
-    );
   },
 
   render() {
     const { value, field, forID, classNameWrapper } = this.props;
-    const options = this.getOptions();
+    const options = fieldGet(field, "options", []) || [];
     const multiple = this.isMultiple();
-    const required = Boolean(fieldGet(field, "required", false));
-    const threshold = Number(fieldGet(field, "dropdown_threshold", 5));
     const otherLabel =
       String(fieldGet(field, "other_label", "Other") || "") || "Other";
     const otherWidget =
       String(fieldGet(field, "other_widget", "string") || "") || "string";
+    const fieldName = String(fieldGet(field, "name", "field") || "field");
 
-    const { values, otherActive, otherText } = this.getOtherContext(options);
+    const { values, unknowns, otherActive, otherText } =
+      this.getOtherContext();
 
-    const selector = multiple
-      ? h(
-          "div",
-          { id: forID, role: "group", style: listStyles },
-          ...options.map((option) =>
-            this.renderCheckboxChoice(option, values),
-          ),
-          h(
-            "label",
-            { key: OTHER_OPTION_VALUE, style: choiceStyles },
-            h("input", {
-              type: "checkbox",
-              checked: otherActive,
-              onChange: (e) => {
-                if (e.target.checked) {
-                  this.setState({ otherActive: true });
-                } else {
-                  this.setState({ otherActive: false });
-                  this.props.onChange(values.filter((v) => this.isKnown(v)));
-                }
-              },
-            }),
-            h("span", null, otherLabel),
-          ),
-        )
-      : options.length + 1 > threshold
-        ? this.renderDropdown(options, otherActive, value, required, otherLabel)
-        : h(
-            "div",
-            { id: forID, role: "radiogroup", style: listStyles },
-            ...options.map((option) =>
-              this.renderOptionChoice(option, otherActive, value),
-            ),
-            h(
-              "label",
-              { key: OTHER_OPTION_VALUE, style: choiceStyles },
-              h("input", {
-                type: "radio",
-                name: forID,
-                checked: otherActive,
-                onChange: () => this.selectOther(),
-              }),
-              h("span", null, otherLabel),
-            ),
-          );
+    // The real select control, with the "other" choice appended to the
+    // options. The rest of the field config (multiple, dropdown_threshold,
+    // min, max, required, i18n...) passes through untouched.
+    const SelectControl = getFieldType("select")?.control;
+    const selectField = {
+      ...fieldConfig(field),
+      options: [...options, { label: otherLabel, value: OTHER_OPTION_VALUE }],
+    };
+    // The sentinel option is what the select displays while "other" is
+    // active; it never reaches the stored value.
+    const selectValue = multiple
+      ? [...values.filter((v) => this.isKnown(v)), ...(otherActive ? [OTHER_OPTION_VALUE] : [])]
+      : otherActive
+        ? OTHER_OPTION_VALUE
+        : (value ?? null);
+
+    // The free input is another built-in control, resolved through the same
+    // registry; anything unavailable (e.g. "list", "markdown") falls back
+    // to a plain string input.
+    const OtherControl =
+      (REUSABLE_OTHER_WIDGETS.includes(otherWidget) &&
+        getFieldType(otherWidget)?.control) ||
+      getFieldType("string")?.control;
 
     return h(
       "div",
       { className: classNameWrapper },
-      selector,
-      otherActive
+      SelectControl
+        ? h(SelectControl, {
+            field: selectField,
+            value: selectValue,
+            forID,
+            onChange: (next) => this.handleSelectChange(next),
+          })
+        : null,
+      otherActive && OtherControl
         ? h(
             "div",
             { style: { marginTop: "8px" } },
             h(
               "label",
-              {
-                htmlFor: `${forID}-other`,
-                style: {
-                  display: "block",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                  marginBottom: "4px",
-                },
-              },
+              { htmlFor: `${forID}-other`, style: otherLabelStyles },
               otherLabel,
             ),
-            h(OtherValueInput, {
-              id: `${forID}-other`,
-              label: otherLabel,
-              widgetType: otherWidget,
-              value: otherText,
+            h(OtherControl, {
+              field: {
+                name: `${fieldName}.other`,
+                label: otherLabel,
+                widget: otherWidget,
+              },
+              value: isEmptyValue(otherText) ? null : otherText,
+              forID: `${forID}-other`,
               onChange: (text) => this.emitOtherText(text),
             }),
           )
@@ -407,9 +252,18 @@ const selectOtherControl = createClass({
 const selectOtherPreview = createClass({
   render() {
     const { value, field } = this.props;
-    const options = (fieldGet(field, "options", []) || []).map(toOption);
-    const labelFor = (v) =>
-      options.find((o) => o.value === v)?.label ?? String(v);
+    // Reuse the built-in select preview: it prints the option's label for
+    // known values and the raw value for a custom "other" one.
+    const SelectPreview = getFieldType("select")?.preview;
+    if (SelectPreview) return h(SelectPreview, { field, value });
+    const options = (fieldGet(field, "options", []) || []).map(optionValue);
+    const labelFor = (v) => {
+      const i = options.indexOf(v);
+      const raw = (fieldGet(field, "options", []) || [])[i];
+      return i >= 0 && raw && typeof raw === "object" && raw.label !== undefined
+        ? String(raw.label)
+        : String(v ?? "");
+    };
     return h(
       "span",
       null,
@@ -446,10 +300,7 @@ export const selectOther = {
       multiple: { type: "boolean" },
       dropdown_threshold: { type: "integer" },
       other_label: { type: "string" },
-      other_widget: {
-        type: "string",
-        enum: ["string", "text", "number", "boolean", "color", "date", "datetime"],
-      },
+      other_widget: { type: "string", enum: REUSABLE_OTHER_WIDGETS },
     },
     required: ["options"],
   },
