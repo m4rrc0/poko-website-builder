@@ -163,17 +163,20 @@
 :where(hr) {
   margin-block: var(--flow-hr);
 } /* prettier-ignore */
-:where(:where(img, picture, video):not(:first-child)) {
-    margin-block-start: var(--flow-media);
+:where(
+  :where(h1, h2, h3, h4, h5, h6, p, ul, ol, menu, dir, dl, blockquote, figure, hgroup, address, menu, search, form, fieldset, details, pre, ul, ol, menu, dir, dl, li, hr, img, picture, video)
+    + :where(img, picture, video)
+) {
+  margin-block-start: var(--flow-media);
 } /* prettier-ignore */
 :where(:where(blockquote, figure, hgroup, address, menu, search, form, fieldset, details, pre):not(:first-child)) {
-    margin-block-start: var(--flow-prose);
+  margin-block-start: var(--flow-prose);
 } /* prettier-ignore */
 :where(:where(section, .section, table):not(:first-child)) {
-    margin-block-start: var(--flow-section);
+  margin-block-start: var(--flow-section);
 } /* prettier-ignore */
 :where(:where(section, .section) + :where(section, .section)) {
-    margin-block-start: 0;
+  margin-block-start: 0;
 }
 
 /* Avoid previous defaults in some situations */

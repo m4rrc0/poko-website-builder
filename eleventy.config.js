@@ -56,6 +56,10 @@ import {
 import * as envConf from "./env.config.js";
 import { enginePath, dependencyEnginePath } from "./src/utils/paths.js";
 import {
+  recordIconUse,
+  setIconSources,
+} from "./src/config-11ty/icon-manifest.js";
+import {
   DEBUG,
   CMS_IMPORT,
   ELEVENTY_RUN_MODE,
@@ -210,6 +214,10 @@ const iconLists = {
     filePath.split("/").pop().replace(".svg", ""),
   ),
 };
+
+// CMS preview icon manifest: `icon.class` records each rendered icon, the
+// build writes a bundled map of their real svg markup.
+setIconSources(iconSources);
 
 /**
  * @typedef { import("@11ty/eleventy").UserConfig } UserConfig
@@ -568,7 +576,11 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginIcons, {
     sources: iconSources,
     icon: {
-      class: (name, source) => `icon icon-${source} icon-${name}`,
+      // Also records usage for the CMS preview's bundled icon map.
+      class: (name, source) => {
+        recordIconUse(source, name);
+        return `icon icon-${source} icon-${name}`;
+      },
       transform: async (svg) => {
         const min = (svg || "").replace(/\s+/g, " ");
         return min;

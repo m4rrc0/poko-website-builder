@@ -1,109 +1,25 @@
 import Image from "@11ty/eleventy-img";
 import deepmerge from "deepmerge";
-import { removeUndefinedProps } from "../../../utils/objects.js";
 import { imageTransformOptions } from "../../plugins/imageTransform.js";
+import { recordImageStats } from "../../image-manifest.js";
+import { prepareImageArgs } from "./image.args.js";
 import { WORKING_DIR } from "../../../../env.config.js";
 
 export async function image(args) {
-  const {
-    src: srcRaw,
-    alt,
-    aspectRatio,
-    objectPosition,
-    width,
-    title,
-    loading,
-    decoding,
-    fetchpriority,
-    sizes,
-    wrapper,
-    class: classNameExplicit,
-    id,
-    style,
-    imgAttributes,
-    // Other possible image arguments that could be passed through the `imgAttrs` field in the CMS or manually
-    name,
-    height,
-    srcset,
-    crossorigin,
-    usemap,
-    ismap,
-    referrerpolicy,
-    draggable,
-    hidden,
-    tabindex,
-    contenteditable,
-    dir,
-    lang,
-    spellcheck,
-    // The rest are possibly options to pass as shortcode options
-    ...opts
-  } = args;
-
-  const otherArgs = removeUndefinedProps({
-    name,
-    height,
-    srcset,
-    crossorigin,
-    usemap,
-    ismap,
-    referrerpolicy,
-    draggable,
-    hidden,
-    tabindex,
-    contenteditable,
-    dir,
-    lang,
-    spellcheck,
-  });
-
-  let wrapperTag = wrapper ? wrapper.split(" ")[0] : "";
-  // wrapperTag = wrapperTag || (width ? "p" : "");
-  // TODO: Allow defining a wrapping tag??
-  //
-  // TODO: If we have some 'full-bleed' class on the image, we need sizes to be "100vw"?? We might want to account for a max bleed nonetheless
-
-  const className = [
-    classNameExplicit,
-    imgAttributes?.class,
-    aspectRatio && `aspect-ratio-${aspectRatio}`,
-    objectPosition && `object-[${objectPosition.trim().replace(" ", "_")}]`,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  // Shared with the CMS preview stub (preview-njk.js) — the pure arg→attrs
+  // computation lives in ./image.args.js so they can't diverge.
+  const { srcRaw, width, widths, fallback, wrapperTag, imgAttributes, opts } =
+    prepareImageArgs(args);
 
   const options = deepmerge.all(
     [
       imageTransformOptions,
       {
         returnType: "html",
-        // ...(width && { width }),
-        ...(width && { widths: [width, width * 2] }),
+        ...(widths && { widths }),
         htmlOptions: {
-          imgAttributes: {
-            ...(imgAttributes || {}),
-            "eleventy:ignore": "",
-            ...(alt && { alt }),
-            ...(title && { title }),
-            ...(loading && { loading }),
-            ...(decoding && { decoding }),
-            ...((fetchpriority || loading === "eager") && {
-              fetchpriority: fetchpriority || "high",
-            }),
-            ...(width && { sizes: `${width}px` }),
-            ...(sizes && { sizes }),
-            ...(className && { class: className }),
-            ...(id && { id }),
-            // NOTE: I think `fallback: "smallest"` allows us to avoid inline styling
-            // ...((width && {
-            //   style: `inline-size:${width}px;${style || ""}`,
-            // }) ||
-            //   (style && { style })),
-            ...(style && { style }),
-            ...otherArgs,
-          },
-          // We can use "smallest" when only one width and accounting for pixel density
-          ...(width && { fallback: "smallest" }),
+          imgAttributes,
+          ...(fallback && { fallback }),
         },
       },
       opts,
@@ -118,6 +34,8 @@ export async function image(args) {
     ? `${WORKING_DIR}/${srcRaw}`.replace(/\/+/g, "/")
     : srcRaw;
   let html = await Image(src, options);
+  // CMS preview manifest — key by the CMS-facing path (`/_images/…`).
+  recordImageStats(srcRaw, Image.statsSync?.(src, options));
   // if (!html) {
   //   console.error({ error, src, options, page: this.page.fileSlug });
   // }

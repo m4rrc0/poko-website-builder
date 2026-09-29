@@ -98,8 +98,12 @@ export async function buildCss({
 /**
  * Bundle JS entrypoints for the browser: `Bun.build` under Bun,
  * `esbuild` under Node. Returns `[{ path, content }]` like `buildCss`.
+ *
+ * `plugins` accepts bundler plugins in the shared `{ name, setup(build) }`
+ * shape that both runtimes understand (esbuild plugins are a superset —
+ * only `build.onResolve`/`build.onLoad` style hooks are portable).
  */
-export async function buildJs({ entrypoints, minify = false }) {
+export async function buildJs({ entrypoints, minify = false, plugins = [] }) {
   if (isBun) {
     const { build: bunBuild } = await import("bun");
     const { outputs } = await bunBuild({
@@ -107,6 +111,7 @@ export async function buildJs({ entrypoints, minify = false }) {
       target: "browser",
       format: "esm",
       minify,
+      plugins,
     });
     return Promise.all(
       outputs.map(async (output) => ({
@@ -124,6 +129,7 @@ export async function buildJs({ entrypoints, minify = false }) {
     format: "esm",
     platform: "browser",
     minify,
+    plugins,
   });
   return outputFiles.map((file) => ({ path: file.path, content: file.text }));
 }

@@ -55,10 +55,17 @@ export class CmsPage {
         : `
       <script type="module" eleventy:ignore>
         import * as defaultEditorComponents from "./defaultEditorComponents.js";
+        import { defaultComponentPreview } from "./preview-runtime.js";
         const decNames = Object.keys(defaultEditorComponents)
         console.log(decNames, defaultEditorComponents);
         decNames.forEach(name => {
-          CMS.registerEditorComponent(defaultEditorComponents[name]);
+          // Sveltia requires a toPreview fn; default renders toBlock output
+          // through the app pipeline. A component's own toPreview wins.
+          const component = defaultEditorComponents[name];
+          CMS.registerEditorComponent({
+            toPreview: defaultComponentPreview(component),
+            ...component,
+          });
         })
       </script>
       ` +
@@ -66,10 +73,15 @@ export class CmsPage {
             ? `
       <script type="module" eleventy:ignore>
         import * as userEditorComponents from "./userEditorComponents.js";
+        import { defaultComponentPreview } from "./preview-runtime.js";
         const uecNames = Object.keys(userEditorComponents)
         console.log(uecNames, userEditorComponents);
         uecNames.forEach(name => {
-          CMS.registerEditorComponent(userEditorComponents[name]);
+          const component = userEditorComponents[name];
+          CMS.registerEditorComponent({
+            toPreview: defaultComponentPreview(component),
+            ...component,
+          });
         })
       </script>
       `

@@ -204,6 +204,7 @@
   --flow-h5: 1.67em; /* Chrome: 1.67em */
   --flow-h6: 2.33em; /* Chrome: 2.33em */
   --flow-hr: 1em;
+  --flow-media: 1em; /* Chrome: 1em | for img, picture, video */
   --flow-prose: var(--step-1); /* for blockquote, figure */
   --flow-section: var(--step-2);
   --flow-area: var(--step-3);
