@@ -1,5 +1,7 @@
 // Reusable CMS field primitives shared by section types declared in
 // `sectionsField.types` (this folder's `index.js`).
+
+import { utilitiesField } from "./utility-classes.js";
 //
 // IMPORTANT: These shapes are intentionally aligned with the inline editor
 // components in `src/content-static/admin/defaultEditorComponents.js` so that
@@ -84,12 +86,14 @@ export const sectionWrapperField = {
   collapsed: true,
   i18n: true,
   fields: [
+    utilitiesField,
     {
       name: "class",
       label: "Section Class Names",
       widget: "string",
       required: false,
       i18n: "duplicate",
+      hint: "Free-form class names merged with the Utility Classes picked above (e.g. 'my-class another-class')",
     },
     {
       name: "attributes",

@@ -4,6 +4,7 @@ import {
   editorComponents,
   // activeCollectionNames,
   iconLists,
+  utilityClassGroups,
 } from "./env.js";
 
 const { CONTENT_DIR } = env;
@@ -949,26 +950,88 @@ ${reelItemsStr}
 };
 
 /**
+ * Utility-class picker data (generated server-side and shipped via env.js).
+ * `utilityOptionToGroup` maps each selectable class name to its picker group
+ * so `parseSectionWrapper` can route known utility classes back into the
+ * `utilities` object on round-trips.
+ */
+const utilityOptionToGroup = new Map();
+for (const group of utilityClassGroups || []) {
+  for (const option of group.options || []) {
+    utilityOptionToGroup.set(option.value, group.name);
+  }
+}
+
+const classListFromUtilities = (utilities) => {
+  if (!utilities || typeof utilities !== "object") return "";
+  const tokens = Object.values(utilities)
+    .flatMap((value) => (Array.isArray(value) ? value : [value]))
+    .filter((v) => typeof v === "string" && v.trim());
+  return [...new Set(tokens)].join(" ");
+};
+
+// Mirrors `utilitiesField` in section-primitives.js (built from the same
+// `utilityClassGroups` catalog, delivered here via env.js).
+const utilitiesField = {
+  name: "utilities",
+  label: "Utility Classes",
+  hint: "Pick utility classes by group — merged into the element's class attribute. Use the Class Names field for anything not listed.",
+  widget: "object",
+  required: false,
+  collapsed: false,
+  i18n: "duplicate",
+  fields: (utilityClassGroups || []).map((group) => ({
+    name: group.name,
+    label: group.label,
+    widget: "select",
+    multiple: true,
+    required: false,
+    options: group.options,
+  })),
+};
+
+/**
  * Parse a section's outer-tag attribute string into structured `sectionWrapper`
- * data: `{ class, attributes }`. The `class` is promoted to a first-class field
- * so it stops being hidden inside the raw attributes string.
+ * data: `{ class, utilities, attributes }`. The `class` is promoted to a
+ * first-class field so it stops being hidden inside the raw attributes
+ * string; tokens matching the utility-class catalog are routed into the
+ * `utilities` picker groups, the rest stays free-form in `class`.
  */
 const parseSectionWrapper = (attrsString) => {
   const { extracted, remaining } = extractAttributes(attrsString || "", [
     "class",
   ]);
+  const utilities = {};
+  const freeClasses = [];
+  for (const token of (extracted?.class || "").split(/\s+/).filter(Boolean)) {
+    const groupName = utilityOptionToGroup.get(token);
+    if (groupName) {
+      (utilities[groupName] ??= []).push(token);
+    } else {
+      freeClasses.push(token);
+    }
+  }
   return {
-    ...(extracted?.class ? { class: extracted?.class } : {}),
+    ...(freeClasses.length ? { class: freeClasses.join(" ") } : {}),
+    ...(Object.keys(utilities).length ? { utilities } : {}),
     ...(remaining ? { attributes: remaining } : {}),
   };
 };
 
 /**
  * Build the section's outer-tag attribute string from `sectionWrapper` data.
+ * Picked `utilities` are merged into the single `class="…"` attribute.
  */
 const buildSectionWrapperString = (sectionWrapper) => {
-  const { class: className, attributes } = sectionWrapper || {};
-  return [className ? `class="${className}"` : "", attributes || ""]
+  const { class: className, utilities, attributes } = sectionWrapper || {};
+  const merged = [
+    ...new Set(
+      `${className || ""} ${classListFromUtilities(utilities)}`
+        .split(/\s+/)
+        .filter(Boolean),
+    ),
+  ].join(" ");
+  return [merged ? `class="${merged}"` : "", attributes || ""]
     .filter(Boolean)
     .join(", ");
 };
@@ -988,11 +1051,12 @@ const sectionWrapperField = {
   collapsed: true,
   i18n: true,
   fields: [
+    utilitiesField,
     {
       name: "class",
       label: "Section Class Names",
       widget: "string",
-      hint: "Class names added to the outer section element (e.g. 'my-class another-class')",
+      hint: "Free-form class names merged with the Utility Classes picked above (e.g. 'my-class another-class')",
       required: false,
       i18n: "duplicate",
     },

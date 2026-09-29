@@ -1,6 +1,7 @@
 import { CmsConfig } from "./config.js";
 import { CmsPage } from "./page.js";
 import { getActiveCollections, getActiveEditorComponents } from "./config.js";
+import { utilityClassGroups } from "./utility-classes.js";
 import { enginePath, dependencyEnginePath } from "../../../utils/paths.js";
 
 export default async function (eleventyConfig, pluginOptions) {
@@ -55,6 +56,7 @@ export default async function (eleventyConfig, pluginOptions) {
   export const editorComponents = ${JSON.stringify(editorComponents)};
   export const activeCollectionNames = ${JSON.stringify(activeCollectionNames)};
   export const iconLists = ${JSON.stringify(iconLists)};
+  export const utilityClassGroups = ${JSON.stringify(utilityClassGroups)};
   `;
     },
     {

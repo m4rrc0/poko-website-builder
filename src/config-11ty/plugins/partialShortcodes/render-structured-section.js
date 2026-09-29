@@ -1,3 +1,5 @@
+import { classListFromUtilities } from "../cms-config/utility-classes.js";
+
 // Shared rendering logic for the structured ("data-driven") section types
 // dispatched by the `sections` shortcode. Mirrors the canonical CMS schema
 // (header/items/footer/sectionWrapper) so frontmatter authoring produces the
@@ -96,7 +98,12 @@ export async function renderStructuredSection(data, opts) {
     innerContent = parts.join("\n");
   }
 
-  const wrapperClass = sectionWrapper?.class ?? flatClass ?? "";
+  const wrapperClass = [
+    sectionWrapper?.class ?? flatClass ?? "",
+    classListFromUtilities(sectionWrapper?.utilities),
+  ]
+    .filter(Boolean)
+    .join(" ");
   const wrapperAttrs = sectionWrapper?.attributes
     ? ` ${sectionWrapper.attributes}`
     : "";
