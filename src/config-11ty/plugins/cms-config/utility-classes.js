@@ -435,9 +435,10 @@ export const utilitiesField = {
   label: "Utility Classes",
   hint: "Pick utility classes by group — merged into the element's class attribute. Use the Class Names field for anything not listed.",
   widget: "object",
-  required: false,
-  collapsed: false,
+  required: true,
+  collapsed: true,
   i18n: "duplicate",
+  summary: "TODO: list classes as they will be added",
   fields: utilityClassGroups
     .filter((group) => group.field || group.options?.length)
     .map((group) => ({
