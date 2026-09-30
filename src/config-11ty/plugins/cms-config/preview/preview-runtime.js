@@ -5,6 +5,7 @@ import {
   bundledIcons,
   iconUrlBases,
   setSrcsetProvider,
+  setStatsProvider,
   registerPreviewFilterStubs,
   hydratePreviewEnv,
   generatePreviewCss,
@@ -25,6 +26,8 @@ import {
   year,
   env,
   njkFilterNames,
+  pagesCollection,
+  activeCollections,
   globalSettings as staticGlobalSettings,
   brandConfig as staticBrandConfig,
 } from "./env.js";
@@ -110,21 +113,30 @@ const loadImageManifest = async () => {
       const res = await fetch(url);
       if (res.ok) {
         imageManifest = await res.json();
+        // Srcs resolved via CMS blobs/data while the manifest was absent must
+        // re-resolve — a published url always beats a revocable blob.
+        for (const [k, v] of [...assetUrlCache])
+          if (/^(blob:|data:image\/)/i.test(v)) assetUrlCache.delete(k);
+        console.log("[cms preview] image-manifest loaded", {
+          url,
+          entries: Object.keys(imageManifest).length,
+        });
         return;
       }
     } catch {}
   }
   imageManifest = {};
+  console.log("[cms preview] image-manifest MISSING (all fetches failed)");
 };
 
-// Prefer webp, smallest variant ≥ 768px (preview doesn't need 2560px),
+// Prefer webp, smallest variant ≥ 2560px (preview doesn't need 2560px),
 // else largest available, else any format.
 const pickManifestUrl = (entry) => {
   const variants =
     (Array.isArray(entry?.webp) && entry.webp.length && entry.webp) ||
     Object.values(entry ?? {}).find((v) => Array.isArray(v) && v.length) ||
     [];
-  const pick = variants.find((v) => v.width >= 768) ?? variants.at(-1);
+  const pick = variants.find((v) => v.width >= 2560) ?? variants.at(-1);
   return pick?.url ?? null;
 };
 
@@ -153,6 +165,9 @@ const manifestSrcset = (src) => {
     .join(", ");
 };
 setSrcsetProvider(manifestSrcset);
+// `| image(src, opts)` filter stats: published sources get the manifest's
+// real per-format variants; unpublished → null (filter synthesizes a shim).
+setStatsProvider(manifestEntry);
 
 // Icons: bundled map of svgs the real build rendered (`preview-icons`), plus
 // a lazy unpkg fetch for icons chosen in the CMS that no page used at build
@@ -252,6 +267,20 @@ const scheduleAssetRerender = () => {
   }, 0);
 };
 
+// Debug: which resolution branch each src takes (once per src+branch —
+// reveals order bugs like manifest-still-null on first pass, or a blob url
+// getting sticky-cached before the manifest ever loads).
+const resolveDbg = new Set();
+const dbgResolve = (branch, src) => {
+  const k = `${branch}|${src}`;
+  if (resolveDbg.has(k)) return;
+  resolveDbg.add(k);
+  console.log("[cms preview] asset", branch, src, {
+    manifestLoaded: imageManifest !== null,
+    manifestSize: imageManifest ? Object.keys(imageManifest).length : 0,
+  });
+};
+
 export const resolvePreviewAsset = (src) => {
   // Already-usable urls (cms blobs, data uris, remote, protocol-relative,
   // anchors, any scheme) pass through untouched. The `#[^\s'"<>]*` test
@@ -261,33 +290,45 @@ export const resolvePreviewAsset = (src) => {
     isUsableUrl(src) ||
     /^#[^\s'"<>]*$/.test(src) ||
     /^[a-z][a-z0-9+.-]*:/i.test(src)
-  )
+  ) {
+    dbgResolve("passthrough", src);
     return src;
-  if (assetUrlCache.has(src)) return assetUrlCache.get(src);
+  }
+  if (assetUrlCache.has(src)) {
+    dbgResolve("cache", src);
+    return assetUrlCache.get(src);
+  }
   // Published images win: stable, sync, already served by the site.
   const published = manifestUrl(src);
   if (published) {
     assetUrlCache.set(src, published);
+    dbgResolve("manifest", src);
     return published;
   }
   if (!previewState.getAsset) return isMediaPath(src) ? "" : src;
-  if (failedAssets.has(src)) return "";
+  if (failedAssets.has(src)) {
+    dbgResolve("failed", src);
+    return "";
+  }
   const asset = lookupAsset(src);
   const url = asset?.url;
   if (isUsableUrl(url)) {
     // Dropped/draft assets carry blobURL up front → usable synchronously.
     assetUrlCache.set(src, url);
+    dbgResolve("cms-blob", src);
     return url;
   }
   if (asset) {
     // Stored asset: blob fetch pending — empty src this pass, real url on
     // the settle-triggered re-render.
+    dbgResolve("cms-pending", src);
     fetchAssetUrl(src);
     return "";
   }
   // No asset record: media paths can never resolve to a real url — empty src
   // so the <img> shows alt text. Other site-relative paths may be served.
   if (isMediaPath(src)) {
+    dbgResolve("miss", src);
     if (!missedAssets.has(src)) {
       missedAssets.add(src);
       console.warn(
@@ -332,7 +373,9 @@ export const previewState = {
   entry: null, // raw entry data (asset-resolved)
   computed: null, // entry data after eleventyComputed — what templates see
   page: {},
-  siteData: { translated: null, pagesData: null }, // CMS dataFiles entries
+  // CMS dataFiles entries: translatedData (the <lang>.yaml dir file) plus one
+  // `<coll>Data` entry per folder collection (its <coll>/<coll>.yaml dir file).
+  siteData: { translated: null, collectionData: {} },
   getAsset: null,
   getCollection: null,
   collectionName: "",
@@ -341,12 +384,30 @@ export const previewState = {
   requestRerender: null,
 };
 
+// Sveltia materializes every schema field in `entry.data` — unfilled ones as
+// `""` — while omitting them from the saved file entirely. "" therefore means
+// "not written": strip it (plus null/undefined) so materialized defaults
+// can't mask lower cascade tiers — the key simply isn't in the frontmatter
+// Eleventy would read. Booleans/numbers/array elements stay: an unfilled
+// toggle is indistinguishable from an intentional `false`.
+export const stripEmpty = (v) => {
+  if (Array.isArray(v)) return v.map(stripEmpty);
+  if (!v || typeof v !== "object") return v;
+  const out = {};
+  for (const [k, val] of Object.entries(v)) {
+    if (val === "" || val == null) continue;
+    out[k] = stripEmpty(val);
+  }
+  return out;
+};
+
 // File/i18n entries hold default-locale fields on `data`, other locales under
 // `i18n[locale].data`. Missing locale → default data (Eleventy would 404 the
-// file, but a wrong-locale preview beats an empty one).
+// file, but a wrong-locale preview beats an empty one). Data-file entries get
+// the same empty-field strip — Sveltia materializes their schema too.
 const entryDataForLang = (entry, lang) => {
   const js = toJs(entry);
-  return js?.i18n?.[lang]?.data ?? js?.data ?? {};
+  return stripEmpty(js?.i18n?.[lang]?.data ?? js?.data ?? {});
 };
 
 const getCmsEntry = async (collection, slug) => {
@@ -357,6 +418,9 @@ const getCmsEntry = async (collection, slug) => {
   }
 };
 
+// Per dataFiles-slug retry budget for cold stores (see hydratePreviewFromCms).
+const hydrateAttempts = new Map();
+
 // Pull CMS-managed `_data` sources (globalSettings singleton, brand file,
 // per-locale dataFiles) out of the Sveltia store and recompute the derived
 // env values — same `deriveEnv` as the build, live values while editing.
@@ -364,15 +428,56 @@ export const hydratePreviewFromCms = async () => {
   // Published-image manifest (built by image-manifest.js) — loaded once,
   // before any render resolves assets.
   await loadImageManifest();
-  const [gs, brand, translated, pagesData] = previewState.getCollection
+  // Every folder collection's dir file is a `dataFiles` file entry named
+  // `<coll>Data` ("pagesData" for pages — same convention). Fetch them all:
+  // the edited entry's tier and every collection item's merge need them.
+  const dataFileNames = [pagesCollection, ...activeCollections]
+    .filter((c) => c.folder)
+    .map((c) => `${c.name}Data`);
+  const [gs, brand, translated, ...collEntries] = previewState.getCollection
     ? await Promise.all([
         getCmsEntry("_singletons", "globalSettings"),
         getCmsEntry("stylesConfig", "brand"),
         getCmsEntry("dataFiles", "translatedData"),
-        getCmsEntry("dataFiles", "pagesData"),
+        ...dataFileNames.map((slug) => getCmsEntry("dataFiles", slug)),
       ])
     : [null, null, null, null];
-  previewState.siteData = { translated, pagesData };
+  const collectionData = {};
+  dataFileNames.forEach(
+    (slug, i) =>
+      (collectionData[slug.slice(0, -"Data".length)] = collEntries[i]),
+  );
+  previewState.siteData = { translated, collectionData };
+  console.log(
+    "[cms preview] dirData",
+    Object.fromEntries(
+      Object.entries(collectionData).map(([name, e]) => {
+        const d = e && entryDataForLang(e, previewState.lang || "fr");
+        return [
+          name,
+          d && {
+            pageLayout: d.pageLayout,
+            layout: d.layout,
+            generatePage: d.generatePage,
+            keys: Object.keys(d).length,
+          },
+        ];
+      }),
+    ),
+  );
+  // Cold Sveltia store: a dataFiles entry can come back null until its
+  // collection warms — re-hydrate + re-render a few times, then give up (the
+  // file may legitimately not exist).
+  const missing = [
+    ["translatedData", translated],
+    ...dataFileNames.map((slug, i) => [slug, collEntries[i]]),
+  ].filter(([slug, e]) => !e && (hydrateAttempts.get(slug) ?? 0) < 4);
+  for (const [slug] of missing)
+    hydrateAttempts.set(slug, (hydrateAttempts.get(slug) ?? 0) + 1);
+  if (missing.length)
+    setTimeout(() => {
+      hydratePreviewFromCms().then(() => previewState.requestRerender?.());
+    }, 800);
   hydratePreviewEnv({
     constants: previewEnvConstants,
     globalSettings: toJs(gs)?.data ?? staticGlobalSettings,
@@ -391,20 +496,41 @@ const escapeHtml = (s) =>
 // force-keeps exactly the attrs we need: `src`/`srcset` carrying `blob:` or
 // `data:image/` urls — safe by construction (blob is opaque, img-loaded
 // data: svgs can't script) and scoped to media attrs only.
-let sanitizeHooked = false;
+// DOMPurify's URI policy strips `src="blob:…"`/`src="data:image/…"` wholesale
+// and the forceAttribute hook does not reliably save them — park the values
+// in `data-preview-*` (plain data-* attrs pass sanitize untouched) and swap
+// them back after innerHTML insertion via restoreParkedSrcs.
 export const sanitizeHtml = (html) => {
   if (!window.DOMPurify?.sanitize) return `<pre>${escapeHtml(html)}</pre>`;
-  if (!sanitizeHooked) {
-    sanitizeHooked = true;
-    window.DOMPurify.addHook("uponSanitizeAttribute", (_node, data) => {
-      if (
-        /^src(set)?$/i.test(data.attrName) &&
-        /^(blob:|data:image\/)/i.test(data.attrValue)
-      )
-        data.forceAttribute = true;
-    });
+  const parked = String(html ?? "").replace(
+    /\b(src|srcset)="(blob:|data:image\/)([^"]*)"/gi,
+    (_, attr, scheme, rest) => `data-preview-${attr}="${scheme}${rest}"`,
+  );
+  const out = window.DOMPurify.sanitize(parked);
+  const count = (s, re) => (String(s).match(re) || []).length;
+  console.log("[cms preview] sanitize", {
+    blobSrcIn: count(html, /src="blob:/g),
+    parkedSrcOut: count(out, /data-preview-src="blob:/g),
+  });
+  return out;
+};
+
+// Post-innerHTML: restore parked media attrs. Call on the inserted subtree.
+export const restoreParkedSrcs = (root) => {
+  for (const el of root.querySelectorAll(
+    "[data-preview-src],[data-preview-srcset]",
+  )) {
+    const src = el.getAttribute("data-preview-src");
+    const srcset = el.getAttribute("data-preview-srcset");
+    if (src) {
+      el.setAttribute("src", src);
+      el.removeAttribute("data-preview-src");
+    }
+    if (srcset) {
+      el.setAttribute("srcset", srcset);
+      el.removeAttribute("data-preview-srcset");
+    }
   }
-  return window.DOMPurify.sanitize(html);
 };
 // "Eleventy lite": Nunjucks + markdown-it in the bundled renderer. Falls back
 // to Sveltia's marked if the rich pipeline throws.
@@ -420,7 +546,7 @@ export const renderMarkdown = async (src, data) => {
 };
 export const setHtml = (el, html) => {
   el.innerHTML = sanitizeHtml(html);
-  // el.innerHTML = html;
+  restoreParkedSrcs(el);
 };
 
 // Runtime UnoCSS overlay: regenerate page-specific utilities from the rendered
@@ -444,40 +570,88 @@ export const updateUnoStyles = async (doc, html) => {
 };
 // Singleton: one renderer/env for the session. The render cascade is read
 // live from previewState so entry switches/keystrokes don't rebuild it.
+// The full data cascade is rebuilt only when one of its inputs changed —
+// reference compare on previewState pieces (each refresh swaps entry/page/
+// computed/collections; hydrate swaps siteData). Within a refresh the many
+// cascade() calls hit this memo instead of re-deep-merging.
+let cascadeCache = null;
+let cascadeKey = null;
+
+// Data tiers for a non-entry context (collection items): directory files
+// merged under the item's own frontmatter, matching Eleventy's dir cascade.
+export const collectionItemData = (collectionName, data) =>
+  cascadeMerge(
+    entryDataForLang(previewState.siteData.translated, previewState.lang),
+    entryDataForLang(
+      previewState.siteData.collectionData?.[collectionName],
+      previewState.lang,
+    ),
+    stripEmpty(data ?? {}),
+  );
+
+const buildCascade = () =>
+  // Deep-merge in Eleventy precedence: global/constants < directory data
+  // files (shallow dir → deeper dir) < page entry/computed < plumbing —
+  // objects compose, scalars and arrays of the later source win.
+  cascadeMerge(
+    {
+      env,
+      baseUrl,
+      basePath,
+      prodUrl,
+      displayUrl,
+      pathPrefix,
+      statusesToUnrender,
+      metadata,
+      iconLists,
+      year,
+    },
+    // `<lang>/<lang>.yaml` (dataFiles.translatedData) applies everywhere
+    // under <lang>/; `<coll>/<coll>.yaml` is that collection's deeper dir file.
+    entryDataForLang(previewState.siteData.translated, previewState.lang),
+    entryDataForLang(
+      previewState.siteData.collectionData?.[previewState.collectionName],
+      previewState.lang,
+    ),
+    previewState.computed ?? previewState.entry ?? {},
+    {
+      collections: previewState.collections,
+      lang: previewState.lang,
+      page: previewState.page,
+      // Preview-only marker so templates can gate node-only blocks
+      // (`{% if not cmsPreview %}`) — e.g. fs `glob`/image filters.
+      cmsPreview: true,
+    },
+  );
+
 let renderer;
 export const getRenderer = () =>
   (renderer ??= createRenderer({
-    getCascade: () =>
-      // Deep-merge in Eleventy precedence: global/constants < directory data
-      // files < page entry < computed < plumbing — objects compose, scalars
-      // and arrays of the later source win.
-      cascadeMerge(
-        {
-          env,
-          baseUrl,
-          basePath,
-          prodUrl,
-          displayUrl,
-          pathPrefix,
-          statusesToUnrender,
-          metadata,
-          iconLists,
-          year,
-        },
-        // Directory data files (CMS `dataFiles` collection):
-        // `<lang>/<lang>.yaml` applies everywhere under <lang>/,
-        // `pagesData` under <lang>/pages/.
-        entryDataForLang(previewState.siteData.translated, previewState.lang),
-        previewState.collectionName === "pages"
-          ? entryDataForLang(previewState.siteData.pagesData, previewState.lang)
-          : {},
-        previewState.computed ?? previewState.entry ?? {},
-        {
-          collections: previewState.collections,
-          lang: previewState.lang,
-          page: previewState.page,
-        },
-      ),
+    getCascade: () => {
+      const s = previewState;
+      const key = [
+        s.siteData,
+        s.collections,
+        s.computed,
+        s.entry,
+        s.page,
+        s.lang,
+        s.collectionName,
+      ];
+      if (cascadeKey?.every((v, i) => v === key[i])) return cascadeCache;
+      cascadeKey = key;
+      const out = buildCascade();
+      console.log("[cms preview] cascade", {
+        collectionName: s.collectionName,
+        collDataKeys: Object.keys(s.siteData.collectionData ?? {}).filter(
+          (k) => s.siteData.collectionData[k],
+        ),
+        pageLayout: out.pageLayout,
+        layout: out.layout,
+        generatePage: out.generatePage,
+      });
+      return (cascadeCache = out);
+    },
   }));
 export const asyncPreview = (promise) => {
   const el = document.createElement("div");

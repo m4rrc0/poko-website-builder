@@ -10,7 +10,7 @@ import {
   mdSemanticContainerTags,
   mdPlainContainerNames,
   mRCTOptions,
-} from "../../markdown-containers.js";
+} from "../../../markdown-containers.js";
 
 let md;
 
@@ -31,6 +31,15 @@ export const setSrcsetProvider = (fn) => {
   srcsetProvider = typeof fn === "function" ? fn : () => "";
 };
 export const previewSrcset = (src) => srcsetProvider(src);
+
+// Same injection, for the `| image(src, opts)` filter: the runtime provides
+// the build manifest's real stats ({webp: [{url, width}…], jpeg: […]});
+// null for unpublished sources.
+let statsProvider = () => null;
+export const setStatsProvider = (fn) => {
+  statsProvider = typeof fn === "function" ? fn : () => null;
+};
+export const previewImageStats = (src) => statsProvider(src);
 
 // Same injection, for `{% icon %}`: the runtime resolves "lib:name" to real
 // svg markup (bundled build map, else lazy unpkg fetch → re-render); null

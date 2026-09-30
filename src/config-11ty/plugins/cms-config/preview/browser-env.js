@@ -12,7 +12,7 @@
 // IMPORTANT: exports are `let` bindings hydrated at runtime — never read them
 // at module top level, only inside functions.
 
-import { deriveEnv } from "../../../env/derive.js";
+import { deriveEnv } from "../../../../env/derive.js";
 
 // ---- build-time constants (hydrated once from serialized env.js) ----
 export let CONTENT_DIR = "_content";

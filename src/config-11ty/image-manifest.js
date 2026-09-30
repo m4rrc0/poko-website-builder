@@ -33,7 +33,12 @@ export const recordImageStats = (input, stats) => {
     const urls = variants
       .filter((v) => v?.url)
       .map(({ url, width }) => ({ url, width }));
-    if (urls.length) entry[format] = urls;
+    if (!urls.length) continue;
+    // Union-merge: the same source is often Image()'d at several call sites
+    // with different width sets — every listed url is a real emitted file.
+    const merged = new Map((entry[format] ?? []).map((v) => [v.url, v]));
+    for (const v of urls) merged.set(v.url, v);
+    entry[format] = [...merged.values()].sort((a, b) => a.width - b.width);
   }
   if (Object.keys(entry).length) manifest.set(key, entry);
 };

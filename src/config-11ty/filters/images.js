@@ -58,7 +58,7 @@ export async function image(input, localOptsRaw = {}) {
     // formats: ["jpeg", "auto"],
   };
 
-  const src = `${WORKING_DIR}/${input}`;
+  const src = `${WORKING_DIR}/${input}`.replace(/\/+/g, "/");
   const stats = await Image(src, statsOptions);
   recordImageStats(input, stats);
   const html = await Image(src, { ...statsOptions, returnType: "html" });

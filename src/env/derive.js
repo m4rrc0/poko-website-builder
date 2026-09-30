@@ -11,7 +11,7 @@ import {
 
 // Every value here derives from CMS-editable data (`_data/globalSettings.yaml`,
 // `_data/brand.yaml`) — the same computation runs at build time (env.config.js)
-// and in the browser CMS preview (cms-config/browser-env.js), so previews can
+// and in the browser CMS preview (cms-config/preview/browser-env.js), so previews can
 // hydrate live values straight from the Sveltia data store.
 export function deriveEnv({
   globalSettings = {},

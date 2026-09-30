@@ -1,5 +1,5 @@
 // Shared markdown-it configuration used by both the Eleventy md library
-// (eleventy.config.js) and the CMS preview renderer (cms-config/preview-md.js).
+// (eleventy.config.js) and the CMS preview renderer (cms-config/preview/preview-md.js).
 // Keep in sync with the real pipeline — the preview imports this module so the
 // two can never drift.
 

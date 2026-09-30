@@ -1,13 +1,16 @@
-import { filterCollection, sortCollection } from "../../../utils/arrays.js";
+import { filterCollection, sortCollection } from "../../../../utils/arrays.js";
 import {
   createNjkEnv,
   renderRichContent,
   renderNjkPartial,
+  renderNjkString,
 } from "./preview-njk.js";
+import { getPreviewMd } from "./preview-md.js";
 export {
   setAssetResolver,
   setIconResolver,
   setSrcsetProvider,
+  setStatsProvider,
   isMediaPath,
   resolveSrcset,
 } from "./preview-md.js";
@@ -17,25 +20,29 @@ export { hydratePreviewEnv } from "./browser-env.js";
 // - jsPartials: every `.11ty.js` partial, bundled — never a manual list
 // - previewData: `_data/**` yaml/json keyed like Eleventy's data cascade
 // - userHtmlClasses: project `_config/htmlClasses.js` (optional)
-import jsPartials from "./preview-partials.generated.js";
-import previewData from "./preview-data.generated.js";
-import { htmlClasses as userHtmlClasses } from "./preview-userconfig.generated.js";
+import jsPartials from "./generated/preview-partials.generated.js";
+import previewData from "./generated/preview-data.generated.js";
+import { htmlClasses as userHtmlClasses } from "./generated/preview-userconfig.generated.js";
+import {
+  layoutSources,
+  jsLayouts,
+} from "./generated/preview-layouts.generated.js";
 // Icons the real build inlined (recorded via plugin-icons `class` cb) + unpkg
 // bases for CMS-chosen icons absent from the map — re-exported so the raw
 // (unbundled) preview-runtime module can reach them through ./preview-renderer.
 export {
   default as bundledIcons,
   iconUrlBases,
-} from "./preview-icons.generated.js";
+} from "./generated/preview-icons.generated.js";
 // `env.config.js` resolves to browser-env.js via the bundler alias — these
 // are live bindings hydrated from the CMS store (see preview-runtime).
 import * as previewEnv from "./browser-env.js";
 // Never destructure: `let` bindings hydrate AFTER module init — read through
 // the namespace at call time.
-import eleventyComputed from "../../../data/eleventyComputed.js";
+import eleventyComputed from "../../../../data/eleventyComputed.js";
 import { createGenerator } from "@unocss/core";
 import deepmerge from "deepmerge";
-import { buildUnoConfig } from "../plugin-eleventy-unocss/uno.config.base.js";
+import { buildUnoConfig } from "../../plugin-eleventy-unocss/uno.config.base.js";
 
 // Runtime UnoCSS: same config factory as the build, but brand values come
 // from the hydrated bindings — a stylesConfig edit regenerates the generator.
@@ -147,11 +154,24 @@ const previewFilterCollection = (
 // renderer (and a single Nunjucks env) tracks the entry being edited instead
 // of being rebuilt per keystroke.
 export function createRenderer({ getCascade }) {
+  // cascade() runs dozens of times per render (every renderRich/partial
+  // call). Rebuild only when the runtime cascade or a hydrated env value
+  // changed — hydratePreviewEnv swaps these binding values on each hydrate.
+  let cascadeMemo = null;
+  let cascadeMemoKey = null;
   const cascade = () => {
     const runtime = getCascade() ?? {};
+    const key = [
+      runtime,
+      previewEnv.globalSettings,
+      previewEnv.brandConfig,
+      previewEnv.brandStyles,
+    ];
+    if (cascadeMemoKey?.every((v, i) => v === key[i])) return cascadeMemo;
+    cascadeMemoKey = key;
     // Eleventy merge order: global `_data` first, everything else above it;
     // deep-merge so per-layer objects (vars, tags…) compose like the build.
-    return cascadeMerge(previewData, runtime, {
+    return (cascadeMemo = cascadeMerge(previewData, runtime, {
       // CMS-hydrated values always win over anything stale in runtime data.
       globalSettings: previewEnv.globalSettings,
       brandConfig: previewEnv.brandConfig,
@@ -164,7 +184,7 @@ export function createRenderer({ getCascade }) {
       inlineAllStyles: previewEnv.inlineAllStyles,
       // `data.env` in the build is the whole env module — same here, hydrated.
       env: { ...previewEnv, ...(runtime.env ?? {}) },
-    });
+    }));
   };
   const renderRich = (src, data) =>
     renderRichContent(env, src, { ...cascade(), ...data });
@@ -209,8 +229,11 @@ export function createRenderer({ getCascade }) {
       console.warn(`[cms preview] unknown partial "${name}"`);
       return "";
     },
-    // Run the real eleventyComputed over cascade+entry data (per refresh).
-    compute: (data) => applyComputed({ ...cascade(), ...data }),
+    // Run the real eleventyComputed over the deep-merged cascade + entry —
+    // frontmatter is a data-cascade tier (deep-merge, not shallow shadow), so
+    // e.g. `vars: {}` in frontmatter must not empty the dir-file `vars` that
+    // computed fns read.
+    compute: (data) => applyComputed(cascadeMerge(cascade(), data)),
     userHtmlClasses,
   };
 
@@ -235,10 +258,91 @@ export function createRenderer({ getCascade }) {
       .join("\n");
   }
 
+  // Layout wrap: cascade `layout` (globalData default "base"; dir files and
+  // page frontmatter override) resolves like partials — project > theme >
+  // engine — with `.11ty.js` winning over source templates. Layouts receive
+  // the cascade + `content` = rendered body (`{{ content | safe }}` inside
+  // `_main-content.md`). A layout file's own frontmatter `layout:` chains
+  // (depth-capped). The outer document tags are stripped; html/body classes
+  // move to a wrapper div so palette/layout utilities still apply.
+  const layoutFile = (name) => {
+    const base = String(name).replace(/\.(11ty\.js|njk|html|md)$/, "");
+    const jsKey = `${base}.11ty.js`;
+    if (jsLayouts[jsKey]) return { jsKey };
+    const srcKey = [
+      String(name),
+      `${base}.html`,
+      `${base}.njk`,
+      `${base}.md`,
+    ].find((k) => layoutSources[k]);
+    return srcKey ? { srcKey } : null;
+  };
+
+  const renderLayout = async (content) => {
+    const c = cascade();
+    // "base" mirrors eleventy.config.js `addGlobalData("layout","base")` —
+    // config-level global data isn't a `_data` file so it never reaches
+    // previewData. Page/dir values still win; false/"" disables.
+    let name = c.layout ?? "base";
+    console.log("[cms preview] renderLayout", {
+      layout: c.layout,
+      pageLayout: c.pageLayout,
+      resolved: name,
+    });
+    if (!name) return content;
+    for (let depth = 0; name && depth < 4; depth++) {
+      const found = layoutFile(name);
+      if (!found) {
+        console.warn(`[cms preview] layout "${name}" not found`);
+        break;
+      }
+      const data = { ...c, content };
+      let out;
+      if (found.jsKey) {
+        out = await jsLayouts[found.jsKey].call({ ...c, ...ctx }, data);
+      } else {
+        const src = layoutSources[found.srcKey];
+        // Layout frontmatter may chain another layout (`layout:`) — strip
+        // the block, continue the loop with its value.
+        const fm = src.match(/^---\s*\n([\s\S]*?)\n---\s*/);
+        name = fm?.[1]?.match(/^\s*layout:\s*(\S+)/m)?.[1] ?? null;
+        const body = fm ? src.slice(fm[0].length) : src;
+        try {
+          out = await renderNjkString(env, body, data);
+        } catch (e) {
+          console.warn(
+            `[cms preview] layout "${found.srcKey}" render failed`,
+            e,
+          );
+          break;
+        }
+        if (found.srcKey.endsWith(".md")) out = getPreviewMd().render(out);
+        content = out;
+        continue;
+      }
+      content = out;
+      name = null;
+    }
+    // Promote html/body classes to a wrapper div; drop document tags so the
+    // layout's nav/footer/etc. render inside the preview root. Head children
+    // (meta/link/style) stay — inert or still functional.
+    const classes = [
+      ...content.matchAll(/<(?:html|body)\b[^>]*?\bclass="([^"]*)"/g),
+    ]
+      .flatMap((m) => m[1].split(/\s+/))
+      .filter(Boolean)
+      .join(" ");
+    const inner = content
+      .replace(/<!doctype[^>]*>/gi, "")
+      .replace(/<\/?(?:html|head|body)\b[^>]*>/gi, "");
+    return `<div class="cms-layout ${classes}">${inner}</div>`;
+  };
+
   return {
     renderSection,
     renderSections,
     renderRich,
+    renderLayout,
     compute: ctx.compute,
     userHtmlClasses,
   };

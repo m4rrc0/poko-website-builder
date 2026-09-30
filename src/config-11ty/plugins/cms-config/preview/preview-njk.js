@@ -20,22 +20,23 @@ import {
   resolveAsset,
   resolveIcon,
   previewSrcset,
+  previewImageStats,
 } from "./preview-md.js";
-import { prepareImageArgs } from "../../shortcodes/components/image.args.js";
-import { adminEntryUrl } from "./admin-url.js";
-import njkSources from "./preview-njk-sources.generated.js";
+import { prepareImageArgs } from "../../../shortcodes/components/image.args.js";
+import { adminEntryUrl } from "../utils/admin-url.js";
+import njkSources from "./generated/preview-njk-sources.generated.js";
 import {
   link,
   button,
   linkPaired,
   buttonPaired,
-} from "../../shortcodes/components/links.js";
-import { embed } from "../../shortcodes/components/embed.js";
-import { gallery } from "../../shortcodes/components/gallery.js";
-import { newLine, htmlLineBreak } from "../../shortcodes/newLine.js";
-import { locale_url, locale_links, tagLabel } from "../../filters/i18n.js";
-import { emailLink, email } from "../../filters/email.js";
-import { htmlAttrs, htmlImgAttrs, ioAttr } from "../../filters/html.js";
+} from "../../../shortcodes/components/links.js";
+import { embed } from "../../../shortcodes/components/embed.js";
+import { gallery } from "../../../shortcodes/components/gallery.js";
+import { newLine, htmlLineBreak } from "../../../shortcodes/newLine.js";
+import { locale_url, locale_links, tagLabel } from "../../../filters/i18n.js";
+import { emailLink, email } from "../../../filters/email.js";
+import { htmlAttrs, htmlImgAttrs, ioAttr } from "../../../filters/html.js";
 import {
   filterCollection,
   join,
@@ -45,15 +46,15 @@ import {
   sortCollection,
   asc,
   desc,
-} from "../../filters/array.js";
+} from "../../../filters/array.js";
 import {
   toISOString,
   formatDate,
   dateToSlug,
   toLocaleString,
   formatDateLocalized,
-} from "../../filters/dates.js";
-import { slugifyPath } from "../../filters/slugify.js";
+} from "../../../filters/dates.js";
+import { slugifyPath } from "../../../filters/slugify.js";
 import EleventyNavigation from "@11ty/eleventy-navigation/eleventy-navigation.js";
 
 // ---------------------------------------------------------------------------
@@ -164,11 +165,20 @@ const imageStub = function (args = {}) {
   const { srcRaw, wrapperTag, imgAttributes, width } = prepareImageArgs(
     typeof args === "string" ? { src: args } : args,
   );
+  console.log("[cms preview] image stub", {
+    srcRaw,
+    argsKeys: Object.keys(args),
+    resolved: srcRaw ? resolveAsset(srcRaw) : null,
+  });
   if (!srcRaw) return "";
+  console.log({ srcRaw, imgAttributes });
   const attrs = {
     src: resolveAsset(srcRaw),
     width,
     ...imgAttributes,
+    loading: "lazy",
+    decoding: "async",
+    fetchpriority: "low",
     srcset: imgAttributes.srcset || previewSrcset(srcRaw) || undefined,
   };
   const img = `<img ${Object.entries(attrs)
@@ -179,8 +189,12 @@ const imageStub = function (args = {}) {
     .join(" ")}>`;
   return wrapperTag ? `<${wrapperTag}>${img}</${wrapperTag}>` : img;
 };
+const emptyStubWarned = new Set();
 const emptyStub = (what) => {
-  console.warn(`[cms preview] "${what}" is not supported in preview`);
+  if (!emptyStubWarned.has(what)) {
+    emptyStubWarned.add(what);
+    console.warn(`[cms preview] "${what}" is not supported in preview`);
+  }
   return "";
 };
 // {% icon "tablerOutline:name", width=.., class=.. %} — real SVGs come from
@@ -269,13 +283,19 @@ export function createNjkEnv({ lang = "", helpers }) {
     const data = { ...cascade, ...dataManual, __cascade: cascade };
     const bare = filename.replace(/\.(njk|md|11ty\.js)$/, "");
     if (helpers.hasJsPartial?.(bare)) return helpers.partial(bare, data);
-    const html = await renderNjkPartial(
-      env,
-      filename,
-      data,
-      this.lang || langOf(),
-      engineOverride,
-    );
+    let html;
+    try {
+      html = await renderNjkPartial(
+        env,
+        filename,
+        data,
+        this.lang || langOf(),
+        engineOverride,
+      );
+    } catch (e) {
+      console.warn(`[cms preview] partial "${filename}" render failed`, e);
+      return "";
+    }
     if (html != null) return html;
     if (!/\./.test(filename)) return helpers.partial(filename, data);
     console.warn(`[cms preview] partial "${filename}" not found`);
@@ -573,8 +593,20 @@ export function createNjkEnv({ lang = "", helpers }) {
           .map((f) => f.trim());
     return names.find((n) => resolvePartialKey(n, langOf())) || "";
   });
-  // image/fs filters → identity stubs
-  for (const name of ["image", "ogImage", "imgStats", "glob"]) {
+  // `| image(src, opts)` — eleventy-img stats shape without sharp: manifest
+  // variants for published sources (real urls+widths); else a shim pointing
+  // each format at the resolved source so `.webp[0].url`-style reads work.
+  env.addFilter("image", (src, opts = {}) => {
+    const stats = previewImageStats(src);
+    if (stats) return stats;
+    const url = resolveAsset(src);
+    if (!url) return {};
+    const width = Number(opts?.width) || Number(opts?.widths?.[0]) || undefined;
+    const variant = { url, ...(width ? { width } : {}) };
+    return { webp: [variant], jpeg: [variant] };
+  });
+  // fs filters → identity stubs
+  for (const name of ["ogImage", "imgStats", "glob"]) {
     env.addFilter(name, (v) => v ?? "");
   }
 

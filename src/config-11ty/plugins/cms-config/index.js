@@ -65,11 +65,13 @@ export default async function (eleventyConfig, pluginOptions) {
     [enginePath(
       "src/config-11ty/plugins/cms-config/defaultEditorComponents.js",
     )]: "admin/defaultEditorComponents.js",
-    [enginePath("src/config-11ty/plugins/cms-config/preview-runtime.js")]:
-      "admin/preview-runtime.js",
-    [enginePath("src/config-11ty/plugins/cms-config/previewTemplates.js")]:
-      "admin/previewTemplates.js",
-    [enginePath("src/config-11ty/plugins/cms-config/admin-url.js")]:
+    [enginePath(
+      "src/config-11ty/plugins/cms-config/preview/preview-runtime.js",
+    )]: "admin/preview-runtime.js",
+    [enginePath(
+      "src/config-11ty/plugins/cms-config/preview/previewTemplates.js",
+    )]: "admin/previewTemplates.js",
+    [enginePath("src/config-11ty/plugins/cms-config/utils/admin-url.js")]:
       "admin/admin-url.js",
   });
 
@@ -101,7 +103,8 @@ export default async function (eleventyConfig, pluginOptions) {
   // an unconditional write would loop plugin re-run → write → reset forever.
   // JSON.stringify does not escape U+2028/9, which break JS string literals —
   // a partial containing either would kill the whole preview bundle.
-  const njkSourcesPath = `${import.meta.dirname}/preview-njk-sources.generated.js`;
+  const generatedDir = `${import.meta.dirname}/preview/generated`;
+  const njkSourcesPath = `${generatedDir}/preview-njk-sources.generated.js`;
   const njkSourcesCode = `export default ${JSON.stringify(njkSources)
     .replace(/\u2028/g, "\\u2028")
     .replace(/\u2029/g, "\\u2029")};\n`;
@@ -143,14 +146,14 @@ export default async function (eleventyConfig, pluginOptions) {
       .map(
         ([key, file], i) =>
           `import p${i} from ${JSON.stringify(
-            path.relative(import.meta.dirname, path.resolve(file)),
+            path.relative(generatedDir, path.resolve(file)),
           )};`,
       )
       .join("\n") +
     `\nexport default {\n${Object.entries(jsPartialFiles)
       .map(([key], i) => `  ${JSON.stringify(key)}: p${i},`)
       .join("\n")}\n};\n`;
-  const jsPartialsPath = `${import.meta.dirname}/preview-partials.generated.js`;
+  const jsPartialsPath = `${generatedDir}/preview-partials.generated.js`;
   const existingJsPartials = await readFile(jsPartialsPath, "utf-8").catch(
     () => null,
   );
@@ -176,7 +179,7 @@ export default async function (eleventyConfig, pluginOptions) {
       previewData = deepmerge(previewData, node);
     }
   }
-  const previewDataPath = `${import.meta.dirname}/preview-data.generated.js`;
+  const previewDataPath = `${generatedDir}/preview-data.generated.js`;
   const previewDataCode = `export default ${JSON.stringify(previewData)
     .replace(/\\u2028/g, "\\\\u2028")
     .replace(/\\u2029/g, "\\\\u2029")};\n`;
@@ -192,10 +195,10 @@ export default async function (eleventyConfig, pluginOptions) {
   const htmlClassesFile = path.resolve(`${WORKING_DIR}/_config/htmlClasses.js`);
   const userConfigCode = (await fglob(htmlClassesFile)).length
     ? `export { default as htmlClasses } from ${JSON.stringify(
-        `./${path.relative(import.meta.dirname, htmlClassesFile)}`,
+        `./${path.relative(generatedDir, htmlClassesFile)}`,
       )};\n`
     : `export const htmlClasses = {};\n`;
-  const userConfigPath = `${import.meta.dirname}/preview-userconfig.generated.js`;
+  const userConfigPath = `${generatedDir}/preview-userconfig.generated.js`;
   const existingUserConfig = await readFile(userConfigPath, "utf-8").catch(
     () => null,
   );
@@ -206,7 +209,52 @@ export default async function (eleventyConfig, pluginOptions) {
   // Icon map is written at eleventy.after (uses are recorded while pages
   // render); the bundle imports it at setup — ensure it exists so a fresh
   // checkout/first build resolves. Converges via the resetConfig watch loop.
-  await ensureIconsModule(`${import.meta.dirname}/preview-icons.generated.js`);
+  await ensureIconsModule(`${generatedDir}/preview-icons.generated.js`);
+
+  // Layout templates for the preview — same resolution priority as partials
+  // (project > theme > engine), minus lang dirs (layouts aren't localized).
+  // Two maps like partials: njk/md/html sources by filename, .11ty.js as
+  // bundled imports. Basenames collide on ext (`base.html` vs `base.njk`) —
+  // keep the ext in the key; resolution order lives in the renderer.
+  const layoutSources = {};
+  const jsLayoutFiles = {};
+  for (const dir of [
+    `${WORKING_DIR}/${LAYOUTS_DIR}`,
+    enginePath(`src/themes/${POKO_THEME}/${LAYOUTS_DIR}`),
+    enginePath(`src/content/${LAYOUTS_DIR}`),
+  ]) {
+    for (const file of await fglob(`${dir}/**/*.{njk,md,html,11ty.js}`)) {
+      const key = path.basename(file);
+      if (key.endsWith(".11ty.js")) {
+        if (!(key in jsLayoutFiles)) jsLayoutFiles[key] = file;
+      } else if (!(key in layoutSources)) {
+        layoutSources[key] = await readFile(file, "utf-8");
+      }
+    }
+  }
+  const jsLayoutsCode =
+    Object.entries(jsLayoutFiles)
+      .map(
+        ([key, file], i) =>
+          `import l${i} from ${JSON.stringify(
+            path.relative(generatedDir, path.resolve(file)),
+          )};`,
+      )
+      .join("\n") +
+    `\nexport const jsLayouts = {\n${Object.keys(jsLayoutFiles)
+      .map((key, i) => `  ${JSON.stringify(key)}: l${i},`)
+      .join("\n")}\n};\n`;
+  const layoutsCode =
+    `export const layoutSources = ${JSON.stringify(layoutSources)
+      .replace(/\u2028/g, "\\u2028")
+      .replace(/\u2029/g, "\\u2029")};\n` + jsLayoutsCode;
+  const layoutsPath = `${generatedDir}/preview-layouts.generated.js`;
+  const existingLayouts = await readFile(layoutsPath, "utf-8").catch(
+    () => null,
+  );
+  if (existingLayouts !== layoutsCode) {
+    await writeFile(layoutsPath, layoutsCode);
+  }
 
   // Shared modules import `env.config.js` (dotenv/fs) — redirect to the
   // browser shim hydrated from the CMS store.
@@ -214,12 +262,12 @@ export default async function (eleventyConfig, pluginOptions) {
     name: "browser-env",
     setup(build) {
       build.onResolve({ filter: /(^|\/)env\.config\.js$/ }, () => ({
-        path: path.join(import.meta.dirname, "browser-env.js"),
+        path: path.join(import.meta.dirname, "preview/browser-env.js"),
       }));
     },
   };
 
-  const previewRendererEntryPath = `${import.meta.dirname}/preview-renderer.entry.js`;
+  const previewRendererEntryPath = `${import.meta.dirname}/preview/preview-renderer.entry.js`;
   const [{ content: previewRendererCode }] = await buildJs({
     entrypoints: [previewRendererEntryPath],
     minify: MINIFY,
@@ -249,6 +297,31 @@ export default async function (eleventyConfig, pluginOptions) {
         .filter(Boolean);
 
       const envVars = { CONTENT_DIR };
+
+      // Collections whose every locale dir file (`<lang>/<coll>/<coll>.yaml`)
+      // sets `generatePage: previewOnly` produce no pages — gate them out of
+      // custom preview registration so Sveltia's default preview shows.
+      const previewOnlyCollections = (
+        await Promise.all(
+          [pagesCollection, ...activeCollections]
+            .filter((c) => c.folder)
+            .map(async (c) => {
+              const files = await fglob(
+                `${WORKING_DIR}/*/${c.name}/${c.name}.yaml`,
+              );
+              if (!files.length) return null;
+              const flags = await Promise.all(
+                files.map((f) =>
+                  readFile(f, "utf-8").then(
+                    (t) => yaml.load(t)?.generatePage === "previewOnly",
+                    () => false,
+                  ),
+                ),
+              );
+              return flags.every(Boolean) ? c.name : null;
+            }),
+        )
+      ).filter(Boolean);
 
       // Build-time constants for the browser env shim (`browser-env.js`).
       // CMS-derived values (globalSettings, brandConfig, languages…) are NOT
@@ -298,6 +371,7 @@ export default async function (eleventyConfig, pluginOptions) {
   // Every filter name registered on the eleventy config (universal filters),
   // shipped so the browser nunjucks env can stub the ones it doesn't implement.
   export const njkFilterNames = ${JSON.stringify(Object.keys(eleventyConfig.universal?.filters || {}).sort())};
+  export const previewOnlyCollections = ${JSON.stringify(previewOnlyCollections)};
   `;
     },
     {
@@ -315,7 +389,7 @@ export default async function (eleventyConfig, pluginOptions) {
     enginePath(`src/themes/${POKO_THEME}/**/*.{11ty.js,njk,md}`),
     enginePath("src/config-11ty/plugins/partialShortcodes/**/*.js"),
     enginePath("src/config-11ty/plugins/plugin-eleventy-unocss/rules/*.js"),
-    `${import.meta.dirname}/{preview-runtime,previewTemplates,section-primitives}.js`,
+    `${import.meta.dirname}/{preview/preview-runtime,preview/previewTemplates,section-primitives}.js`,
     `${WORKING_DIR}/**/*.{11ty.js,njk,md}`,
   ];
   // Tokens only ever produced from CMS data values, never literal in the corpus
@@ -397,6 +471,6 @@ export default async function (eleventyConfig, pluginOptions) {
   // Bundled icon map for the preview: svg markup of every icon the real
   // build rendered (recorded via plugin-icons `icon.class` callback).
   eleventyConfig.on("eleventy.after", () =>
-    writeIconsModule(`${import.meta.dirname}/preview-icons.generated.js`),
+    writeIconsModule(`${generatedDir}/preview-icons.generated.js`),
   );
 }
