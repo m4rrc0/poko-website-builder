@@ -637,7 +637,7 @@ export const mostCommonMarkdownCollectionConfig = {
         field: "tags",
       },
     ],
-    default: "eleventyNavigation.add",
+    default: "navItems",
   },
   // editor: {
   //   preview: false,
@@ -2954,7 +2954,7 @@ const stylesConfigCollection = (fontsourceFonts) => ({
           summary:
             "{{name}}: {{widthsContext}} | {{fontStacksContext}} | {{typeScale}} | {{palette}}",
           hint: "You can group styles in different contexts to be used across the website using a class name like '.ctx-[name]'.",
-          default: [{ name: "main", value: "ctx" }],
+          default: [{ name: "main" }],
           fields: [
             {
               name: "name",
