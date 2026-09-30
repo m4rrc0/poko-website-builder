@@ -19,6 +19,11 @@ export default async function (eleventyConfig, pluginOptions) {
         "assets/js/sveltia-cms.js",
       [dependencyEnginePath("@sveltia/cms", "dist/sveltia-cms.mjs")]:
         "assets/js/sveltia-cms.mjs",
+      // Sveltia lazily imports dist/chunks/react-dom.js (resolved relative
+      // to the bundle URL) to mount custom React field types — it must be
+      // served alongside the bundle or it falls back to the CDN.
+      [dependencyEnginePath("@sveltia/cms", "dist/chunks")]:
+        "assets/js/chunks",
     });
   } else if (CMS_IMPORT.startsWith("../../")) {
     eleventyConfig.addPassthroughCopy({
