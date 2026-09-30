@@ -54,6 +54,12 @@ const opt = (value, label) => ({
   label: `${label || humanize(value)} (${value})`,
 });
 const opts = (values) => values.map((v) => opt(v));
+// Short label, no `(value)` suffix — for groups where the class name is
+// redundant once the value is humanized (e.g. `palette--bg-pop` -> "Pop Bg").
+const namedOpts = (pairs) => pairs.map(([value, label]) => ({ value, label }));
+// Bare label = the class token itself (e.g. `clickable`) — groups where any
+// suffix would just repeat.
+const bareOpts = (values) => values.map((v) => ({ value: v, label: v }));
 
 // Token names resolved by the parameterized atom rules (see ctx-atoms.js /
 // src/styles/ctx/33_spaces.css). Referenced by `moreOptions` docs only.
@@ -167,7 +173,7 @@ export const utilityClassGroups = [
       value_field: "palettes.*.name",
       display_fields: ["palettes.*.name"],
       search_fields: ["palettes.*.name"],
-      multiple: true,
+      multiple: false,
       required: false,
       i18n: "duplicate",
     },
@@ -180,15 +186,15 @@ export const utilityClassGroups = [
     name: "variant",
     label: "Palette Variant",
     hint: "Palette slot permutations — remix the active palette (see AGENTS.md 'Absolute permutation model').",
-    options: opts([
-      "palette--read",
-      "palette--pop",
-      "palette--tone",
-      "palette--contrast",
-      "palette--pop-contrast",
-      "palette--tone-contrast",
-      "palette--bg-pop",
-      "palette--bg-tone",
+    options: namedOpts([
+      ["palette--read", "Read"],
+      ["palette--pop", "Pop"],
+      ["palette--tone", "Tone"],
+      ["palette--contrast", "Contrast"],
+      ["palette--pop-contrast", "Pop Contrast"],
+      ["palette--tone-contrast", "Tone Contrast"],
+      ["palette--bg-pop", "Pop Bg"],
+      ["palette--bg-tone", "Tone Bg"],
     ]),
     moreOptions: [
       "palette--default",
@@ -233,12 +239,13 @@ export const utilityClassGroups = [
   {
     name: "width",
     label: "Width",
-    options: opts([
-      "width-prose",
-      "width-featured",
-      "width-body",
-      "width-outset",
-      "width-section",
+    multiple: false,
+    options: namedOpts([
+      ["width-prose", "Prose"],
+      ["width-featured", "Featured"],
+      ["width-body", "Body"],
+      ["width-outset", "Outset"],
+      ["width-section", "Section"],
     ]),
     moreOptions: [
       ...widthNames
@@ -258,18 +265,18 @@ export const utilityClassGroups = [
   {
     name: "typography",
     label: "Text & Typography",
-    options: opts([
-      "text-left",
-      "text-center",
-      "text-right",
-      "font-bold",
-      "italic",
-      "uppercase",
-      "capitalize",
-      "whitespace-nowrap",
-      "text-balance",
-      "text-pretty",
-      "text-wrap",
+    options: namedOpts([
+      ["text-left", "Left"],
+      ["text-center", "Center"],
+      ["text-right", "Right"],
+      ["font-bold", "Bold"],
+      ["italic", "Italic"],
+      ["uppercase", "Uppercase"],
+      ["capitalize", "Capitalize"],
+      ["whitespace-nowrap", "Whitespace Nowrap"],
+      ["text-balance", "Balanced"],
+      ["text-pretty", "Pretty"],
+      ["text-wrap", "Wrap"],
     ]),
     moreOptions: [
       "text",
@@ -316,7 +323,7 @@ export const utilityClassGroups = [
   {
     name: "misc",
     label: "Miscellaneous",
-    options: opts(["bleed-bg", "breakout-clickable", "clickable"]),
+    options: bareOpts(["bleed-bg", "breakout-clickable", "clickable"]),
     moreOptions: [
       "background-overlay",
       "background-shadow",
@@ -441,9 +448,12 @@ export const utilitiesField = {
       ...(group.hint ? { hint: group.hint } : {}),
       ...(group.field || {
         widget: "select",
-        multiple: true,
+        multiple: group.multiple ?? true,
         options: group.options,
       }),
+      // Groups below this many options render as checkboxes/radios rather
+      // than a searchable dropdown.
+      dropdown_threshold: 20,
     })),
 };
 

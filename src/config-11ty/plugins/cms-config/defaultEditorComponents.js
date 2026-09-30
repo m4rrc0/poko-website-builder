@@ -960,8 +960,15 @@ ${reelItemsStr}
 const utilityTokenToPickerValue = new Map();
 for (const group of utilityClassGroups || []) {
   const prefix = group.classPrefix || "";
+  // Single-select groups (palette relation, width) store a scalar — extra
+  // matched tokens of that group stay in the free-form `class`.
+  const multi = (group.field?.multiple ?? group.multiple) !== false;
   for (const option of group.options || []) {
-    utilityTokenToPickerValue.set(prefix + option.value, [group.name, option.value]);
+    utilityTokenToPickerValue.set(prefix + option.value, [
+      group.name,
+      option.value,
+      multi,
+    ]);
   }
 }
 
@@ -1000,9 +1007,10 @@ const utilitiesField = {
       ...(group.hint ? { hint: group.hint } : {}),
       ...(group.field || {
         widget: "select",
-        multiple: true,
+        multiple: group.multiple ?? true,
         options: group.options,
       }),
+      dropdown_threshold: 20,
     })),
 };
 
@@ -1021,8 +1029,10 @@ const parseSectionWrapper = (attrsString) => {
   const freeClasses = [];
   for (const token of (extracted?.class || "").split(/\s+/).filter(Boolean)) {
     const route = utilityTokenToPickerValue.get(token);
-    if (route) {
+    if (route && route[2]) {
       (utilities[route[0]] ??= []).push(route[1]);
+    } else if (route && !(route[0] in utilities)) {
+      utilities[route[0]] = route[1];
     } else {
       freeClasses.push(token);
     }
