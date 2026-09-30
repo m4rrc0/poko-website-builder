@@ -1,21 +1,39 @@
 // Catalog of selectable utility classes backing the CMS "Utility Classes"
-// picker (`utilitiesField`) inside `sectionWrapper`. Classes are grouped so
-// authors can discover the design system by intent; every option `value` is
-// a literal class name appended to the section element's `class` attribute.
+// picker (`utilitiesField`) inside `sectionWrapper`. Classes are grouped by
+// intent; every group maps onto one CMS field inside the `utilities` object
+// and every selected value emits one or more class names appended to the
+// section element's `class` attribute.
 //
-// Sources:
-//  - The static groups below mirror the UnoCSS rules in
-//    `plugin-eleventy-unocss/rules/` and the hand-written CTX CSS in
-//    `src/styles/ctx/`. Parameterized families (p-*, breathe-*, width-*, …)
-//    enumerate the token names those rules resolve (`--py-*`, `--px-*`,
-//    `--p-*`, `--flow-*`, `--radius-*`, `--width-*`).
-//  - Brand-generated classes (`palette-*`, `ctx-*`, `widths-*`, `fonts-*`,
-//    `type-scale-*`) come from `env.config.js`, matching the class names
-//    `mapStyleStringsToClassDef` emits (`> 1` entries are required for
-//    per-name classes, except `ctx-*` which is always emitted).
-//  - `tailwind` is a curated set of common presetWind4 utilities — not an
-//    exhaustive list; anything missing can be typed into the free-text
-//    `class` field, which is merged with the picked utilities at render.
+// Group shape:
+//   {
+//     name,          // key inside `utilities` (e.g. utilities.spacing)
+//     label,         // field label
+//     hint?,         // field hint
+//     classPrefix?,  // emitted class = classPrefix + value (palette-*)
+//     field?,        // widget override (e.g. relation); default is a
+//                    // multi-select built from `options`
+//     options,       // selectable values; for `classPrefix` groups these are
+//                    // the unprefixed values, for plain selects the literal
+//                    // class names
+//     moreOptions?,  // documented extras NOT offered — move entries into
+//                    // `options` to enable them later
+//   }
+//
+// Sources for `moreOptions`/documented families (kept exhaustive so adding
+// one back is a copy-paste):
+//  - UnoCSS rules in `plugin-eleventy-unocss/rules/` and hand-written CTX CSS
+//    in `src/styles/ctx/`. Parameterized families enumerate the token names
+//    the rules resolve (`--py-*`, `--px-*`, `--p-*`, `--flow-*`,
+//    `--radius-*`, `--width-*`).
+//  - Brand-generated classes from `env.config.js`: `palette-{name}` (palette
+//    relation), `ctx-{name}`, `widths-{name}`, `fonts-{name}`,
+//    `type-scale-{name}` (emitted by `mapStyleStringsToClassDef` — the
+//    `*{name}` context classes only exist when > 1 entry is configured).
+//  - `general` holds common presetWind4 utilities. NOTE: numeric Tailwind
+//    spacing (`p-4`, `mx-2`, …) is intentionally absent — the CTX atom rules
+//    `(p|py|…)-(name)` and `(m|my|…)-(name)` match those tokens first and
+//    resolve them against `--p-*`/`--py-*` vars, so they do NOT mean
+//    Tailwind spacing here.
 import {
   brandPalettes,
   brandWidthsContexts,
@@ -36,10 +54,9 @@ const opt = (value, label) => ({
   label: `${label || humanize(value)} (${value})`,
 });
 const opts = (values) => values.map((v) => opt(v));
-const namedOpts = (entries) => entries.map(([v, l]) => opt(v, l));
 
 // Token names resolved by the parameterized atom rules (see ctx-atoms.js /
-// src/styles/ctx/33_spaces.css).
+// src/styles/ctx/33_spaces.css). Referenced by `moreOptions` docs only.
 const pyNames = [
   "body",
   "section",
@@ -108,255 +125,303 @@ const widthNames = [
   "wrap",
 ];
 
-// ---- Brand-generated groups (dynamic, per project) -------------------------
+// Currently configured palette names — option *values* of the palette
+// relation (`palettes.*.name` in `stylesConfig/brand`); the emitted class is
+// `palette-{name}` via the group's `classPrefix`.
+const paletteNames = (brandPalettes || []).map((p) => p.name).filter(Boolean);
 
-const paletteNameOptions = (brandPalettes?.length || 0) > 1
-  ? brandPalettes.map((p) => opt(`palette-${p.name}`, `Palette ${p.name}`))
-  : [];
-
-const styleContextOptions = [
-  ...(brandStyleContexts || []).map((c) =>
-    opt(`ctx-${c.name}`, `Context ${c.name}`),
-  ),
+// Style-context classes (`.ctx-*` always emitted; `.widths-*`/`.fonts-*`/
+// `.type-scale-*` only when more than one entry exists). Documented under
+// the `styleContext` group — not offered yet.
+const styleContextClasses = [
+  ...(brandStyleContexts || []).map((c) => `ctx-${c.name}`),
   ...(brandWidthsContexts?.length > 1
-    ? brandWidthsContexts.map((c) =>
-        opt(`widths-${c.name}`, `Widths ${c.name}`),
-      )
+    ? brandWidthsContexts.map((c) => `widths-${c.name}`)
     : []),
   ...(brandFontStacksContexts?.length > 1
-    ? brandFontStacksContexts.map((c) =>
-        opt(`fonts-${c.name}`, `Fonts ${c.name}`),
-      )
+    ? brandFontStacksContexts.map((c) => `fonts-${c.name}`)
     : []),
   ...(brandTypeScales?.length > 1
-    ? brandTypeScales.map((c) =>
-        opt(`type-scale-${c.name}`, `Type scale ${c.name}`),
-      )
+    ? brandTypeScales.map((c) => `type-scale-${c.name}`)
     : []),
 ];
 
 /**
- * Grouped option catalog: `[{ name, label, options: [{ value, label }] }]`.
- * Consumed twice: server-side to build `utilitiesField` for `admin/config.json`
- * (via `section-primitives.js`), and client-side where it is serialized into
- * `/admin/env.js` for `defaultEditorComponents.js`.
+ * Grouped option catalog. Groups with neither `field` nor non-empty
+ * `options` are documentation-only — the field builder skips them.
+ *
+ * Consumed twice: server-side to build `utilitiesField` for
+ * `admin/config.json` (via `section-primitives.js`), and client-side where it
+ * is serialized into `/admin/env.js` for `defaultEditorComponents.js`.
  */
 export const utilityClassGroups = [
   {
     name: "palette",
-    label: "Palette & Colors",
-    options: [
-      ...paletteNameOptions,
-      ...namedOpts([
-        ["palette--default", "Default"],
-        ["palette--reset", "Reset"],
-        ["palette--contrast", "Contrast"],
-        ["palette--pop", "Pop"],
-        ["palette--accent", "Accent"],
-        ["palette--tone", "Tone"],
-        ["palette--alt", "Alt"],
-        ["palette--bg-pop", "Background Pop"],
-        ["palette--bg-tone", "Background Tone"],
-        ["palette--pop-contrast", "Pop Contrast"],
-        ["palette--tone-contrast", "Tone Contrast"],
-        ["palette--contrast-pop", "Contrast Pop"],
-        ["palette--contrast-tone", "Contrast Tone"],
-        ["palette--read", "Read"],
-        ["palette--light", "Light"],
-        ["palette--dark", "Dark"],
-      ]),
-    ],
+    label: "Palette",
+    hint: "Applies .palette-{name}. Palettes are configured in Styles Config > Brand > Color Palettes.",
+    classPrefix: "palette-",
+    field: {
+      widget: "relation",
+      collection: "stylesConfig",
+      file: "brand",
+      value_field: "palettes.*.name",
+      display_fields: ["palettes.*.name"],
+      search_fields: ["palettes.*.name"],
+      multiple: true,
+      required: false,
+      i18n: "duplicate",
+    },
+    // Values are palette *names* (the relation stores `name`, not the class).
+    // Also used to route `palette-{name}` tokens back into this group when
+    // parsing an existing class attribute in the inline editor.
+    options: paletteNames.map((n) => opt(n, `Palette ${n}`)),
   },
   {
-    name: "styleContext",
-    label: "Style Contexts",
-    options: styleContextOptions,
+    name: "variant",
+    label: "Palette Variant",
+    hint: "Palette slot permutations — remix the active palette (see AGENTS.md 'Absolute permutation model').",
+    options: opts([
+      "palette--read",
+      "palette--pop",
+      "palette--tone",
+      "palette--contrast",
+      "palette--pop-contrast",
+      "palette--tone-contrast",
+      "palette--bg-pop",
+      "palette--bg-tone",
+    ]),
+    moreOptions: [
+      "palette--default",
+      "palette--reset",
+      "palette--accent",
+      "palette--alt",
+      "palette--contrast-pop",
+      "palette--contrast-tone",
+      "palette--light",
+      "palette--dark",
+      // Positional permutations: `palette--{r|n|p|t|0}×4` (e.g.
+      // `palette--nrpt`), generated by the dynamic rule in ctx-colors.js.
+    ],
   },
   {
     name: "spacing",
-    label: "Spacing & Rhythm",
-    options: [
-      ...namedOpts([
-        ["breathe", "Breathe (vertical margin)"],
-        ["no-padding", "No padding"],
-        ["no-flow", "No flow spacing"],
-        ["px-restore", "Restore lateral padding"],
-        ["reset-w", "Reset width (self)"],
-        ["reset-down-w", "Reset width (descendants)"],
-      ]),
-      ...opts([
-        ...pyNames.map((n) => `breathe-${n}`),
-        ...pyNames.map((n) => `squash-${n}`),
-        ...pyNames.map((n) => `py-${n}`),
-        ...pxNames.map((n) => `px-${n}`),
-        "p-card",
-        ...pyNames.map((n) => `my-${n}`),
-        ...pxNames.map((n) => `mx-${n}`),
-        "m-card",
-        ...flowNames.map((n) => `flow-${n}`),
-      ]),
+    label: "Spacing",
+    options: opts([
+      "breathe",
+      "no-padding",
+      "px-restore",
+      "squash",
+      "p-card",
+      "mx-auto",
+    ]),
+    moreOptions: [
+      "no-flow",
+      "reset-w",
+      "reset-down-w",
+      "m-card",
+      ...pyNames.map((n) => `breathe-${n}`),
+      ...pyNames.map((n) => `squash-${n}`),
+      ...pyNames.map((n) => `py-${n}`),
+      ...pxNames.map((n) => `px-${n}`),
+      ...pyNames.map((n) => `my-${n}`),
+      ...pxNames.map((n) => `mx-${n}`),
+      ...flowNames.map((n) => `flow-${n}`),
+      // Also available: p-/pb-/pi-/pbs-/pbe-/pis-/pie-{py|px names},
+      // m-/mb-/mi-/mbs-/mbe-/mis-/mie-{py|px names}, space:{value}
     ],
   },
   {
-    name: "sizing",
-    label: "Width, Bleed & Ratio",
-    options: [
-      ...opts([
-        ...widthNames.map((n) => `width-${n}`),
-        "full-bleed",
-        "full-bleed-page",
-        "full-bleed-screen",
-        "full-bleed-body",
-        "full-bleed-prose",
-        "full-bleed-featured",
-        "full-bleed-card",
-        "full-bleed-section",
-        "full-bleed-before",
-        "full-bleed-after",
-        "bleed-bg",
-        "aspect-ratio-1",
-        "aspect-ratio-1.5",
-        "aspect-ratio-2",
-      ]),
+    name: "width",
+    label: "Width",
+    options: opts([
+      "width-prose",
+      "width-featured",
+      "width-body",
+      "width-outset",
+      "width-section",
+    ]),
+    moreOptions: [
+      ...widthNames
+        .filter(
+          (n) => !["prose", "featured", "body", "outset", "section"].includes(n),
+        )
+        .map((n) => `width-${n}`),
+      "full-bleed",
+      ...widthNames.map((n) => `full-bleed-${n}`),
+      "full-bleed-before",
+      "full-bleed-after",
+      "aspect-ratio-1",
+      "aspect-ratio-1.5",
+      "aspect-ratio-2",
     ],
   },
   {
     name: "typography",
     label: "Text & Typography",
-    options: [
-      ...namedOpts([
-        ["text", "Centered text (with Center)"],
-        ["lowercase", "Lowercase (with-icon)"],
-        ["sub", "Sub icon"],
-        ["super", "Super icon"],
-        ["icon", "Icon"],
-        ["with-icon", "With icon"],
-        ["external-link-icons", "External link icons"],
-        ["truncate", "Truncate"],
-        ["truncate-lines", "Truncate lines"],
-        ["truncate-lines-overflow", "Truncate lines (ellipsis)"],
-      ]),
-      ...opts([
-        "text-left",
-        "text-center",
-        "text-right",
-        "text-justify",
-        "font-medium",
-        "font-semibold",
-        "font-bold",
-        "italic",
-        "not-italic",
-        "uppercase",
-        "capitalize",
-        "normal-case",
-        "underline",
-        "no-underline",
-        "line-through",
-        "whitespace-nowrap",
-        "text-balance",
-        "text-pretty",
-      ]),
+    options: opts([
+      "text-left",
+      "text-center",
+      "text-right",
+      "font-bold",
+      "italic",
+      "uppercase",
+      "capitalize",
+      "whitespace-nowrap",
+      "text-balance",
+      "text-pretty",
+      "text-wrap",
+    ]),
+    moreOptions: [
+      "text",
+      "lowercase",
+      "sub",
+      "super",
+      "icon",
+      "with-icon",
+      "external-link-icons",
+      "truncate",
+      "truncate-lines",
+      "truncate-lines-overflow",
+      "text-justify",
+      "font-medium",
+      "font-semibold",
+      "not-italic",
+      "normal-case",
+      "underline",
+      "no-underline",
+      "line-through",
     ],
   },
+  {
+    name: "borders",
+    label: "Borders & Radius",
+    options: opts([
+      "border",
+      "radius",
+      "radius-card",
+      "radius-featured",
+      "radius-prose",
+      "radius-section",
+      "radius-token",
+      "radius-round",
+    ]),
+    moreOptions: [
+      "radius-body",
+      // Positioned variants also exist: radius-{t|r|b|l|tl|tr|bl|br|
+      // top|right|bottom|left|top-left|…}-{radius name} — e.g. radius-top-card.
+      // border-{name} resolves var(--thick-{name}) — no --thick-* tokens are
+      // defined by default, so only bare `border` is offered for now.
+    ],
+  },
+  {
+    name: "misc",
+    label: "Miscellaneous",
+    options: opts(["bleed-bg", "breakout-clickable", "clickable"]),
+    moreOptions: [
+      "background-overlay",
+      "background-shadow",
+      "scroll-shadows-horizontal",
+      "scroll-shadows-radial-v",
+      "scroll-shadows-radial-h",
+      "skew-border-before",
+      "skew-border-after",
+    ],
+  },
+  {
+    name: "general",
+    label: "General Purpose",
+    options: opts([
+      "flex",
+      "flex-row",
+      "flex-col",
+      "flex-wrap",
+      "items-start",
+      "items-center",
+      "items-end",
+      "items-baseline",
+      "justify-start",
+      "justify-center",
+      "justify-end",
+      "justify-between",
+      "justify-around",
+      "justify-evenly",
+      "grid",
+      "block",
+      "inline-block",
+      "inline",
+      "hidden",
+      "invisible",
+      "visible",
+      "relative",
+      "absolute",
+      "sticky",
+      "overflow-hidden",
+      "overflow-x-auto",
+      "overflow-y-auto",
+      "w-full",
+      "h-full",
+      "min-h-screen",
+      "sr-only",
+      "pointer-events-none",
+      "select-none",
+      "grayscale",
+    ]),
+    moreOptions: [
+      // Wind4 utilities are nearly unlimited; add common ones as needed
+      // (gap-*, order-*, z-*, opacity-*, col-* …). Avoid numeric p-*/m-*
+      // spacing — shadowed by the CTX atom rules (see module header).
+    ],
+  },
+  // ---- Documented-only groups (no active options yet) ---------------------
   {
     name: "layout",
     label: "Layout Primitives",
-    options: [
-      ...namedOpts([
-        ["box", "Box"],
-        ["no-border", "No border (box)"],
-        ["flow", "Flow"],
-        ["recursive", "Flow recursive"],
-        ["horizontal", "Flow horizontal"],
-        ["split-after-me", "Flow split after me"],
-        ["stop", "Flow stop"],
-        ["center", "Center"],
-        ["intrinsic", "Center intrinsic"],
-        ["cluster", "Cluster"],
-        ["with-sidebar", "With sidebar (fixed-fluid)"],
-        ["switcher", "Switcher"],
-        ["cover", "Cover"],
-        ["grid-fluid", "Fluid grid"],
-        ["frame", "Frame"],
-        ["reel", "Reel"],
-        ["no-bar", "Reel no scrollbar"],
-        ["overflowing", "Reel overflowing"],
-        ["imposter", "Imposter"],
-        ["fixed", "Fixed position"],
-        ["container", "Container query"],
-        ["pile", "Pile"],
-        ["faux-masonry", "Faux masonry"],
-      ]),
+    options: [],
+    moreOptions: [
+      "box",
+      "no-border",
+      "flow",
+      "recursive",
+      "horizontal",
+      "split-after-me",
+      "stop",
+      "center",
+      "intrinsic",
+      "cluster",
+      "with-sidebar",
+      "switcher",
+      "cover",
+      "grid-fluid",
+      "frame",
+      "reel",
+      "no-bar",
+      "overflowing",
+      "imposter",
+      "fixed",
+      "container",
+      "pile",
+      "faux-masonry",
+      // Parameterized: limit-{n}, split-after-{n}, container:{name},
+      // space:{value}, vt-name-{name}
     ],
   },
   {
-    name: "effects",
-    label: "Borders & Effects",
-    options: [
-      ...opts([
-        "border",
-        "radius",
-        ...radiusNames.map((n) => `radius-${n}`),
-        "background-overlay",
-        "background-shadow",
-        "breakout-clickable",
-        "scroll-shadows-horizontal",
-        "scroll-shadows-radial-v",
-        "scroll-shadows-radial-h",
-        "skew-border-before",
-        "skew-border-after",
-      ]),
+    name: "styleContext",
+    label: "Style Contexts",
+    options: [],
+    moreOptions: [
+      // `.ctx-{name}`, `.widths-{name}`, `.fonts-{name}`,
+      // `.type-scale-{name}` — currently configured:
+      ...styleContextClasses,
     ],
   },
-  {
-    name: "tailwind",
-    label: "Tailwind Utilities",
-    options: [
-      ...opts([
-        "flex",
-        "flex-row",
-        "flex-col",
-        "flex-wrap",
-        "items-start",
-        "items-center",
-        "items-end",
-        "items-baseline",
-        "justify-start",
-        "justify-center",
-        "justify-end",
-        "justify-between",
-        "justify-around",
-        "justify-evenly",
-        "grid",
-        "block",
-        "inline-block",
-        "inline",
-        "hidden",
-        "invisible",
-        "visible",
-        "relative",
-        "absolute",
-        "sticky",
-        "overflow-hidden",
-        "overflow-x-auto",
-        "overflow-y-auto",
-        "w-full",
-        "h-full",
-        "min-h-screen",
-        "mx-auto",
-        "sr-only",
-        "pointer-events-none",
-        "select-none",
-        "grayscale",
-      ]),
-    ],
-  },
-].filter((group) => group.options.length > 0);
+];
 
 /**
- * The "Utility Classes" object field: one multi-select per group. Values
- * stored under `sectionWrapper.utilities` (or whichever parent object) as
- * `{ <groupName>: [class, …] }` — flattened by `classListFromUtilities`.
+ * The "Utility Classes" object field: one field per group — a multi-select
+ * built from `options`, or the group's own `field` definition (e.g. the
+ * palette `relation`). Values are stored under `sectionWrapper.utilities` as
+ * `{ <groupName>: [value, …] }` — flattened by `classListFromUtilities`.
  */
 export const utilitiesField = {
   name: "utilities",
@@ -366,24 +431,42 @@ export const utilitiesField = {
   required: false,
   collapsed: false,
   i18n: "duplicate",
-  fields: utilityClassGroups.map((group) => ({
-    name: group.name,
-    label: group.label,
-    widget: "select",
-    multiple: true,
-    required: false,
-    options: group.options,
-  })),
+  fields: utilityClassGroups
+    .filter((group) => group.field || group.options?.length)
+    .map((group) => ({
+      name: group.name,
+      label: group.label,
+      required: false,
+      i18n: "duplicate",
+      ...(group.hint ? { hint: group.hint } : {}),
+      ...(group.field || {
+        widget: "select",
+        multiple: true,
+        options: group.options,
+      }),
+    })),
 };
 
 /**
- * Flatten a `utilities` object (`{ group: [class, …] }` or
- * `{ group: "class" }`) into a deduped, space-joined class string.
+ * Flatten a `utilities` object (`{ group: [value, …] }`, `{ group: "value" }`,
+ * or a plain array of class names) into a deduped, space-joined class
+ * string. A group's `classPrefix` is prepended to each value unless the
+ * value already carries it; unknown keys pass their values through
+ * unchanged, so hand-authored YAML stays permissive.
  */
-export const classListFromUtilities = (utilities) => {
+export const classListFromUtilities = (
+  utilities,
+  groups = utilityClassGroups,
+) => {
   if (!utilities || typeof utilities !== "object") return "";
-  const tokens = Object.values(utilities)
-    .flatMap((value) => (Array.isArray(value) ? value : [value]))
-    .filter((v) => typeof v === "string" && v.trim());
+  const prefixByGroup = new Map(
+    groups.map((g) => [g.name, g.classPrefix || ""]),
+  );
+  const tokens = Object.entries(utilities).flatMap(([key, value]) => {
+    const prefix = prefixByGroup.get(key) ?? "";
+    return (Array.isArray(value) ? value : [value])
+      .filter((v) => typeof v === "string" && v.trim())
+      .map((v) => (v.startsWith(prefix) ? v : prefix + v));
+  });
   return [...new Set(tokens)].join(" ");
 };

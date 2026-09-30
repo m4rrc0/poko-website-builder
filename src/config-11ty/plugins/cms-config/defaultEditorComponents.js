@@ -951,22 +951,32 @@ ${reelItemsStr}
 
 /**
  * Utility-class picker data (generated server-side and shipped via env.js).
- * `utilityOptionToGroup` maps each selectable class name to its picker group
- * so `parseSectionWrapper` can route known utility classes back into the
- * `utilities` object on round-trips.
+ * `utilityTokenToPickerValue` maps each emitted class token to the
+ * [group, value] pair that selects it, honoring a group's `classPrefix`
+ * (e.g. palette relations store bare names like `main` and emit
+ * `palette-main`). `parseSectionWrapper` uses it to route known utility
+ * classes back into the `utilities` object on round-trips.
  */
-const utilityOptionToGroup = new Map();
+const utilityTokenToPickerValue = new Map();
 for (const group of utilityClassGroups || []) {
+  const prefix = group.classPrefix || "";
   for (const option of group.options || []) {
-    utilityOptionToGroup.set(option.value, group.name);
+    utilityTokenToPickerValue.set(prefix + option.value, [group.name, option.value]);
   }
 }
 
+// Mirrors `classListFromUtilities` in utility-classes.js.
 const classListFromUtilities = (utilities) => {
   if (!utilities || typeof utilities !== "object") return "";
-  const tokens = Object.values(utilities)
-    .flatMap((value) => (Array.isArray(value) ? value : [value]))
-    .filter((v) => typeof v === "string" && v.trim());
+  const prefixByGroup = new Map(
+    (utilityClassGroups || []).map((g) => [g.name, g.classPrefix || ""]),
+  );
+  const tokens = Object.entries(utilities).flatMap(([key, value]) => {
+    const prefix = prefixByGroup.get(key) ?? "";
+    return (Array.isArray(value) ? value : [value])
+      .filter((v) => typeof v === "string" && v.trim())
+      .map((v) => (v.startsWith(prefix) ? v : prefix + v));
+  });
   return [...new Set(tokens)].join(" ");
 };
 
@@ -980,14 +990,20 @@ const utilitiesField = {
   required: false,
   collapsed: false,
   i18n: "duplicate",
-  fields: (utilityClassGroups || []).map((group) => ({
-    name: group.name,
-    label: group.label,
-    widget: "select",
-    multiple: true,
-    required: false,
-    options: group.options,
-  })),
+  fields: (utilityClassGroups || [])
+    .filter((group) => group.field || group.options?.length)
+    .map((group) => ({
+      name: group.name,
+      label: group.label,
+      required: false,
+      i18n: "duplicate",
+      ...(group.hint ? { hint: group.hint } : {}),
+      ...(group.field || {
+        widget: "select",
+        multiple: true,
+        options: group.options,
+      }),
+    })),
 };
 
 /**
@@ -1004,9 +1020,9 @@ const parseSectionWrapper = (attrsString) => {
   const utilities = {};
   const freeClasses = [];
   for (const token of (extracted?.class || "").split(/\s+/).filter(Boolean)) {
-    const groupName = utilityOptionToGroup.get(token);
-    if (groupName) {
-      (utilities[groupName] ??= []).push(token);
+    const route = utilityTokenToPickerValue.get(token);
+    if (route) {
+      (utilities[route[0]] ??= []).push(route[1]);
     } else {
       freeClasses.push(token);
     }
