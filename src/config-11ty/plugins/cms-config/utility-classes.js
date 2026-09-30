@@ -438,7 +438,10 @@ export const utilitiesField = {
   required: true,
   collapsed: true,
   i18n: "duplicate",
-  summary: "TODO: list classes as they will be added",
+  // Shows each group's display values (option labels), space-joined — an
+  // approximation of the emitted class list (palette names unprefixed).
+  summary:
+    "{{palette}} {{variant}} {{spacing}} {{width}} {{typography}} {{borders}} {{misc}} {{general}}",
   fields: utilityClassGroups
     .filter((group) => group.field || group.options?.length)
     .map((group) => ({

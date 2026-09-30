@@ -35,6 +35,17 @@ import { classListFromUtilities } from "../cms-config/utility-classes.js";
 export const COLLECTION_EMPTY_MARKER = "<!--poko:collection-empty-->";
 
 /**
+ * Merge an entity's free-form `class` with its `utilities` picker values —
+ * the pair every class-bearing field object may carry (`{ class, utilities }`
+ * on headers, footers, items, columns, areas, and the section-level layout
+ * class).
+ */
+export const mergedClass = (entity) =>
+  [entity?.class, classListFromUtilities(entity?.utilities)]
+    .filter(Boolean)
+    .join(" ");
+
+/**
  * Must be invoked as `renderStructuredSection.call(this, data, opts)`.
  *
  * @this  {object}  the 11ty.js partial render context.
@@ -76,7 +87,7 @@ export async function renderStructuredSection(data, opts) {
         await this.partial.call(this, "_sectionHeader", {
           __cascade: cascade,
           content: html,
-          class: header.class,
+          class: mergedClass(header),
         }),
       );
     }
@@ -90,7 +101,7 @@ export async function renderStructuredSection(data, opts) {
         await this.partial.call(this, "_sectionFooter", {
           __cascade: cascade,
           content: html,
-          class: footer.class,
+          class: mergedClass(footer),
         }),
       );
     }
@@ -98,12 +109,10 @@ export async function renderStructuredSection(data, opts) {
     innerContent = parts.join("\n");
   }
 
-  const wrapperClass = [
-    sectionWrapper?.class ?? flatClass ?? "",
-    classListFromUtilities(sectionWrapper?.utilities),
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const wrapperClass = mergedClass({
+    class: sectionWrapper?.class ?? flatClass ?? "",
+    utilities: sectionWrapper?.utilities,
+  });
   const wrapperAttrs = sectionWrapper?.attributes
     ? ` ${sectionWrapper.attributes}`
     : "";
@@ -143,7 +152,7 @@ export async function renderItemsListInner({
         return await this.partial.call(this, itemPartial, {
           __cascade: cascade,
           content: html,
-          class: item?.class,
+          class: mergedClass(item),
         });
       }),
     )
@@ -188,7 +197,7 @@ export async function renderAreasInner({
           return await self.partial.call(self, partialName, {
             __cascade: cascade,
             content: html,
-            class: area.class,
+            class: mergedClass(area),
           });
         }
 
@@ -206,7 +215,7 @@ export async function renderAreasInner({
               fixedSide: area.layoutOptions?.fixedSide,
               widthFixed: area.layoutOptions?.widthFixed,
               widthFluidMin: area.layoutOptions?.widthFluidMin,
-              class: area.class,
+              class: mergedClass(area),
             },
           });
 
@@ -221,7 +230,7 @@ export async function renderAreasInner({
               gap: area.layoutOptions?.gap,
               widthWrap: area.layoutOptions?.widthWrap,
               columns: area.layoutOptions?.columns,
-              class: area.class,
+              class: mergedClass(area),
             },
           });
 
@@ -233,7 +242,7 @@ export async function renderAreasInner({
             wrapperPartial: "_flow",
             wrapperProps: {
               gap: area.layoutOptions?.gap,
-              class: area.class,
+              class: mergedClass(area),
             },
           });
 
@@ -249,7 +258,7 @@ export async function renderAreasInner({
               itemWidth: area.layoutOptions?.itemWidth,
               height: area.layoutOptions?.height,
               noBar: area.layoutOptions?.noBar,
-              class: area.class,
+              class: mergedClass(area),
             },
           });
 
@@ -272,7 +281,7 @@ export async function renderAreasInner({
             itemWidth: area.layoutOptions?.itemWidth,
             height: area.layoutOptions?.height,
             noBar: area.layoutOptions?.noBar,
-            class: area.class,
+            class: mergedClass(area),
             itemPartial: area.itemPartial,
           });
           // An empty, non-`keepVisible` collection drops the area only.
@@ -317,7 +326,7 @@ export async function renderColumnsPairInner({
     return await self.partial.call(self, itemPartial, {
       __cascade: cascade,
       content: html,
-      class: col?.class,
+      class: mergedClass(col),
     });
   };
 

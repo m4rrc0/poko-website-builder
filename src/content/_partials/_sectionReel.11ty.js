@@ -1,6 +1,7 @@
 import {
   renderStructuredSection,
   renderItemsListInner,
+  mergedClass,
 } from "../../config-11ty/plugins/partialShortcodes/render-structured-section.js";
 
 // Canonical structured shape (mirrors the inline editor component):
@@ -29,7 +30,7 @@ export default async function (data) {
           itemWidth: d?.layoutOptions?.itemWidth,
           height: d?.layoutOptions?.height,
           noBar: d?.layoutOptions?.noBar,
-          class: d?.class,
+          class: mergedClass(d),
         },
       });
     },

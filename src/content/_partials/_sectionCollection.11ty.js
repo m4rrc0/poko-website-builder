@@ -1,6 +1,7 @@
 import {
   COLLECTION_EMPTY_MARKER,
   renderStructuredSection,
+  mergedClass,
 } from "../../config-11ty/plugins/partialShortcodes/render-structured-section.js";
 
 // Canonical structured shape (mirrors the inline editor component):
@@ -59,7 +60,7 @@ export default async function (data) {
     itemWidth: data?.layoutOptions?.itemWidth,
     height: data?.layoutOptions?.height,
     noBar: data?.layoutOptions?.noBar,
-    class: data?.class,
+    class: mergedClass(data),
     itemPartial: data?.itemPartial,
   });
 

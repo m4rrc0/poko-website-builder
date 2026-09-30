@@ -28,6 +28,7 @@ export const sectionHeaderField = {
       required: false,
       i18n: true,
     },
+    utilitiesField,
     {
       name: "class",
       label: "Header Classes",
@@ -60,6 +61,7 @@ export const sectionFooterField = {
       required: false,
       i18n: true,
     },
+    utilitiesField,
     {
       name: "class",
       label: "Footer Classes",
@@ -267,6 +269,7 @@ export const gridItemFields = [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: "Grid Item Classes",
@@ -288,6 +291,7 @@ export const reelItemFields = [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: "Reel Item Classes",
@@ -309,6 +313,7 @@ export const flowItemFields = [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: "Flow Item Classes",
@@ -553,6 +558,7 @@ export const twoColumnsItemFields = (side) => [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: `Column ${side} Classes`,
@@ -581,6 +587,7 @@ export const areaRawAreaFields = [
   // matching partial (`_areaRaw`) just wraps the value as-is, so consistency
   // with inline mode is the author's responsibility.
   { name: "content", label: "Content", widget: "richtext" },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "attributes",
@@ -609,6 +616,7 @@ export const twoColumnsAreaFields = [
     summary: "{{content | truncate(50)}}",
     fields: twoColumnsItemFields("Right"),
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -640,6 +648,7 @@ export const gridAreaFields = [
     summary: "{{content | truncate(50)}}",
     fields: gridItemFields,
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -677,6 +686,7 @@ export const flowAreaFields = [
     default: [{ content: "" }, { content: "" }],
     fields: flowItemFields,
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -708,6 +718,7 @@ export const reelAreaFields = [
     default: [{ content: "" }, { content: "" }],
     fields: reelItemFields,
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -734,6 +745,7 @@ export const reelAreaFields = [
 export const collectionAreaFields = (extraOptions = []) => [
   collectionSelectField(extraOptions),
   sortAndFilterOptionsField,
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
