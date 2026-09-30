@@ -24,10 +24,13 @@ export default [
       return { [`--${varName}`]: cssValue };
     },
   ],
-  // Aspect ratio utility
+  // Aspect ratio utility — plain number or n/d fraction (e.g. aspect-ratio-16/9)
   [
-    /^aspect-ratio-(\d+(?:\.\d+)?)$/,
-    ([, d]) => ({ "aspect-ratio": d, "object-fit": "var(--fit, cover)" }),
+    /^aspect-ratio-(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)?)$/,
+    ([, d]) => ({
+      "aspect-ratio": d.replace(/\//, " / "),
+      "object-fit": "var(--fit, cover)",
+    }),
   ],
   // View Trnasition Name
   [

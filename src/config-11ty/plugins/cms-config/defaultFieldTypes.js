@@ -81,6 +81,12 @@ const optionValue = (option) =>
 const isEmptyValue = (value) =>
   value === undefined || value === null || value === "";
 
+// Stored values match options loosely: content saved by a previously
+// `number`-typed field (e.g. `1.78`) still lands in the right place — `1`
+// maps back to a "1" option, anything else shows in the free input. On the
+// next save the CMS rewrites it as a string, which is acceptable.
+const sameOptionValue = (a, b) => a === b || String(a) === String(b);
+
 const getFieldType = (name) =>
   window.CMS?.getFieldType?.(name) ?? window.CMS?.getWidget?.(name);
 
@@ -113,7 +119,17 @@ const selectOtherControl = createClass({
   },
 
   isKnown(value) {
-    return this.getOptionValues().includes(value);
+    return this.getOptionValues().some((ov) => sameOptionValue(ov, value));
+  },
+
+  // The literal option value loosely matching a stored value, so the inner
+  // select can highlight it even when the stored type differs (e.g. number
+  // `1` vs option `"1"`).
+  matchingOptionValue(value) {
+    const match = this.getOptionValues().find((ov) =>
+      sameOptionValue(ov, value),
+    );
+    return match === undefined ? value : match;
   },
 
   isOtherValue(value) {
@@ -200,10 +216,15 @@ const selectOtherControl = createClass({
     // The sentinel option is what the select displays while "other" is
     // active; it never reaches the stored value.
     const selectValue = multiple
-      ? [...values.filter((v) => this.isKnown(v)), ...(otherActive ? [OTHER_OPTION_VALUE] : [])]
+      ? [
+          ...values.filter((v) => this.isKnown(v)).map((v) => this.matchingOptionValue(v)),
+          ...(otherActive ? [OTHER_OPTION_VALUE] : []),
+        ]
       : otherActive
         ? OTHER_OPTION_VALUE
-        : (value ?? null);
+        : isEmptyValue(value)
+          ? null
+          : this.matchingOptionValue(value);
 
     // The free input is another built-in control, resolved through the same
     // registry; anything unavailable (e.g. "list", "markdown") falls back
@@ -212,6 +233,15 @@ const selectOtherControl = createClass({
       (REUSABLE_OTHER_WIDGETS.includes(otherWidget) &&
         getFieldType(otherWidget)?.control) ||
       getFieldType("string")?.control;
+
+    // String-ish free inputs expect a string; a stored number (e.g. `1.78`
+    // from a previous `number` field) is shown as its text form.
+    const otherControlValue =
+      ["string", "text"].includes(otherWidget) &&
+      !isEmptyValue(otherText) &&
+      typeof otherText !== "string"
+        ? String(otherText)
+        : otherText;
 
     return h(
       "div",
@@ -239,7 +269,7 @@ const selectOtherControl = createClass({
                 label: otherLabel,
                 widget: otherWidget,
               },
-              value: isEmptyValue(otherText) ? null : otherText,
+              value: isEmptyValue(otherControlValue) ? null : otherControlValue,
               forID: `${forID}-other`,
               onChange: (text) => this.emitOtherText(text),
             }),

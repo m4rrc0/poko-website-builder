@@ -1092,9 +1092,17 @@ const imageFields = [
   {
     name: "aspectRatio",
     label: "Aspect Ratio",
-    widget: "number",
-    value_type: "float",
-    hint: "Width / Height => square = 1; 16:9 = 1.78; 4:3 = 1.33; Extra wide = 4;",
+    widget: "select-other",
+    options: [
+      { label: "Square (1)", value: "1" },
+      { label: "Landscape (4/3)", value: "4/3" },
+      { label: "Portrait (3/4)", value: "3/4" },
+      { label: "Widescreen (16/9)", value: "16/9" },
+      { label: "Ultrawide (18/5)", value: "18/5" },
+      { label: "Golden (1.6180/1)", value: "1.6180/1" },
+    ],
+    other_widget: "string",
+    hint: "Width / Height — pick a preset or 'Other' to enter a custom ratio (e.g. 1.78, 2.39, 21/9).",
     required: false,
   },
   {
@@ -1889,9 +1897,17 @@ export const imageShortcode = {
         {
           name: "aspectRatio",
           label: "Aspect Ratio",
-          widget: "number",
-          value_type: "float",
-          hint: "Width / Height => square = 1; 16:9 = 1.78; 4:3 = 1.33; Extra wide = 4;",
+          widget: "select-other",
+          options: [
+            { label: "Square (1)", value: "1" },
+            { label: "Landscape (4/3)", value: "4/3" },
+            { label: "Portrait (3/4)", value: "3/4" },
+            { label: "Widescreen (16/9)", value: "16/9" },
+            { label: "Ultrawide (18/5)", value: "18/5" },
+            { label: "Golden (1.6180/1)", value: "1.6180/1" },
+          ],
+          other_widget: "string",
+          hint: "Width / Height — pick a preset or 'Other' to enter a custom ratio (e.g. 1.78, 2.39, 21/9).",
           required: false,
         },
         {
