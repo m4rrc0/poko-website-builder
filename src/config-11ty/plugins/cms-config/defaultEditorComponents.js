@@ -2480,10 +2480,11 @@ export const curlyAttrs = {
   //      noop class authors can also type by hand; it keeps matching
   //      unambiguous and documents intent in the markup itself.
   //
-  // `\s*` before `.poko` tolerates `{ .poko … }`; `\b` keeps `.pokofamily`
-  // out; the body accepts `}` only inside quotes so `attr="a}b"` still
-  // matches. A `}` inside a quoted value is rare but cheap to support.
-  pattern: /\{\s*\.poko\b(?:[^}"']|"[^"]*"|'[^']*')*\}/,
+  // `\s*` before `.poko` tolerates `{ .poko … }`; the lookahead `(?=[\s}])`
+  // rejects `.pokofamily` and `.poko-extra` (unlike `\b`, which treats the
+  // `-` after `o` as a boundary); the body accepts `}` only inside quotes so
+  // `attr="a}b"` still matches — rare but cheap to support.
+  pattern: /\{\s*\.poko(?=[\s}])(?:[^}"']|"[^"]*"|'[^']*')*\}/,
   fromBlock: function (match) {
     return parseCurlyAttrs(match[0]);
   },
@@ -4508,9 +4509,10 @@ export const sectionBuilder = {
         };
       }
       if (area.tagName === "flow") {
-        const parsed = parseFlowBody(
-          extractWithNunjucksTag(sectionInner, "flow"),
-        );
+        const parsed = parseFlowBody({
+          attributes: area.attributes,
+          content: area.content,
+        });
         return {
           type: "flow",
           class: area.class || parsed?.class,
@@ -4521,9 +4523,10 @@ export const sectionBuilder = {
         };
       }
       if (area.tagName === "reel") {
-        const parsed = parseReelBody(
-          extractWithNunjucksTag(sectionInner, "reel"),
-        );
+        const parsed = parseReelBody({
+          attributes: area.attributes,
+          content: area.content,
+        });
         return {
           type: "reel",
           class: area.class || parsed?.class,
