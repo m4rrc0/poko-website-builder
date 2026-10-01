@@ -43,6 +43,7 @@ import {
   itemPartialField,
   buildAreasField,
 } from "./section-primitives.js";
+import { utilitiesField } from "./utility-classes.js";
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
 
 const isDev = NODE_ENV === "development";
@@ -629,7 +630,7 @@ export const mostCommonMarkdownCollectionConfig = {
         name: "navItems",
         label: "Nav Items",
         field: "eleventyNavigation.add",
-        value: "Nav",
+        eq: "Nav",
       },
       {
         name: "tags",
@@ -1143,6 +1144,7 @@ export function buildSectionsField(activeCollections) {
               layoutTypeNone,
             ],
           },
+          utilitiesField,
           {
             name: "class",
             label: "Layout Class Names",
@@ -1178,6 +1180,7 @@ export function buildSectionsField(activeCollections) {
             i18n: true,
             types: [layoutTypeFlowGap, layoutTypeNone],
           },
+          utilitiesField,
           {
             name: "class",
             label: "Layout Class Names",
@@ -1222,6 +1225,7 @@ export function buildSectionsField(activeCollections) {
             i18n: true,
             types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeNone],
           },
+          utilitiesField,
           {
             name: "class",
             label: "Layout Class Names",
@@ -1257,6 +1261,7 @@ export function buildSectionsField(activeCollections) {
             i18n: true,
             types: [layoutTypeReel, layoutTypeNone],
           },
+          utilitiesField,
           {
             name: "class",
             label: "Layout Class Names",
@@ -1293,6 +1298,7 @@ export function buildSectionsField(activeCollections) {
               layoutTypeNone,
             ],
           },
+          utilitiesField,
           {
             name: "class",
             label: "Layout Class Names",
@@ -3131,8 +3137,12 @@ export class CmsConfig {
         initial_locales: "default", // default: "all" // Allows for setting the initial locales
       },
       slug: {
-        encoding: "ascii",
+        encoding: "unicode", // Default "unicode" to accept all unicode characters. Or "ascii" to only accept ASCII characters
         clean_accents: true, // Transliterate accented characters to their closest ASCII equivalent
+        maxlength: 32,
+        trim: true,
+        lowercase: true,
+        timezone: "local", // default: "utc"
       },
       field_defaults: {
         richtext: {

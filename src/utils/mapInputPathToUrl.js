@@ -1,7 +1,10 @@
 import { USER_DIR, allLanguages } from "../../env.config.js";
 
-const dirsToStrip = [USER_DIR, "pages"];
-const langCodes = allLanguages.map((lang) => lang.code);
+// `allLanguages` is a live binding in the CMS preview bundle (hydrated from
+// the CMS data store after module init) — these maps must be built lazily at
+// call time, not at module scope.
+const dirsToStrip = () => [USER_DIR, "pages"];
+const langCodes = () => allLanguages.map((lang) => lang.code);
 // const stripRegex = new RegExp(`^\/*(${dirsToStrip.join("|")})\/*`);
 
 // NOTE: Keep lang prefixes but strip undesirable path segments like "pages" or "_user-content"
@@ -19,13 +22,14 @@ function stripPathSegment(path, segmentToStrip, allowedPrefixes = []) {
   return strippedPath;
 }
 
-const languagePrefixesMap = allLanguages
-  .map((lang) => {
-    if (typeof lang.prefix === "string") {
-      return [lang.defaultPrefixRegex, lang.prefix];
-    }
-  })
-  .filter(Boolean);
+const languagePrefixesMap = () =>
+  allLanguages
+    .map((lang) => {
+      if (typeof lang.prefix === "string") {
+        return [lang.defaultPrefixRegex, lang.prefix];
+      }
+    })
+    .filter(Boolean);
 
 // for (const lang of globalSettings.allLanguages) {
 //   if (lang.customUrlPrefix) {
@@ -41,12 +45,12 @@ export default function mapInputPathToUrl(filePathStem) {
 
   // const formatted = unWrapped.replace(stripRegex, ""); // remove leading unwanted dir names (like 'pages')
   let formatted = unWrapped;
-  for (const dir of dirsToStrip) {
-    formatted = stripPathSegment(formatted, dir, langCodes);
+  for (const dir of dirsToStrip()) {
+    formatted = stripPathSegment(formatted, dir, langCodes());
   }
 
   let unPrefixed = formatted;
-  for (const [regex, prefix] of languagePrefixesMap) {
+  for (const [regex, prefix] of languagePrefixesMap()) {
     if (regex.test(unPrefixed)) {
       unPrefixed = unPrefixed.replace(regex, `/${prefix}/`);
     }

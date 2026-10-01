@@ -1,6 +1,7 @@
 import {
   renderStructuredSection,
   renderItemsListInner,
+  mergedClass,
 } from "../../config-11ty/plugins/partialShortcodes/render-structured-section.js";
 
 // Helpers below are invoked with `.call(this, …)` to flow the 11ty render
@@ -35,7 +36,7 @@ export default async function (data) {
           columns: d?.layoutOptions?.columns,
           widthColumnMin: d?.layoutOptions?.widthColumnMin,
           widthColumnMax: d?.layoutOptions?.widthColumnMax,
-          class: d?.class,
+          class: mergedClass(d),
         },
       });
     },

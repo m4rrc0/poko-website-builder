@@ -1,16 +1,16 @@
-import {
-  USER_DIR,
-  languages,
-  SITE_NAME,
-  COLLECTIONS,
-} from "../../env.config.js";
+import { languages, SITE_NAME, COLLECTIONS } from "../../env.config.js";
 // Was usefull when parents were declared in references
 // import temp from './temp.js';
 import mapInputPathToUrl from "../utils/mapInputPathToUrl.js";
 import { ldWebPage } from "./structured-data/ldWebPage.js";
 import ld from "./structured-data/ld.js";
 
-const defaultLang = languages.find((lang) => lang.isWebsiteDefault)?.code;
+// `data.languages` is the global-data copy (addGlobalData); the `languages`
+// import is the same list in Node and a live binding in the CMS preview
+// bundle — read them at call time, never at module scope.
+const langList = (data) => data?.languages || languages;
+const defaultLang = (data) =>
+  langList(data).find((lang) => lang.isWebsiteDefault)?.code;
 
 export default {
   // ...temp,
@@ -34,7 +34,7 @@ export default {
   language: (data) => {
     // Display collection names only
     const filePathStem = data.page.filePathStem;
-    const language = languages.find((lang) =>
+    const language = langList(data).find((lang) =>
       lang.defaultPrefixRegex.test(filePathStem),
     );
 
@@ -43,11 +43,11 @@ export default {
   lang: (data) => {
     // TODO: We should be able to rely on data.languages computed above but it seems unreliable...
     const filePathStem = data.page.filePathStem;
-    const language = languages.find((lang) =>
+    const language = langList(data).find((lang) =>
       lang.defaultPrefixRegex.test(filePathStem),
     );
 
-    return language?.code || data.lang || defaultLang;
+    return language?.code || data.lang || defaultLang(data);
   },
   layout: (data) => {
     return data?.pageLayout || data?.layout;
@@ -93,7 +93,7 @@ export default {
           // isCurrent: collectionItem.data.lang === data.lang,
           // isDefault: collectionItem.data.lang === defaultLang,
           isCurrentLang: collectionItem.data.lang === data.lang,
-          isDefaultLang: collectionItem.data.lang === defaultLang,
+          isDefaultLang: collectionItem.data.lang === defaultLang(data),
 
           fileSlug: collectionItem.page.fileSlug,
           filePathStem: collectionItem.page.filePathStem,
@@ -107,7 +107,7 @@ export default {
         };
       });
 
-    const orderedCollectionItems = languages
+    const orderedCollectionItems = langList(data)
       .map((lang) => {
         return collectionItems.find((colItem) => colItem.lang === lang.code);
       })
@@ -172,7 +172,7 @@ export default {
   metadata: (data) => {
     const gMeta = data.globalSettings?.metadata || {};
     // const siteName = data.globalSettings?.siteName || gMeta.siteName || "";
-    const siteName = SITE_NAME;
+    const siteName = data.env?.SITE_NAME || SITE_NAME;
     const titleCascade = data.metadata?.title || data.title || null;
     return {
       ...data.metadata,

@@ -1,6 +1,7 @@
 import {
   renderStructuredSection,
   renderItemsListInner,
+  mergedClass,
 } from "../../config-11ty/plugins/partialShortcodes/render-structured-section.js";
 
 // Canonical structured shape (mirrors the inline editor component):
@@ -24,8 +25,9 @@ export default async function (data) {
         itemPartial: "_flowItem",
         wrapperPartial: "_flow",
         wrapperProps: {
+          type: d?.layoutOptions?.type,
           gap: d?.layoutOptions?.gap,
-          class: d?.class,
+          class: mergedClass(d),
         },
       });
     },

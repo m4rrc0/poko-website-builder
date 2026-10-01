@@ -4,15 +4,20 @@ import {
   editorComponents,
   // activeCollectionNames,
   iconLists,
+  utilityClassGroups,
 } from "./env.js";
+// import {
+//   asyncPreview,
+//   getRenderer,
+//   sectionsSlots,
+//   previewState,
+//   setHtml,
+//   SECTIONS_EMPTY_NOTE,
+// } from "./preview-runtime.js";
 
 const { CONTENT_DIR } = env;
 // const iconLists = env?.iconLists || {};
 const iconLibs = Object.keys(iconLists) || [];
-
-const SECTION_WRAPPER_STYLE = `background-color: hsl(var(--sui-background-color-3-hsl) / 0.3);`;
-const AREA_ITEM_PREVIEW_STYLE = `border: 1px dashed hsl(var(--sui-background-color-4-hsl) / 1); margin-block-start: .5rem; padding: 0 1rem .5rem;`;
-const AREA_PREVIEW_STYLE = `border: 1px dashed hsl(var(--sui-background-color-4-hsl) / 1); margin-block-start: .5rem; padding: 0 .5rem .5rem;`;
 
 const ec = (idExcl) => editorComponents.filter((id) => id !== idExcl);
 const multilineToInline = (multi) => {
@@ -41,14 +46,22 @@ const njkAttrsStringFromSectionAreaData = (areaData) => {
   // `type` is a CMS-side discriminator for the sectionBuilder areas list
   // (e.g. "areaRaw", "area"). It must NOT be serialized onto the tag.
   // `tagName` is an internal helper produced when parsing existing markup
-  // and must also not be serialized.
+  // and must also not be serialized. `utilities` is the picker object — its
+  // class tokens are merged into `class` before serializing.
   const {
     content,
     attributes,
     type: _type,
     tagName: _tagName,
+    utilities,
     ...isolatedAttrs
   } = areaData || {};
+  const utilClasses = classListFromUtilities(utilities);
+  if (utilClasses) {
+    isolatedAttrs.class = [isolatedAttrs.class, utilClasses]
+      .filter(Boolean)
+      .join(" ");
+  }
   const constructedAttrs = njkAttrsStringFromObj(isolatedAttrs);
   const attrs = [constructedAttrs, attributes || ""].filter(Boolean).join(", ");
 
@@ -383,8 +396,7 @@ const extractSectionAreaData = (contentString, tagName) => {
   const { extracted, remaining } = extractAttributes(attributes || "", [
     "class",
   ]);
-  const className = extracted?.class || null;
-  return { class: className, attributes: remaining, content };
+  return { ...splitClassTokens(extracted?.class), attributes: remaining, content };
 };
 
 const extractAllSectionAreaData = (contentString, tagName) => {
@@ -393,8 +405,11 @@ const extractAllSectionAreaData = (contentString, tagName) => {
     const { extracted, remaining } = extractAttributes(attributes || "", [
       "class",
     ]);
-    const className = extracted?.class || null;
-    return { class: className, attributes: remaining, content };
+    return {
+      ...splitClassTokens(extracted?.class),
+      attributes: remaining,
+      content,
+    };
   });
 
   return items;
@@ -435,10 +450,9 @@ const extractAllSectionAreaDataMultipleTags = (contentString, tagNames) => {
     const { extracted, remaining } = extractAttributes(attributes || "", [
       "class",
     ]);
-    const className = extracted?.class || null;
     return {
       tagName,
-      class: className,
+      ...splitClassTokens(extracted?.class),
       attributes: remaining,
       content,
     };
@@ -451,29 +465,6 @@ const extractAllSectionAreaDataMultipleTags = (contentString, tagNames) => {
 // Section helpers
 // Shared building blocks for section fromBlock/toBlock implementations.
 // ---------------------------------------------------------------------------
-
-const buildBodyPreview = ({ items }) => {
-  const itemsStr = items?.length
-    ? items
-        .map((item) => {
-          return item?.content
-            ? `<div style="${AREA_ITEM_PREVIEW_STYLE}">
-
-${item.content}
-</div>`
-            : "";
-        })
-        .filter(Boolean)
-        .join("\n")
-    : "";
-
-  if (!itemsStr) return "";
-
-  return `<div style="${AREA_PREVIEW_STYLE}">
-
-${itemsStr}
-</div>`;
-};
 
 /**
  * Parse sectionHeader and sectionFooter from a section's inner content.
@@ -510,24 +501,6 @@ ${footer.content}
   return { headerContent, footerContent };
 };
 
-const buildSectionHeaderFooterMarkupPreview = ({ header, footer }) => {
-  const headerContent = header?.content
-    ? `<header>
-
-${header.content}
-</header>`
-    : "";
-
-  const footerContent = footer?.content
-    ? `<footer>
-
-${footer.content}
-</footer>`
-    : "";
-
-  return { headerContent, footerContent };
-};
-
 /**
  * Parse a layout tag's attribute string into { class, layoutOptions, attributes }.
  * `class` is promoted to top-level; `layoutOptions` holds the remaining known
@@ -539,8 +512,10 @@ const parseLayoutAttrs = (attrsString, layoutKeys) => {
     ...layoutKeys,
   ]);
   const { class: className, ...layoutOptions } = extracted;
+  const { class: freeClass, utilities } = splitClassTokens(className);
   return {
-    class: className || undefined,
+    class: freeClass || undefined,
+    ...(utilities ? { utilities } : {}),
     layoutOptions,
     attributes: remaining || undefined,
   };
@@ -552,11 +527,18 @@ const parseLayoutAttrs = (attrsString, layoutKeys) => {
  */
 const buildLayoutAttrsString = ({
   class: className,
+  utilities,
   layoutOptions,
   attributes,
 }) =>
   [
-    njkAttrsStringFromObj({ ...(layoutOptions || {}), class: className }),
+    njkAttrsStringFromObj({
+      ...(layoutOptions || {}),
+      class:
+        [className, classListFromUtilities(utilities)]
+          .filter(Boolean)
+          .join(" ") || undefined,
+    }),
     attributes || "",
   ]
     .filter(Boolean)
@@ -594,6 +576,7 @@ const parseTwoColumnsBody = (block) => {
   if (!block) return undefined;
   const {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   } = parseLayoutAttrs(block.attributes, TWO_COLUMNS_LAYOUT_KEYS);
@@ -605,6 +588,7 @@ const parseTwoColumnsBody = (block) => {
 
   return {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
     itemLeft: items[0]?.content ? items[0] : undefined,
@@ -618,6 +602,7 @@ const parseTwoColumnsBody = (block) => {
  */
 const buildTwoColumnsBody = ({
   class: className,
+  utilities,
   layoutOptions,
   attributes,
   itemLeft,
@@ -641,6 +626,7 @@ ${itemRight.content}
 
   const attrsStr = buildLayoutAttrsString({
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   });
@@ -659,6 +645,7 @@ const parseGridBody = (block) => {
   if (!block) return undefined;
   const {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   } = parseLayoutAttrs(block.attributes, GRID_LAYOUT_KEYS);
@@ -667,6 +654,7 @@ const parseGridBody = (block) => {
 
   return {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
     items,
@@ -679,6 +667,7 @@ const parseGridBody = (block) => {
  */
 const buildGridBody = ({
   class: className,
+  utilities,
   layoutOptions,
   attributes,
   items,
@@ -701,6 +690,7 @@ ${item.content}
 
   const attrsStr = buildLayoutAttrsString({
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   });
@@ -763,6 +753,7 @@ const parseCollectionBody = ({ attributes, content }) => {
   // hidden `attributes` field.
   const {
     class: className,
+    utilities,
     layoutOptions,
     attributes: remainingAttributes,
   } = parseLayoutAttrs(afterCollectionSpecific, COLLECTION_LAYOUT_KEYS);
@@ -788,6 +779,7 @@ const parseCollectionBody = ({ attributes, content }) => {
     collection: collectionSpecific.collection,
     sortAndFilterOptions,
     class: className,
+    utilities,
     itemPartial,
     itemTemplate: stripRawTags(content),
     layoutOptions,
@@ -804,6 +796,7 @@ const buildCollectionBody = ({
   collection,
   sortAndFilterOptions,
   class: className,
+  utilities,
   itemPartial,
   itemTemplate,
   layoutOptions,
@@ -819,7 +812,10 @@ const buildCollectionBody = ({
     sortCriterias,
     keepVisible,
     ...(layoutOptions || {}),
-    class: className,
+    class:
+      [className, classListFromUtilities(utilities)]
+        .filter(Boolean)
+        .join(" ") || undefined,
     itemPartial,
   };
   const collAttrsStr = [njkAttrsStringFromObj(collAttrs), attributes || ""]
@@ -838,6 +834,7 @@ const parseFlowBody = (block) => {
   if (!block) return undefined;
   const {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   } = parseLayoutAttrs(block.attributes, FLOW_LAYOUT_KEYS);
@@ -846,6 +843,7 @@ const parseFlowBody = (block) => {
 
   return {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
     items,
@@ -858,6 +856,7 @@ const parseFlowBody = (block) => {
  */
 const buildFlowBody = ({
   class: className,
+  utilities,
   layoutOptions,
   attributes,
   items,
@@ -880,6 +879,7 @@ ${item.content}
 
   const attrsStr = buildLayoutAttrsString({
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   });
@@ -897,6 +897,7 @@ const parseReelBody = (block) => {
   if (!block) return undefined;
   const {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   } = parseLayoutAttrs(block.attributes, REEL_LAYOUT_KEYS);
@@ -905,6 +906,7 @@ const parseReelBody = (block) => {
 
   return {
     class: className,
+    utilities,
     layoutOptions,
     attributes,
     items,
@@ -917,6 +919,7 @@ const parseReelBody = (block) => {
  */
 const buildReelBody = ({
   class: className,
+  utilities,
   layoutOptions,
   attributes,
   items,
@@ -939,6 +942,7 @@ ${item.content}
 
   const attrsStr = buildLayoutAttrsString({
     class: className,
+    utilities,
     layoutOptions,
     attributes,
   });
@@ -949,26 +953,127 @@ ${reelItemsStr}
 };
 
 /**
+ * Utility-class picker data (generated server-side and shipped via env.js).
+ * `utilityTokenToPickerValue` maps each emitted class token to the
+ * [group, value] pair that selects it, honoring a group's `classPrefix`
+ * (e.g. palette relations store bare names like `main` and emit
+ * `palette-main`). `parseSectionWrapper` uses it to route known utility
+ * classes back into the `utilities` object on round-trips.
+ */
+const utilityTokenToPickerValue = new Map();
+for (const group of utilityClassGroups || []) {
+  const prefix = group.classPrefix || "";
+  // Single-select groups (palette relation, width) store a scalar — extra
+  // matched tokens of that group stay in the free-form `class`.
+  const multi = (group.field?.multiple ?? group.multiple) !== false;
+  for (const option of group.options || []) {
+    utilityTokenToPickerValue.set(prefix + option.value, [
+      group.name,
+      option.value,
+      multi,
+    ]);
+  }
+}
+
+// Mirrors `classListFromUtilities` in utility-classes.js.
+const classListFromUtilities = (utilities) => {
+  if (!utilities || typeof utilities !== "object") return "";
+  const prefixByGroup = new Map(
+    (utilityClassGroups || []).map((g) => [g.name, g.classPrefix || ""]),
+  );
+  const tokens = Object.entries(utilities).flatMap(([key, value]) => {
+    const prefix = prefixByGroup.get(key) ?? "";
+    return (Array.isArray(value) ? value : [value])
+      .filter((v) => typeof v === "string" && v.trim())
+      .map((v) => (v.startsWith(prefix) ? v : prefix + v));
+  });
+  return [...new Set(tokens)].join(" ");
+};
+
+// Mirrors `utilitiesField` in section-primitives.js (built from the same
+// `utilityClassGroups` catalog, delivered here via env.js).
+const utilitiesField = {
+  name: "utilities",
+  label: "Utility Classes",
+  hint: "Pick utility classes by group — merged into the element's class attribute. Use the Class Names field for anything not listed.",
+  widget: "object",
+  required: true,
+  collapsed: true,
+  i18n: "duplicate",
+  summary:
+    "{{palette}} {{variant}} {{spacing}} {{width}} {{typography}} {{borders}} {{misc}} {{general}}",
+  fields: (utilityClassGroups || [])
+    .filter((group) => group.field || group.options?.length)
+    .map((group) => ({
+      name: group.name,
+      label: group.label,
+      required: false,
+      i18n: "duplicate",
+      ...(group.hint ? { hint: group.hint } : {}),
+      ...(group.field || {
+        widget: "select",
+        multiple: group.multiple ?? true,
+        options: group.options,
+      }),
+      dropdown_threshold: 20,
+    })),
+};
+
+/**
+ * Split a class attribute value into picker `utilities` (catalog tokens
+ * routed to their group — single-select groups keep only the first match)
+ * and the leftover free-form `class` string. Returns only present keys.
+ */
+const splitClassTokens = (classString) => {
+  const utilities = {};
+  const freeClasses = [];
+  for (const token of (classString || "").split(/\s+/).filter(Boolean)) {
+    const route = utilityTokenToPickerValue.get(token);
+    if (route && route[2]) {
+      (utilities[route[0]] ??= []).push(route[1]);
+    } else if (route && !(route[0] in utilities)) {
+      utilities[route[0]] = route[1];
+    } else {
+      freeClasses.push(token);
+    }
+  }
+  return {
+    ...(freeClasses.length ? { class: freeClasses.join(" ") } : {}),
+    ...(Object.keys(utilities).length ? { utilities } : {}),
+  };
+};
+
+/**
  * Parse a section's outer-tag attribute string into structured `sectionWrapper`
- * data: `{ class, attributes }`. The `class` is promoted to a first-class field
- * so it stops being hidden inside the raw attributes string.
+ * data: `{ class, utilities, attributes }`. The `class` is promoted to a
+ * first-class field so it stops being hidden inside the raw attributes
+ * string; tokens matching the utility-class catalog are routed into the
+ * `utilities` picker groups, the rest stays free-form in `class`.
  */
 const parseSectionWrapper = (attrsString) => {
   const { extracted, remaining } = extractAttributes(attrsString || "", [
     "class",
   ]);
   return {
-    ...(extracted?.class ? { class: extracted?.class } : {}),
+    ...splitClassTokens(extracted?.class),
     ...(remaining ? { attributes: remaining } : {}),
   };
 };
 
 /**
  * Build the section's outer-tag attribute string from `sectionWrapper` data.
+ * Picked `utilities` are merged into the single `class="…"` attribute.
  */
 const buildSectionWrapperString = (sectionWrapper) => {
-  const { class: className, attributes } = sectionWrapper || {};
-  return [className ? `class="${className}"` : "", attributes || ""]
+  const { class: className, utilities, attributes } = sectionWrapper || {};
+  const merged = [
+    ...new Set(
+      `${className || ""} ${classListFromUtilities(utilities)}`
+        .split(/\s+/)
+        .filter(Boolean),
+    ),
+  ].join(" ");
+  return [merged ? `class="${merged}"` : "", attributes || ""]
     .filter(Boolean)
     .join(", ");
 };
@@ -988,11 +1093,12 @@ const sectionWrapperField = {
   collapsed: true,
   i18n: true,
   fields: [
+    utilitiesField,
     {
       name: "class",
       label: "Section Class Names",
       widget: "string",
-      hint: "Class names added to the outer section element (e.g. 'my-class another-class')",
+      hint: "Free-form class names merged with the Utility Classes picked above (e.g. 'my-class another-class')",
       required: false,
       i18n: "duplicate",
     },
@@ -1143,6 +1249,7 @@ const sectionHeaderField = (parentCompName) => ({
       i18n: true,
       // editor_components: ec(parentCompName),
     },
+    utilitiesField,
     {
       name: "class",
       label: "Header Classes",
@@ -1176,6 +1283,7 @@ const sectionFooterField = (parentCompName) => ({
       i18n: true,
       // editor_components: ec(parentCompName),
     },
+    utilitiesField,
     {
       name: "class",
       label: "Footer Classes",
@@ -1722,19 +1830,19 @@ export const link = {
     return `{% link ${attrsStr}${otherAttrsString} %}${content || ""}{% endlink %}`;
   },
 
-  toPreview: (data) => {
-    const content = data?.content || data?.text || "";
-    let type = data?.linkType?.type;
-    const url = data?.linkType?.url;
-    const isInternal =
-      type !== "external" && type !== "email" && type !== "file";
-    // For internal link, lead to the relevant page in the CMS
-    const href = isInternal
-      ? `/admin/#/collections/pages/entries/${type}/${url}`
-      : url;
+  // toPreview: (data) => {
+  //   const content = data?.content || data?.text || "";
+  //   let type = data?.linkType?.type;
+  //   const url = data?.linkType?.url;
+  //   const isInternal =
+  //     type !== "external" && type !== "email" && type !== "file";
+  //   // For internal link, lead to the relevant page in the CMS
+  //   const href = isInternal
+  //     ? `/admin/#/collections/pages/entries/${type}/${url}`
+  //     : url;
 
-    return `<a href="${href}">${content || url}${isInternal ? ` <sup>🢱${url}</sup>` : ""}</a>`;
-  },
+  //   return `<a href="${href}">${content || url}${isInternal ? ` <sup>🢱${url}</sup>` : ""}</a>`;
+  // },
 };
 
 export const icon = {
@@ -1794,6 +1902,7 @@ export const icon = {
           ],
         },
         { name: "size", label: "Size", widget: "string", required: false },
+        utilitiesField,
         { name: "class", label: "Class", widget: "string", required: false },
         {
           name: "otherAttrs",
@@ -1835,7 +1944,7 @@ export const icon = {
         iconLib: { type: iconLib, iconName: iconName },
         // iconName,
         size,
-        class: className,
+        ...splitClassTokens(className),
         otherAttrs,
       },
     };
@@ -1844,7 +1953,9 @@ export const icon = {
     const iconLib = data?.icon?.iconLib?.type;
     const iconName = data?.icon?.iconLib?.iconName;
     const size = data?.icon?.size;
-    const className = data?.icon?.class;
+    const className = [data?.icon?.class, classListFromUtilities(data?.icon?.utilities)]
+      .filter(Boolean)
+      .join(" ");
     const otherAttrs = data?.icon?.otherAttrs;
 
     const parts = [`"${iconLib}:${iconName}"`];
@@ -1862,7 +1973,7 @@ export const icon = {
     return `{% icon ${parts.join(", ")} %}`;
   },
 
-  toPreview: (data) => `<span>ICON</span>`,
+  // toPreview: (data) => `<span>ICON</span>`,
 };
 
 export const imageShortcode = {
@@ -1926,6 +2037,7 @@ export const imageShortcode = {
           collapsed: true,
           i18n: true,
           fields: [
+            utilitiesField,
             {
               name: "class",
               label: "Class",
@@ -2021,7 +2133,7 @@ export const imageShortcode = {
         ...(aspectRatio && { aspectRatio }),
         ...(width && { width }),
         advanced: {
-          ...(className && { class: className }),
+          ...splitClassTokens(className),
           ...(id && { id }),
           ...(title && { title }),
           ...(loading && { loading }),
@@ -2037,6 +2149,7 @@ export const imageShortcode = {
     const { alt, aspectRatio, width, advanced } = attributes || {};
     const {
       class: className,
+      utilities,
       id,
       title,
       loading,
@@ -2044,13 +2157,16 @@ export const imageShortcode = {
       wrapper,
       imgAttrs,
     } = advanced || {};
+    const mergedImageClass = [className, classListFromUtilities(utilities)]
+      .filter(Boolean)
+      .join(" ");
 
     const attrs = {
       src,
       ...(alt && { alt }),
       ...(aspectRatio && { aspectRatio }),
       ...(width && { width }),
-      ...(className && { class: className }),
+      ...(mergedImageClass && { class: mergedImageClass }),
       ...(id && { id }),
       ...(title && { title }),
       ...(loading && { loading }),
@@ -2062,9 +2178,9 @@ export const imageShortcode = {
 
     return `{% image ${attrsStr}${imgAttrs ? ", " + imgAttrs : ""} %}`;
   },
-  toPreview: function () {
-    return `<img src="{{src}}" alt="{{alt}}" width="300" />`;
-  },
+  // toPreview: function () {
+  //   return `<img src="{{src}}" alt="{{alt}}" width="300" />`;
+  // },
 };
 
 export const partial = {
@@ -2121,9 +2237,9 @@ export const partial = {
   toBlock: function (data) {
     return stringifyPartial(data, ".md", "partial");
   },
-  toPreview: function (data) {
-    return `<PARTIAL>`;
-  },
+  // toPreview: function (data) {
+  //   return `<PARTIAL>`;
+  // },
 };
 
 export const htmlPartial = {
@@ -2179,9 +2295,9 @@ export const htmlPartial = {
   toBlock: function (data) {
     return stringifyPartial(data, ".njk", "htmlPartial");
   },
-  toPreview: function (data) {
-    return `<HTML PARTIAL>`;
-  },
+  // toPreview: function (data) {
+  //   return `<HTML PARTIAL>`;
+  // },
 };
 
 console.log({ editorComponents });
@@ -2221,10 +2337,28 @@ export const wrapper = {
       ],
     },
     {
-      name: "wrapperAttrs",
+      name: "wrapperOptions",
       label: "Wrapper Attributes",
-      widget: "string",
+      widget: "object",
       required: false,
+      collapsed: true,
+      fields: [
+        utilitiesField,
+        {
+          name: "class",
+          label: "Class Names",
+          widget: "string",
+          hint: "Free-form class names merged with the Utility Classes picked above (e.g. 'my-class another-class')",
+          required: false,
+        },
+        {
+          name: "attributes",
+          label: "Raw Attributes",
+          widget: "string",
+          hint: "Any other attribute string (e.g. id=\"main\", data-foo=\"bar\")",
+          required: false,
+        },
+      ],
     },
   ],
   pattern:
@@ -2243,31 +2377,141 @@ export const wrapper = {
       //content: multilineContent,
       content,
       wrapperTag,
-      wrapperAttrs,
+      wrapperOptions: parseSectionWrapper(wrapperAttrs),
     };
   },
   toBlock: function (data) {
-    const { content, wrapperTag = "div", wrapperAttrs = "" } = data;
+    const { content, wrapperTag = "div" } = data;
     // Convert from multiline to inline for storage
     // const inlineContent = multilineToInline(content);
 
-    // TODO: improve parsing here to make sure we output properly formatted attributes list
-    // {% wrapper tag="div", class="any number of classes", id="any" %}
-    // Probable separators: ` `, `,`, `, `
-    // But we need to avoid splitting spaces in between quotes (like in `class`)
-    const tagAttrs = wrapperAttrs;
+    const tagAttrs = buildSectionWrapperString(data?.wrapperOptions);
 
     return `{% wrapper tag="${wrapperTag}"${tagAttrs ? `, ${tagAttrs}` : ""} %}
 ${content}
 {% endwrapper %}`;
   },
+  //   toPreview: function (data) {
+  //     const { content, tag, class: className } = data;
+  //     return `<${tag || "div"} class="${className || ""}">
+
+  // ${content}
+  // </${tag || "div"}>`;
+  //   },
+};
+
+/**
+ * Parse a `{ .poko … }` curly-attribute string into `{ utilities, class,
+ * id, attributes }`. Dotted tokens become class names (`.poko` itself is a
+ * marker and is dropped — it is re-emitted by `curlyAttrsToBlock`), `#…`
+ * becomes the id, and everything else is kept verbatim as raw attributes.
+ */
+const parseCurlyAttrs = (curlyString) => {
+  const inner = (curlyString || "").replace(/^\{/, "").replace(/\}$/, "");
+  // split on spaces, keeping quoted values (`a="b c"`) together
+  const tokens = inner.match(/(?:[^\s"']|"[^"]*"|'[^']*')+/g) || [];
+  const classes = [];
+  const attributes = [];
+  let id;
+  for (const token of tokens) {
+    if (token === ".poko") continue;
+    if (token.startsWith(".") && token.length > 1) classes.push(token.slice(1));
+    else if (token.startsWith("#") && token.length > 1 && id === undefined)
+      id = token.slice(1);
+    else attributes.push(token);
+  }
+  return {
+    ...splitClassTokens(classes.join(" ")),
+    ...(id ? { id } : {}),
+    ...(attributes.length ? { attributes: attributes.join(" ") } : {}),
+  };
+};
+
+/**
+ * Serialize back to `{.poko .cls-1 .cls-2 #id attr="v"}` — the
+ * markdown-it-attrs form, with the `.poko` marker class first.
+ */
+const buildCurlyAttrs = (data) => {
+  const classes = [
+    ...new Set(
+      `${classListFromUtilities(data?.utilities)} ${data?.class || ""}`
+        .split(/\s+/)
+        .filter(Boolean),
+    ),
+  ];
+  return `{${[
+    ".poko",
+    ...classes.map((c) => `.${c}`),
+    ...(data?.id ? [`#${data.id}`] : []),
+    ...(data?.attributes ? [data.attributes] : []),
+  ].join(" ")}}`;
+};
+
+export const curlyAttrs = {
+  id: "curlyAttrs",
+  label: "Attributes",
+  icon: "data_object",
+  trigger: "menuitem",
+  mode: "dialog",
+  summary: "{{class}} {{id}}",
+  fields: [
+    utilitiesField,
+    {
+      name: "class",
+      label: "Class Names",
+      widget: "string",
+      hint: "Free-form class names merged with the Utility Classes picked above (e.g. 'my-class another-class')",
+      required: false,
+    },
+    {
+      name: "id",
+      label: "Id",
+      widget: "string",
+      required: false,
+    },
+    {
+      name: "attributes",
+      label: "Raw Attributes",
+      widget: "string",
+      hint: 'Any other attribute string (e.g. data-foo="bar", hidden, aria-label="…")',
+      required: false,
+    },
+  ],
+  // Matching is the tricky bit — the emitted markup is consumed by
+  // markdown-it-attrs at build time, which attaches `{.cls #id k=v}` to the
+  // preceding inline element (no space: `*em*{.a}`) or, at end of block, to
+  // the block itself (`paragraph {.a}`). So the component output is just a
+  // `{…}` group that may appear anywhere in the text, with or without a
+  // space before it — the pattern must not anchor or require whitespace.
+  //
+  // Options considered:
+  //   a) Match ANY `{…}` group — too broad: would swallow literal braces in
+  //      code samples, template snippets, or hand-written attrs the author
+  //      never intended as this component.
+  //   b) Match `{…}` only when it starts with `.`/`#` — still too broad:
+  //      every genuine markdown-it-attrs usage in content becomes a
+  //      component instance (arguably fine, but makes the marker moot and
+  //      surprises authors editing plain `{.cls}` by hand).
+  //   c) REQUIRE the `.poko` marker class first (chosen) — a tiny, memorable
+  //      noop class authors can also type by hand; it keeps matching
+  //      unambiguous and documents intent in the markup itself.
+  //
+  // `\s*` before `.poko` tolerates `{ .poko … }`; the lookahead `(?=[\s}])`
+  // rejects `.pokofamily` and `.poko-extra` (unlike `\b`, which treats the
+  // `-` after `o` as a boundary); the body accepts `}` only inside quotes so
+  // `attr="a}b"` still matches — rare but cheap to support.
+  pattern: /\{\s*\.poko(?=[\s}])(?:[^}"']|"[^"]*"|'[^']*')*\}/,
+  fromBlock: function (match) {
+    return parseCurlyAttrs(match[0]);
+  },
+  toBlock: function (data) {
+    return buildCurlyAttrs(data);
+  },
   toPreview: function (data) {
-    const { content, tag, class: className } = data;
-
-    return `<${tag || "div"} class="${className || ""}">
-
-${content}
-</${tag || "div"}>`;
+    const code = buildCurlyAttrs(data)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;");
+    return `<code>${code}</code>`;
   },
 };
 
@@ -2841,6 +3085,7 @@ export const sectionFlow = {
           required: false,
           // editor_components: ec("sectionFlow"),
         },
+        utilitiesField,
         {
           name: "class",
           label: "Flow Item Classes",
@@ -2865,6 +3110,7 @@ export const sectionFlow = {
       i18n: true,
       types: [layoutTypeFlow, layoutTypeNone],
     },
+    utilitiesField,
     {
       name: "class",
       label: "Layout Class Names",
@@ -2890,6 +3136,7 @@ export const sectionFlow = {
       items: flow?.items || [],
       layoutOptions: flow?.layoutOptions || {},
       class: flow?.class,
+      utilities: flow?.utilities,
       sectionWrapper: parseSectionWrapper(sectionAttributes),
     };
   },
@@ -2901,6 +3148,7 @@ export const sectionFlow = {
 
     const flowContent = buildFlowBody({
       class: data?.class,
+      utilities: data?.utilities,
       layoutOptions: data?.layoutOptions,
       items: data?.items,
     });
@@ -2913,27 +3161,10 @@ ${flowContent}
 ${footerContent}
 {% endsectionFlow %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-flow" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Flow</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({ type: "sectionFlow", ...(data || {}) }),
+  //   ),
 };
 
 export const sectionGrid = {
@@ -2959,6 +3190,7 @@ export const sectionGrid = {
           required: false,
           // editor_components: ec("sectionGrid"),
         },
+        utilitiesField,
         {
           name: "class",
           label: "Grid Item Classes",
@@ -2991,6 +3223,7 @@ export const sectionGrid = {
         layoutTypeNone,
       ],
     },
+    utilitiesField,
     {
       name: "class",
       label: "Layout Class Names",
@@ -3026,6 +3259,7 @@ export const sectionGrid = {
       items: grid?.items || [],
       layoutOptions: grid?.layoutOptions || {},
       class: grid?.class,
+      utilities: grid?.utilities,
       sectionWrapper: parseSectionWrapper(sectionAttributes),
     };
   },
@@ -3037,6 +3271,7 @@ export const sectionGrid = {
 
     const gridContent = buildGridBody({
       class: data?.class,
+      utilities: data?.utilities,
       layoutOptions: data?.layoutOptions,
       items: data?.items,
     });
@@ -3049,27 +3284,10 @@ ${gridContent}
 ${footerContent}
 {% endsectionGrid %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-grid" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Grid</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({ type: "sectionGrid", ...(data || {}) }),
+  //   ),
 };
 
 export const sectionTwoColumns = {
@@ -3095,6 +3313,7 @@ export const sectionTwoColumns = {
           required: false,
           // editor_components: ec("sectionTwoColumns"),
         },
+        utilitiesField,
         {
           name: "class",
           label: "Column Left Classes",
@@ -3125,6 +3344,7 @@ export const sectionTwoColumns = {
           required: false,
           // editor_components: ec("sectionTwoColumns"),
         },
+        utilitiesField,
         {
           name: "class",
           label: "Column Right Classes",
@@ -3149,6 +3369,7 @@ export const sectionTwoColumns = {
       i18n: true,
       types: [layoutTypeSwitcher, layoutTypeFixedFluid, layoutTypeNone],
     },
+    utilitiesField,
     {
       name: "class",
       label: "Layout Class Names",
@@ -3177,6 +3398,7 @@ export const sectionTwoColumns = {
       itemRight: twoColumns?.itemRight,
       layoutOptions: twoColumns?.layoutOptions || {},
       class: twoColumns?.class,
+      utilities: twoColumns?.utilities,
       sectionWrapper: parseSectionWrapper(sectionAttributes),
     };
   },
@@ -3188,6 +3410,7 @@ export const sectionTwoColumns = {
 
     const twoColumnsContent = buildTwoColumnsBody({
       class: data?.class,
+      utilities: data?.utilities,
       layoutOptions: data?.layoutOptions,
       itemLeft: data?.itemLeft,
       itemRight: data?.itemRight,
@@ -3201,29 +3424,13 @@ ${twoColumnsContent}
 ${footerContent}
 {% endsectionTwoColumns %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({
-      items: [data?.itemLeft, data?.itemRight],
-    });
-
-    return `<section class="section-two-columns" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Two Columns</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({
+  //       type: "sectionTwoColumns",
+  //       ...(data || {}),
+  //     }),
+  //   ),
 };
 
 export const sectionReel = {
@@ -3248,6 +3455,7 @@ export const sectionReel = {
           required: false,
           // editor_components: ec("sectionReel"),
         },
+        utilitiesField,
         {
           name: "class",
           label: "Reel Item Classes",
@@ -3272,6 +3480,7 @@ export const sectionReel = {
       i18n: true,
       types: [layoutTypeReel, layoutTypeNone],
     },
+    utilitiesField,
     {
       name: "class",
       label: "Layout Class Names",
@@ -3297,6 +3506,7 @@ export const sectionReel = {
       items: reel?.items || [],
       layoutOptions: reel?.layoutOptions || {},
       class: reel?.class,
+      utilities: reel?.utilities,
       sectionWrapper: parseSectionWrapper(sectionAttributes),
     };
   },
@@ -3308,6 +3518,7 @@ export const sectionReel = {
 
     const reelContent = buildReelBody({
       class: data?.class,
+      utilities: data?.utilities,
       layoutOptions: data?.layoutOptions,
       items: data?.items,
     });
@@ -3320,27 +3531,10 @@ ${reelContent}
 ${footerContent}
 {% endsectionReel %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-reel" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Reel</small>
-
-${headerContent}
-
-${areaContent}
-
-${footerContent}
-
-</section>
-`;
-  },
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({ type: "sectionReel", ...(data || {}) }),
+  //   ),
 };
 
 // Mirror of `keepVisibleField` in `./section-primitives.js` — keep both in sync.
@@ -3591,6 +3785,7 @@ export const sectionCollection = {
         layoutTypeNone,
       ],
     },
+    utilitiesField,
     {
       name: "class",
       label: "Layout Class Names",
@@ -3647,6 +3842,7 @@ export const sectionCollection = {
       sortAndFilterOptions: parsed?.sortAndFilterOptions,
       layoutOptions: parsed?.layoutOptions,
       class: parsed?.class,
+      utilities: parsed?.utilities,
       itemPartial: parsed?.itemPartial,
       itemTemplate: parsed?.itemTemplate,
       attributes: parsed?.attributes,
@@ -3663,6 +3859,7 @@ export const sectionCollection = {
       collection: data?.collection,
       sortAndFilterOptions: data?.sortAndFilterOptions,
       class: data?.class,
+      utilities: data?.utilities,
       itemPartial: data?.itemPartial,
       itemTemplate: data?.itemTemplate,
       layoutOptions: data?.layoutOptions,
@@ -3677,7 +3874,13 @@ ${collectionContent}
 ${footerContent}
 {% endsectionCollection %}`;
   },
-  toPreview: (data) => `<span>COLLECTION SECTION</span>`,
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({
+  //       type: "sectionCollection",
+  //       ...(data || {}),
+  //     }),
+  //   ),
 };
 
 export const sectionBuilder = {
@@ -3704,6 +3907,7 @@ export const sectionBuilder = {
               label: "Content",
               widget: "richtext",
             },
+            utilitiesField,
             {
               name: "class",
               label: "Area Classes",
@@ -3738,6 +3942,7 @@ export const sectionBuilder = {
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
+                utilitiesField,
                 {
                   name: "class",
                   label: "Column Left Classes",
@@ -3768,6 +3973,7 @@ export const sectionBuilder = {
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
+                utilitiesField,
                 {
                   name: "class",
                   label: "Column Right Classes",
@@ -3782,6 +3988,7 @@ export const sectionBuilder = {
                 },
               ],
             },
+            utilitiesField,
             {
               name: "class",
               label: "Area Classes",
@@ -3827,6 +4034,7 @@ export const sectionBuilder = {
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
+                utilitiesField,
                 {
                   name: "class",
                   label: "Item Classes",
@@ -3841,6 +4049,7 @@ export const sectionBuilder = {
                 },
               ],
             },
+            utilitiesField,
             {
               name: "class",
               label: "Area Classes",
@@ -4035,6 +4244,7 @@ export const sectionBuilder = {
                 keepVisibleField,
               ],
             },
+            utilitiesField,
             {
               name: "class",
               label: "Area Classes",
@@ -4095,6 +4305,7 @@ export const sectionBuilder = {
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
+                utilitiesField,
                 {
                   name: "class",
                   label: "Item Classes",
@@ -4109,6 +4320,7 @@ export const sectionBuilder = {
                 },
               ],
             },
+            utilitiesField,
             {
               name: "class",
               label: "Area Classes",
@@ -4154,6 +4366,7 @@ export const sectionBuilder = {
                   required: false,
                   editor_components: ec("sectionBuilder"),
                 },
+                utilitiesField,
                 {
                   name: "class",
                   label: "Item Classes",
@@ -4168,6 +4381,7 @@ export const sectionBuilder = {
                 },
               ],
             },
+            utilitiesField,
             {
               name: "class",
               label: "Area Classes",
@@ -4273,6 +4487,7 @@ export const sectionBuilder = {
         return {
           type: "twoColumns",
           class: area.class || parsed?.class,
+          utilities: area.utilities || parsed?.utilities,
           layoutOptions: parsed?.layoutOptions || {},
           attributes: parsed?.attributes,
           itemLeft: parsed?.itemLeft,
@@ -4287,6 +4502,7 @@ export const sectionBuilder = {
         return {
           type: "grid",
           class: area.class || parsed?.class,
+          utilities: area.utilities || parsed?.utilities,
           layoutOptions: parsed?.layoutOptions || {},
           attributes: parsed?.attributes,
           items: parsed?.items || [],
@@ -4300,6 +4516,7 @@ export const sectionBuilder = {
         return {
           type: "collection",
           class: area.class || parsed?.class,
+          utilities: area.utilities || parsed?.utilities,
           layoutOptions: parsed?.layoutOptions || {},
           attributes: parsed?.attributes,
           collection: parsed?.collection,
@@ -4308,24 +4525,28 @@ export const sectionBuilder = {
         };
       }
       if (area.tagName === "flow") {
-        const parsed = parseFlowBody(
-          extractWithNunjucksTag(sectionInner, "flow"),
-        );
+        const parsed = parseFlowBody({
+          attributes: area.attributes,
+          content: area.content,
+        });
         return {
           type: "flow",
           class: area.class || parsed?.class,
+          utilities: area.utilities || parsed?.utilities,
           layoutOptions: parsed?.layoutOptions || {},
           attributes: parsed?.attributes,
           items: parsed?.items || [],
         };
       }
       if (area.tagName === "reel") {
-        const parsed = parseReelBody(
-          extractWithNunjucksTag(sectionInner, "reel"),
-        );
+        const parsed = parseReelBody({
+          attributes: area.attributes,
+          content: area.content,
+        });
         return {
           type: "reel",
           class: area.class || parsed?.class,
+          utilities: area.utilities || parsed?.utilities,
           layoutOptions: parsed?.layoutOptions || {},
           attributes: parsed?.attributes,
           items: parsed?.items || [],
@@ -4337,6 +4558,7 @@ export const sectionBuilder = {
         return {
           type: area.tagName,
           class: area.class || undefined,
+          utilities: area.utilities,
           attributes: area.attributes || undefined,
           content: area.content,
         };
@@ -4359,11 +4581,13 @@ export const sectionBuilder = {
 
     const areasStr = data?.areas?.length
       ? data.areas
+          .filter(Boolean)
           .map((area) => {
             switch (area.type) {
               case "twoColumns":
                 return buildTwoColumnsBody({
                   class: area.class,
+                  utilities: area.utilities,
                   layoutOptions: area.layoutOptions,
                   attributes: area.attributes,
                   itemLeft: area.itemLeft,
@@ -4373,6 +4597,7 @@ export const sectionBuilder = {
               case "grid":
                 return buildGridBody({
                   class: area.class,
+                  utilities: area.utilities,
                   layoutOptions: area.layoutOptions,
                   attributes: area.attributes,
                   items: area.items,
@@ -4383,6 +4608,7 @@ export const sectionBuilder = {
                   collection: area.collection,
                   sortAndFilterOptions: area.sortAndFilterOptions,
                   class: area.class,
+                  utilities: area.utilities,
                   layoutOptions: area.layoutOptions,
                   attributes: area.attributes,
                   itemPartial: area.itemPartial,
@@ -4391,6 +4617,7 @@ export const sectionBuilder = {
               case "flow":
                 return buildFlowBody({
                   class: area.class,
+                  utilities: area.utilities,
                   layoutOptions: area.layoutOptions,
                   attributes: area.attributes,
                   items: area.items,
@@ -4399,6 +4626,7 @@ export const sectionBuilder = {
               case "reel":
                 return buildReelBody({
                   class: area.class,
+                  utilities: area.utilities,
                   layoutOptions: area.layoutOptions,
                   attributes: area.attributes,
                   items: area.items,
@@ -4434,73 +4662,13 @@ ${areasStr}
 ${footerContent}
 {% endsectionBuilder %}`;
   },
-  toPreview: (data) => {
-    const { headerContent, footerContent } =
-      buildSectionHeaderFooterMarkupPreview({
-        header: data?.header,
-        footer: data?.footer,
-      });
-
-    let itemStr = "";
-    const wrapItemStr = ({ itemStr: str, label }) => `<div>
-<small style="float:right;clear:both;margin-right:.5rem;">${label}</small>
-
-${str}
-</div>`;
-
-    const areasStr = data?.areas?.length
-      ? data.areas
-          .map((area) => {
-            switch (area.type) {
-              case "twoColumns":
-                itemStr = buildBodyPreview({
-                  items: [area.itemLeft, area.itemRight],
-                });
-                return wrapItemStr({ itemStr, label: "Two Columns" });
-
-              case "grid":
-                itemStr = buildBodyPreview({ items: area?.items });
-                return wrapItemStr({ itemStr, label: "Grid" });
-
-              case "collection":
-                itemStr = "<COLLECTION>";
-                return wrapItemStr({ itemStr, label: "Collection" });
-
-              case "flow":
-                itemStr = buildBodyPreview({ items: area?.items });
-                return wrapItemStr({ itemStr, label: "Flow" });
-
-              case "reel":
-                itemStr = buildBodyPreview({ items: area?.items });
-                return wrapItemStr({ itemStr, label: "Reel" });
-
-              case "areaRaw":
-              case "area":
-              default: {
-                if (!area.content) return "";
-                itemStr = buildBodyPreview({ items: [area] });
-                return wrapItemStr({ itemStr, label: "Raw" });
-              }
-            }
-          })
-          .filter(Boolean)
-          .join("\n")
-      : "";
-
-    // const areaContent = buildBodyPreview({ items: data?.items });
-
-    return `<section class="section-builder" style="${SECTION_WRAPPER_STYLE}">
-<small style="float:right;">Builder</small>
-
-${headerContent}
-
-${areasStr}
-
-${footerContent}
-
-</section>
-`;
-  },
+  // toPreview: (data) =>
+  //   asyncPreview(
+  //     getRenderer().renderSection({
+  //       type: "sectionBuilder",
+  //       ...(data || {}),
+  //     }),
+  //   ),
 };
 
 export const sections = {
@@ -4516,7 +4684,13 @@ export const sections = {
   toBlock: function (data) {
     return `{% sections %}{% endsections %}`;
   },
-  toPreview: (data) => `<span>SECTIONS</span>`,
+  // toPreview: () => {
+  //   const el = document.createElement("div");
+  //   el.className = "cms-sections-slot";
+  //   sectionsSlots.add(el);
+  //   setHtml(el, previewState.sectionsHtml || SECTIONS_EMPTY_NOTE);
+  //   return el;
+  // },
 };
 
 // Example for project specific component def

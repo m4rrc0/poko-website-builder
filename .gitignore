@@ -44,3 +44,12 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Graphify
 graphify-out
+
+# Generated CMS preview assets
+src/config-11ty/plugins/cms-config/preview/generated/
+
+# Temp content directories for testing
+_tmp
+_temp
+
+_content-copy

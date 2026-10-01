@@ -13,10 +13,18 @@ export class CmsPage {
         ? "https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"
         : "/assets/js/sveltia-cms.js";
 
-    // TODO: not sure it is useful anymore ??
-    const currentCollections = JSON.stringify(
-      data?.globalSettings?.collections || [],
+    // Same stylesheets as the site's <head> so the CMS preview pane matches the site
+    const previewStyleUrls = Array.from(
+      `${data.htmlExternalCtxCssTag || ""}\n${data.htmlExternalCssTags || ""}`.matchAll(
+        /href="([^"]+)"/g,
+      ),
+      (m) => m[1],
     );
+    // UnoCSS layer (brand preflight + preview utility classes) between ctx and project styles
+    const ctxIndex = previewStyleUrls.findIndex((url) =>
+      url.endsWith("ctx.css"),
+    );
+    previewStyleUrls.splice(ctxIndex + 1, 0, "/admin/preview.css");
 
     return (
       `
@@ -31,7 +39,9 @@ export class CmsPage {
     <script src=${sveltiaScriptSrc} eleventy:ignore></script>
     <link href="config.json" type="application/json" rel="cms-config-url" />
     <script eleventy:ignore>
-      const currentCollections = JSON.parse('${currentCollections || "[]"}')
+      </script>
+      <script eleventy:ignore>
+        ${JSON.stringify(previewStyleUrls)}.forEach((url) => CMS.registerPreviewStyle(url));
       </script>
       ` +
       (data.env.initialCmsSetup
@@ -39,10 +49,16 @@ export class CmsPage {
         : `
       <script type="module" eleventy:ignore>
         import * as defaultEditorComponents from "./defaultEditorComponents.js";
+        import { defaultComponentPreview } from "./preview-runtime.js";
         const decNames = Object.keys(defaultEditorComponents)
-        console.log(decNames, defaultEditorComponents);
         decNames.forEach(name => {
-          CMS.registerEditorComponent(defaultEditorComponents[name]);
+          // Sveltia requires a toPreview fn; default renders toBlock output
+          // through the app pipeline. A component's own toPreview wins.
+          const component = defaultEditorComponents[name];
+          CMS.registerEditorComponent({
+            toPreview: defaultComponentPreview(component),
+            ...component,
+          });
         })
       </script>
       <script type="module" eleventy:ignore>
@@ -72,14 +88,24 @@ export class CmsPage {
             ? `
       <script type="module" eleventy:ignore>
         import * as userEditorComponents from "./userEditorComponents.js";
+        import { defaultComponentPreview } from "./preview-runtime.js";
         const uecNames = Object.keys(userEditorComponents)
-        console.log(uecNames, userEditorComponents);
         uecNames.forEach(name => {
-          CMS.registerEditorComponent(userEditorComponents[name]);
+          const component = userEditorComponents[name];
+          CMS.registerEditorComponent({
+            toPreview: defaultComponentPreview(component),
+            ...component,
+          });
         })
       </script>
       `
-            : "")) +
+            : "") +
+          `
+      <script type="module" eleventy:ignore>
+        import { registerPreviewTemplates } from "./previewTemplates.js";
+        registerPreviewTemplates(CMS);
+      </script>
+      `) +
       `
   </head>
   <body>

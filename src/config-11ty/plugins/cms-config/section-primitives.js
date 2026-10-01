@@ -1,5 +1,7 @@
 // Reusable CMS field primitives shared by section types declared in
 // `sectionsField.types` (this folder's `index.js`).
+
+import { utilitiesField } from "./utility-classes.js";
 //
 // IMPORTANT: These shapes are intentionally aligned with the inline editor
 // components in `src/content-static/admin/defaultEditorComponents.js` so that
@@ -26,6 +28,7 @@ export const sectionHeaderField = {
       required: false,
       i18n: true,
     },
+    utilitiesField,
     {
       name: "class",
       label: "Header Classes",
@@ -58,6 +61,7 @@ export const sectionFooterField = {
       required: false,
       i18n: true,
     },
+    utilitiesField,
     {
       name: "class",
       label: "Footer Classes",
@@ -84,12 +88,14 @@ export const sectionWrapperField = {
   collapsed: true,
   i18n: true,
   fields: [
+    utilitiesField,
     {
       name: "class",
       label: "Section Class Names",
       widget: "string",
       required: false,
       i18n: "duplicate",
+      hint: "Free-form class names merged with the Utility Classes picked above (e.g. 'my-class another-class')",
     },
     {
       name: "attributes",
@@ -263,6 +269,7 @@ export const gridItemFields = [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: "Grid Item Classes",
@@ -284,6 +291,7 @@ export const reelItemFields = [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: "Reel Item Classes",
@@ -305,6 +313,7 @@ export const flowItemFields = [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: "Flow Item Classes",
@@ -549,6 +558,7 @@ export const twoColumnsItemFields = (side) => [
     widget: "richtext",
     required: false,
   },
+  utilitiesField,
   {
     name: "class",
     label: `Column ${side} Classes`,
@@ -577,6 +587,7 @@ export const areaRawAreaFields = [
   // matching partial (`_areaRaw`) just wraps the value as-is, so consistency
   // with inline mode is the author's responsibility.
   { name: "content", label: "Content", widget: "richtext" },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "attributes",
@@ -605,6 +616,7 @@ export const twoColumnsAreaFields = [
     summary: "{{content | truncate(50)}}",
     fields: twoColumnsItemFields("Right"),
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -636,6 +648,7 @@ export const gridAreaFields = [
     summary: "{{content | truncate(50)}}",
     fields: gridItemFields,
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -673,6 +686,7 @@ export const flowAreaFields = [
     default: [{ content: "" }, { content: "" }],
     fields: flowItemFields,
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -704,6 +718,7 @@ export const reelAreaFields = [
     default: [{ content: "" }, { content: "" }],
     fields: reelItemFields,
   },
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",
@@ -730,6 +745,7 @@ export const reelAreaFields = [
 export const collectionAreaFields = (extraOptions = []) => [
   collectionSelectField(extraOptions),
   sortAndFilterOptionsField,
+  utilitiesField,
   { name: "class", label: "Area Classes", widget: "string", required: false },
   {
     name: "layoutOptions",

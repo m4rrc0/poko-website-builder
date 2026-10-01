@@ -47,9 +47,18 @@ import markdownItMark from "markdown-it-mark";
 import markdownItLinkAttributes from "markdown-it-link-attributes";
 import markdownItAttrs from "markdown-it-attrs";
 import markdownItBracketedSpans from "markdown-it-bracketed-spans";
+import {
+  mdSemanticContainerTags,
+  mdPlainContainerNames,
+  mRCTOptions,
+} from "./src/config-11ty/markdown-containers.js";
 // -------- Env Variables
 import * as envConf from "./env.config.js";
 import { enginePath, dependencyEnginePath } from "./src/utils/paths.js";
+import {
+  recordIconUse,
+  setIconSources,
+} from "./src/config-11ty/icon-manifest.js";
 import {
   DEBUG,
   CMS_IMPORT,
@@ -158,24 +167,8 @@ function shouldNotRender(data) {
   return false;
 }
 
-function mditRenderContainerTag(tagName, tokens, idx, options, env, Renderer) {
-  tokens[idx].tag = tagName;
-  return Renderer.renderToken(tokens, idx, options);
-}
-function mRCTOptions(tagName) {
-  return {
-    render: function (tokens, idx, options, env, Renderer) {
-      return mditRenderContainerTag(
-        tagName,
-        tokens,
-        idx,
-        options,
-        env,
-        Renderer,
-      );
-    },
-  };
-}
+// mdSemanticContainerTags / mdPlainContainerNames / mRCTOptions live in
+// src/config-11ty/markdown-containers.js so the CMS preview can share them.
 
 const simpleIconsDir = dependencyEnginePath("simple-icons", "icons");
 const tablerOutlineDir = dependencyEnginePath("@tabler/icons", "icons/outline");
@@ -222,6 +215,10 @@ const iconLists = {
     filePath.split("/").pop().replace(".svg", ""),
   ),
 };
+
+// CMS preview icon manifest: `icon.class` records each rendered icon, the
+// build writes a bundled map of their real svg markup.
+setIconSources(iconSources);
 
 /**
  * @typedef { import("@11ty/eleventy").UserConfig } UserConfig
@@ -351,45 +348,22 @@ export default async function (eleventyConfig) {
       // linkify: true // Do not do this until we implement an automatic email protection 11ty transform
     }),
   );
-  eleventyConfig.amendLibrary(
-    "md",
-    (mdLib) =>
-      mdLib
-        // Use it like this:
-        // ::: section
-        // :::
-        .use(markdownItContainer, "section", mRCTOptions("section"))
-        .use(markdownItContainer, "aside", mRCTOptions("aside"))
-        .use(markdownItContainer, "article", mRCTOptions("article"))
-        .use(markdownItContainer, "footer", mRCTOptions("footer"))
-        .use(markdownItContainer, "header", mRCTOptions("header"))
-        .use(markdownItContainer, "nav", mRCTOptions("nav"))
-        .use(markdownItContainer, "main", mRCTOptions("main"))
-        .use(markdownItContainer, "ul", mRCTOptions("ul"))
-        .use(markdownItContainer, "ol", mRCTOptions("ol"))
-        .use(markdownItContainer, "div", mRCTOptions("div"))
-        .use(markdownItContainer, "p", mRCTOptions("p"))
-        .use(markdownItContainer, "hgroup", mRCTOptions("hgroup"))
-        .use(markdownItContainer, "h1", mRCTOptions("h1"))
-        .use(markdownItContainer, "h2", mRCTOptions("h2"))
-        .use(markdownItContainer, "h3", mRCTOptions("h3"))
-        .use(markdownItContainer, "h4", mRCTOptions("h4"))
-        .use(markdownItContainer, "h5", mRCTOptions("h5"))
-        .use(markdownItContainer, "h6", mRCTOptions("h6"))
-        .use(markdownItContainer, "box")
-        .use(markdownItContainer, "flow")
-        .use(markdownItContainer, "grid-fluid")
-        .use(markdownItContainer, "cluster")
-        .use(markdownItContainer, "switcher")
-        .use(markdownItContainer, "cover")
-        .use(markdownItContainer, "fixed-fluid")
-        .use(markdownItContainer, "prose")
-        //
-        .use(markdownItMark) // https://github.com/markdown-it/markdown-it-mark
-        .use(markdownItLinkAttributes) // https://github.com/crookedneighbor/markdown-it-link-attributes
-        .use(markdownItAttrs) // https://github.com/arve0/markdown-it-attrs
-        .use(markdownItBracketedSpans), // https://github.com/mb21/markdown-it-bracketed-spans
-  );
+  eleventyConfig.amendLibrary("md", (mdLib) => {
+    // Use it like this:
+    // ::: section
+    // :::
+    for (const tag of mdSemanticContainerTags) {
+      mdLib.use(markdownItContainer, tag, mRCTOptions(tag));
+    }
+    for (const name of mdPlainContainerNames) {
+      mdLib.use(markdownItContainer, name);
+    }
+    mdLib
+      .use(markdownItMark) // https://github.com/markdown-it/markdown-it-mark
+      .use(markdownItLinkAttributes) // https://github.com/crookedneighbor/markdown-it-link-attributes
+      .use(markdownItAttrs) // https://github.com/arve0/markdown-it-attrs
+      .use(markdownItBracketedSpans); // https://github.com/mb21/markdown-it-bracketed-spans
+  });
 
   // --------------------- Bundles
   eleventyConfig.addBundle("html");
@@ -603,7 +577,11 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(pluginIcons, {
     sources: iconSources,
     icon: {
-      class: (name, source) => `icon icon-${source} icon-${name}`,
+      // Also records usage for the CMS preview's bundled icon map.
+      class: (name, source) => {
+        recordIconUse(source, name);
+        return `icon icon-${source} icon-${name}`;
+      },
       transform: async (svg) => {
         const min = (svg || "").replace(/\s+/g, " ");
         return min;
