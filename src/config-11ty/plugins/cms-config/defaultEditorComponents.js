@@ -2427,6 +2427,120 @@ ${content}
   },
 };
 
+/**
+ * Parse a `{ .poko … }` curly-attribute string into `{ utilities, class,
+ * id, attributes }`. Dotted tokens become class names (`.poko` itself is a
+ * marker and is dropped — it is re-emitted by `curlyAttrsToBlock`), `#…`
+ * becomes the id, and everything else is kept verbatim as raw attributes.
+ */
+const parseCurlyAttrs = (curlyString) => {
+  const inner = (curlyString || "").replace(/^\{/, "").replace(/\}$/, "");
+  // split on spaces, keeping quoted values (`a="b c"`) together
+  const tokens = inner.match(/(?:[^\s"']|"[^"]*"|'[^']*')+/g) || [];
+  const classes = [];
+  const attributes = [];
+  let id;
+  for (const token of tokens) {
+    if (token === ".poko") continue;
+    if (token.startsWith(".") && token.length > 1) classes.push(token.slice(1));
+    else if (token.startsWith("#") && token.length > 1 && id === undefined)
+      id = token.slice(1);
+    else attributes.push(token);
+  }
+  return {
+    ...splitClassTokens(classes.join(" ")),
+    ...(id ? { id } : {}),
+    ...(attributes.length ? { attributes: attributes.join(" ") } : {}),
+  };
+};
+
+/**
+ * Serialize back to `{.poko .cls-1 .cls-2 #id attr="v"}` — the
+ * markdown-it-attrs form, with the `.poko` marker class first.
+ */
+const buildCurlyAttrs = (data) => {
+  const classes = [
+    ...new Set(
+      `${classListFromUtilities(data?.utilities)} ${data?.class || ""}`
+        .split(/\s+/)
+        .filter(Boolean),
+    ),
+  ];
+  return `{${[
+    ".poko",
+    ...classes.map((c) => `.${c}`),
+    ...(data?.id ? [`#${data.id}`] : []),
+    ...(data?.attributes ? [data.attributes] : []),
+  ].join(" ")}}`;
+};
+
+export const curlyAttrs = {
+  id: "curlyAttrs",
+  label: "Attributes",
+  icon: "data_object",
+  trigger: "menuitem",
+  mode: "dialog",
+  summary: "{{class}} {{id}}",
+  fields: [
+    utilitiesField,
+    {
+      name: "class",
+      label: "Class Names",
+      widget: "string",
+      hint: "Free-form class names merged with the Utility Classes picked above (e.g. 'my-class another-class')",
+      required: false,
+    },
+    {
+      name: "id",
+      label: "Id",
+      widget: "string",
+      required: false,
+    },
+    {
+      name: "attributes",
+      label: "Raw Attributes",
+      widget: "string",
+      hint: 'Any other attribute string (e.g. data-foo="bar", hidden, aria-label="…")',
+      required: false,
+    },
+  ],
+  // Matching is the tricky bit — the emitted markup is consumed by
+  // markdown-it-attrs at build time, which attaches `{.cls #id k=v}` to the
+  // preceding inline element (no space: `*em*{.a}`) or, at end of block, to
+  // the block itself (`paragraph {.a}`). So the component output is just a
+  // `{…}` group that may appear anywhere in the text, with or without a
+  // space before it — the pattern must not anchor or require whitespace.
+  //
+  // Options considered:
+  //   a) Match ANY `{…}` group — too broad: would swallow literal braces in
+  //      code samples, template snippets, or hand-written attrs the author
+  //      never intended as this component.
+  //   b) Match `{…}` only when it starts with `.`/`#` — still too broad:
+  //      every genuine markdown-it-attrs usage in content becomes a
+  //      component instance (arguably fine, but makes the marker moot and
+  //      surprises authors editing plain `{.cls}` by hand).
+  //   c) REQUIRE the `.poko` marker class first (chosen) — a tiny, memorable
+  //      noop class authors can also type by hand; it keeps matching
+  //      unambiguous and documents intent in the markup itself.
+  //
+  // `\s*` before `.poko` tolerates `{ .poko … }`; `\b` keeps `.pokofamily`
+  // out; the body accepts `}` only inside quotes so `attr="a}b"` still
+  // matches. A `}` inside a quoted value is rare but cheap to support.
+  pattern: /\{\s*\.poko\b(?:[^}"']|"[^"]*"|'[^']*')*\}/,
+  fromBlock: function (match) {
+    return parseCurlyAttrs(match[0]);
+  },
+  toBlock: function (data) {
+    return buildCurlyAttrs(data);
+  },
+  toPreview: function (data) {
+    const code = buildCurlyAttrs(data)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;");
+    return `<code>${code}</code>`;
+  },
+};
+
 // export const section = {
 //   id: "section",
 //   label: "Section",
