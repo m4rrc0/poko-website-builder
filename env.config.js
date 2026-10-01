@@ -3,16 +3,7 @@ import { resolve, join, relative } from "node:path";
 import fs from "node:fs";
 import yaml from "js-yaml";
 import { PACKAGE_ROOT, packagePath } from "./src/utils/paths.js";
-import { transformLanguage } from "./src/utils/languages.js";
-import {
-  mapStyleStringsToClassDef,
-  compileStyleContexts,
-  transformFontStacksContexts,
-  transformWidthsContext,
-  transformBrandColors,
-  transformPalette,
-  transformTypeScales,
-} from "./src/utils/transformStyles.js";
+import { deriveEnv } from "./src/env/derive.js";
 
 const processEnv = typeof process !== "undefined" ? process.env : {};
 
@@ -391,108 +382,40 @@ export const userHtmlClasses = async function () {
 
 // export const userCmsConfig = userCmsConfigTemp;
 
-// More specific useful global settings
-export const selectedCollections = globalSettings?.collections || [];
+// More specific useful global settings — all derived from CMS-editable data.
+// The computation lives in `src/env/derive.js` so the CMS preview browser
+// bundle can recompute the same values from the Sveltia data store.
+const derivedEnv = deriveEnv({
+  globalSettings,
+  brandConfig,
+  statusesToUnrender,
+});
 
-export const allLanguages =
-  globalSettings?.languages?.map(transformLanguage) || [];
-
-export const initialCmsSetup = !allLanguages?.length;
-
-export const languages = allLanguages.filter(
-  (lang) => !statusesToUnrender.includes(lang.status),
-);
-export const defaultLanguage = allLanguages.find(
-  (lang) => lang.isWebsiteDefault,
-);
-export const defaultLangCode = defaultLanguage?.code || "en";
-export const unrenderedLanguages = allLanguages
-  .filter((lang) => statusesToUnrender.includes(lang.status))
-  .map((lang) => lang.code);
+export const selectedCollections = derivedEnv.selectedCollections;
+export const allLanguages = derivedEnv.allLanguages;
+export const initialCmsSetup = derivedEnv.initialCmsSetup;
+export const languages = derivedEnv.languages;
+export const defaultLanguage = derivedEnv.defaultLanguage;
+export const defaultLangCode = derivedEnv.defaultLangCode;
+export const unrenderedLanguages = derivedEnv.unrenderedLanguages;
 
 // ----------- Brand styles computations
-// TODO: REFACTOR HERE
-export const inlineAllStyles =
-  typeof brandConfig?.inlineAllStyles === "boolean"
-    ? brandConfig?.inlineAllStyles
-    : false;
-
-// Widths contexts
-export const brandWidthsContexts = (brandConfig?.widthsContexts || []).map(
-  transformWidthsContext,
-);
-export const brandWidthsContextsStyles = mapStyleStringsToClassDef(
-  brandWidthsContexts,
-  ".widths-",
-);
-
-// Font stacks contexts
-export const brandFontStacksContexts = transformFontStacksContexts(
-  brandConfig?.fontStacksContexts,
-  brandConfig?.customFontsImport,
-);
-export const brandFontStacksContextsStyles = mapStyleStringsToClassDef(
-  brandFontStacksContexts,
-  ".fonts-",
-);
-
-// Type Scale
-export const brandTypeScales = transformTypeScales(brandConfig?.typeScales);
-export const brandTypeScalesStyles = mapStyleStringsToClassDef(
-  brandTypeScales,
-  ".type-scale-",
-);
-
-// Colors
-export const brandColors = transformBrandColors(brandConfig?.colors);
-export const brandColorsStyles = brandColors
-  .map((color) => color.stylesString)
-  .join("");
-
-// Palettes
-export const brandPalettes = (brandConfig?.palettes || []).map(
-  transformPalette,
-);
-export const brandPalettesStyles = mapStyleStringsToClassDef(
-  brandPalettes,
-  ".palette-",
-);
-
-// Style Contexts
-export const brandStyleContexts = compileStyleContexts(
-  brandConfig?.styleContexts,
-  {
-    widthsContext: brandWidthsContexts,
-    fontStacksContext: brandFontStacksContexts,
-    typeScale: brandTypeScales,
-    palette: brandPalettes,
-  },
-);
-export const brandStyleContextsStyles = mapStyleStringsToClassDef(
-  brandStyleContexts,
-  ".ctx-",
-  0,
-);
-
-// Styles to be injected
-export const brandRootStyles = [
-  ":root{",
-  brandWidthsContexts?.[0]?.stylesString || "",
-  brandFontStacksContexts?.[0]?.stylesString || "",
-  brandTypeScales?.[0]?.stylesString || "",
-  brandColorsStyles || "",
-  brandPalettes?.[0]?.stylesString || "",
-  "}",
-].join("");
-
-export const brandStyles = [
-  brandRootStyles || "",
-  brandStyleContextsStyles || "", // Comes before more precise styles
-  brandWidthsContextsStyles || "",
-  brandFontStacksContextsStyles || "",
-  brandTypeScalesStyles || "",
-  brandPalettesStyles || "",
-].join("\n");
+export const inlineAllStyles = derivedEnv.inlineAllStyles;
+export const brandWidthsContexts = derivedEnv.brandWidthsContexts;
+export const brandWidthsContextsStyles = derivedEnv.brandWidthsContextsStyles;
+export const brandFontStacksContexts = derivedEnv.brandFontStacksContexts;
+export const brandFontStacksContextsStyles =
+  derivedEnv.brandFontStacksContextsStyles;
+export const brandTypeScales = derivedEnv.brandTypeScales;
+export const brandTypeScalesStyles = derivedEnv.brandTypeScalesStyles;
+export const brandColors = derivedEnv.brandColors;
+export const brandColorsStyles = derivedEnv.brandColorsStyles;
+export const brandPalettes = derivedEnv.brandPalettes;
+export const brandPalettesStyles = derivedEnv.brandPalettesStyles;
+export const brandStyleContexts = derivedEnv.brandStyleContexts;
+export const brandStyleContextsStyles = derivedEnv.brandStyleContextsStyles;
+export const brandRootStyles = derivedEnv.brandRootStyles;
+export const brandStyles = derivedEnv.brandStyles;
 
 // uno.config.js imports this module: awaiting it at top level deadlocks under
 // Node's cyclic top-level-await rules, so it resolves lazily on both runtimes.
@@ -560,11 +483,7 @@ export const WEBSITE_PATH_PREFIX =
   processEnv.WEBSITE_PATH_PREFIX ??
   (GITHUB_PAGES_DEPLOY ? pathPrefixFromUrl(GITHUB_PAGES_URL || BASE_URL) : "");
 
-export const SITE_NAME =
-  processEnv.SITE_NAME ||
-  globalSettings?.metadata?.siteName ||
-  globalSettings?.siteName ||
-  "";
+export const SITE_NAME = processEnv.SITE_NAME || derivedEnv.SITE_NAME || "";
 
 if (DEBUG) {
   console.log({ processEnv });

@@ -13,7 +13,7 @@ export default function ({
     .join(" ");
   styleStr = styleStr ? `style="${styleStr}"` : "";
 
-  return `<${tag || "div"} class="layout area main list-flow ${type} ${recursive ? "recursive" : ""} ${className || ""}" ${styleStr}>
+  return `<${tag || "div"} class="layout area main list-flow ${type || "flow"} ${recursive ? "recursive" : ""} ${className || ""}" ${styleStr}>
 ${content}
 </${tag || "div"}>`;
 }

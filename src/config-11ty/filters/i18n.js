@@ -1,5 +1,9 @@
-import { languages } from "../../../env.config.js";
 import { getNestedValue } from "../../utils/objects.js";
+
+// `languages` is global data (eleventy.config.js addGlobalData) so it is always
+// available on `this.ctx` — keeping it out of module scope lets this file run
+// in the browser CMS preview bundle, which cannot import env.config.js.
+const getLanguages = (ctx) => ctx?.languages || [];
 
 // remove any lang prefix if present and leading/trailing slashes
 function stripUrl(input, langPrefixRegex, collectionNamesRegex) {
@@ -27,9 +31,7 @@ function lookupTemplateTranslations(
   // TODO: Make this more robust
   // Removing lang prefix and collection name from input makes collision more probable
 
-  const langPrefixes = (this.ctx?.languages || languages).map(
-    (lang) => lang.prefix,
-  );
+  const langPrefixes = getLanguages(this.ctx).map((lang) => lang.prefix);
   const langPrefixRegex = new RegExp(`^\/*(${langPrefixes.join("|")})\/`);
   const eleventyCollections = this.ctx.collections;
   const collectionNames = Object.keys(eleventyCollections);
@@ -79,7 +81,8 @@ export function locale_url(...args) {
   // const originalFilter = this.env.getFilter("locale_url_original");
   const input = args[0];
   const langOverride =
-    (args[1] && languages.find((lang) => lang.code === args[1])?.code) ||
+    (args[1] &&
+      getLanguages(this.ctx).find((lang) => lang.code === args[1])?.code) ||
     undefined;
   const propName =
     args[2] || (typeof langOverride === "undefined" && args[1]) || "url";
@@ -117,7 +120,8 @@ export function locale_url(...args) {
 
 // inclusionOption can be "all", "others", "self" or a lang code
 export function locale_links(input, inclusionOption = "others") {
-  const templateTranslations = lookupTemplateTranslations.call(this, input);
+  const templateTranslations =
+    lookupTemplateTranslations.call(this, input) || [];
 
   if (inclusionOption === "all") {
     return templateTranslations;

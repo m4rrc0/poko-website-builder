@@ -25,6 +25,7 @@ export default async function (data) {
         itemPartial: "_flowItem",
         wrapperPartial: "_flow",
         wrapperProps: {
+          type: d?.layoutOptions?.type,
           gap: d?.layoutOptions?.gap,
           class: mergedClass(d),
         },
