@@ -1,7 +1,7 @@
 import Image from "@11ty/eleventy-img";
 import deepmerge from "deepmerge";
 import { imageTransformOptions } from "../../plugins/imageTransform.js";
-import { recordImageStats } from "../../image-manifest.js";
+import { isManifestSource, recordImageStats } from "../../image-manifest.js";
 import { prepareImageArgs } from "./image.args.js";
 import { WORKING_DIR } from "../../../../env.config.js";
 
@@ -35,7 +35,13 @@ export async function image(args) {
     : srcRaw;
   let html = await Image(src, options);
   // CMS preview manifest — key by the CMS-facing path (`/_images/…`).
-  recordImageStats(srcRaw, Image.statsSync?.(src, options));
+  if (isManifestSource(srcRaw)) {
+    try {
+      recordImageStats(srcRaw, Image.statsSync(src, options));
+    } catch (e) {
+      console.warn(`[image-manifest] stats failed for ${srcRaw}:`, e?.message);
+    }
+  }
   // if (!html) {
   //   console.error({ error, src, options, page: this.page.fileSlug });
   // }

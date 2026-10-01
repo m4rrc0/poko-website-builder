@@ -1,6 +1,6 @@
 import fglob from "fast-glob";
 import path from "node:path";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import yaml from "js-yaml";
 import deepmerge from "deepmerge";
 import {
@@ -81,6 +81,7 @@ export default async function (eleventyConfig, pluginOptions) {
   // write-if-different — an unconditional write would loop plugin re-run →
   // write → reset forever.
   const generatedDir = `${import.meta.dirname}/preview/generated`;
+  await mkdir(generatedDir, { recursive: true });
   const writeIfChanged = async (filePath, code) => {
     const existing = await readFile(filePath, "utf-8").catch(() => null);
     if (existing !== code) await writeFile(filePath, code);

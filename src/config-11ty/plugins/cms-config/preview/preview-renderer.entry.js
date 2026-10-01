@@ -77,9 +77,10 @@ const attrTokenKey = (html) => {
   return [...set].sort().join("|");
 };
 export const generatePreviewCss = async (html) => {
-  const key = attrTokenKey(html);
+  const uno = await getUno();
+  const key = `${unoKey}\n${attrTokenKey(html)}`;
   if (key === cssTokenKey) return cachedCss;
-  const { css } = await (await getUno()).generate(String(html ?? ""));
+  const { css } = await uno.generate(String(html ?? ""));
   cssTokenKey = key;
   cachedCss = css;
   return css;

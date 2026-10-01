@@ -21,6 +21,8 @@ const manifestKey = (input) => {
   return m ? `/${m[1].replace(/\\/g, "/")}` : null;
 };
 
+export const isManifestSource = (input) => manifestKey(input) !== null;
+
 // Call after every eleventy-img `Image(src, opts)` returns stats.
 // `input` = the src the call site was given; `stats` = the stats object
 // ({ webp: [{url, width, …}], jpeg: […], … }).

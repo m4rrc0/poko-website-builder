@@ -283,13 +283,13 @@
 }
 :where(
   :where(body, .cms-layout)
-    > main:has(& > :where(header, footer, aside):first-child)
+    > main:has(> :where(header, footer, aside):first-child)
 ) {
   padding-block-start: 0;
 }
 :where(
   :where(body, .cms-layout)
-    > main:has(& > :where(header, footer, aside):last-child)
+    > main:has(> :where(header, footer, aside):last-child)
 ) {
   padding-block-end: 0;
 } /* prettier-ignore */

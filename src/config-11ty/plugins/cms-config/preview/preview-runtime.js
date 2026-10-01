@@ -416,7 +416,12 @@ const escapeHtml = (s) =>
 // field value IS the blob) would be stripped wholesale, so they're parked in
 // `data-preview-*` and restored by postprocessMedia on the live DOM.
 const PARK_RE =
-  /\b(src|srcset|poster|href|content)=(["'])([^"']*?(?:blob:|data:image\/)[^"']*?)\2/gi;
+  /\b(src|srcset|poster|href|content)=(["'])((?:blob:|data:image\/)[^"']*)\2/gi;
+const SAFE_PARKED_URL_RE = /^(?:blob:|data:image\/)/i;
+const isSafeParked = (attr, v) =>
+  attr === "srcset"
+    ? v.split(/,\s+/).every((c) => SAFE_PARKED_URL_RE.test(c.trim()))
+    : SAFE_PARKED_URL_RE.test(v.trim());
 export const sanitizeHtml = (html) => {
   if (!window.DOMPurify?.sanitize) return `<pre>${escapeHtml(html)}</pre>`;
   const parked = String(html ?? "").replace(
@@ -442,8 +447,8 @@ export const postprocessMedia = (root) => {
     for (const attr of MEDIA_ATTRS) {
       const v = el.getAttribute(`data-preview-${attr}`);
       if (!v) continue;
-      el.setAttribute(attr, v);
       el.removeAttribute(`data-preview-${attr}`);
+      if (isSafeParked(attr, v)) el.setAttribute(attr, v);
     }
   }
   // Step 2: resolve CMS media paths → usable urls + manifest srcset backfill.
