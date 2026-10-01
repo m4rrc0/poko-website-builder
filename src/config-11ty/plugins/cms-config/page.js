@@ -13,11 +13,6 @@ export class CmsPage {
         ? "https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"
         : "/assets/js/sveltia-cms.js";
 
-    // TODO: not sure it is useful anymore ??
-    const currentCollections = JSON.stringify(
-      data?.globalSettings?.collections || [],
-    );
-
     // Same stylesheets as the site's <head> so the CMS preview pane matches the site
     const previewStyleUrls = Array.from(
       `${data.htmlExternalCtxCssTag || ""}\n${data.htmlExternalCssTags || ""}`.matchAll(
@@ -44,7 +39,6 @@ export class CmsPage {
     <script src=${sveltiaScriptSrc} eleventy:ignore></script>
     <link href="config.json" type="application/json" rel="cms-config-url" />
     <script eleventy:ignore>
-      const currentCollections = JSON.parse('${currentCollections || "[]"}')
       </script>
       <script eleventy:ignore>
         ${JSON.stringify(previewStyleUrls)}.forEach((url) => CMS.registerPreviewStyle(url));
@@ -57,7 +51,6 @@ export class CmsPage {
         import * as defaultEditorComponents from "./defaultEditorComponents.js";
         import { defaultComponentPreview } from "./preview-runtime.js";
         const decNames = Object.keys(defaultEditorComponents)
-        console.log(decNames, defaultEditorComponents);
         decNames.forEach(name => {
           // Sveltia requires a toPreview fn; default renders toBlock output
           // through the app pipeline. A component's own toPreview wins.
@@ -75,7 +68,6 @@ export class CmsPage {
         import * as userEditorComponents from "./userEditorComponents.js";
         import { defaultComponentPreview } from "./preview-runtime.js";
         const uecNames = Object.keys(userEditorComponents)
-        console.log(uecNames, userEditorComponents);
         uecNames.forEach(name => {
           const component = userEditorComponents[name];
           CMS.registerEditorComponent({

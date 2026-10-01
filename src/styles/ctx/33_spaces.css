@@ -7,14 +7,14 @@
 }*/
 
 /* Reset body */
-:where(body) {
+:where(body, .cms-layout) {
   min-block-size: 100vh;
   margin: 0;
   padding: 0;
 }
 
 /* Push page footer at the bottom without the need for a grid or flex body */
-:where(body > footer) {
+:where(body > footer, .cms-layout > footer) {
   position: sticky;
   top: calc(100vh - 1px);
 }
@@ -50,7 +50,7 @@
 
 /* ----- Max Width ----- */
 
-:where(body) {
+:where(body, .cms-layout) {
   /* --max-width: min(100%, var(--width-page));
   max-inline-size: min(100%, var(--width-page));
   margin-inline: auto; */
@@ -61,7 +61,7 @@
 /* prettier-ignore */
 /* :where(:where(section, .section) > :where(.area, header, footer, .header, .footer, .main)), */
 /* prettier-ignore */
-:where(*:not(html, body, main, section, .section, header, footer, aside, article, hgroup, div), .layout) {
+:where(*:not(html, body, .cms-layout, main, section, .section, header, footer, aside, article, hgroup, div), .layout) {
 /* :where(body > *:not(main), main > *) { */
   max-inline-size: var(--max-width);
   margin-inline: var(--mi-auto-applied);
@@ -220,7 +220,7 @@
 
 /* METHOD 3: Tracking depth and apply only the first time we encounter non structural elements */
 /* Initialize the flag */
-:where(body),
+:where(body, .cms-layout),
 .px-restore {
   --px-applied: 0;
 }
@@ -229,7 +229,7 @@
 /* :where(p, h1, h2, h3, h4, h5, h6, hgroup, address, blockquote, figure, figcaption, ul, ol, dl, menu, pre, form, table, details, search), */
 /* Apply on .box to avoid double lateral padding */
 /* prettier-ignore */
-:where(*:not(html, body, main, section, .section, header, footer, aside, article, hgroup, div), .layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, .cover, .reel, .box) {
+:where(*:not(html, body, .cms-layout, main, section, .section, header, footer, aside, article, hgroup, div), .layout, .switcher, .grid-fluid, .cluster, .flow, .fixed-fluid, .center, .cover, .reel, .box) {
   padding-inline: calc(var(--px-body, 0.8rem) * (1 - var(--px-applied)));
 
   & > * {
@@ -248,8 +248,8 @@
 :where(:where(ul, ol):not([role="list"]):not(.reset)) {
     padding-inline-start: var(--offset-list, 2rem);
 } /* Special case for ul and ol: nested */ /* prettier-ignore */
-:where(body > :where(ul, ol):not([role="list"]):not(.reset)),
-:where(body > main > :where(ul, ol):not([role="list"]):not(.reset)){
+:where(:where(body, .cms-layout) > :where(ul, ol):not([role="list"]):not(.reset)),
+:where(:where(body, .cms-layout) > main > :where(ul, ol):not([role="list"]):not(.reset)){
     padding-inline-start: calc(var(--px-body, 0.8rem) + var(--offset-list, 2rem));
 } /* prettier-ignore */
 
@@ -265,14 +265,14 @@
 
 /* -- Vertical Padding -- */
 
-:where(body > :first-child) {
+:where(:where(body, .cms-layout) > :first-child) {
   padding-block-start: var(--py-body);
 }
-:where(body > :last-child) {
+:where(:where(body, .cms-layout) > :last-child) {
   padding-block-end: var(--py-body);
 }
-:where(body > :where(header, footer, main, aside)),
-:where(body > main > :where(header, footer, aside)) {
+:where(:where(body, .cms-layout) > :where(header, footer, main, aside)),
+:where(:where(body, .cms-layout) > main > :where(header, footer, aside)) {
   --py: var(--py-body);
   padding-block: var(--py-body);
 }
@@ -281,10 +281,16 @@
   --py: var(--py-section);
   padding-block: var(--py-section);
 }
-:where(body > main:has(& > :where(header, footer, aside):first-child)) {
+:where(
+  :where(body, .cms-layout)
+    > main:has(& > :where(header, footer, aside):first-child)
+) {
   padding-block-start: 0;
 }
-:where(body > main:has(& > :where(header, footer, aside):last-child)) {
+:where(
+  :where(body, .cms-layout)
+    > main:has(& > :where(header, footer, aside):last-child)
+) {
   padding-block-end: 0;
 } /* prettier-ignore */
 /* NOTE: Do not think this is relevant */

@@ -75,91 +75,87 @@ export default async function (eleventyConfig, pluginOptions) {
       "admin/admin-url.js",
   });
 
-  // Bundle project/theme/engine .njk/.md partial sources for the CMS preview's
-  // browser Nunjucks env. Mirrors partials/index.js resolution priority:
-  // project lang dirs > project shared > theme > engine (first-write-wins).
-  const njkSources = {};
-  const njkSourceDirs = [
-    {
-      pattern: `${WORKING_DIR}/*/${PARTIALS_DIR}/**/*.{njk,md}`,
-      langDirs: true,
-    },
-    { pattern: `${WORKING_DIR}/${PARTIALS_DIR}/**/*.{njk,md}` },
-    {
-      pattern: enginePath(
-        `src/themes/${POKO_THEME}/${PARTIALS_DIR}/**/*.{njk,md}`,
-      ),
-    },
-    { pattern: enginePath(`src/content/${PARTIALS_DIR}/**/*.{njk,md}`) },
-  ];
-  for (const { pattern, langDirs } of njkSourceDirs) {
-    for (const file of await fglob(pattern)) {
-      const [dir, rel] = file.split(`/${PARTIALS_DIR}/`);
-      const key = langDirs ? `${dir.split("/").pop()}/${rel}` : rel;
-      if (!(key in njkSources)) njkSources[key] = await readFile(file, "utf-8");
-    }
-  }
-  // Write-if-different: the file lives under a `resetConfig` watch target, so
-  // an unconditional write would loop plugin re-run → write → reset forever.
-  // JSON.stringify does not escape U+2028/9, which break JS string literals —
-  // a partial containing either would kill the whole preview bundle.
+  // ---- generated preview modules -------------------------------------------
+  // Everything below lands in preview/generated/ and feeds the renderer
+  // bundle. The files sit under `resetConfig` watch targets, so writes are
+  // write-if-different — an unconditional write would loop plugin re-run →
+  // write → reset forever.
   const generatedDir = `${import.meta.dirname}/preview/generated`;
-  const njkSourcesPath = `${generatedDir}/preview-njk-sources.generated.js`;
-  const njkSourcesCode = `export default ${JSON.stringify(njkSources)
-    .replace(/\u2028/g, "\\u2028")
-    .replace(/\u2029/g, "\\u2029")};\n`;
-  const existingNjkSources = await readFile(njkSourcesPath, "utf-8").catch(
-    () => null,
-  );
-  if (existingNjkSources !== njkSourcesCode) {
-    await writeFile(njkSourcesPath, njkSourcesCode);
-  }
-
-  // Same priority order for `.11ty.js` partials: they ship as real bundled
-  // code — a generated import map, never a hand-maintained list.
-  const jsPartialFiles = {};
-  const jsPartialDirs = [
-    {
-      pattern: `${WORKING_DIR}/*/${PARTIALS_DIR}/**/*.11ty.js`,
-      langDirs: true,
-    },
-    { pattern: `${WORKING_DIR}/${PARTIALS_DIR}/**/*.11ty.js` },
-    {
-      pattern: enginePath(
-        `src/themes/${POKO_THEME}/${PARTIALS_DIR}/**/*.11ty.js`,
-      ),
-    },
-    { pattern: enginePath(`src/content/${PARTIALS_DIR}/**/*.11ty.js`) },
-  ];
-  for (const { pattern, langDirs } of jsPartialDirs) {
-    for (const file of await fglob(pattern)) {
-      const [dir, rel] = file.split(`/${PARTIALS_DIR}/`);
-      const key = (langDirs ? `${dir.split("/").pop()}/${rel}` : rel).replace(
-        /\.11ty\.js$/,
-        "",
-      );
-      if (!(key in jsPartialFiles)) jsPartialFiles[key] = file;
+  const writeIfChanged = async (filePath, code) => {
+    const existing = await readFile(filePath, "utf-8").catch(() => null);
+    if (existing !== code) await writeFile(filePath, code);
+  };
+  // JSON.stringify does not escape U+2028/9, which terminate JS string
+  // literals — a source containing either would kill the whole bundle.
+  const jsSafeJson = (value) =>
+    JSON.stringify(value)
+      .replace(/\u2028/g, "\\u2028")
+      .replace(/\u2029/g, "\\u2029");
+  // First-write-wins collect over dir specs in priority order (earlier specs
+  // win duplicate keys) — mirrors partials/index.js retrievePartial().
+  const collectFirstWins = async (specs, load) => {
+    const out = {};
+    for (const { pattern, keyOf } of specs) {
+      for (const file of await fglob(pattern)) {
+        const k = keyOf(file);
+        if (!(k in out)) out[k] = await load(file);
+      }
     }
-  }
-  const jsPartialsCode =
-    Object.entries(jsPartialFiles)
+    return out;
+  };
+  // Partial keys: "<lang>/<file>" for project lang dirs, "<file>" otherwise —
+  // the runtime resolver tries `lang/name` before shared `name`.
+  const partialKeyOf = (langDirs) => (file) => {
+    const [dir, rel] = file.split(`/${PARTIALS_DIR}/`);
+    return langDirs ? `${dir.split("/").pop()}/${rel}` : rel;
+  };
+  // Dir specs in resolution priority: project lang > project > theme > engine.
+  const partialSpecs = (glob, mapKey = (k) => k) =>
+    [
+      `${WORKING_DIR}/*/${PARTIALS_DIR}/${glob}`,
+      `${WORKING_DIR}/${PARTIALS_DIR}/${glob}`,
+      enginePath(`src/themes/${POKO_THEME}/${PARTIALS_DIR}/${glob}`),
+      enginePath(`src/content/${PARTIALS_DIR}/${glob}`),
+    ].map((pattern, i) => ({
+      pattern,
+      keyOf: (file) => mapKey(partialKeyOf(i === 0)(file)),
+    }));
+  // {key → file} → a generated module importing each file and exporting the
+  // map — partials/layouts ship as real bundled code, never hand-listed.
+  const importMapCode = (files, exportName) =>
+    Object.values(files)
       .map(
-        ([key, file], i) =>
-          `import p${i} from ${JSON.stringify(
+        (file, i) =>
+          `import s${i} from ${JSON.stringify(
             path.relative(generatedDir, path.resolve(file)),
           )};`,
       )
       .join("\n") +
-    `\nexport default {\n${Object.entries(jsPartialFiles)
-      .map(([key], i) => `  ${JSON.stringify(key)}: p${i},`)
-      .join("\n")}\n};\n`;
-  const jsPartialsPath = `${generatedDir}/preview-partials.generated.js`;
-  const existingJsPartials = await readFile(jsPartialsPath, "utf-8").catch(
-    () => null,
+    `\nexport ${exportName ? `const ${exportName} =` : "default"} {\n` +
+    Object.keys(files)
+      .map((key, i) => `  ${JSON.stringify(key)}: s${i},`)
+      .join("\n") +
+    "\n};\n";
+
+  // Raw .njk/.md partial sources for the preview's browser Nunjucks env.
+  const njkSources = await collectFirstWins(
+    partialSpecs("**/*.{njk,md}"),
+    (f) => readFile(f, "utf-8"),
   );
-  if (existingJsPartials !== jsPartialsCode) {
-    await writeFile(jsPartialsPath, jsPartialsCode);
-  }
+  await writeIfChanged(
+    `${generatedDir}/preview-njk-sources.generated.js`,
+    `export default ${jsSafeJson(njkSources)};\n`,
+  );
+
+  // `.11ty.js` partials: generated import map, keyed without the extension.
+  const jsPartialFiles = await collectFirstWins(
+    partialSpecs("**/*.11ty.js", (k) => k.replace(/\.11ty\.js$/, "")),
+    (f) => f,
+  );
+  await writeIfChanged(
+    `${generatedDir}/preview-partials.generated.js`,
+    importMapCode(jsPartialFiles),
+  );
 
   // `_data` cascade for the preview: yaml/json parsed at build time, keyed by
   // path segments below `_data/` — matching the shape Eleventy exposes
@@ -179,32 +175,22 @@ export default async function (eleventyConfig, pluginOptions) {
       previewData = deepmerge(previewData, node);
     }
   }
-  const previewDataPath = `${generatedDir}/preview-data.generated.js`;
-  const previewDataCode = `export default ${JSON.stringify(previewData)
-    .replace(/\\u2028/g, "\\\\u2028")
-    .replace(/\\u2029/g, "\\\\u2029")};\n`;
-  const existingPreviewData = await readFile(previewDataPath, "utf-8").catch(
-    () => null,
+  await writeIfChanged(
+    `${generatedDir}/preview-data.generated.js`,
+    `export default ${jsSafeJson(previewData)};\n`,
   );
-  if (existingPreviewData !== previewDataCode) {
-    await writeFile(previewDataPath, previewDataCode);
-  }
 
   // Project `_config/htmlClasses.js` (optional) — drives the build's
   // htmlClassesTransform; the preview applies it to the preview root element.
   const htmlClassesFile = path.resolve(`${WORKING_DIR}/_config/htmlClasses.js`);
-  const userConfigCode = (await fglob(htmlClassesFile)).length
-    ? `export { default as htmlClasses } from ${JSON.stringify(
-        `./${path.relative(generatedDir, htmlClassesFile)}`,
-      )};\n`
-    : `export const htmlClasses = {};\n`;
-  const userConfigPath = `${generatedDir}/preview-userconfig.generated.js`;
-  const existingUserConfig = await readFile(userConfigPath, "utf-8").catch(
-    () => null,
+  await writeIfChanged(
+    `${generatedDir}/preview-userconfig.generated.js`,
+    (await fglob(htmlClassesFile)).length
+      ? `export { default as htmlClasses } from ${JSON.stringify(
+          `./${path.relative(generatedDir, htmlClassesFile)}`,
+        )};\n`
+      : `export const htmlClasses = {};\n`,
   );
-  if (existingUserConfig !== userConfigCode) {
-    await writeFile(userConfigPath, userConfigCode);
-  }
 
   // Icon map is written at eleventy.after (uses are recorded while pages
   // render); the bundle imports it at setup — ensure it exists so a fresh
@@ -232,29 +218,11 @@ export default async function (eleventyConfig, pluginOptions) {
       }
     }
   }
-  const jsLayoutsCode =
-    Object.entries(jsLayoutFiles)
-      .map(
-        ([key, file], i) =>
-          `import l${i} from ${JSON.stringify(
-            path.relative(generatedDir, path.resolve(file)),
-          )};`,
-      )
-      .join("\n") +
-    `\nexport const jsLayouts = {\n${Object.keys(jsLayoutFiles)
-      .map((key, i) => `  ${JSON.stringify(key)}: l${i},`)
-      .join("\n")}\n};\n`;
-  const layoutsCode =
-    `export const layoutSources = ${JSON.stringify(layoutSources)
-      .replace(/\u2028/g, "\\u2028")
-      .replace(/\u2029/g, "\\u2029")};\n` + jsLayoutsCode;
-  const layoutsPath = `${generatedDir}/preview-layouts.generated.js`;
-  const existingLayouts = await readFile(layoutsPath, "utf-8").catch(
-    () => null,
+  await writeIfChanged(
+    `${generatedDir}/preview-layouts.generated.js`,
+    `export const layoutSources = ${jsSafeJson(layoutSources)};\n` +
+      importMapCode(jsLayoutFiles, "jsLayouts"),
   );
-  if (existingLayouts !== layoutsCode) {
-    await writeFile(layoutsPath, layoutsCode);
-  }
 
   // Shared modules import `env.config.js` (dotenv/fs) — redirect to the
   // browser shim hydrated from the CMS store.

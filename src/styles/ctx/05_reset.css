@@ -340,13 +340,15 @@ select:focus:not(:focus-visible) {
 }
 
 /* Skip link for accessibility */
-:where(body, body > header) > :where(a:first-of-type[href="#main"]) {
+:where(body, body > header, .cms-layout, .cms-layout > header)
+  > :where(a:first-of-type[href="#main"]) {
   background: white;
   position: absolute;
   left: 50%;
   transform: translateX(-50%) translateY(-150%);
   transition: transform 0.3s;
 }
-:where(body, body > header) > :where(a:first-of-type[href="#main"]):focus {
+:where(body, body > header, .cms-layout, .cms-layout > header)
+  > :where(a:first-of-type[href="#main"]):focus {
   transform: translateX(-50%) translateY(20%);
 }

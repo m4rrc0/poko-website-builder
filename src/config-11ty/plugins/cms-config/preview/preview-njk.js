@@ -17,7 +17,6 @@ import nunjucks from "nunjucks";
 import slugify from "@sindresorhus/slugify";
 import {
   getPreviewMd,
-  resolveAsset,
   resolveIcon,
   previewSrcset,
   previewImageStats,
@@ -56,6 +55,14 @@ import {
 } from "../../../filters/dates.js";
 import { slugifyPath } from "../../../filters/slugify.js";
 import EleventyNavigation from "@11ty/eleventy-navigation/eleventy-navigation.js";
+// Shortcode names + handler bodies shared with the build-time
+// partialShortcodes plugin — the preview registers the same tags against
+// its own partial/renderContent implementations.
+import {
+  sectionPartialNames,
+  otherPartialNames,
+  makePartialHandlers,
+} from "../../partialShortcodes/handlers.js";
 
 // ---------------------------------------------------------------------------
 // Partial source resolution — mirrors partials/index.js retrievePartial():
@@ -158,22 +165,16 @@ function pairedTag(name, runFn) {
 // Build-time-only features: resolve to safe stand-ins, never throw.
 // `{% image %}` — same arg→attrs computation as the build shortcode
 // (image.args.js): aspect-ratio-*/object-[*] classes, sizes, loading… land in
-// the markup so runtime UnoCSS sees them. src resolves to the published
-// manifest url (sync) or a CMS data:/blob url; srcset gets the manifest's
-// real width variants.
+// the markup so runtime UnoCSS sees them. src stays the CMS storage path —
+// the runtime's post-insert media pass resolves it to a usable url; srcset is
+// still set eagerly from the manifest so the markup is self-contained.
 const imageStub = function (args = {}) {
   const { srcRaw, wrapperTag, imgAttributes, width } = prepareImageArgs(
     typeof args === "string" ? { src: args } : args,
   );
-  console.log("[cms preview] image stub", {
-    srcRaw,
-    argsKeys: Object.keys(args),
-    resolved: srcRaw ? resolveAsset(srcRaw) : null,
-  });
   if (!srcRaw) return "";
-  console.log({ srcRaw, imgAttributes });
   const attrs = {
-    src: resolveAsset(srcRaw),
+    src: srcRaw,
     width,
     ...imgAttributes,
     loading: "lazy",
@@ -190,6 +191,10 @@ const imageStub = function (args = {}) {
   return wrapperTag ? `<${wrapperTag}>${img}</${wrapperTag}>` : img;
 };
 const emptyStubWarned = new Set();
+// Once-per-session warn for nav nodes rendered without title/key (see the
+// `| eleventyNavigation` filter) — resets are unnecessary: if the warn ever
+// fires we WANT the console to keep the record of a broken nav render.
+let navKeysWarned = false;
 const emptyStub = (what) => {
   if (!emptyStubWarned.has(what)) {
     emptyStubWarned.add(what);
@@ -230,8 +235,6 @@ const iconStub = function (iconId, attrs = {}) {
       return `${kept} class="icon icon-${lib} icon-${name} ${cls || ""}" ${dims} ${extra}>`;
     });
   }
-  // return `<svg class="icon icon-${lib} icon-${name} ${cls || ""}" ${dims} ${extra} aria-hidden="true"><title>${name}</title></svg>`;
-  // return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="icon icon-${lib} icon-${name} ${cls || ""}" ${dims} ${extra}><title>${name}</title><path d="M240-340h480L480-740 240-340Zm141-80 99-164 98 164H381Zm-57 308.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM480-160q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Zm0-320Z"/></svg>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" class="icon-stub icon icon-${lib} icon-${name} ${cls || ""}" ${dims} ${extra}><path d="M240-340h480L480-740 240-340Zm141-80 99-164 98 164H381Zm-57 308.5Q251-143 197-197t-85.5-127Q80-397 80-480t31.5-156Q143-709 197-763t127-85.5Q397-880 480-880t156 31.5Q709-817 763-763t85.5 127Q880-563 880-480t-31.5 156Q817-251 763-197t-127 85.5Q563-80 480-80t-156-31.5ZM480-160q133 0 226.5-93.5T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160Zm0-320Z"/></svg>`;
 };
 
@@ -315,81 +318,16 @@ export function createNjkEnv({ lang = "", helpers }) {
     });
   }
 
-  // ---- section & layout partial shortcodes (partialShortcodes/index.js parity)
-  const renderNamedPartial = async function (
-    partialName,
-    content,
-    dataManual,
-    engineOverride,
-  ) {
-    const trimmed = typeof content === "string" ? content.trim() : "";
-    const rendered = trimmed
-      ? await allHelpers.renderContent(trimmed, "njk,md", {
-          ...this.ctx,
-          ...dataManual,
-        })
-      : "";
-    return renderPartial.call(
-      this,
-      partialName,
-      {
-        content: rendered,
-        ...dataManual,
-      },
-      engineOverride,
-    );
-  };
-
-  const sectionPartialNames = [
-    "sectionRaw",
-    "sectionHeader",
-    "sectionFooter",
-    "sectionFlow",
-    "sectionGrid",
-    "sectionTwoColumns",
-    "sectionCollection",
-    "sectionReel",
-    "sectionBuilder",
-  ];
-  const otherPartialNames = [
-    "wrapper",
-    "flow",
-    "flowItem",
-    "grid",
-    "gridItem",
-    "twoColumns",
-    "twoColumnsItem",
-    "collectionWrapper",
-    "collectionItem",
-    "reel",
-    "reelItem",
-    "area",
-    "areaRaw",
-  ];
-  for (const name of [...sectionPartialNames, ...otherPartialNames]) {
-    addPaired(name, async function (content, dataManual, engineOverride) {
-      return renderNamedPartial.call(
-        this,
-        `_${name}`,
-        content,
-        dataManual,
-        engineOverride,
-      );
-    });
-  }
-
-  // `collection` passes inner content RAW (rendered per-item by _collection)
-  addPaired("collection", async function (content, dataManual, engineOverride) {
-    return renderPartial.call(
-      this,
-      "_collection",
-      {
-        content: typeof content === "string" ? content : "",
-        ...dataManual,
-      },
-      engineOverride,
-    );
+  // ---- section & layout partial shortcodes (handlers shared with the
+  // build plugin — see partialShortcodes/handlers.js)
+  const { named, collection, sections } = makePartialHandlers({
+    renderPartial,
+    renderContent: allHelpers.renderContent,
   });
+  for (const name of [...sectionPartialNames, ...otherPartialNames]) {
+    addPaired(name, named(name));
+  }
+  addPaired("collection", collection);
 
   // `{% section %}` — mirrors the deferred plugin in eleventy.config.js:
   // multi-arg deprecated form dispatches to partial(), single object arg
@@ -429,52 +367,19 @@ export function createNjkEnv({ lang = "", helpers }) {
     return renderRich(content, this.ctx ?? {});
   });
 
-  addPaired("sections", async function () {
-    const items = this.ctx?.sections;
-    if (!Array.isArray(items) || items.length === 0) return "";
-    const rendered = await Promise.all(
-      items.map(async (section, index) => {
-        if (!section || typeof section !== "object") return "";
-        const { type, content, ...dataManual } = section;
-        if (!type) {
-          console.warn(`sections[${index}] is missing a "type"; skipping.`);
-          return "";
-        }
-        return renderNamedPartial.call(
-          this,
-          `_${type}`,
-          content ?? "",
-          dataManual,
-        );
-      }),
-    );
-    return rendered.join("\n");
-  });
+  addPaired("sections", sections);
 
   // ---- component shortcodes (real implementations)
-  // Internal links resolve to CMS entry urls (see previewTemplates); append the
-  // same 🢱 badge the link editor component's toPreview uses. When `link()`
-  // can't resolve (e.g. collections not loaded yet on first render), synthesize
-  // the admin entry url from the args — it doesn't need collection data.
-  // const withAdminBadge = (html) =>
-  //   String(html ?? "").replace(
-  //     /(<a\b[^>]*href="\/admin\/#\/collections\/[^"]*"[^>]*>)(.*?)(<\/a>)/gs,
-  //     (_, open, inner, close) => {
-  //       const slug =
-  //         open
-  //           .match(/entries\/[^"#?]+/)?.[0]
-  //           ?.split("/")
-  //           .pop() ?? "";
-  //       return `${open}${inner} <sup>🢱${slug}</sup>${close}`;
-  //     },
-  //   );
+  // Internal links resolve to CMS entry urls (see previewTemplates). When
+  // `link()` can't resolve (e.g. collections not loaded yet on first render),
+  // synthesize the admin entry url from the args — it doesn't need collection
+  // data.
   const previewLink = (fn, paired) =>
     async function (first, ...rest) {
       const [content, args] = paired ? [first, rest] : [null, [first, ...rest]];
       const html = await (paired
         ? fn.call(this, content, ...args)
         : fn.call(this, ...args));
-      // if (html) return withAdminBadge(html);
       if (html) return html;
       const merged = args.find((a) => a && typeof a === "object") || {};
       const urlRef = typeof args[0] === "string" ? args[0] : merged.url;
@@ -486,8 +391,55 @@ export function createNjkEnv({ lang = "", helpers }) {
         .replace(/^\/+|\/+$/g, "")
         .split("/")
         .pop();
-      const label = content || merged.text || merged.content || urlRef;
-      return `<a href="${adminEntryUrl(merged.collection || "pages", slug)}">${label} <sup>🢱${slug}</sup></a>`;
+      const coll = merged.collection || "pages";
+      // Same passthrough attrs as the real link() — minus the consumed keys.
+      const {
+        __keywords: _k,
+        url: _u,
+        text,
+        content: _c,
+        lang: _l,
+        prop: _p,
+        collection: _col,
+        type: _t,
+        linkType: _lt,
+        anchor: _a, // admin editor urls are #-routed; can't carry fragments
+        subject: _s,
+        body: _b,
+        cc: _cc,
+        bcc: _bb,
+        preload,
+        newTab,
+        ...attrs
+      } = merged;
+      const attrStr = Object.entries({
+        ...attrs,
+        target: attrs.target || (newTab ? "_blank" : undefined),
+        ...(preload === false || preload === "false"
+          ? { "data-no-instant": true }
+          : {}),
+        ...(preload === true || preload === "true"
+          ? { "data-instant": true }
+          : {}),
+      })
+        .filter(([, v]) => v)
+        .map(([k, v]) =>
+          v === true ? k : `${k}="${String(v).replace(/"/g, "&quot;")}"`,
+        )
+        .join(" ");
+      // Label parity with the real fn's `pageData.name` fallback — items are
+      // computed (B7) so `title`/`name` are populated.
+      const item = (this?.collections?.[coll] ?? []).find(
+        (i) => i.page?.fileSlug === slug || i.data?.page?.fileSlug === slug,
+      );
+      const label =
+        content ||
+        text ||
+        merged.content ||
+        item?.data?.title ||
+        item?.data?.name ||
+        urlRef;
+      return `<a href="${adminEntryUrl(coll, slug)}" ${attrStr}>${label}</a>`;
     };
   addPaired("link", previewLink(linkPaired, true));
   addPaired("button", previewLink(buttonPaired, true));
@@ -545,8 +497,24 @@ export function createNjkEnv({ lang = "", helpers }) {
     randomFilter,
     asc,
     desc,
-    eleventyNavigation: (collection, activeKey, options) =>
-      EleventyNavigation.findNavigationEntries(collection, activeKey, options),
+    eleventyNavigation: (collection, activeKey, options) => {
+      const entries = EleventyNavigation.findNavigationEntries(
+        collection,
+        activeKey,
+        options,
+      );
+      // Nav titles/keys come from eleventyComputed in the real build — a node
+      // with neither means the item never saw computed data (or the author
+      // didn't set it). Empty <a> text is a silent nav break: warn loudly.
+      const blank = entries.filter((e) => !e.title && !e.key).length;
+      if (blank && !navKeysWarned) {
+        navKeysWarned = true;
+        console.warn(
+          `[cms preview] ${blank} nav ${blank === 1 ? "entry" : "entries"} missing title/key — item data lacks computed eleventyNavigation`,
+        );
+      }
+      return entries;
+    },
   })) {
     env.addFilter(name, typeof fn === "function" ? bind(fn) : fn);
   }
@@ -595,14 +563,14 @@ export function createNjkEnv({ lang = "", helpers }) {
   });
   // `| image(src, opts)` — eleventy-img stats shape without sharp: manifest
   // variants for published sources (real urls+widths); else a shim pointing
-  // each format at the resolved source so `.webp[0].url`-style reads work.
+  // each format at the source path so `.webp[0].url`-style reads work — the
+  // post-insert media pass resolves it like any other media attr.
   env.addFilter("image", (src, opts = {}) => {
     const stats = previewImageStats(src);
     if (stats) return stats;
-    const url = resolveAsset(src);
-    if (!url) return {};
+    if (!src) return {};
     const width = Number(opts?.width) || Number(opts?.widths?.[0]) || undefined;
-    const variant = { url, ...(width ? { width } : {}) };
+    const variant = { url: src, ...(width ? { width } : {}) };
     return { webp: [variant], jpeg: [variant] };
   });
   // fs filters → identity stubs

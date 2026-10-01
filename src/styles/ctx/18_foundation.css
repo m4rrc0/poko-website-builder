@@ -216,7 +216,7 @@
 }
 
 /* 1.1 Base typography */
-:where(body) {
+:where(body, .cms-layout) {
   /* NOTE: This is needed on Chrome to avoid .reel overflowing the viewport */
   overflow-x: clip;
 
@@ -278,7 +278,7 @@ html:focus-within {
   scroll-behavior: smooth;
 }
 
-:where(body) {
+:where(body, .cms-layout) {
   text-underline-offset: var(--text-underline-offset, 0.15em);
 }
 

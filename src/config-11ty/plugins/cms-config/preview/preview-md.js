@@ -14,10 +14,11 @@ import {
 
 let md;
 
-// Asset resolver injected by preview-runtime: maps a markdown/shortcode image
-// src to Sveltia's asset (blob: url for unsaved/dropped files, public url
-// otherwise). Identity by default so the bundle is usable standalone.
-// let assetResolver = (src) => null;
+// Asset resolver injected by preview-runtime: maps a CMS storage path
+// (`/_images/…`) to a usable url (published manifest url, else CMS blob/data).
+// Drives `resolveSrcset` below — the runtime's post-insert media pass calls
+// the resolver directly for plain attrs. Identity default keeps the bundle
+// usable standalone.
 let assetResolver = (src) => src;
 export const setAssetResolver = (fn) => {
   assetResolver = typeof fn === "function" ? fn : (src) => src;
@@ -73,28 +74,6 @@ export const resolveSrcset = (v) =>
     })
     .join(", ");
 
-// Literal `<img src>`/`<a href>` in markdown/njk source bypass the image
-// rule — html tokens render verbatim. Rewrite asset attrs inside them at
-// render time (scoped string rewrite on the token, not a DOM pass).
-const HTML_ATTR_RE = /\b(src|srcset|poster|href)=(["'])([^"']*)\2/g;
-const rewriteHtmlAttrs = (content) =>
-  String(content ?? "").replace(HTML_ATTR_RE, (match, attr, quote, val) => {
-    if (attr === "href" && !isMediaPath(val)) return match;
-    const resolved = attr === "srcset" ? resolveSrcset(val) : resolveAsset(val);
-    return `${attr}=${quote}${resolved}${quote}`;
-  });
-const wrapHtmlTokenRule = (md, name) => {
-  const base =
-    md.renderer.rules[name] ?? ((tokens, idx) => tokens[idx].content);
-  md.renderer.rules[name] = (tokens, idx, options, env, self) => {
-    const original = tokens[idx].content;
-    tokens[idx].content = rewriteHtmlAttrs(original);
-    const out = base(tokens, idx, options, env, self);
-    tokens[idx].content = original;
-    return out;
-  };
-};
-
 export function getPreviewMd() {
   if (md) return md;
   md = new MarkdownIt({ html: true, linkify: false }).set({ breaks: true });
@@ -108,17 +87,8 @@ export function getPreviewMd() {
     .use(markdownItLinkAttributes)
     .use(markdownItAttrs)
     .use(markdownItBracketedSpans);
-  // Resolve ![img](src) through the CMS asset store (blob: for dropped files)
-  const defaultImage =
-    md.renderer.rules.image ||
-    ((tokens, idx, options, env, self) =>
-      self.renderToken(tokens, idx, options));
-  md.renderer.rules.image = (tokens, idx, options, env, self) => {
-    const src = tokens[idx].attrGet("src");
-    if (src) tokens[idx].attrSet("src", assetResolver(src));
-    return defaultImage(tokens, idx, options, env, self);
-  };
-  wrapHtmlTokenRule(md, "html_block");
-  wrapHtmlTokenRule(md, "html_inline");
+  // No attr rewriting here: `![img]` and literal-html `src`/`href` emit CMS
+  // media paths verbatim — the runtime's post-insert media pass resolves
+  // them uniformly (plus manifest srcset backfill on <img>).
   return md;
 }
