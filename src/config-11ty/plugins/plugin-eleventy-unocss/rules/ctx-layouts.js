@@ -326,7 +326,7 @@ export default [
           [symbols.selector]: () => `:where(.cover)`,
           display: "flex",
           "flex-direction": "column",
-          "min-block-size": "100vh",
+          // "min-block-size": "100vh",
           "min-block-size": "var(--min-height-cover, 100svh)",
           padding: "var(--gap-cover, 1em)",
         },

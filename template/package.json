@@ -8,6 +8,6 @@
     "dev": "poko dev"
   },
   "dependencies": {
-    "poko-website-builder": "^0.0.1"
+    "poko-website-builder": "^0.0.2"
   }
 }

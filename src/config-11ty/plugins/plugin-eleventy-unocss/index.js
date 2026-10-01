@@ -1,6 +1,5 @@
 // import { loadConfig } from "@unocss/config";
-import { createGenerator } from "@unocss/core";
-import unoConfig from "./uno.config.js";
+import { getUnoGenerator } from "./generator.js";
 
 // TODO: Minify CSS on prod
 
@@ -10,7 +9,7 @@ export default async function (eleventyConfig, pluginOptions) {
   // Load configuration or use preset-uno if no config
   // const config = await loadConfig();
   // const generator = await createGenerator(config.config);
-  const generator = await createGenerator(unoConfig);
+  const generator = await getUnoGenerator();
 
   eleventyConfig.addTransform("UnoCSS", async function (content) {
     if (/admin\/index.html/.test(this.page.outputPath)) {
