@@ -1,3 +1,12 @@
+const cssKeywordNames = [
+  "auto",
+  "inherit",
+  "initial",
+  "unset",
+  "none",
+  "normal",
+];
+
 const resolveNamedValue = (name, varPrefix, varFallback) =>
   name.startsWith("-")
     ? `var(-${name}, ${varFallback})`

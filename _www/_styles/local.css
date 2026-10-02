@@ -216,6 +216,17 @@ body > footer {
   border-radius: var(--step--2);
 }
 
+/* Editorial review notes left in docs for later review — visible, greppable */
+.review-note {
+  margin-block: var(--step-2);
+  border: 2px dashed var(--color-pop);
+  border-radius: var(--step--2);
+  background: color-mix(in oklab, var(--color-pop) 8%, transparent);
+}
+.review-note > *:first-child::before {
+  content: '📌 ';
+}
+
 .cta {
   display: inline-flex;
   width: fit-content;

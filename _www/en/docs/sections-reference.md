@@ -1,13 +1,13 @@
 ---
-translationKey: section-components
+translationKey: sections-reference
 order: 7
 lang: en
 createdAt: 2026-05-13T07:45:00.000Z
 ldType: WebPage
-name: Section components
+name: Sections reference
 docsNav:
-  section: building-pages
-  order: 2
+  section: developers
+  order: 4
 vars: {}
 ---
 {% raw %}

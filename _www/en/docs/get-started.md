@@ -7,13 +7,15 @@ eleventyNavigation:
   title: Get Started
   order: 2
 docsNav:
-  section: getting-started
+  section: start-here
   order: 1
 metadata:
-  description: Set up your free website builder in minutes with our step-by-step guide
+  description: Set up your free poko website in about 15–30 minutes, no code required
 ---
 
 # Get Started
+
+This guide takes you from zero to a live website you can edit yourself. Everything happens in your browser — you will never need to install anything or touch a line of code.
 
 ::: aside {.callout .prose .box .palette--tone}
 
@@ -25,97 +27,159 @@ We offer tailored website creation and setup assistance.
 
 :::
 
-## Before you Begin
+## Before you begin
 
-Setting up a poko website is straightforward, but you'll need to be comfortable creating accounts and navigating web service settings. If you've set up a GitHub repository or configured hosting before, this will be a walk in the park.
+**Time required:** \~15–30 minutes for first-time setup.
 
-**Time required:** \~15-30 minutes for first-time setup
+**What you need:**
 
-**What you'll need:**
+- A [GitHub](https://github.com) account (free)
 
-- A GitHub account (free)
+**Optional:**
 
-Optional:
+- A [Cloudflare](https://www.cloudflare.com) account (free) — the recommended hosting, or any other static host (Netlify, Vercel…). GitHub Pages also works and needs no extra account.
+- A domain name (you can buy one later and attach it anytime)
 
-- A Cloudflare Pages account (free) or any other static hosting provider (Netlify, Vercel, etc.)
-- A domain name
+::: aside {.review-note}
 
-## Setup Guide
+**REVIEW — @m4rrc0:** The screenshots below come from the old French tutoriels (`_images/tutos/`). Some show outdated GitHub/Cloudflare UI in French. Flag the ones you want re-captured — or drop replacements in `_images/tutos/` and I'll rewire them.
 
-_Detailed step-by-step instructions coming soon._
+:::
 
-**Overview of the process:**
-::: div {.overview .palette--bg .width-prose .center .box}
+## How it works, in one picture
 
-1. Fork the [poko website builder](https://github.com/m4rrc0/poko-website-builder) repository on Github.
+1. **Fork** the poko repository → your own copy of the whole website lives on your GitHub account.
+2. **Host it** on Cloudflare Pages or GitHub Pages → every save rebuilds your site automatically.
+3. **Edit it** through the CMS at `your-site/admin` → a friendly interface that writes your changes back to the repository for you.
 
-- ℹ️ [What is a 'Fork'?](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo)
-- ⚡️ Quick link: [Fork m4rrc0/poko-website-builder](https://github.com/m4rrc0/poko-website-builder/fork)
-  :::
+## Step 1 — Fork the repository
 
-::: div {.overview .palette--bg .width-prose .center .box} 2. Create a new fine-grained Github personal access token
+A *fork* is your own copy of the poko project, stored on your GitHub account. Everything you change stays in your copy; the original project is untouched.
 
-- ℹ️ [What is a 'Personal Access Token' on Github?](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)
-- ⚡️ Quick link to a [pre-filled token creation form](https://github.com/settings/personal-access-tokens/new?name=poko-website-builder+token&description=Read+and+write+repo+access+for+the+CMS&expires_in=none&contents=write)
-  - If you forked the repository inside an organization, change the `Resource Owner` to match your organization name
-  - Feel free to set an `expiration date` or restrict the `Repository access` to specific repositories
-- Copy the token value and save it in a safe place (like a password manager) - ⚠️ **Do not share this token with anyone** - ⚠️ **You will not be able to read the token from Github after you leave the page** (you can always create a new one though)
-  :::
+- Make sure you are logged into GitHub, then open [m4rrc0/poko-website-builder](https://github.com/m4rrc0/poko-website-builder) and click **Fork** (top right). ⚡️ Quick link: [Fork the repo](https://github.com/m4rrc0/poko-website-builder/fork)
 
-::: div {.overview .palette--bg .width-prose .center .box} 3. [Create a new project on Cloudflare Pages](https://developers.cloudflare.com/pages/get-started/git-integration/) from the forked repository
+{% image src="/_images/tutos/fork.webp" %}
 
-- ⚠️ Make sure you are using a 'Pages' project, not a 'Workers' project
-- Choose 'Import an existing Git repository'
-- Select the forked repository as the source
-- Choose a 'production' branch (usually `main`)
+- Give your project a name (this becomes part of your free web address) and an optional description, then click **Create fork**.
+
+{% image src="/_images/tutos/2-new-fork.webp", width="600" %}
+
+You now own a complete copy of the website builder.
+
+> **Tip — multiple sites?** GitHub allows one free site per account, but you can create free *organizations* (each with their own fork and site) as many times as you like. See [Collaborators & organizations](/en/docs/collaborators/).
+
+## Step 2 — Create a personal access token
+
+The CMS needs permission to save your edits back into the repository. You grant that with a **token** — a secret string that works like a password limited to your repository.
+
+> ⚠️ Treat a token like a password: never share it, and store it somewhere safe (a password manager is ideal). GitHub will only show it once — if you lose it, just create a new one.
+
+- Open the [pre-filled token creation form](https://github.com/settings/personal-access-tokens/new?name=poko-website-builder+token&description=Read+and+write+repo+access+for+the+CMS&expires_in=none&contents=write).
+- Review the pre-filled settings:
+  - If you forked into an *organization*, change **Resource owner** to your organization name.
+  - Optionally set an expiration date or restrict **Repository access** to just your fork.
+- Click **Generate token** at the bottom.
+
+{% image src="/_images/tutos/3-creation-de-token.webp", width="600" %}
+
+- **Copy the token** and save it in your password manager — you will paste it once when you first log into the CMS.
+
+{% image src="/_images/tutos/6-token.webp", width="600" %}
+
+## Step 3 — Put your site online
+
+Pick one of the two free hosting options below. Cloudflare Pages is the recommended one (faster builds, nicer URLs); GitHub Pages needs no extra account.
+
+### Option A — Cloudflare Pages (recommended)
+
+- Create a free [Cloudflare](https://www.cloudflare.com) account, then go to **Workers & Pages → Create → Pages → Import an existing Git repository** and connect your GitHub account.
+- Select your forked repository.
+
+{% image src="/_images/tutos/9-chois-du-compte.webp", width="600" %}
+
 - Configure the build settings:
-  - Build command: `bun run cf-build`
-  - Publish directory: `dist`
-- Click 'Create project' and wait for the first build to finish (\~30 seconds)
-  :::
+  - **Production branch:** `main`
+  - **Build command:** `bun run cf-build`
+  - **Build output directory:** `dist`
+- Click **Save and Deploy** and wait \~30 seconds for the first build.
 
-::: div {.overview .palette--bg .width-prose .center .box} 4. Connect to the CMS
+{% image src="/_images/tutos/12-configurer-les-versions-et-les-deploiements-2.webp", width="600" %}
 
-- Find the URL of your Cloudflare Pages project (e.g. `https://project-name.pages.dev`)
-- Open the URL in your browser and add `/admin` to the end (e.g. `https://project-name.pages.dev/admin`). You should see the CMS login screen.
-- Choose 'Sign in with GitHub Using a PAT' and enter the token you created earlier
-- The page should reload and you should be logged in
-- Note: The token is saved in your browser's local storage so you won't have to enter it again in that browser. But you will need it again if you sign in from another device or browser.
-  :::
+- When it succeeds, Cloudflare gives your site an address like `https://your-project.pages.dev`. **Keep this URL — it is your site.**
 
-::: div {.overview .palette--bg .width-prose .center .box} 5. Start editing your content
+::: aside {.review-note}
 
-- On the first load (and only then), you will only be able to edit your 'Global Settings'. Fill in the required fields and save. You will need to wait for your site to re-build before you can see the changes.
-- You can now explore the CMS interface to edit your content.
-- ~~Check out our User Guide for more information.~~ (Coming soon)
-  :::
+**REVIEW — @m4rrc0:** `cf-build` and `build` are identical aliases in `package.json` — kept `cf-build` per your existing docs. Remove this note if confirmed.
 
-## Video Walkthrough
+:::
 
-_Video tutorial coming soon to guide you through the entire setup process._
+### Option B — GitHub Pages (no extra account)
 
-## Next Steps
+Your fork ships a **Deploy Site** workflow (`.github/workflows/deploy.yml`) that builds and publishes to GitHub Pages automatically — including every later publish.
 
-Once your site is up and running:
+- In your fork on GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
 
-- Explore the CMS interface to edit your content
-- Customize your design and branding
-- Add pages and create your site structure
-- ~~Check out our User Guide and Documentation for more information.~~ (Coming soon)
+{% image src="/_images/tutos/3-giyhub-action.webp", width="600" %}
 
-## Need Help?
+- Open the **Actions** tab and enable workflows if asked. The next push to `main` deploys automatically — or select **Deploy Site → Run workflow** with the `github-pages` target to trigger it now.
 
-Stuck on something? Here are your options:
+{% image src="/_images/tutos/6-run-workflow.webp", width="600" %}
+
+- When the workflow finishes, your site is live at `https://your-username.github.io/your-repo/`.
+
+::: aside {.review-note}
+
+**REVIEW — @m4rrc0:** `deploy.yml` reads GitHub *vars* (`BASE_URL`, `PROD_URL`, `CONTENT_DIR`…). For a fork under a `/<repo>/` Pages path, does `BASE_URL` need to be set to `/your-repo/` (or similar) for assets/links to work? One line on which vars a GitHub-Pages fork must set, and I'll add it.
+
+:::
+
+## Step 4 — Log into the CMS
+
+The CMS (Content Management System) is the friendly interface where you'll do all your editing.
+
+- Go to your site address and add `/admin` at the end — for example `https://your-project.pages.dev/admin`.
+- Choose **Sign in with GitHub Using a PAT** and paste the token from step 2.
+
+{% image src="/_images/tutos/17-cms-connection-admin.webp", width="500" %}
+
+You're in! The token is remembered in this browser; you'll need it again on other devices or browsers.
+
+## Step 5 — First configuration
+
+On the very first visit, the CMS only lets you edit **Global Settings** — fill it in before anything else.
+
+- Open **Global Settings** in the sidebar.
+
+{% image src="/_images/tutos/20-cms-pages-d-accueil-vide.webp" %}
+
+- Set your **Site Name**.
+- Set **Production URL** to your full site address, e.g. `https://your-project.pages.dev` (keep the `https://`, no trailing `/admin`).
+
+{% image src="/_images/tutos/21-cms-settings-url.webp", width="300" %}
+
+- Open **Languages** and add the language(s) your site will use (at least one, marked published).
+
+{% image src="/_images/tutos/22-cms-settings-langue-1.webp", width="300" %}
+
+- Fill every required field (marked `*`), then click **Save and Publish** in the top-left (under the Save arrow).
+
+{% image src="/_images/tutos/24-cms-save-and-publish.webp", width="300" %}
+
+- Wait a minute or two while your site rebuilds, then refresh your site. When your site name appears — you're live. 🎉
+
+{% image src="/_images/tutos/26-cms-fin.webp", width="200" %}
+
+## Next steps
+
+Your site is online. Now learn the tools:
+
+- [The CMS interface](/en/docs/cms-tour/) — find your way around
+- [Pages](/en/docs/pages/) — create and organize your pages
+- [Sections](/en/docs/sections/) — build page layouts visually
+- [Brand & design](/en/docs/brand-design/) — colors, fonts and palettes
+
+## Need help?
 
 - **Professional setup:** {{ "hello@poko.eco" | emailLink("Contact us") }} for hands-on assistance
-- **Community support:** Join our [GitHub discussions](https://github.com/m4rrc0/poko-website-builder/discussions)
-
-## Want to help us?
-
-[Give us a Star](https://github.com/m4rrc0/poko-website-builder) on Github
-
-We're always looking for help with testing, documentation, and community support. If you're interested, please {{ "mailto:hello@poko.eco" | emailLink("reach out by email") }} or come [discuss on Github](https://github.com/m4rrc0/poko-website-builder/discussions).
-
-## Want to work with us?
-
-If you are a freelancer or agency looking for a website builder to offer to your clients, we'd love to hear from you! {{ "hello@poko.eco" | emailLink("Contact us") }} right away.
+- **Community support:** [GitHub discussions](https://github.com/m4rrc0/poko-website-builder/discussions)
+- **Troubleshooting:** [common issues & fixes](/en/docs/troubleshooting/)

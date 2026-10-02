@@ -6,8 +6,8 @@ createdAt: 2026-05-13T07:47:00.000Z
 ldType: WebPage
 name: htmlClasses.js
 docsNav:
-  section: advanced
-  order: 4
+  section: developers
+  order: 9
 vars: {}
 ---
 ## Setup html classes on specific selectors

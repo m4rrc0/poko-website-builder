@@ -6,8 +6,8 @@ createdAt: 2026-05-13T07:45:00.000Z
 ldType: WebPage
 name: Partials
 docsNav:
-  section: advanced
-  order: 1
+  section: developers
+  order: 7
 vars: {}
 ---
 {% raw %}

@@ -6,8 +6,8 @@ createdAt: 2026-05-13T08:33:00.000Z
 ldType: WebPage
 name: Introduction & setup
 docsNav:
-  section: getting-started
-  order: 2
+  section: developers
+  order: 1
 vars: {}
 ---
 {% raw %}
@@ -37,10 +37,10 @@ git clone https://github.com/m4rrc0/poko-website-builder.git
 
 ## Project architecture
 
-The project strictly separates source code from content files:
+The project strictly separates source code from content files — see [Architecture](/en/docs/architecture/) for the full tour:
 
 - `src`: Contains the source code (Eleventy configuration, JavaScript, CSS).
-- `_content`: Contains site files only (Markdown, images). This is where the CMS operates to avoid merge conflicts.
+- `_content` (or your `CONTENT_DIR`): Contains site files only (Markdown, images). This is where the CMS operates to avoid merge conflicts.
 - `dist`: The final generated site directory (Do not modify manually).
 - `eleventy.config.js`: The Eleventy configuration file.
 
@@ -102,15 +102,11 @@ bun run build
 
 **Note:** If Node.js is used instead of Bun, use `npm install` for dependency management.
 
----
-
-à modifier
-
 ## CMS access (Sveltia)
 
 Once the server is running, the CMS interface is available at `/admin`. This allows you to manage your content visually without editing Markdown files manually.
 
-To enable GitHub authentication, you need to deploy a Cloudflare Worker for OAuth. This worker acts as a secure bridge between your CMS and your GitHub repository. Follow the [Sveltia CMS documentation](https://sveltiacms.app/) to set up and deploy the `sveltia-cms-auth` worker, then add its URL to `CMS_AUTH_URL` in your `.env` file.
+Sign in with a GitHub **personal access token** (contents: write on the repo) — no OAuth worker needed. For OAuth-style login instead, deploy the `sveltia-cms-auth` Cloudflare Worker (see the [Sveltia CMS documentation](https://sveltiacms.app/)) and set `CMS_AUTH_URL` in `.env`.
 
 ## Deployment and production
 
@@ -122,8 +118,5 @@ bun run build
 
 This will generate the final static website inside the `dist/` directory.
 
-Poko outputs a pure static site, making it incredibly easy to host anywhere:
-
-- **Netlify / Vercel:** Simply connect your GitHub repository and set the build command to `bun run build` with the publish directory set to `dist/`.
-- **GitHub Pages:** You can easily set up a GitHub Action to run the build command and deploy the `dist/` folder to your `gh-pages` branch.
+Poko outputs a pure static site, making it incredibly easy to host anywhere — see [Deployment](/en/docs/deployment/) for the shipped Cloudflare Pages, GitHub Pages, Netlify and Vercel configs.
 {% endraw %}
