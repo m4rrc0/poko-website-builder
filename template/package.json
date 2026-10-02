@@ -1,13 +1,24 @@
 {
-  "name": "my-poko-website",
+  "name": "poko-website-template",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "poko dev",
+    "dev": "poko dev",
     "build": "poko build",
-    "dev": "poko dev"
+    "cf-build": "poko build",
+    "build:gh-pages": "poko build:gh-pages",
+    "clean": "rm -rf dist",
+    "clean:modules": "rm -rf dist node_modules",
+    "clean:cache": "rm -rf dist .cache",
+    "upgrade": "npm i poko-website-builder@latest && npm i && bun i"
   },
   "dependencies": {
-    "poko-website-builder": "^0.0.2"
+    "poko-website-builder": "^0.1.0"
+  },
+  "engines": {
+    "bun": ">=1.2.22",
+    "node": ">=22.6"
   }
 }
