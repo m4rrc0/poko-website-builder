@@ -1,0 +1,88 @@
+{% set navPages = collections.all | filterCollection([{ by: 'lang', value:
+lang }, { by: 'parent', value: '' }]) | eleventyNavigation %}
+
+{% if navPages | length %}
+
+<header class="">
+  <nav id="main-nav" class="cluster">
+    <ul role="list" class="cluster">
+        <li id="logo-item">
+          <a href="/" id="logo" aria-label="Home">
+            {% partial "poko-logo-cc.njk" %}
+          </a>
+        </li>
+       {% for link in navPages %}
+        <li>
+        {# prettier-ignore #}
+        <a
+            href="{{link.url}}"
+            hreflang="{{link.lang}}"
+            {% if link.url == page.url %}aria-current="page"{% endif %}
+            >{{link.title}}</a
+        >
+        </li>
+        {% endfor %}
+    </ul>
+  </nav>
+</header>
+
+{% css %}
+:root {
+ --gap-cover: 1em;
+
+}
+:where(body > :where(header, footer, main, aside)) {
+    padding: var(--gap-cover, 1em);
+}
+header {
+    border: none;
+}
+#main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+#main-nav:not(section.cover #main-nav){
+    padding-inline: 0;
+}
+
+#logo-item {
+    margin-inline-end: auto;
+}
+
+#logo {
+    display: block;
+    width: var(--step-7);
+    max-width: var(--step-7);
+}
+
+#logo svg {
+    width: 100%;
+    height: auto;
+}
+
+
+#main-nav ul{
+    margin-block-start: 0;
+    width: 100%;
+    justify-content: flex-end;
+    row-gap: .25em;
+
+}
+
+#main-nav a{
+    text-transform: uppercase;
+    text-decoration: none;
+    font-family: Calibri, sans-serif;
+    color: var(--color-text);
+    font-size: var(--step--1);
+}
+
+#main-nav a[aria-current="page"] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.4em;
+    text-decoration-color: var(--color-pop);
+}
+{% endcss %}
+{% endif %}

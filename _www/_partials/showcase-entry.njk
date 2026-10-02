@@ -1,0 +1,35 @@
+<article class="showcase-entry box full-bleed-before">
+<header class="block-header {{ blocks[0].class }}">
+{{ blocks[0].value | renderContent("njk,md", { languages: languages, collections: collections }) | safe }}
+</header>
+<div
+  class=" fixed-fluid {{ 'fixed-right' if fixedRight or '' }} {{ class }}"
+  style="--width-fixed: {{widthFixed or '300px'}}; --width-fluid-min: {{widthFluidMin or '50%'}}; --gap-fixed-fluid: {{gap or '1em'}}"
+>
+  {% for block in blocks %} {% if block.type == "markdown" and loop.first == false %}
+  <div class="block-markdown {{ block.class }}">
+    {{ block.value | renderContent("njk,md", { languages: languages, collections: collections }) | safe }}
+  </div>
+  {% endif %} {% if block.type == "image" %} <div><img
+  {{ block | htmlImgAttrs({ type: null, class: 'block-image ' + (block.class or '') }) }}
+  /></div> {% endif %} {% endfor %}
+</div>
+</article>
+
+{% css %}
+.showcase-entry {
+--full-bleed-max-width: var(--width-max);
+max-inline-size: var(--width-prose);
+margin-inline: auto;
+padding-inline: 0;
+& img {
+margin-block-start: var(--step-1);
+}
+}
+.showcase-entry:nth-child(odd) {
+background-color: var(--indigo-light);
+}
+.showcase-entry:first-of-type {
+margin-block-start: var(--step-2);
+}
+{% endcss %}

@@ -1,0 +1,82 @@
+<div class="side-label-anchor">
+    <div class="side-label" id="side-label">
+        <button
+            class="side-label__tab"
+            aria-expanded="false"
+            aria-controls="side-label-panel"
+            aria-label="À propos de poko"
+            id="side-label-btn"
+        >
+            {% partial "poko-logo-favicon.njk" %}
+        </button>
+        <div
+            class="side-label__panel"
+            id="side-label-panel"
+            role="region"
+            aria-labelledby="side-label-btn"
+            inert
+        >
+            <p>
+                Built by <a href="https://www.mookai.be/" target="_blank" rel="noopener">mookaï</a> with <a href="https://www.poko.eco/" class="palette--pop" target="_blank" rel="noopener">poko</a>, an independent website builder fighting for a more ethical web
+            </p>
+            <p>
+                Cleaner than 99% of pages tested on <a href="https://www.websitecarbon.com/" target="_blank" rel="noopener">Website Carbon</a>
+            </p>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var anchor = document.querySelector('.side-label-anchor');
+    var el = document.getElementById('side-label');
+    var btn = document.getElementById('side-label-btn');
+    var panel = document.getElementById('side-label-panel');
+
+    function open() {
+        el.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        panel.removeAttribute('inert');
+        var first = panel.querySelector('a, button, [tabindex]');
+        if (first) first.focus();
+    }
+
+    function close() {
+        el.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('inert', '');
+    }
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        el.classList.contains('is-open') ? close() : open();
+    });
+
+    // Ferme si on clique en dehors
+    document.addEventListener('click', function (e) {
+        if (el.classList.contains('is-open') && !anchor.contains(e.target)) {
+            close();
+        }
+    });
+
+    // Ferme avec Escape, retourne le focus au bouton
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && el.classList.contains('is-open')) {
+            close();
+            btn.focus();
+        }
+    });
+
+    // Remonte le bouton quand le footer entre dans le viewport
+    document.addEventListener('DOMContentLoaded', function () {
+        var footer = document.querySelector('.footer-group') || document.querySelector('footer');
+        if (!footer) return;
+        function updateBottom() {
+            var overlap = Math.max(0, window.innerHeight - footer.getBoundingClientRect().top);
+            anchor.style.bottom = overlap > 0 ? overlap + 'px' : '';
+        }
+        window.addEventListener('scroll', updateBottom, { passive: true });
+        window.addEventListener('resize', updateBottom, { passive: true });
+        updateBottom();
+    });
+}());
+</script>

@@ -1,0 +1,27 @@
+siteName: poko
+productionUrl: https://www.poko.eco
+htmlHead: |-
+  <link rel="icon" type="image/png" href="/assets/files/icons/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/assets/files/icons/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/files/icons/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/files/icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="poko" />
+  <link rel="manifest" href="/assets/files/icons/site.webmanifest" />
+languages:
+  - code: en
+    status: published
+    name: English
+    customUrlPrefix:
+      prefix: /
+    isCmsDefault: true
+    isWebsiteDefault: true
+  - code: fr
+    status: inactive
+    name: French
+    customUrlPrefix: null
+    isCmsDefault: false
+    isWebsiteDefault: false
+customNav: main
+collections:
+  - articles
+  - people

@@ -1,0 +1,43 @@
+inlineAllStyles: true
+widthsContexts:
+  - name: main
+    max: 80rem
+    prose: 50rem
+fontStacksContexts:
+  - name: main
+    body:
+      native: classical-humanist
+    heading:
+      native: classical-humanist
+    code:
+      native: monospace-code
+typeScales:
+  - name: main
+    minFontSize: 18
+    maxFontSize: 20
+    minTypeScale: 1.2
+    maxTypeScale: 1.25
+colors:
+  - name: indigo
+    value: '#130e35'
+  - name: indigo-light
+    value: '#241a66'
+  - name: white
+    value: '#ffffff'
+  - name: pink
+    value: '#ef4d99'
+  - name: lavender
+    value: '#B1AFE6'
+  - name: purple
+    value: '#E8B2F0'
+palettes:
+  - name: main
+    read: white
+    tone: purple
+    pop: pink
+    neutral: lavender
+    selection:
+      text--selection: indigo
+      bg--selection: lavender
+ctxCssImport:
+  filename: ctx.css

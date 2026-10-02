@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 500 500">
+  <defs>
+    <style>
+      .st0 {fill: #f04d98;}
+      .st1 {fill: #1e1656;}
+      @media (prefers-color-scheme: dark) {
+        .st0 {fill: #f04d98;}
+        .st1 {fill: #ffffff;}
+      }
+    </style>
+  </defs>
+  <rect class="st1" x="17.5" y="125.3" width="29.9" height="348.3"/>
+  <polygon class="st0" points="128.2 125.1 229.8 249.5 128.2 373.8 89.4 373.8 193.3 249.5 89.4 125.1 128.2 125.1"/>
+  <rect class="st1" x="270.8" y="26.4" width="29.9" height="348.3"/>
+  <polygon class="st0" points="443.6 374.7 342.1 250.3 443.6 126 482.5 126 378.5 250.3 482.5 374.7 443.6 374.7"/>
+</svg>

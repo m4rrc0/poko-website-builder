@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="{{lang or 'en'}}" class="no-js">
+  <head>
+    {% partial "_html-head-default.md" %} {% getBundle "html", "head" %}
+    <style>
+      body {
+        --width-nav: var(--width-max);
+      }
+
+      pre {
+        position: relative;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+        padding: 0.15em 0.6em;
+        font-size: var(--step--2);
+        font-family: inherit;
+        background: transparent;
+        color: var(--color-tone);
+        border: 1px solid currentColor;
+        border-radius: 4px;
+        opacity: 0.5;
+        transition: opacity 0.15s;
+      }
+
+      .copy-btn:hover {
+        opacity: 1;
+      }
+
+      .copy-btn.copied {
+        color: var(--color-pop);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    {% partial "_main-nav.njk", {}, "njk" %}
+
+    <div
+      class="with-sidebar"
+      style="--content-min: min(var(--width-prose) / 2, 100%); margin-block-start: var(--step-4); padding: var(--gap-cover, 1em);"
+    >
+      <div class="docs-nav flow">{% partial "docs-nav.md", {}, "njk" %}</div>
+      <div class="docs-content">
+        <!-- Content -->
+        {% partial "_main-content.md" %}
+      </div>
+    </div>
+    {% partial "label-slide.njk" %}
+
+    <!-- Footer -->
+    {% partial '_main-footer.njk' %}
+
+    <script defer>
+    document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('pre > code').forEach(function(code) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+
+    btn.addEventListener('click', function() {
+      navigator.clipboard.writeText(code.textContent).then(function() {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+
+    code.parentElement.appendChild(btn);
+  });
+});
+    </script>
+  </body>
+</html>
