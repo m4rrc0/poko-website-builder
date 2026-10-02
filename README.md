@@ -60,6 +60,17 @@ needs a `package.json` (with `"type": "module"`, since the configuration below i
 ESM), an `eleventy.config.js` and a `_content/` directory — see
 [`template/`](./template) for a working example.
 
+### Start a new website
+
+The template is mirrored to
+[`m4rrc0/poko-website-template`](https://github.com/m4rrc0/poko-website-template),
+a GitHub template repository — click **Use this template** there, or scaffold
+without git history:
+
+```sh
+npx degit m4rrc0/poko-website-template my-site
+```
+
 ```sh
 npm install poko-website-builder   # or: bun add poko-website-builder
 ```

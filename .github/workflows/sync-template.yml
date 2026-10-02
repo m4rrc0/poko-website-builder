@@ -1,0 +1,50 @@
+name: Sync template
+
+# Publishes template/ to the standalone m4rrc0/poko-website-template repository
+# (a GitHub template repository) whenever it changes on main. The mirror is
+# publish-only — never commit to it directly, every push here force-overwrites.
+#
+# One-time setup: a TEMPLATE_SYNC_TOKEN repository secret holding a fine-grained
+# PAT scoped to m4rrc0/poko-website-template with Contents: Read+Write.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "template/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Publish template mirror
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Split template/ into its own history
+        id: split
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          sha="$(git subtree split --prefix=template HEAD)"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Push to poko-website-template
+        env:
+          TEMPLATE_SYNC_TOKEN: ${{ secrets.TEMPLATE_SYNC_TOKEN }}
+        run: |
+          if [ -z "$TEMPLATE_SYNC_TOKEN" ]; then
+            echo "::error::TEMPLATE_SYNC_TOKEN secret is not set" >&2
+            exit 1
+          fi
+          echo "::add-mask::$TEMPLATE_SYNC_TOKEN"
+          git push --force \
+            "https://x-access-token:${TEMPLATE_SYNC_TOKEN}@github.com/m4rrc0/poko-website-template.git" \
+            "${{ steps.split.outputs.sha }}:refs/heads/main"
