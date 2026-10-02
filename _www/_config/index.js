@@ -13,7 +13,7 @@ import {
 } from "../../env.config.js";
 
 const { projects, pages, spreadPageSetup } = await import(
-  `../${SRC_DIR_FROM_WORKING_DIR}/config-11ty/plugins/cms-config/index.js`
+  `../${SRC_DIR_FROM_WORKING_DIR}/config-11ty/plugins/cms-config/config.js`
 );
 
 const additionalProjectConfig = [
@@ -121,10 +121,9 @@ const additionalDocsConfig = [
                 required: false,
                 i18n: "duplicate",
                 options: [
-                    { value: "getting-started", label: "Getting Started" },
-                    { value: "content", label: "Content" },
-                    { value: "building-pages", label: "Building Pages" },
-                    { value: "advanced", label: "Advanced" },
+                    { value: "start-here", label: "Start Here" },
+                    { value: "editors", label: "For Editors" },
+                    { value: "developers", label: "For Developers" },
                 ],
             },
             {

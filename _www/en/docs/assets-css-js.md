@@ -6,8 +6,8 @@ createdAt: 2026-05-13T07:46:00.000Z
 ldType: WebPage
 name: Assets (CSS & JS)
 docsNav:
-  section: advanced
-  order: 2
+  section: developers
+  order: 8
 vars: {}
 ---
 {% raw %}

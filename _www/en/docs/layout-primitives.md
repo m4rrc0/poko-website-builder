@@ -6,8 +6,8 @@ createdAt: 2026-05-13T07:44:00.000Z
 ldType: WebPage
 name: Layout primitives
 docsNav:
-  section: building-pages
-  order: 1
+  section: developers
+  order: 5
 vars: {}
 ---
 Poko uses a "Primitives" approach for layouts. These can be used as CSS classes or Markdown containers.

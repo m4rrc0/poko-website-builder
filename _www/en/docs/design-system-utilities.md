@@ -6,8 +6,8 @@ createdAt: 2026-05-13T07:45:00.000Z
 ldType: WebPage
 name: Design system & utilities
 docsNav:
-  section: building-pages
-  order: 3
+  section: developers
+  order: 6
 vars: {}
 ---
 Poko uses a set of global CSS variables and utility classes to maintain a consistent design system. This approach ensures that spacing, typography, and colors remain harmonious and responsive across the entire site.

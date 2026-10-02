@@ -3,10 +3,9 @@
   | sortCollection([{ by: "docsNav.order", direction: "asc" }]) %}
 
 {% set navSections = [
-  { key: "getting-started", label: "Getting Started" },
-  { key: "content",         label: "Content" },
-  { key: "building-pages",  label: "Building Pages" },
-  { key: "advanced",        label: "Advanced" }
+  { key: "start-here",  label: "Start Here" },
+  { key: "editors",     label: "For Editors" },
+  { key: "developers",  label: "For Developers" }
 ] %}
 
 <nav class="docs-nav-sidebar flow">

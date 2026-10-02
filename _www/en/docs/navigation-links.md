@@ -6,8 +6,8 @@ createdAt: 2026-05-13T07:44:00.000Z
 ldType: WebPage
 name: Navigation & links
 docsNav:
-  section: content
-  order: 3
+  section: developers
+  order: 12
 vars: {}
 ---
 {% raw %}
@@ -79,6 +79,8 @@ Creates a link to a file, which can be made downloadable. This is automatically 
 ```
 
 ## Navigation bar
+
+> **Note:** the primary navigation model is now **page-driven** — each page sets `eleventyNavigation` (title/parent) + `order` in its frontmatter, and `_main-nav` builds the menu via `collections.all | filterCollection | eleventyNavigation`. The YAML nav files documented below are the **legacy** path, still supported via `customNav`/`pageNav` for projects that need hand-authored menus.
 
 Navigation is managed via YAML files in `_content/_data/[lang]/nav/`.
 Example `main.yaml`:
