@@ -95,7 +95,11 @@ const selectOtherControl = createClass({
     // `otherActive` tracks the "selected but still empty" case: once the
     // user types, the value itself marks the field as "other" and this flag
     // is only needed while the free input is shown with no value yet.
-    return { otherActive: false };
+    // `otherDraft` mirrors the free input's content while it is open — the
+    // stored value can't be trusted for that, since a partially typed
+    // value may coincide with a real option (e.g. "1" on the way to
+    // "16/10") and must not collapse or clear the input.
+    return { otherActive: false, otherDraft: null };
   },
 
   componentDidUpdate(prevProps) {
@@ -105,8 +109,15 @@ const selectOtherControl = createClass({
     // still hold the previous option for a beat — don't self-cancel that.
     if (!this.state.otherActive || prevProps.value === this.props.value)
       return;
+    // A value matching the draft came from the free input itself — e.g.
+    // typing "1" while an option "1" exists — leave the input alone.
+    const { otherDraft } = this.state;
+    if (otherDraft !== null && sameOptionValue(otherDraft, this.props.value))
+      return;
     if (!this.isMultiple() && this.isKnown(this.props.value)) {
-      this.setState({ otherActive: false });
+      this.setState({ otherActive: false, otherDraft: null });
+    } else if (!this.isMultiple() && isEmptyValue(this.props.value)) {
+      this.setState({ otherDraft: null });
     }
   },
 
@@ -146,7 +157,9 @@ const selectOtherControl = createClass({
         values,
         unknowns,
         otherActive: this.state.otherActive || unknowns.length > 0,
-        otherText: unknowns.length ? unknowns[unknowns.length - 1] : "",
+        otherText:
+          this.state.otherDraft ??
+          (unknowns.length ? unknowns[unknowns.length - 1] : ""),
       };
     }
     const otherActive = this.state.otherActive || this.isOtherValue(value);
@@ -154,15 +167,24 @@ const selectOtherControl = createClass({
       values: [],
       unknowns: [],
       otherActive,
-      otherText: this.isOtherValue(value) ? value : "",
+      otherText: this.state.otherDraft ?? (this.isOtherValue(value) ? value : ""),
     };
   },
 
   emitOtherText(text) {
     const { value, onChange } = this.props;
+    const prevDraft = this.state.otherDraft;
+    this.setState({ otherDraft: isEmptyValue(text) ? null : text });
     if (this.isMultiple()) {
       const values = Array.isArray(value) ? value : [];
-      const known = values.filter((v) => this.isKnown(v));
+      // The previous draft may now match a real option ("1" on the way to
+      // "16/10") — drop it so it is replaced by the new text rather than
+      // kept as a checked option.
+      const known = values.filter(
+        (v) =>
+          this.isKnown(v) &&
+          !(prevDraft !== null && sameOptionValue(v, prevDraft)),
+      );
       onChange(isEmptyValue(text) ? known : [...known, text]);
     } else {
       onChange(isEmptyValue(text) ? null : text);
@@ -178,7 +200,10 @@ const selectOtherControl = createClass({
       const hasOther = arr.includes(OTHER_OPTION_VALUE);
       const clean = arr.filter((v) => v !== OTHER_OPTION_VALUE);
       const { unknowns } = this.getOtherContext();
-      this.setState({ otherActive: hasOther });
+      this.setState({
+        otherActive: hasOther,
+        ...(hasOther ? {} : { otherDraft: null }),
+      });
       // While "other" stays checked, keep the stored custom values.
       onChange(hasOther ? [...clean, ...unknowns] : clean);
     } else if (next === OTHER_OPTION_VALUE) {
@@ -187,7 +212,7 @@ const selectOtherControl = createClass({
       // the UI (otherwise the old option would still be saved).
       if (this.isKnown(value)) onChange(null);
     } else {
-      this.setState({ otherActive: false });
+      this.setState({ otherActive: false, otherDraft: null });
       onChange(next ?? null);
     }
   },
