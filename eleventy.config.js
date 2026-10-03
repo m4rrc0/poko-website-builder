@@ -138,6 +138,7 @@ import {
   link as linkShortcode,
   button as buttonShortcode,
   image,
+  wireLqipBundleManager,
   gallery,
   wrapper,
   embed,
@@ -752,6 +753,9 @@ export default async function (eleventyConfig) {
   // We are keeping for now for easier migration from '{% link' to '{% linkSimple' before manually replacing
   eleventyConfig.addAsyncShortcode("linkSimple", linkShortcode);
   eleventyConfig.addShortcode("buttonSimple", buttonShortcode);
+  // LQIP: gives the image shortcode access to the `html` bundle manager so it
+  // can push eager-image <link rel=preload> tags into the page's `head` bucket.
+  wireLqipBundleManager(eleventyConfig);
   eleventyConfig.addShortcode("image", image);
   eleventyConfig.addShortcode("gallery", gallery);
   // eleventyConfig.addPairedShortcode("wrapper", wrapper);

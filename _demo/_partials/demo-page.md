@@ -391,7 +391,7 @@ p q r s t u v w x y z { | } \~ </code></pre>
 {% endsectionHeader %}
 {% grid type="switcher", class="prose" %}
 {% gridItem %}
-{% image src="/_images/pexels-amine-photographe-14559000.webp" %}
+{% image src="/_images/pexels-amine-photographe-14559000.webp", alt="A pink flower", loading="eager" %}
 
 A flower
 {% endgridItem %}
