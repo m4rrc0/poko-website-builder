@@ -32,7 +32,6 @@ import cmsConfigPlugin from "./src/config-11ty/plugins/cms-config/index.js";
 import autoCollections from "./src/config-11ty/plugins/auto-collections/index.js";
 import htmlClassesTransform from "./src/config-11ty/plugins/html-classes-transform/index.js";
 import ioElementsTransform from "./src/config-11ty/plugins/io-elements-transform/index.js";
-import lqipTransform from "./src/config-11ty/plugins/lqip-transform/index.js";
 import populateInputDir from "./src/config-11ty/plugins/populateInputDir/index.js";
 import partialsPlugin from "./src/config-11ty/plugins/partials/index.js";
 import partialShortcodesPlugin from "./src/config-11ty/plugins/partialShortcodes/index.js";
@@ -139,6 +138,7 @@ import {
   link as linkShortcode,
   button as buttonShortcode,
   image,
+  wireLqipBundleManager,
   gallery,
   wrapper,
   embed,
@@ -621,9 +621,6 @@ export default async function (eleventyConfig) {
   await eleventyConfig.addPlugin(buildExternalCSS);
   await eleventyConfig.addPlugin(pluginUnoCSS);
   await eleventyConfig.addPlugin(ioElementsTransform);
-  // LQIP backgrounds + eager LCP placeholders — must run after the
-  // eleventy-img HTML transform so every <img> src is a generated file.
-  await eleventyConfig.addPlugin(lqipTransform);
 
   // --------------------- Populate files and default content
   eleventyConfig.addPassthroughCopy({
@@ -756,6 +753,9 @@ export default async function (eleventyConfig) {
   // We are keeping for now for easier migration from '{% link' to '{% linkSimple' before manually replacing
   eleventyConfig.addAsyncShortcode("linkSimple", linkShortcode);
   eleventyConfig.addShortcode("buttonSimple", buttonShortcode);
+  // LQIP: gives the image shortcode access to the `html` bundle manager so it
+  // can push eager-image <link rel=preload> tags into the page's `head` bucket.
+  wireLqipBundleManager(eleventyConfig);
   eleventyConfig.addShortcode("image", image);
   eleventyConfig.addShortcode("gallery", gallery);
   // eleventyConfig.addPairedShortcode("wrapper", wrapper);
