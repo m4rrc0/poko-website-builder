@@ -32,6 +32,7 @@ import cmsConfigPlugin from "./src/config-11ty/plugins/cms-config/index.js";
 import autoCollections from "./src/config-11ty/plugins/auto-collections/index.js";
 import htmlClassesTransform from "./src/config-11ty/plugins/html-classes-transform/index.js";
 import ioElementsTransform from "./src/config-11ty/plugins/io-elements-transform/index.js";
+import lqipTransform from "./src/config-11ty/plugins/lqip-transform/index.js";
 import populateInputDir from "./src/config-11ty/plugins/populateInputDir/index.js";
 import partialsPlugin from "./src/config-11ty/plugins/partials/index.js";
 import partialShortcodesPlugin from "./src/config-11ty/plugins/partialShortcodes/index.js";
@@ -620,6 +621,9 @@ export default async function (eleventyConfig) {
   await eleventyConfig.addPlugin(buildExternalCSS);
   await eleventyConfig.addPlugin(pluginUnoCSS);
   await eleventyConfig.addPlugin(ioElementsTransform);
+  // LQIP backgrounds + eager LCP placeholders — must run after the
+  // eleventy-img HTML transform so every <img> src is a generated file.
+  await eleventyConfig.addPlugin(lqipTransform);
 
   // --------------------- Populate files and default content
   eleventyConfig.addPassthroughCopy({

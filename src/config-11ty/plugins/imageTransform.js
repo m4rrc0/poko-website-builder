@@ -45,7 +45,7 @@ const maxPxPerRem = Math.max(
   ),
 );
 
-const maxWidthInPx = (
+export const maxWidthInPx = (
   brandWidthsContexts.length ? brandWidthsContexts : [{}]
 ).map((context) => {
   return context?.vars?.max
