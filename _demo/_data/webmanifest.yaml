@@ -1,0 +1,14 @@
+favicon: /_data/icons/logo.svg
+touchIcon: /_data/icons/touch.png
+manifest:
+  name: Poko Demo
+  short_name: Poko
+  description: Demo content site for poko
+  display: standalone
+  theme_color: "#1e5adc"
+  background_color: "#ffffff"
+sources:
+  icon192: /_data/icons/icon-192-src.png
+dark:
+  favicon: /_data/icons/logo-dark.svg
+  theme_color: "#0b0b0f"

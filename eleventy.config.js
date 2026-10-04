@@ -35,6 +35,7 @@ import ioElementsTransform from "./src/config-11ty/plugins/io-elements-transform
 import populateInputDir from "./src/config-11ty/plugins/populateInputDir/index.js";
 import partialsPlugin from "./src/config-11ty/plugins/partials/index.js";
 import partialShortcodesPlugin from "./src/config-11ty/plugins/partialShortcodes/index.js";
+import faviconsPlugin from "./src/config-11ty/plugins/favicons/index.js";
 import buildExternalCSS from "./src/config-11ty/plugins/buildExternalCSS/index.js";
 import ctxCss from "./src/config-11ty/plugins/ctxCss/index.js";
 import pluginUnoCSS from "./src/config-11ty/plugins/plugin-eleventy-unocss/index.js";
@@ -71,6 +72,7 @@ import {
   // SRC_DIR_FROM_WORKING_DIR,
   IMAGE_CACHE_DIR,
   IMAGES_OUTPUT_DIR,
+  ICONS_DIR,
   PARTIALS_DIR,
   LAYOUTS_DIR,
   OUTPUT_DIR,
@@ -78,6 +80,7 @@ import {
   BASE_URL,
   PROD_URL,
   WEBSITE_PATH_PREFIX,
+  SITE_NAME,
   POKO_THEME,
   statusesToUnrender,
   allLanguages,
@@ -522,6 +525,13 @@ export default async function (eleventyConfig) {
     iconLists,
   });
   eleventyConfig.addPlugin(autoCollections);
+  eleventyConfig.addPlugin(faviconsPlugin, {
+    inputDir: WORKING_DIR_ABSOLUTE,
+    inputIconsSubdir: ICONS_DIR,
+    outputDir: path.resolve(OUTPUT_DIR),
+    outputIconsSubdir: "assets/icons",
+    manifestData: { name: SITE_NAME },
+  });
   // TODO: we want to remove webC entirely
   // eleventyConfig.addPlugin(pluginWebc, {
   //   components: [
@@ -633,8 +643,7 @@ export default async function (eleventyConfig) {
       : {}),
     ...(hasUserFieldTypes
       ? {
-          [`${WORKING_DIR}/_config/fieldTypes.js`]:
-            "admin/userFieldTypes.js",
+          [`${WORKING_DIR}/_config/fieldTypes.js`]: "admin/userFieldTypes.js",
         }
       : {}),
     // Populate Default Content: Copy `src/content-static/` to `dist`

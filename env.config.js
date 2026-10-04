@@ -42,6 +42,10 @@ export const CONTENT_PATH_PREFIX = processEnv.CONTENT_PATH_PREFIX || "";
 export const CONTENT_DIR = processEnv.CONTENT_DIR || "_content";
 export const PARTIALS_DIR = processEnv.PARTIALS_DIR || "_partials";
 export const LAYOUTS_DIR = processEnv.LAYOUTS_DIR || "_layouts";
+// Subdirectory (under WORKING_DIR) holding CMS-uploaded site icons — shared
+// by the favicons plugin (`inputIconsSubdir`) and the CMS icon fields'
+// media_folder/public_folder so uploads and lookups stay in sync.
+export const ICONS_DIR = processEnv.ICONS_DIR || "_data/icons";
 // WORKING_DIR merges relative paths from CONTENT_PATH_PREFIX and CONTENT_DIR
 export const WORKING_DIR =
   processEnv.WORKING_DIR || join(CONTENT_PATH_PREFIX, CONTENT_DIR);
