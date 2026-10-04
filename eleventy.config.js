@@ -72,6 +72,7 @@ import {
   // SRC_DIR_FROM_WORKING_DIR,
   IMAGE_CACHE_DIR,
   IMAGES_OUTPUT_DIR,
+  ICONS_DIR,
   PARTIALS_DIR,
   LAYOUTS_DIR,
   OUTPUT_DIR,
@@ -525,7 +526,9 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(autoCollections);
   eleventyConfig.addPlugin(faviconsPlugin, {
     inputDir: WORKING_DIR_ABSOLUTE,
+    inputIconsSubdir: ICONS_DIR,
     outputDir: path.resolve(OUTPUT_DIR),
+    outputIconsSubdir: "assets/icons",
     manifestData: { name: SITE_NAME },
   });
   // TODO: we want to remove webC entirely
@@ -639,8 +642,7 @@ export default async function (eleventyConfig) {
       : {}),
     ...(hasUserFieldTypes
       ? {
-          [`${WORKING_DIR}/_config/fieldTypes.js`]:
-            "admin/userFieldTypes.js",
+          [`${WORKING_DIR}/_config/fieldTypes.js`]: "admin/userFieldTypes.js",
         }
       : {}),
     // Populate Default Content: Copy `src/content-static/` to `dist`

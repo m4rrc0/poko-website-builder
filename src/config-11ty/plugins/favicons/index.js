@@ -4,8 +4,9 @@
 // markup via the `favicons` shortcode.
 //
 // Sources come from a yaml data file (default `_data/webmanifest.yaml`)
-// resolved against `inputDir` — CMS-style paths (`/_files/icons/x.svg`,
-// `/_images/x.png`) and plain relative/absolute fs paths all work.
+// resolved against `inputDir` — CMS-style paths (`/_data/icons/x.svg`,
+// `/_images/x.png`) and plain relative/absolute fs paths all work, with a
+// basename fallback under `inputIconsSubdir`.
 // Never upscales: a slot is emitted only when a source reaches its size
 // (SVG always qualifies — it is rasterized via sharp density scaling).
 // Raster outputs go through eleventy-img (content-hash caching) and
@@ -22,7 +23,7 @@ import toIco from "png-to-ico";
 const DARK_MEDIA = "(prefers-color-scheme: dark)";
 
 // Auto-fetch files (favicon.ico/svg, apple-touch-icon.png, manifest) always
-// land at the output root; `icon-*.png` slots follow `iconsSubdir`.
+// land at the output root; `icon-*.png` slots follow `outputIconsSubdir`.
 const SLOTS = {
   faviconSvg: { file: "favicon.svg", svgOnly: true },
   faviconIco: { file: "favicon.ico" },
@@ -51,9 +52,13 @@ const parseColor = (c, fallback) => {
   if (typeof c !== "string" || !c.trim()) return fallback;
   const hex = c.trim().replace(/^#/, "");
   if (!/^[0-9a-f]{3,8}$/i.test(hex)) return fallback;
-  const full = hex.length <= 4
-    ? hex.split("").map((x) => x + x).join("")
-    : hex;
+  const full =
+    hex.length <= 4
+      ? hex
+          .split("")
+          .map((x) => x + x)
+          .join("")
+      : hex;
   const n = parseInt(full, 16);
   const hasAlpha = full.length === 8;
   return {
@@ -76,14 +81,16 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     dataFile = "_data/webmanifest.yaml",
     // Content root that CMS-style public paths resolve against.
     inputDir = eleventyConfig.dir.input,
+    // Subdirectory (under inputDir) to find icon files under; "" = root.
+    inputIconsSubdir = "_icons",
     // Site output root; generated icons are written here (or under
-    // `iconsSubdir` for the manifest-only PNG slots).
+    // `outputIconsSubdir` for the manifest-only PNG slots).
     outputDir = eleventyConfig.dir.output,
     // URL path prefix baked into emitted links + manifest srcs. Defaults to
     // Eleventy's own `pathPrefix` (unset -> root-relative URLs).
     urlPrefix = eleventyConfig.pathPrefix ?? "",
     // Subdirectory (under outputDir) for icon-*.png files; "" = root.
-    iconsSubdir = "",
+    outputIconsSubdir = "",
     // Manifest emission.
     manifestUrl = "/manifest.webmanifest",
     manifestData = {},
@@ -102,20 +109,32 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     if (!metaCache.has(p)) {
       metaCache.set(
         p,
-        sharp(p, { failOn: "none" }).metadata().catch(() => null),
+        sharp(p, { failOn: "none" })
+          .metadata()
+          .catch(() => null),
       );
     }
     return metaCache.get(p);
   };
 
-  // CMS `/_files/icons/x.png`-style paths, `./x.png` and absolute fs paths
-  // all resolve here; missing files resolve to null.
+  // CMS public paths (`/<inputIconsSubdir>/x.png`), `./x.png` and absolute fs
+  // paths all resolve here; when the stored path misses, the basename is
+  // retried under `inputIconsSubdir` so moved icon dirs keep resolving.
+  // Missing files resolve to null.
   const resolveSource = (raw) => {
     if (typeof raw !== "string" || !raw.trim()) return null;
     const p = raw.trim();
     if (fs.existsSync(p)) return path.resolve(p);
     const underInput = path.join(inputDir, p.replace(/^\/+/, ""));
     if (fs.existsSync(underInput)) return underInput;
+    if (inputIconsSubdir) {
+      const underIcons = path.join(
+        inputDir,
+        inputIconsSubdir,
+        path.basename(p),
+      );
+      if (fs.existsSync(underIcons)) return underIcons;
+    }
     return null;
   };
 
@@ -126,12 +145,7 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
   // Preference order: the slot's own override → other overrides, nearest
   // above the target first → `touchIcon` → `favicon`. "Nearest above"
   // because a closer source downscales with fewer artifacts.
-  const pickSource = async (
-    scope,
-    slotKey,
-    size,
-    { svgOnly = false } = {},
-  ) => {
+  const pickSource = async (scope, slotKey, size, { svgOnly = false } = {}) => {
     scope = scope || {};
     const sources = scope.sources || {};
     const slotOverride = resolveSource(sources[slotKey]);
@@ -148,7 +162,8 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
       for (const src of list) {
         const meta = await metaOf(src);
         if (!meta) continue;
-        if (svgOnly ? isSvg(meta) : canReach(meta, size)) out.push({ src, meta });
+        if (svgOnly ? isSvg(meta) : canReach(meta, size))
+          out.push({ src, meta });
       }
       return out;
     };
@@ -207,8 +222,8 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     const stats = await Image(source.src, {
       formats: ["png"],
       widths: [size],
-      outputDir: path.join(outputDir, iconsSubdir),
-      urlPath: iconsSubdir ? joinUrl("/", iconsSubdir) : "/",
+      outputDir: path.join(outputDir, outputIconsSubdir),
+      urlPath: outputIconsSubdir ? joinUrl("/", outputIconsSubdir) : "/",
       transformOnRequest: false,
       sharpOptions: svgSharpOptions(source.meta, size),
       filenameFormat,
@@ -283,8 +298,13 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
               // inside the `dark:` block; light keys are used as-is.
               const sourceKey = key.endsWith("Dark") ? key.slice(0, -4) : key;
               if (spec.file.endsWith(".ico")) {
-                const src = await pickSource(scope, sourceKey, Math.min(...icoSizes));
-                const result = src && (await emitIco({ file: spec.file, source: src }));
+                const src = await pickSource(
+                  scope,
+                  sourceKey,
+                  Math.min(...icoSizes),
+                );
+                const result =
+                  src && (await emitIco({ file: spec.file, source: src }));
                 if (result) emitted[key] = result;
                 return;
               }
@@ -304,10 +324,18 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
                   : spec.maskable
                     ? maskablePadding
                     : 0,
-                background: spec.apple ? appleBg : spec.maskable ? maskBg : TRANSPARENT,
+                background: spec.apple
+                  ? appleBg
+                  : spec.maskable
+                    ? maskBg
+                    : TRANSPARENT,
               });
               if (stat?.url) {
-                emitted[key] = { file: spec.file, url: stat.url, size: spec.size };
+                emitted[key] = {
+                  file: spec.file,
+                  url: stat.url,
+                  size: spec.size,
+                };
               }
             } catch (error) {
               console.warn(
@@ -393,9 +421,7 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
         linkTag({
           rel: "icon",
           href: joinUrl(urlPrefix, "/favicon-dark.ico"),
-          sizes: emitted.faviconIcoDark.sizes
-            .map((s) => `${s}x${s}`)
-            .join(" "),
+          sizes: emitted.faviconIcoDark.sizes.map((s) => `${s}x${s}`).join(" "),
           media: DARK_MEDIA,
         }),
       );
