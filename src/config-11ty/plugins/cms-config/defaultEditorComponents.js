@@ -2075,7 +2075,29 @@ export const imageShortcode = {
               hint: "Position the image vertically and horizontally with CSS object-position (e.g., 'center', 'top left', 'center 75%')",
             },
             {
-              name: "wrapper",
+              name: "objectFit",
+              label: "Object Fit",
+              widget: "select",
+              options: [
+                { value: "", label: "Cover (default)" },
+                { value: "cover", label: "Cover" },
+                { value: "contain", label: "Contain" },
+                { value: "fill", label: "Fill" },
+                { value: "scale-down", label: "Scale Down" },
+                { value: "none", label: "None" },
+              ],
+              required: false,
+              hint: "How the image fits its box (CSS object-fit); default is cover.",
+            },
+            {
+              name: "noLqip",
+              label: "No LQIP",
+              widget: "boolean",
+              required: false,
+              hint: "Skip the low-quality placeholder background for this image.",
+            },
+            {
+              name: "wrapper",', 
               label: "Wrapper",
               widget: "string",
               required: false,
@@ -2110,6 +2132,8 @@ export const imageShortcode = {
         "title",
         "loading",
         "objectPosition",
+        "objectFit",
+        "noLqip",
         "wrapper",
       ],
     );
@@ -2123,6 +2147,8 @@ export const imageShortcode = {
       title,
       loading,
       objectPosition,
+      objectFit,
+      noLqip,
       wrapper,
     } = extracted;
 
@@ -2138,6 +2164,8 @@ export const imageShortcode = {
           ...(title && { title }),
           ...(loading && { loading }),
           ...(objectPosition && { objectPosition }),
+          ...(objectFit && { objectFit }),
+          ...(noLqip && { noLqip }),
           ...(wrapper && { wrapper }),
           ...(imgAttrs && { imgAttrs }),
         },
@@ -2154,6 +2182,8 @@ export const imageShortcode = {
       title,
       loading,
       objectPosition,
+      objectFit,
+      noLqip,
       wrapper,
       imgAttrs,
     } = advanced || {};
@@ -2171,6 +2201,8 @@ export const imageShortcode = {
       ...(title && { title }),
       ...(loading && { loading }),
       ...(objectPosition && { objectPosition }),
+      ...(objectFit && { objectFit }),
+      ...(noLqip && { noLqip }),
       ...(wrapper && { wrapper }),
       // ...(imgAttrs && { imgAttrs }),
     };

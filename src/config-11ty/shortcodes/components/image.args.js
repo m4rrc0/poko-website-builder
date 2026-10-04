@@ -11,6 +11,8 @@ export function prepareImageArgs(args = {}) {
     alt,
     aspectRatio,
     objectPosition,
+    objectFit,
+    noLqip,
     width,
     title,
     loading,
@@ -68,6 +70,7 @@ export function prepareImageArgs(args = {}) {
     imgAttributes?.class,
     aspectRatio && `aspect-ratio-${aspectRatio}`,
     objectPosition && `object-[${objectPosition.trim().replace(" ", "_")}]`,
+    objectFit && `object-${objectFit}`,
   ]
     .filter(Boolean)
     .join(" ");
@@ -95,6 +98,10 @@ export function prepareImageArgs(args = {}) {
     widths: width ? [width, width * 2] : undefined,
     fallback: width ? "smallest" : undefined,
     wrapperTag,
+    aspectRatio,
+    objectPosition,
+    objectFit,
+    noLqip,
     imgAttributes: computedImgAttributes,
     opts,
   };

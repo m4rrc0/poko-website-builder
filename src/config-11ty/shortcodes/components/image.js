@@ -1,7 +1,5 @@
 import Image from "@11ty/eleventy-img";
 import deepmerge from "deepmerge";
-import fs from "node:fs";
-import path from "node:path";
 import sharp from "sharp";
 import {
   imageTransformOptions,
@@ -9,7 +7,7 @@ import {
 } from "../../plugins/imageTransform.js";
 import { isManifestSource, recordImageStats } from "../../image-manifest.js";
 import { prepareImageArgs } from "./image.args.js";
-import { WORKING_DIR, IMAGE_CACHE_DIR } from "../../../../env.config.js";
+import { WORKING_DIR } from "../../../../env.config.js";
 
 // ---------------------------------------------------------------------------
 // LQIP (Low-Quality Image Placeholder) — implements the technique from
@@ -26,36 +24,22 @@ import { WORKING_DIR, IMAGE_CACHE_DIR } from "../../../../env.config.js";
 //                        fetchpriority="high" removed from the <img> (the
 //                        hi-res must not race the LQIP).
 //
-// The eager layer is sized to the display box (never upscaled, >= 0.055 bits
-// per displayed pixel — the LCP spec floor is 0.05) so Chrome keeps it as the
-// LCP candidate and ignores the same-size hi-res arriving later.
+// The eager layer is sized to the display box width (never upscaled, >= 0.055
+// bits per displayed pixel — the LCP spec floor is 0.05) so Chrome keeps it as
+// the LCP candidate and ignores the same-size hi-res arriving later. The LQIP
+// keeps the source aspect ratio — `background-size` + `background-position`
+// crop/position it inside the box exactly like `object-fit`/`object-position`
+// do on the <img>.
 //
-// Alpha comes from the emitted file's own metadata: eleventy-img keeps
-// hasAlpha internal (it only feeds its `formatFiltering` option), so we
-// re-check on the produced file. Opt out per image with `noLqip` /
-// `data-no-lqip`.
+// Derivatives ride the eleventy-img pipeline (dryRun buffers + real writes);
+// the only raw sharp call left is the `metadata()` read for `hasAlpha` —
+// eleventy-img keeps it internal (it only feeds its `formatFiltering`
+// option). Opt out per image with `noLqip` / `data-no-lqip`.
 // ---------------------------------------------------------------------------
-const URL_PATH = "/assets/images/";
 const TINY_WIDTH = 16;
 const TINY_QUALITY = 40;
 const LQIP_QUALITY = 15;
 const BPP_TARGET = 0.055; // bits per displayed pixel (0.05 spec floor + buffer)
-const SHARP_POSITIONS = {
-  center: "centre",
-  centre: "centre",
-  top: "top",
-  bottom: "bottom",
-  left: "left",
-  right: "right",
-  "left top": "left top",
-  "top left": "left top",
-  "right top": "right top",
-  "top right": "right top",
-  "left bottom": "left bottom",
-  "bottom left": "left bottom",
-  "right bottom": "right bottom",
-  "bottom right": "right bottom",
-};
 const FIT_TO_BG_SIZE = {
   cover: "cover",
   contain: "contain",
@@ -64,92 +48,69 @@ const FIT_TO_BG_SIZE = {
   "scale-down": "auto",
 };
 
-// emitted file -> { hasAlpha, width, height, dataUri } | null
-const fileCache = new Map();
-const analyzeFile = (file) => {
-  if (!fileCache.has(file)) {
-    fileCache.set(
-      file,
-      (async () => {
-        try {
-          const meta = await sharp(file).metadata();
-          if (meta.format === "svg") return null; // vector: no placeholder
-          if (meta.hasAlpha) return { hasAlpha: true };
-          const tiny = await sharp(file)
-            .resize({ width: TINY_WIDTH, withoutEnlargement: true })
-            .webp({ quality: TINY_QUALITY })
-            .toBuffer();
-          return {
-            hasAlpha: false,
-            width: meta.width,
-            height: meta.height,
-            dataUri: `data:image/webp;base64,${tiny.toString("base64")}`,
-          };
-        } catch {
-          return null;
-        }
-      })(),
-    );
-  }
-  return fileCache.get(file);
+const lastEmittedFile = (stats) => {
+  const lastFormat = Object.keys(stats).pop();
+  return stats[lastFormat]?.[stats[lastFormat].length - 1];
 };
 
-// (file, w, h, sharpPosition) -> emitted lqip url; the file is written next
-// to the other generated images so the post-build cache copy ships it too.
+// src -> tiny inline webp data URI via the pipeline (dryRun: buffer, no write)
+const tinyCache = new Map();
+const tinyDataUri = (src) => {
+  if (!tinyCache.has(src)) {
+    tinyCache.set(
+      src,
+      Image(src, {
+        ...imageTransformOptions,
+        dryRun: true,
+        widths: [TINY_WIDTH],
+        formats: ["webp"],
+        sharpWebpOptions: { quality: TINY_QUALITY },
+      }).then(
+        (stats) =>
+          stats?.webp?.[0]?.buffer &&
+          `data:image/webp;base64,${stats.webp[0].buffer.toString("base64")}`,
+      ),
+    );
+  }
+  return tinyCache.get(src);
+};
+
+// (src, displayW, displayH) -> emitted lqip url, generated and cached by the
+// same pipeline as the responsive variants (filenameFormat keeps it out of
+// real variant filenames). If the q15 output sits under the bpp floor it is
+// regenerated at q40 before anything is written to disk.
 const lqipCache = new Map();
-const ensureLqip = (file, w, h, position) => {
-  const key = `${file}|${w}x${h}|${position}`;
+const ensureLqip = (src, displayW, displayH) => {
+  const key = `${src}|${displayW}`;
   if (!lqipCache.has(key)) {
     lqipCache.set(
       key,
       (async () => {
-        const outName = `${path.parse(file).name}-lqip-${w}x${h}.webp`;
-        const outPath = path.join(IMAGE_CACHE_DIR, outName);
-        if (!fs.existsSync(outPath)) {
-          const floor = (w * h * BPP_TARGET) / 8; // bytes
-          const make = (quality) =>
-            sharp(file)
-              .resize(w, h, { fit: "cover", position })
-              .webp({ quality })
-              .toBuffer();
-          let buf = await make(LQIP_QUALITY);
-          if (buf.length < floor) buf = await make(40);
-          fs.mkdirSync(IMAGE_CACHE_DIR, { recursive: true });
-          fs.writeFileSync(outPath, buf);
-        }
-        return `${URL_PATH}${outName}`;
+        const base = {
+          ...imageTransformOptions,
+          widths: [displayW],
+          formats: ["webp"],
+          filenameFormat: (id, s, w, fmt) => `${id}-lqip-${w}w.${fmt}`,
+        };
+        const draft = await Image(src, {
+          ...base,
+          dryRun: true,
+          sharpWebpOptions: { quality: LQIP_QUALITY },
+        });
+        const draftSize = draft?.webp?.[0]?.size;
+        const floor = (displayW * displayH * BPP_TARGET) / 8; // bytes
+        const quality =
+          draftSize != null && draftSize < floor ? 40 : LQIP_QUALITY;
+        const stats = await Image(src, {
+          ...base,
+          sharpWebpOptions: { quality },
+        });
+        return stats?.webp?.[0]?.url || null;
       })(),
     );
   }
   return lqipCache.get(key);
 };
-
-const ASPECT_RE = /aspect-ratio-(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)?)/;
-const OBJ_POS_RE = /object-\[([^\]]+)\]/;
-const OBJ_POS_NAMED_RE =
-  /object-(top-left|top-right|bottom-left|bottom-right|left-top|right-top|left-bottom|right-bottom|top|bottom|left|right|center|centre)\b/;
-const OBJ_FIT_RE = /object-(cover|contain|fill|scale-down|none)\b/;
-
-// Class-based hints from `class`/`imgAttributes.class` (aspect-ratio-*,
-// object-[…], object-contain…). Explicit args win over these.
-const boxHints = (classAttr) => {
-  const hints = { aspectRatio: null, position: null, fit: null };
-  const aspect = (classAttr || "").match(ASPECT_RE);
-  if (aspect) {
-    const [n, d = "1"] = aspect[1].split("/");
-    hints.aspectRatio = parseFloat(n) / parseFloat(d);
-  }
-  const arbitrary = (classAttr || "").match(OBJ_POS_RE);
-  const named = (classAttr || "").match(OBJ_POS_NAMED_RE);
-  if (arbitrary) hints.position = arbitrary[1].replaceAll("_", " ");
-  else if (named) hints.position = named[1].replace("-", " ");
-  const fit = (classAttr || "").match(OBJ_FIT_RE);
-  if (fit) hints.fit = fit[1];
-  return hints;
-};
-
-const sharpPosition = (cssPosition) =>
-  SHARP_POSITIONS[(cssPosition || "").toLowerCase().trim()] ?? "centre";
 
 const bgCssFor = (layers, position, size) =>
   `background-image:${layers.map((u) => `url('${u}')`).join(",")};` +
@@ -164,6 +125,14 @@ const sizesUpperBound = (sizes) => {
     parseInt(m[1]),
   );
   return px.length ? Math.min(Math.max(...px), maxWidthInPx) : 0;
+};
+
+// "4/3" | "1.6180/1" | "2.39" -> 1.333… | 1.618 | 2.39
+const parseAspectRatio = (ar) => {
+  if (ar == null) return null;
+  const [n, d = "1"] = String(ar).split("/");
+  const ratio = parseFloat(n) / parseFloat(d);
+  return Number.isFinite(ratio) && ratio > 0 ? ratio : null;
 };
 
 // The `html` bundle manager, wired once from eleventy.config.js so eager-image
@@ -201,8 +170,19 @@ const rewriteImgTag = (html, { bg, dropFetchpriority }) =>
 export async function image(args) {
   // Shared with the CMS preview stub (preview-njk.js) — the pure arg→attrs
   // computation lives in ./image.args.js so they can't diverge.
-  const { srcRaw, width, widths, fallback, wrapperTag, imgAttributes, opts } =
-    prepareImageArgs(args);
+  const {
+    srcRaw,
+    width,
+    widths,
+    fallback,
+    wrapperTag,
+    aspectRatio,
+    objectPosition,
+    objectFit,
+    noLqip,
+    imgAttributes,
+    opts,
+  } = prepareImageArgs(args);
 
   const options = deepmerge.all(
     [
@@ -243,52 +223,45 @@ export async function image(args) {
     : html;
 
   // ---------------- LQIP decoration (opaque images only) ----------------
-  const noLqip = Boolean(args?.noLqip || args?.["data-no-lqip"]);
-  if (html && !noLqip && !/\bbackground(?:-[a-z]+)?\s*:/i.test(imgAttributes?.style || "")) {
+  const skipLqip =
+    Boolean(noLqip) ||
+    Boolean(args?.["data-no-lqip"]) ||
+    /\bbackground(?:-[a-z]+)?\s*:/i.test(imgAttributes?.style || "");
+  if (html && !skipLqip) {
     try {
-      const stats = Image.statsSync(src, options);
-      const lastFormat = Object.keys(stats).pop();
-      const emitted = stats[lastFormat]?.[stats[lastFormat].length - 1];
-      const info = emitted?.outputPath
-        ? await analyzeFile(emitted.outputPath)
+      const emitted = lastEmittedFile(Image.statsSync(src, options));
+      // Alpha comes from the emitted file's own metadata (the file the
+      // browser actually loads): sharp metadata is the one raw call we need.
+      const meta = emitted?.outputPath
+        ? await sharp(emitted.outputPath).metadata()
         : null;
-      if (info && !info.hasAlpha) {
-        const hints = boxHints(imgAttributes?.class);
-        const position = (
-          args?.objectPosition ||
-          hints.position ||
-          "center"
-        ).replace("-", " ");
-        const size = FIT_TO_BG_SIZE[hints.fit] || "cover";
-        const layers = [info.dataUri];
+      if (meta && meta.format !== "svg" && !meta.hasAlpha) {
+        const tiny = await tinyDataUri(src);
+        if (!tiny) throw new Error("no tiny placeholder buffer");
+        const position = (objectPosition || "center").trim();
+        const size = FIT_TO_BG_SIZE[objectFit] || "cover";
+        const layers = [tiny];
         let preloadUrl = null;
 
         if ((imgAttributes?.loading || "").toLowerCase() === "eager") {
           // The LQIP must never be upscaled: aim at the display box. `sizes`
-          // encodes it for fluid images, width/height args are proportional
-          // fallbacks, natural dims the last resort.
-          const w = parseInt(args?.width) || 0;
+          // encodes the width for fluid images, width/height args are
+          // proportional fallbacks, natural dims the last resort.
+          const w = parseInt(width) || 0;
           const h = parseInt(args?.height) || 0;
           const displayW = Math.round(
             sizesUpperBound(imgAttributes?.sizes) ||
               w ||
-              Math.min(info.width, maxWidthInPx),
+              Math.min(meta.width, maxWidthInPx),
           );
-          // An aspect-ratio class/arg defines the box (it wins over the
-          // attrs' ratio); otherwise attrs, then natural dims.
-          const ar = args?.aspectRatio || hints.aspectRatio;
-          const displayH = ar
-            ? Math.max(1, Math.round(displayW / ar))
-            : h && w
-              ? Math.max(1, Math.round((displayW * h) / w))
-              : Math.max(1, Math.round((displayW * info.height) / info.width));
-          preloadUrl = await ensureLqip(
-            emitted.outputPath,
-            displayW,
-            displayH,
-            sharpPosition(position),
-          );
-          layers.unshift(preloadUrl);
+          // Box height is only needed for the bpp floor — the LQIP keeps the
+          // source ratio and CSS (`background-size`) does the cropping.
+          const ar =
+            parseAspectRatio(aspectRatio) ||
+            (h && w ? w / h : meta.width / meta.height);
+          const displayH = Math.max(1, Math.round(displayW / ar));
+          preloadUrl = await ensureLqip(src, displayW, displayH);
+          if (preloadUrl) layers.unshift(preloadUrl);
         }
 
         html = rewriteImgTag(html, {
