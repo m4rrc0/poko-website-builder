@@ -18,6 +18,7 @@ import {
   statusesToUnrender,
   DEBUG,
   LAYOUTS_DIR,
+  ctxCssText,
 } from "../../../../env.config.js";
 import { CmsConfig } from "./config.js";
 import { CmsPage } from "./page.js";
@@ -182,7 +183,11 @@ export default async function (eleventyConfig, pluginOptions) {
       let cur = node;
       for (let i = 0; i < segs.length - 1; i++) cur = cur[segs[i]] = {};
       cur[segs[segs.length - 1]] = yaml.load(await readFile(file, "utf-8"));
-      previewData = deepmerge(previewData, node);
+      // Arrays replace (matching Eleventy's data cascade) — the deepmerge
+      // default concatenates them, which would double lists across files.
+      previewData = deepmerge(previewData, node, {
+        arrayMerge: (_destination, source) => source,
+      });
     }
   }
   await writeIfChanged(
@@ -428,9 +433,12 @@ export default async function (eleventyConfig, pluginOptions) {
         const { css } = await generator.generate(
           [...contents, ...previewCssSafelist].join("\n"),
         );
+        // The brand block no longer rides the UnoCSS preflight — prepend the
+        // ctx-css generated styles so the static preview stylesheet keeps
+        // parity with the site's <head> ordering (ctx brand → uno).
         // Replaces the build's io-elements transform: elements whose `io`
         // filter input was undefined get `data-io-undefined` — hidden.
-        return `${css}\n[data-io-undefined]{display:none !important}\n`;
+        return `${ctxCssText}\n${css}\n[data-io-undefined]{display:none !important}\n`;
       },
     },
     {},

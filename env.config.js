@@ -4,6 +4,7 @@ import fs from "node:fs";
 import yaml from "js-yaml";
 import { PACKAGE_ROOT, packagePath } from "./src/utils/paths.js";
 import { deriveEnv } from "./src/env/derive.js";
+import { loadBrandData } from "./src/config-11ty/plugins/ctx-css/load.js";
 
 const processEnv = typeof process !== "undefined" ? process.env : {};
 
@@ -320,8 +321,9 @@ export const COLLECTIONS = {
 
 // User Config from CMS
 // Read file in ${WORKING_DIR_ABSOLUTE}/_data/globalSettings.yaml
+// Brand data: `_data/brand/*.yaml` files merged per-key over the legacy
+// `_data/brand.yaml` (see the ctx-css plugin's load.js).
 const globalSettingsPath = `${WORKING_DIR_ABSOLUTE}/_data/globalSettings.yaml`;
-const brandConfigPath = `${WORKING_DIR_ABSOLUTE}/_data/brand.yaml`;
 let globalSettings = {};
 let brandConfig = {};
 try {
@@ -331,18 +333,10 @@ try {
   console.error("Error reading globalSettings.yaml:", error);
 }
 try {
-  const brandConfigYaml = fs.readFileSync(brandConfigPath, "utf-8");
-  brandConfig = yaml.load(brandConfigYaml);
+  brandConfig = loadBrandData(WORKING_DIR_ABSOLUTE);
 } catch (error) {
-  console.warn("WARN: brandConfig.yaml not found");
-  brandConfig = {
-    ctxCssImport: { filename: "_ctx.css" },
-    widthsContexts: [],
-    fontStacksContexts: [],
-    typeScales: [],
-    colors: [],
-    palettes: [],
-  };
+  console.warn("WARN: brand data not found");
+  brandConfig = {};
 }
 export { globalSettings, brandConfig };
 
@@ -420,10 +414,14 @@ export const brandColors = derivedEnv.brandColors;
 export const brandColorsStyles = derivedEnv.brandColorsStyles;
 export const brandPalettes = derivedEnv.brandPalettes;
 export const brandPalettesStyles = derivedEnv.brandPalettesStyles;
+export const brandColorProfiles = derivedEnv.brandColorProfiles;
+export const brandColorProfilesStyles = derivedEnv.brandColorProfilesStyles;
 export const brandStyleContexts = derivedEnv.brandStyleContexts;
 export const brandStyleContextsStyles = derivedEnv.brandStyleContextsStyles;
 export const brandRootStyles = derivedEnv.brandRootStyles;
 export const brandStyles = derivedEnv.brandStyles;
+export const ctxData = derivedEnv.ctxData;
+export const ctxCssText = derivedEnv.ctxCssText;
 
 // uno.config.js imports this module: awaiting it at top level deadlocks under
 // Node's cyclic top-level-await rules, so it resolves lazily on both runtimes.

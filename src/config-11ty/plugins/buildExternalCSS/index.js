@@ -1,9 +1,10 @@
 import fglob from "fast-glob";
-import { MINIFY, brandConfig, POKO_THEME } from "../../../../env.config.js";
+import { MINIFY, ctxData, POKO_THEME } from "../../../../env.config.js";
 import { enginePath } from "../../../utils/paths.js";
 import { buildCss } from "../../../utils/runtime.js";
 
-const mustImportCtxCss = !!brandConfig?.ctxCssImport;
+// Resolved via ctx-css (`_data/brand/settings.yaml` -> `brand.yaml` -> true).
+const mustImportCtxCss = !!ctxData?.settings?.ctxCssImport;
 const ctxCssEntrypoint = enginePath("src/styles/ctx/ctx.css");
 
 export default async function (eleventyConfig, pluginOptions) {
@@ -13,7 +14,11 @@ export default async function (eleventyConfig, pluginOptions) {
     pluginOptions || {};
   const outdir = `./${dir.output}/${outputDir}`;
 
-  const htmlExternalCtxCssTag = `<link rel="stylesheet" href="/${outputDir}/ctx.css">`;
+  // Only emit the tag when ctx.css is actually built — otherwise it's a
+  // dangling link (previously emitted unconditionally).
+  const htmlExternalCtxCssTag = mustImportCtxCss
+    ? `<link rel="stylesheet" href="/${outputDir}/ctx.css">`
+    : "";
   let externalStylesInline = null;
   let CtxCssInline = null;
 

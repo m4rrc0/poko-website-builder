@@ -1,0 +1,5 @@
+colors:
+  - name: black
+    value: "#000001"
+  - name: white
+    value: "#ffffff"

@@ -1,0 +1,32 @@
+palettes:
+  # New role-shaped form: the 4 roles bind `--color-{role}-palette`; intents
+  # come from the default color profile (see colorProfiles.yaml).
+  - name: main
+    read: black
+    neutral: white
+    pop: theme1-v1-light-typo
+    tone: theme1-v1-light-alt
+    extras:
+      - name: subtle
+        color: theme1-v1-light-alt
+  - name: contrast
+    read: white
+    neutral: black
+    pop: white
+    tone: theme1-v1-dark-typo
+  # Legacy flat form still works: non-role keys emit `--color-{key}` intents
+  # directly on `.palette-{name}`.
+  - name: theme1-v1-light
+    text: theme1-v1-light-typo
+    bg: theme1-v1-light-contrast
+  - name: theme1-v1-dark
+    text: theme1-v1-dark-typo
+    bg: theme1-v1-dark-contrast
+  - name: theme1-v2-light
+    text: theme1-v2-light-typo
+    bg: theme1-v2-light-contrast
+    accent: theme1-v2-light-accent
+  - name: theme1-v2-dark
+    text: theme1-v2-dark-typo
+    bg: theme1-v2-dark-contrast
+    accent: theme1-v2-dark-accent

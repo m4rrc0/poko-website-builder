@@ -1,0 +1,4 @@
+widthsContexts:
+  - name: main
+    max: 80rem
+    prose: 50rem

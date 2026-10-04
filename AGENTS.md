@@ -5,9 +5,9 @@
 The color stack has five layers:
 
 1. **Tokens** — raw colors (`--gray`, `--white`, `--vermillon`, `--cooper`).
-2. **Palettes** — per-palette role mapping (`--read-palette`, `--neutral-palette`, `--pop-palette`, `--tone-palette`).
-3. **Slots** — active permutation, public interface (`--read`, `--neutral`, `--pop`, `--tone`).
-4. **Intent** — semantic namespaced vars (`--color-text`, `--color-bg`, `--color-accent`, ...).
+2. **Palettes** — per-palette role mapping (`--color-read-palette`, `--color-neutral-palette`, `--color-pop-palette`, `--color-tone-palette`). Palette `extras` add `--color-{name}-palette` bindings.
+3. **Slots** — active permutation, public interface (`--color-read`, `--color-neutral`, `--color-pop`, `--color-tone`).
+4. **Intent** — semantic namespaced vars (`--color-text`, `--color-bg`, `--color-accent`, ...), mapped by color profiles (`colorProfiles` in the CMS).
 5. **Elements** — CSS properties (`color: var(--color-text)`).
 
 Every palette variant is a **complete permutation** of the four slots, read directly from the `*-palette` identity source. Variants never reference other slots, so there are no cycles and no cumulative state.
@@ -24,11 +24,16 @@ UnoCSS rules are context-free: a rule can only emit styles for the class it matc
 
 ## Naming
 
-- L1: no `--color-` prefix.
-- L2: `--{role}-palette`.
-- L3: bare `--{role}`.
+Canonical naming uses the `--color-` prefix on every color layer:
+
+- L1: no `--color-` prefix (`--black`, `--white`).
+- L2: `--color-{role}-palette` (plus `--color-{name}-palette` for palette extras).
+- L3: `--color-{role}`.
 - L4: `--color-*` semantic variables.
 - L5: regular CSS properties.
+
+The bare `--{role}` / `--{role}-palette` spellings seen in older docs and the
+`palette--rnpt` permutation rule are legacy and must not be reintroduced.
 
 ## Old variables removed
 

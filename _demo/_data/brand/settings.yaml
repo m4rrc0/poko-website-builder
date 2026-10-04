@@ -1,0 +1,4 @@
+ctxCssImport: true
+inlineAllStyles: true
+styleContexts:
+  - name: main

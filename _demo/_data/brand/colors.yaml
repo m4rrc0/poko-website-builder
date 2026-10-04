@@ -1,0 +1,37 @@
+colors:
+  - name: black
+    value: "#000001"
+  - name: white
+    value: "#ffffff"
+  - name: theme1-v1-light-typo #typo and button
+    value: "#544A40"
+  - name: theme1-v1-light-alt #section bg, footer, form
+    value: "#F3EDE7"
+  - name: theme1-v1-light-accent #input, button text, hero text
+    value: "#FFFFFF"
+  - name: theme1-v1-light-contrast #bg
+    value: "#FCFCF9"
+  - name: theme1-v1-dark-typo #typo and button
+    value: "#F3EDE7"
+  - name: theme1-v1-dark-alt #section bg, footer, form
+    value: "#544A40"
+  - name: theme1-v1-dark-accent #input, button text, hero text
+    value: "#FFFFFF"
+  - name: theme1-v1-dark-contrast #bg
+    value: "#2B2621"
+  - name: theme1-v2-light-typo #typo, btn bg: hero + form + footer
+    value: "#253E51"
+  - name: theme1-v2-light-alt #footer bg + form bg + btn nav bg
+    value: "#DEE5ED"
+  - name: theme1-v2-light-accent #cards bg
+    value: "#F8F9FB"
+  - name: theme1-v2-light-contrast #bg
+    value: "#ffffff"
+  - name: theme1-v2-dark-typo #typo and logo
+    value: "#FFFFFF"
+  - name: theme1-v2-dark-alt #footer bg, form bg, cards bg
+    value: "#9CB1C9"
+  - name: theme1-v2-dark-accent # ??
+    value: "#F8F9FB"
+  - name: theme1-v2-dark-contrast #bg + btn bg: footer + form + cards
+    value: "#253E51"

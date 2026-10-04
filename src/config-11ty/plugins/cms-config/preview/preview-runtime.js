@@ -370,14 +370,41 @@ export const hydratePreviewFromCms = async () => {
   const dataFileNames = [pagesCollection, ...activeCollections]
     .filter((c) => c.folder)
     .map((c) => `${c.name}Data`);
-  const [gs, brand, translated, ...collEntries] = previewState.getCollection
+  // Brand data lives in the per-section `_data/brand/*.yaml` files (one
+  // stylesConfig file entry each) plus the legacy `brand.yaml` entry — fetch
+  // them all and compose the same merged object `loadBrandData` produces.
+  const stylesConfigSlugs = [
+    "settings",
+    "colors",
+    "palettes",
+    "colorProfiles",
+    "spaces",
+    "borders",
+    "typeScales",
+    "fontStacks",
+    "customFonts",
+    "brand",
+  ];
+  const [gs, translated, ...styleAndCollEntries] = previewState.getCollection
     ? await Promise.all([
         getCmsEntry("_singletons", "globalSettings"),
-        getCmsEntry("stylesConfig", "brand"),
         getCmsEntry("dataFiles", "translatedData"),
+        ...stylesConfigSlugs.map((slug) =>
+          getCmsEntry("stylesConfig", slug),
+        ),
         ...dataFileNames.map((slug) => getCmsEntry("dataFiles", slug)),
       ])
     : [null, null, null, null];
+  const styleEntries = styleAndCollEntries.slice(0, stylesConfigSlugs.length);
+  const collEntries = styleAndCollEntries.slice(stylesConfigSlugs.length);
+  let brand = null;
+  const legacyBrand = styleEntries[stylesConfigSlugs.length - 1];
+  const brandConfig = { ...(stripEmpty(toJs(legacyBrand)?.data) ?? {}) };
+  styleEntries.slice(0, -1).forEach((entry, i) => {
+    const data = stripEmpty(toJs(entry)?.data);
+    if (data && Object.keys(data).length) brandConfig[stylesConfigSlugs[i]] = data;
+  });
+  if (Object.keys(brandConfig).length) brand = brandConfig;
   const collectionData = {};
   dataFileNames.forEach(
     (slug, i) =>
@@ -400,7 +427,7 @@ export const hydratePreviewFromCms = async () => {
   hydratePreviewEnv({
     constants: previewEnvConstants,
     globalSettings: toJs(gs)?.data ?? staticGlobalSettings,
-    brandConfig: toJs(brand)?.data ?? staticBrandConfig,
+    brandConfig: brand ?? staticBrandConfig,
   });
 };
 

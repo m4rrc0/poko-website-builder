@@ -20,6 +20,11 @@ import {
   userCmsConfig,
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
+import {
+  COLOR_ROLES,
+  DEFAULT_BORDERS,
+  DEFAULT_SPACES,
+} from "../ctx-css/defaults.js";
 import { packagePath } from "../../../utils/paths.js";
 import { readTextFile } from "../../../utils/runtime.js";
 import {
@@ -496,9 +501,19 @@ export const tagsField = {
 export const brandColorField = {
   widget: "relation",
   collection: "stylesConfig",
-  file: "brand",
+  file: "colors",
   value_field: "colors.*.name",
   required: false,
+};
+// Color profile leaf: a palette slot (read/neutral/pop/tone), a palette
+// extras color name, a brand color token name — or "Other" for a raw CSS
+// value (var(), relative color syntax, ...). Resolved in ctx-css transform.
+export const profileColorField = {
+  widget: "select-other",
+  options: COLOR_ROLES.map((role) => ({ label: role, value: role })),
+  other_widget: "string",
+  required: false,
+  hint: "Palette slot (read/neutral/pop/tone), palette extras color, brand color name, or a CSS value.",
 };
 export const nativeFontStackSelectField = {
   widget: "select",
@@ -526,17 +541,17 @@ export const fontStackDefinitionField = (nativeDefault = "system-ui") => ({
       label: "Custom Font Override",
       widget: "relation",
       collection: "stylesConfig",
-      file: "brand",
-      value_field: "customFontsImport.*.name",
+      file: "customFonts",
+      value_field: "customFonts.*.name",
       required: false,
     },
   ],
 });
-export const styleContextRelationField = (valField) => ({
+export const styleContextRelationField = (file, valField) => ({
   widget: "relation",
   required: false,
   collection: "stylesConfig",
-  file: "brand",
+  file,
   value_field: `${valField}.*.name`,
 });
 
@@ -2519,6 +2534,440 @@ const globalSettingsSingleton = {
   ],
 };
 
+// ---------------------------------------------------------------------------
+// ctx-css styles config — per-section file entries under `_data/brand/*.yaml`.
+// Resolution order per section: dedicated file -> legacy `brand.yaml` key ->
+// ctx-css defaults. Field builders shared by the new files live here; the
+// legacy `brand` file entry below is kept for projects that have not migrated.
+// ---------------------------------------------------------------------------
+const ctxCssImportField = {
+  name: "ctxCssImport",
+  label: "Apply default styles",
+  widget: "boolean",
+  required: false,
+  default: true,
+};
+const inlineAllStylesField = {
+  name: "inlineAllStyles",
+  label: "Inline All Styles",
+  widget: "boolean",
+  required: false,
+  default: true,
+};
+const widthsContextsField = {
+  name: "widthsContexts",
+  label: "Widths Contexts",
+  label_singular: "Widths Context",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary: "{{name}}:  [Max width '{{max}}', Prose width '{{prose}}']",
+  hint: "The first context is used as the default",
+  default: [{ name: "main", max: "80rem", prose: "50rem" }],
+  fields: [
+    { name: "name", label: "Name", widget: "string", required: true }, // prettier-ignore
+    { name: "max", label: "Max Width", widget: "string", required: true, default: "80rem" }, // prettier-ignore
+    { name: "prose", label: "Prose Width", widget: "string", required: true, default: "50rem" }, // prettier-ignore
+  ],
+};
+const fontStacksListField = (name) => ({
+  name,
+  label: "Font Stacks Contexts",
+  label_singular: "Font Stack Context",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary: `
+  {{name}}:
+  BODY: {{body.custom}} {{body.native}} //
+  HEADINGS: {{heading.custom}} {{heading.native}} //
+  CODE: {{code.custom}} {{code.native}}`,
+  hint: "Select your preferred font stack for every type of text. Prefer only native font stacks for performance reasons. The first values are used as the defaults.",
+  // prettier-ignore
+  default: [{ name: "main", body: { native: "system-ui" }, heading: { native: "system-ui" }, code: { native: "monospace-code" }}],
+  fields: [
+    { name: "name", label: "Name", widget: "string", required: true }, // prettier-ignore
+    { name: "body", label: "Body Text Font", ...fontStackDefinitionField("system-ui") }, // prettier-ignore
+    { name: "heading", label: "Heading Text Font", ...fontStackDefinitionField("system-ui") }, // prettier-ignore
+    { name: "code", label: "Code Text Font", ...fontStackDefinitionField("monospace-code") }, // prettier-ignore
+  ],
+});
+const customFontsListField = (name, fontsourceFonts) => ({
+  name,
+  label: "Custom Fonts Import",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  summary:
+    "[{{name}}] - '{{source.name}}' ({{source.type}}): {{source.weights}} {{source.styles}} {{source.subsets}}",
+  fields: [
+    {
+      name: "name",
+      label: "Font Internal Name",
+      widget: "string",
+      required: true,
+    },
+    {
+      name: "source",
+      label: "Source Service",
+      widget: "object",
+      required: true,
+      collapsed: false,
+      summary: "'{{name}}' ({{type}}): {{weights}} {{styles}} {{subsets}}",
+      types: [
+        {
+          name: "fontsource",
+          label: "Fontsource",
+          widget: "object",
+          required: true,
+          collapsed: "auto",
+          fields: [
+            {
+              name: "name",
+              label: "Font Name",
+              widget: "select",
+              required: true,
+              options: fontsourceFonts,
+              hint: "Select a font from https://fontsource.org/; IMPORTANT NOTE: All fonts don't have all weights, styles, subsets available.",
+            },
+            {
+              name: "weights",
+              label: "Font Weights",
+              widget: "select",
+              multiple: true,
+              required: true,
+              dropdown_threshold: 10,
+              hint: "Default to all selected",
+              default: ["400"],
+              options: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+            },
+            {
+              name: "styles",
+              label: "Font Styles",
+              widget: "select",
+              multiple: true,
+              required: true,
+              default: ["normal"],
+              options: ["normal", "italic"],
+            },
+            {
+              name: "subsets",
+              label: "Font Subsets",
+              widget: "select",
+              multiple: true,
+              required: true,
+              default: ["latin"],
+              dropdown_threshold: 10,
+              options: [
+                "latin",
+                "cyrillic",
+                "greek",
+                "vietnamese",
+                "latin-ext",
+                "cyrillic-ext",
+                "greek-ext",
+                "vietnamese-ext",
+                "math",
+                "symbols",
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+const typeScalesListField = {
+  name: "typeScales",
+  label: "Fluid Type Scales",
+  label_singular: "Fluid Type Scale",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary:
+    "Type Scale '{{name}}'  [Font Size '{{minFontSize}} - {{maxFontSize}}', Type Scale '{{minTypeScale}} - {{maxTypeScale}}']",
+  hint: "Visualize at https://utopia.fyi/type/calculator/. The first type scale is used as the default",
+  default: [{ name: "main", minFontSize: 18, maxFontSize: 20, minTypeScale: 1.2, maxTypeScale: 1.25 }], // prettier-ignore
+  fields: [
+    { name: "name", label: "Type Scale Name", widget: "string", required: true }, // prettier-ignore
+    { name: "minFontSize", label: "Min Font Size (px)", widget: "number", value_type: "int", required: true, default: 18 }, // prettier-ignore
+    { name: "maxFontSize", label: "Max Font Size (px)", widget: "number", value_type: "int", required: true, default: 20 }, // prettier-ignore
+    { name: "minTypeScale", label: "Min Type Scale", widget: "number", value_type: "float", required: true, default: 1.2 }, // prettier-ignore
+    { name: "maxTypeScale", label: "Max Type Scale", widget: "number", value_type: "float", required: true, default: 1.25 }, // prettier-ignore
+    // prettier-ignore
+    { name: "advanced", label: "Advanced Options", widget: "object", required: false, collapsed: true, fields: [ // prettier-ignore
+      { name: "minWidth", label: "Min Width (px)", widget: "number", value_type: "int", required: true, default: 360 }, // prettier-ignore
+      { name: "maxWidth", label: "Max Width (px)", widget: "number", value_type: "int", required: true, default: 1240 }, // prettier-ignore
+      { name: "positiveSteps", label: "Positive Steps", widget: "number", value_type: "int", required: true, default: 6 }, // prettier-ignore
+      { name: "negativeSteps", label: "Negative Steps", widget: "number", value_type: "int", required: true, default: 2 }, // prettier-ignore
+      { name: "prefix", label: "Prefix", widget: "string", required: true, default: "step" }, // prettier-ignore
+      { name: "relativeTo", label: "Relative To", widget: "select", required: true, default: "viewport-width", options: ["viewport-width", "container"] }, // prettier-ignore
+    ]},
+    {
+      name: "customSteps",
+      label: "Custom Steps",
+      widget: "list",
+      required: false,
+      collapsed: true,
+      summary: "From step '{{startStep}}' to '{{endStep}}'",
+      fields: [
+        { name: "startStep", label: "Start Step", widget: "number", value_type: "int/string", required: true }, // prettier-ignore
+        { name: "endStep", label: "End Step", widget: "number", value_type: "int/string", required: true }, // prettier-ignore
+      ],
+    },
+  ],
+};
+const colorsListField = {
+  name: "colors",
+  label: "Colors",
+  label_singular: "Color",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary: "{{name}}: {{value}}",
+  hint: "Colors to be used across the website, in palettes or otherwise. ❗️Save the file for new colors to appear in the palette selection.",
+  fields: [
+    {
+      name: "name",
+      label: "Name",
+      widget: "string",
+      required: true,
+      pattern: [
+        "^[a-z0-9-]+$",
+        "Only lowercase letters, numbers, and hyphens are allowed",
+      ],
+    },
+    {
+      name: "value",
+      label: "Color",
+      widget: "color",
+      required: true,
+      default: "#000001",
+    },
+  ],
+};
+const styleContextsField = {
+  name: "styleContexts",
+  label: "Style Contexts",
+  label_singular: "Style Context",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary:
+    "{{name}}: {{widthsContext}} | {{fontStacksContext}} | {{typeScale}} | {{palette}}",
+  hint: "You can group styles in different contexts to be used across the website using a class name like '.ctx-[name]'.",
+  default: [{ name: "main" }],
+  fields: [
+    {
+      name: "name",
+      label: "Name",
+      widget: "string",
+      required: true,
+      hint: "Used to generate the class name associated with this context (e.g. '.ctx-main')",
+    },
+    // prettier-ignore
+    { label: "Widths Context", name: "widthsContext", ...styleContextRelationField("spaces", "widthsContexts") }, // prettier-ignore
+    { label: "Font Stacks Context", name: "fontStacksContext", ...styleContextRelationField("fontStacks", "fontStacks") }, // prettier-ignore
+    { label: "Type Scale", name: "typeScale", ...styleContextRelationField("typeScales", "typeScales") }, // prettier-ignore
+    { label: "Palette", name: "palette", ...styleContextRelationField("palettes", "palettes") }, // prettier-ignore
+    { label: "Color Profile", name: "colorProfile", ...styleContextRelationField("colorProfiles", "colorProfiles") }, // prettier-ignore
+  ],
+};
+// `extras` — palette-level custom colors, emitted as `--color-{name}-palette`
+// and selectable from color profiles.
+const paletteExtrasField = {
+  name: "extras",
+  label: "Extra Palette Colors",
+  label_singular: "Extra Color",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary: "{{name}}: {{color}}",
+  hint: "Named colors bound to this palette (emitted as '--color-{name}-palette') — selectable from Color Profiles.",
+  fields: [
+    {
+      name: "name",
+      label: "Name",
+      widget: "string",
+      required: true,
+      pattern: [
+        "^[a-z0-9-]+$",
+        "Only lowercase letters, numbers, and hyphens are allowed",
+      ],
+    },
+    { name: "color", label: "Color", ...brandColorField, required: true }, // prettier-ignore
+  ],
+};
+// New slim palettes: the 4 roles + extras. Per-palette intent overrides moved
+// to Color Profiles (cross-defined); escape hatches live in profile fields.
+const palettesListField = {
+  name: "palettes",
+  label: "Color Palettes",
+  label_singular: "Color Palette",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary: ".palette-{{name}}  [{{read}}  {{tone}}  {{pop}}  {{neutral}}]",
+  hint: "The first palette is used as the default",
+  fields: [
+    { name: "name", label: "Palette Name", widget: "string", required: true }, // prettier-ignore
+    { name: "read", label: "read: Most readable Color (Typography)", ...brandColorField, required: true }, // prettier-ignore
+    { name: "tone", label: "tone: Alternative tone Color", ...brandColorField, required: true }, // prettier-ignore
+    { name: "pop", label: "pop: Accent Color that 'pops'", ...brandColorField, required: true }, // prettier-ignore
+    { name: "neutral", label: "neutral: Neutral Color for surface", ...brandColorField, required: true }, // prettier-ignore
+    paletteExtrasField,
+  ],
+};
+// Color profile leaf groups — the intent map. Keys emit `--color-{key}`.
+// A [field name, label] list keeps the groups compact and mirrors the
+// sections the legacy palette detail groups used.
+const profileColorGroup = (name, label, leaves) => ({
+  name,
+  label,
+  widget: "object",
+  collapsed: "auto",
+  required: false,
+  fields: leaves.map(([fieldName, fieldLabel]) => ({
+    name: fieldName,
+    label: fieldLabel,
+    ...profileColorField,
+  })),
+});
+const colorProfileFields = [
+  { name: "name", label: "Profile Name", widget: "string", required: true }, // prettier-ignore
+  profileColorGroup("defaults", "Defaults", [
+    ["text", "Text Color"],
+    ["bg", "Background Color"],
+    ["border", "Border Color"],
+    ["text-decoration", "Text Decoration Color"],
+    ["text--marker", "Text Marker Color (bullet points, etc.)"],
+    ["outline", "Outline Color"],
+    ["shadow", "Shadow Color"],
+    ["caret", "Caret Color"],
+    ["column-rule", "Column Rule Color"],
+    ["outline--focus", "Outline Focus Color"],
+  ]),
+  profileColorGroup("selection", "Selected Text", [
+    ["text--selection", "Text Selection Color"],
+    ["bg--selection", "Background Selection Color"],
+  ]),
+  profileColorGroup("strong", "Strong (Bold text using the <strong> tag)", [
+    ["text__strong", "Bold Text Color"],
+    ["bg__strong", "Bold Background Color"],
+  ]),
+  profileColorGroup("em", "Emphasis (Italic text using the <em> tag)", [
+    ["text__em", "Italic Text Color"],
+    ["bg__em", "Italic Background Color"],
+    ["text-emphasis", "Emphasis symbol Color"],
+  ]),
+  profileColorGroup("mark", "Highlighted Text (using the <mark> tag)", [
+    ["text__mark", "Highlighted Text Color"],
+    ["bg__mark", "Highlighted Background Color"],
+    ["border__mark", "Highlighted Border Color"],
+  ]),
+  profileColorGroup("b", "Visually important text (using the <b> tag)", [
+    ["text__b", "Visually important Text Color"],
+    ["bg__b", "Visually important Background Color"],
+  ]),
+  profileColorGroup("heading", "Heading", [
+    ["text__heading", "Heading Text Color"],
+    ["bg__heading", "Heading Background Color"],
+  ]),
+  profileColorGroup("a", "Link (using the <a> tag)", [
+    ["text__a", "Link Text Color"],
+    ["bg__a", "Link Background Color"],
+    ["text__a--hover", "Link Text Hover Color"],
+    ["bg__a--hover", "Link Background Hover Color"],
+  ]),
+  profileColorGroup("button", "Button", [
+    ["text__button", "Button Text Color"],
+    ["bg__button", "Button Background Color"],
+    ["border__button", "Button Border Color"],
+    ["text__button--hover", "Button Text Hover Color"],
+    ["bg__button--hover", "Button Background Hover Color"],
+    ["border__button--hover", "Button Border Hover Color"],
+    ["text__button--disabled", "Button Text Disabled Color"],
+    ["bg__button--disabled", "Button Background Disabled Color"],
+    ["border__button--disabled", "Button Border Disabled Color"],
+  ]),
+  profileColorGroup("code", "Code (using tags such as code, kbd, pre, samp)", [
+    ["text__code", "Code Text Color"],
+    ["bg__code", "Code Background Color"],
+    ["border__code", "Code Border Color"],
+  ]),
+  profileColorGroup("svg", "Default SVG & icon", [
+    ["fill", "Fill Color"],
+    ["stroke", "Stroke Color"],
+    ["icon-fill", "Icon Fill Color"],
+    ["icon-stroke", "Icon Stroke Color"],
+  ]),
+  profileColorGroup("scrollbar", "Scroll Bar", [
+    ["track-color", "Scrollbar Track Color"],
+    ["thumb-color", "Scrollbar Thumb Color"],
+  ]),
+];
+const colorProfilesListField = {
+  name: "colorProfiles",
+  label: "Color Profiles",
+  label_singular: "Color Profile",
+  widget: "list",
+  required: false,
+  collapsed: true,
+  allow_reorder: true,
+  summary: ".profile-{{name}}",
+  hint: "Map element intents to palette slots, extras or token names. The first profile is the default; '.profile-{name}' classes are emitted when at least 2 profiles are defined.",
+  fields: colorProfileFields,
+};
+// `spaces`/`borders` object fields — per-element keys, defaults from ctx-css.
+const objectMapField = (name, label, defaults, hint) => ({
+  name,
+  label,
+  widget: "object",
+  required: false,
+  collapsed: true,
+  hint,
+  fields: Object.keys(defaults).map((element) => ({
+    name: element,
+    label: element,
+    widget: "string",
+    required: false,
+    default: defaults[element],
+  })),
+});
+const borderStylesField = {
+  name: "borderStyle",
+  label: "Border Styles",
+  widget: "object",
+  required: false,
+  collapsed: true,
+  fields: Object.keys(DEFAULT_BORDERS.borderStyle).map((element) => ({
+    name: element,
+    label: element,
+    widget: "select",
+    required: false,
+    default: DEFAULT_BORDERS.borderStyle[element],
+    options: [
+      "solid",
+      "dashed",
+      "dotted",
+      "double",
+      "groove",
+      "ridge",
+      "inset",
+      "outset",
+      "none",
+      "hidden",
+    ],
+  })),
+};
+
 const stylesConfigCollection = (fontsourceFonts) => ({
   // ...mostCommonMarkdownCollectionConfig,
   // i18n: false,
@@ -2702,8 +3151,126 @@ const stylesConfigCollection = (fontsourceFonts) => ({
       ],
     },
     {
+      name: "settings",
+      label: "Style Settings",
+      icon: "tune",
+      file: `${CONTENT_DIR}/_data/brand/settings.yaml`,
+      i18n: false,
+      fields: [ctxCssImportField, inlineAllStylesField, styleContextsField],
+    },
+    {
+      name: "colors",
+      label: "Brand Colors",
+      icon: "palette",
+      file: `${CONTENT_DIR}/_data/brand/colors.yaml`,
+      i18n: false,
+      fields: [colorsListField],
+    },
+    {
+      name: "palettes",
+      label: "Color Palettes",
+      icon: "swatch",
+      file: `${CONTENT_DIR}/_data/brand/palettes.yaml`,
+      i18n: false,
+      fields: [palettesListField],
+    },
+    {
+      name: "colorProfiles",
+      label: "Color Profiles",
+      icon: "contrast",
+      file: `${CONTENT_DIR}/_data/brand/colorProfiles.yaml`,
+      i18n: false,
+      fields: [colorProfilesListField],
+    },
+    {
+      name: "spaces",
+      label: "Spaces & Widths",
+      icon: "space_bar",
+      file: `${CONTENT_DIR}/_data/brand/spaces.yaml`,
+      i18n: false,
+      fields: [
+        widthsContextsField,
+        objectMapField(
+          "px",
+          "Inline padding (px)",
+          DEFAULT_SPACES.px,
+          "Padding-inline per element — emits `--px-{element}`",
+        ),
+        objectMapField(
+          "py",
+          "Block padding (py)",
+          DEFAULT_SPACES.py,
+          "Padding-block per element — emits `--py-{element}`",
+        ),
+        objectMapField(
+          "gap",
+          "Gap",
+          DEFAULT_SPACES.gap,
+          "Gap per element — emits `--gap-{element}`",
+        ),
+        objectMapField(
+          "flow",
+          "Flow",
+          DEFAULT_SPACES.flow,
+          "Flow spacing per element — emits `--flow-{element}`",
+        ),
+        objectMapField(
+          "offsets",
+          "Offsets",
+          DEFAULT_SPACES.offsets,
+          "Offsets per element — emits `--offset-{element}`",
+        ),
+      ],
+    },
+    {
+      name: "borders",
+      label: "Borders",
+      icon: "border_all",
+      file: `${CONTENT_DIR}/_data/brand/borders.yaml`,
+      i18n: false,
+      fields: [
+        objectMapField(
+          "radius",
+          "Border Radius",
+          DEFAULT_BORDERS.radius,
+          "Radius per element — emits `--radius-{element}`",
+        ),
+        objectMapField(
+          "thick",
+          "Border Thickness",
+          DEFAULT_BORDERS.thick,
+          "Thickness per element — emits `--thick-{element}`",
+        ),
+        borderStylesField,
+      ],
+    },
+    {
+      name: "typeScales",
+      label: "Fluid Type Scales",
+      icon: "format_size",
+      file: `${CONTENT_DIR}/_data/brand/typeScales.yaml`,
+      i18n: false,
+      fields: [typeScalesListField],
+    },
+    {
+      name: "fontStacks",
+      label: "Font Stacks",
+      icon: "font_download",
+      file: `${CONTENT_DIR}/_data/brand/fontStacks.yaml`,
+      i18n: false,
+      fields: [fontStacksListField("fontStacks")],
+    },
+    {
+      name: "customFonts",
+      label: "Custom Fonts",
+      icon: "text_fields",
+      file: `${CONTENT_DIR}/_data/brand/customFonts.yaml`,
+      i18n: false,
+      fields: [customFontsListField("customFonts", fontsourceFonts)],
+    },
+    {
       name: "brand",
-      label: "Brand",
+      label: "Brand (legacy)",
       icon: "brand_family",
       file: `${CONTENT_DIR}/_data/brand.yaml`,
       // format: "yaml",
@@ -3144,10 +3711,11 @@ const stylesConfigCollection = (fontsourceFonts) => ({
               hint: "Used to generate the class name associated with this context (e.g. '.ctx-main')",
             },
             // prettier-ignore
-            { label: "Widths Context", name: "widthsContext", ...styleContextRelationField("widthsContexts") }, // prettier-ignore
-            { label: "Font Stacks Context", name: "fontStacksContext", ...styleContextRelationField("fontStacksContexts") }, // prettier-ignore
-            { label: "Type Scale", name: "typeScale", ...styleContextRelationField("typeScales") }, // prettier-ignore
-            { label: "Palette", name: "palette", ...styleContextRelationField("palettes") }, // prettier-ignore
+            { label: "Widths Context", name: "widthsContext", ...styleContextRelationField("spaces", "widthsContexts") }, // prettier-ignore
+            { label: "Font Stacks Context", name: "fontStacksContext", ...styleContextRelationField("fontStacks", "fontStacks") }, // prettier-ignore
+            { label: "Type Scale", name: "typeScale", ...styleContextRelationField("typeScales", "typeScales") }, // prettier-ignore
+            { label: "Palette", name: "palette", ...styleContextRelationField("palettes", "palettes") }, // prettier-ignore
+            { label: "Color Profile", name: "colorProfile", ...styleContextRelationField("colorProfiles", "colorProfiles") }, // prettier-ignore
           ],
         },
       ],

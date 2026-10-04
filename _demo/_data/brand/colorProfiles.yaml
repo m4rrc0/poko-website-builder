@@ -1,0 +1,8 @@
+colorProfiles:
+  - name: main
+    defaults:
+      text: read
+      bg: neutral
+    a:
+      text__a: read
+      text__a--hover: pop

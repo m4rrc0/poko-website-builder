@@ -121,10 +121,14 @@ export let brandColors = [];
 export let brandColorsStyles = "";
 export let brandPalettes = [];
 export let brandPalettesStyles = "";
+export let brandColorProfiles = [];
+export let brandColorProfilesStyles = "";
 export let brandStyleContexts = [];
 export let brandStyleContextsStyles = "";
 export let brandRootStyles = "";
 export let brandStyles = "";
+export let ctxData = null;
+export let ctxCssText = "";
 
 /**
  * Hydrate the env bindings. `constants` comes from the serialized
@@ -170,10 +174,14 @@ export function hydratePreviewEnv({
     brandColorsStyles,
     brandPalettes,
     brandPalettesStyles,
+    brandColorProfiles,
+    brandColorProfilesStyles,
     brandStyleContexts,
     brandStyleContextsStyles,
     brandRootStyles,
     brandStyles,
+    ctxData,
+    ctxCssText,
     SITE_NAME,
   } = derived);
 }

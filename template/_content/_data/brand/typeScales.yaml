@@ -1,0 +1,6 @@
+typeScales:
+  - name: main
+    minFontSize: 18
+    maxFontSize: 20
+    minTypeScale: 1.2
+    maxTypeScale: 1.25

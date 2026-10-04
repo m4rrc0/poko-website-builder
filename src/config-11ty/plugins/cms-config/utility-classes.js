@@ -36,6 +36,7 @@
 //    Tailwind spacing here.
 import {
   brandPalettes,
+  brandColorProfiles,
   brandWidthsContexts,
   brandFontStacksContexts,
   brandTypeScales,
@@ -132,9 +133,15 @@ const widthNames = [
 ];
 
 // Currently configured palette names — option *values* of the palette
-// relation (`palettes.*.name` in `stylesConfig/brand`); the emitted class is
-// `palette-{name}` via the group's `classPrefix`.
+// relation (`palettes.*.name` in `stylesConfig/palettes`); the emitted class
+// is `palette-{name}` via the group's `classPrefix`.
 const paletteNames = (brandPalettes || []).map((p) => p.name).filter(Boolean);
+
+// Configured color profile names — `profile-{name}` classes are emitted only
+// when at least 2 profiles exist (first is the default map).
+const profileNames = (brandColorProfiles || [])
+  .map((p) => p.name)
+  .filter(Boolean);
 
 // Style-context classes (`.ctx-*` always emitted; `.widths-*`/`.fonts-*`/
 // `.type-scale-*` only when more than one entry exists). Documented under
@@ -164,12 +171,12 @@ export const utilityClassGroups = [
   {
     name: "palette",
     label: "Palette",
-    hint: "Applies .palette-{name}. Palettes are configured in Styles Config > Brand > Color Palettes.",
+    hint: "Applies .palette-{name}. Palettes are configured in Styles Config > Color Palettes.",
     classPrefix: "palette-",
     field: {
       widget: "relation",
       collection: "stylesConfig",
-      file: "brand",
+      file: "palettes",
       value_field: "palettes.*.name",
       display_fields: ["palettes.*.name"],
       search_fields: ["palettes.*.name"],
@@ -181,6 +188,33 @@ export const utilityClassGroups = [
     // Also used to route `palette-{name}` tokens back into this group when
     // parsing an existing class attribute in the inline editor.
     options: paletteNames.map((n) => opt(n, `Palette ${n}`)),
+  },
+  {
+    name: "profile",
+    label: "Color Profile",
+    hint: "Applies .profile-{name}. Color profiles are configured in Styles Config > Color Profiles; the first profile is the default and needs no class. Only offered when at least 2 profiles are defined.",
+    classPrefix: "profile-",
+    // `.profile-{name}` classes are only emitted when ≥ 2 profiles exist —
+    // with fewer, this group has no field/options and is filtered out of the
+    // utilities field entirely.
+    field:
+      profileNames.length > 1
+        ? {
+            widget: "relation",
+            collection: "stylesConfig",
+            file: "colorProfiles",
+            value_field: "colorProfiles.*.name",
+            display_fields: ["colorProfiles.*.name"],
+            search_fields: ["colorProfiles.*.name"],
+            multiple: false,
+            required: false,
+            i18n: "duplicate",
+          }
+        : undefined,
+    options:
+      profileNames.length > 1
+        ? profileNames.map((n) => opt(n, `Profile ${n}`))
+        : [],
   },
   {
     name: "variant",

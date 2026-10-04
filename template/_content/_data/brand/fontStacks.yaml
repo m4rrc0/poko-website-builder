@@ -1,0 +1,8 @@
+fontStacks:
+  - name: main
+    body:
+      native: system-ui
+    heading:
+      native: system-ui
+    code:
+      native: monospace-code

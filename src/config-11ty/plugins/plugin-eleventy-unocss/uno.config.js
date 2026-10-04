@@ -10,13 +10,16 @@ import {
   // presetWebFonts
 } from "unocss";
 import { createLocalFontProcessor } from "@unocss/preset-web-fonts/local";
-import { CACHE_DIR, brandConfig, brandStyles } from "../../../../env.config.js";
+import { CACHE_DIR, ctxData } from "../../../../env.config.js";
 import { buildUnoConfig } from "./uno.config.base.js";
 
 const computedConfig = defineConfig(
   buildUnoConfig({
-    brandConfig,
-    brandStyles,
+    // Resolved brand data (font stack contexts + custom font imports) for the
+    // webfonts preset. The brand styles block itself is emitted by the
+    // ctx-css plugin — it no longer rides the UnoCSS preflight.
+    brandConfig: ctxData,
+    brandStyles: "",
     fontsProcessors: createLocalFontProcessor({
       // cacheDir: ".cache/unocss/fonts", // Directory to cache the fonts
       cacheDir: path.join(CACHE_DIR, "/unocss/fonts"), // Directory to cache the fonts

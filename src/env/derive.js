@@ -1,18 +1,12 @@
 import { transformLanguage } from "../utils/languages.js";
-import {
-  mapStyleStringsToClassDef,
-  compileStyleContexts,
-  transformFontStacksContexts,
-  transformWidthsContext,
-  transformBrandColors,
-  transformPalette,
-  transformTypeScales,
-} from "../utils/transformStyles.js";
+import { resolveBrand } from "../config-11ty/plugins/ctx-css/resolve.js";
+import { compileCtxCss } from "../config-11ty/plugins/ctx-css/transform.js";
 
 // Every value here derives from CMS-editable data (`_data/globalSettings.yaml`,
-// `_data/brand.yaml`) — the same computation runs at build time (env.config.js)
-// and in the browser CMS preview (cms-config/preview/browser-env.js), so previews can
-// hydrate live values straight from the Sveltia data store.
+// `_data/brand.yaml` + `_data/brand/*.yaml`) — the same computation runs at
+// build time (env.config.js) and in the browser CMS preview
+// (cms-config/preview/browser-env.js), so previews can hydrate live values
+// straight from the Sveltia data store.
 export function deriveEnv({
   globalSettings = {},
   brandConfig = {},
@@ -32,75 +26,33 @@ export function deriveEnv({
     .filter((lang) => statusesToUnrender.includes(lang.status))
     .map((lang) => lang.code);
 
-  const inlineAllStyles =
-    typeof brandConfig?.inlineAllStyles === "boolean"
-      ? brandConfig?.inlineAllStyles
-      : false;
+  // Brand/style data: `_data/brand/*.yaml` -> `_data/brand.yaml` -> defaults,
+  // resolved and compiled by the ctx-css plugin.
+  const ctxData = resolveBrand(brandConfig);
+  const compiled = compileCtxCss(ctxData);
 
-  const brandWidthsContexts = (brandConfig?.widthsContexts || []).map(
-    transformWidthsContext,
-  );
-  const brandWidthsContextsStyles = mapStyleStringsToClassDef(
-    brandWidthsContexts,
-    ".widths-",
-  );
+  const inlineAllStyles = ctxData.settings.inlineAllStyles;
 
-  const brandFontStacksContexts = transformFontStacksContexts(
-    brandConfig?.fontStacksContexts,
-    brandConfig?.customFontsImport,
-  );
-  const brandFontStacksContextsStyles = mapStyleStringsToClassDef(
-    brandFontStacksContexts,
-    ".fonts-",
-  );
+  const brandWidthsContexts = compiled.widthsContexts;
+  const brandWidthsContextsStyles = compiled.widthsContextsStyles;
+  const brandFontStacksContexts = compiled.fontStacksContexts;
+  const brandFontStacksContextsStyles = compiled.fontStacksContextsStyles;
+  const brandTypeScales = compiled.typeScales;
+  const brandTypeScalesStyles = compiled.typeScalesStyles;
+  const brandColors = compiled.colors;
+  const brandColorsStyles = compiled.colorsStyles;
+  const brandPalettes = compiled.palettes;
+  const brandPalettesStyles = compiled.palettesStyles;
+  const brandColorProfiles = compiled.colorProfiles;
+  const brandColorProfilesStyles = compiled.colorProfilesStyles;
+  const brandStyleContexts = compiled.styleContexts;
+  const brandStyleContextsStyles = compiled.styleContextsStyles;
 
-  const brandTypeScales = transformTypeScales(brandConfig?.typeScales);
-  const brandTypeScalesStyles = mapStyleStringsToClassDef(
-    brandTypeScales,
-    ".type-scale-",
-  );
-
-  const brandColors = transformBrandColors(brandConfig?.colors);
-  const brandColorsStyles = brandColors
-    .map((color) => color.stylesString)
-    .join("");
-
-  const brandPalettes = (brandConfig?.palettes || []).map(transformPalette);
-  const brandPalettesStyles = mapStyleStringsToClassDef(
-    brandPalettes,
-    ".palette-",
-  );
-
-  const brandStyleContexts = compileStyleContexts(brandConfig?.styleContexts, {
-    widthsContext: brandWidthsContexts,
-    fontStacksContext: brandFontStacksContexts,
-    typeScale: brandTypeScales,
-    palette: brandPalettes,
-  });
-  const brandStyleContextsStyles = mapStyleStringsToClassDef(
-    brandStyleContexts,
-    ".ctx-",
-    0,
-  );
-
-  const brandRootStyles = [
-    ":root{",
-    brandWidthsContexts?.[0]?.stylesString || "",
-    brandFontStacksContexts?.[0]?.stylesString || "",
-    brandTypeScales?.[0]?.stylesString || "",
-    brandColorsStyles || "",
-    brandPalettes?.[0]?.stylesString || "",
-    "}",
-  ].join("");
-
-  const brandStyles = [
-    brandRootStyles || "",
-    brandStyleContextsStyles || "",
-    brandWidthsContextsStyles || "",
-    brandFontStacksContextsStyles || "",
-    brandTypeScalesStyles || "",
-    brandPalettesStyles || "",
-  ].join("\n");
+  const brandRootStyles = compiled.rootStyles;
+  const ctxCssText = compiled.cssText;
+  // Legacy name: the full generated block (kept for the CMS preview overlay
+  // and any template still referencing it). ctxCssText is the new name.
+  const brandStyles = ctxCssText;
 
   const SITE_NAME =
     globalSettings?.metadata?.siteName || globalSettings?.siteName || "";
@@ -124,10 +76,14 @@ export function deriveEnv({
     brandColorsStyles,
     brandPalettes,
     brandPalettesStyles,
+    brandColorProfiles,
+    brandColorProfilesStyles,
     brandStyleContexts,
     brandStyleContextsStyles,
     brandRootStyles,
     brandStyles,
+    ctxData,
+    ctxCssText,
     SITE_NAME,
   };
 }

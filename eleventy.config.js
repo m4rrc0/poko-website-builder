@@ -38,6 +38,7 @@ import partialShortcodesPlugin from "./src/config-11ty/plugins/partialShortcodes
 import faviconsPlugin from "./src/config-11ty/plugins/favicons/index.js";
 import buildExternalCSS from "./src/config-11ty/plugins/buildExternalCSS/index.js";
 import ctxCss from "./src/config-11ty/plugins/ctxCss/index.js";
+import ctxCssPlugin from "./src/config-11ty/plugins/ctx-css/index.js";
 import pluginUnoCSS from "./src/config-11ty/plugins/plugin-eleventy-unocss/index.js";
 import customRenderersPlugin from "./src/config-11ty/plugins/customRenderers/index.js";
 // import keystaticPassthroughFiles from './src/config-11ty/plugins/keystaticPassthroughFiles/index.js';
@@ -628,6 +629,10 @@ export default async function (eleventyConfig) {
   });
 
   // await eleventyConfig.addPlugin(ctxCss);
+  // ctx-css: resolves `_data/brand/*.yaml` + `brand.yaml` + defaults into
+  // `ctxData`, compiles the brand CSS (`ctxBrandCss` global data) and
+  // registers the `{% ctxCss %}` delivery shortcode.
+  await eleventyConfig.addPlugin(ctxCssPlugin);
   await eleventyConfig.addPlugin(buildExternalCSS);
   await eleventyConfig.addPlugin(pluginUnoCSS);
   await eleventyConfig.addPlugin(ioElementsTransform);
