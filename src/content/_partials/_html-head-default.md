@@ -32,7 +32,9 @@
 
 {% endfor %}
 
-{# Favicons #} {# TODO: Generate favicons, manifest, etc #}
+{# Favicons #}
+
+{% favicons %}
 
 {# HTML head injection #}
 

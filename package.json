@@ -73,6 +73,7 @@
     "markdown-it-mark": "^4.0.0",
     "memoize": "^10.1.0",
     "nunjucks": "^3.2.4",
+    "png-to-ico": "^3.0.2",
     "simple-icons": "^15.5.0",
     "unocss": "^66.4.2",
     "utopia-core": "^1.6.0"
