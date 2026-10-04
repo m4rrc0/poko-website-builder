@@ -81,7 +81,7 @@ const tinyDataUri = (src) => {
 // regenerated at q40 before anything is written to disk.
 const lqipCache = new Map();
 const ensureLqip = (src, displayW, displayH) => {
-  const key = `${src}|${displayW}`;
+  const key = `${src}|${displayW}|${displayH}`;
   if (!lqipCache.has(key)) {
     lqipCache.set(
       key,
@@ -90,7 +90,8 @@ const ensureLqip = (src, displayW, displayH) => {
           ...imageTransformOptions,
           widths: [displayW],
           formats: ["webp"],
-          filenameFormat: (id, s, w, fmt) => `${id}-lqip-${w}w.${fmt}`,
+          filenameFormat: (id, s, w, fmt) =>
+            `${id}-lqip-${w}w-${displayH}h.${fmt}`,
         };
         const draft = await Image(src, {
           ...base,
