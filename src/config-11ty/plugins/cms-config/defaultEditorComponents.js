@@ -2079,7 +2079,7 @@ export const imageShortcode = {
               label: "Object Fit",
               widget: "select",
               options: [
-                { value: "", label: "Cover (default)" },
+                { value: "", label: "Default (cover)" },
                 { value: "cover", label: "Cover" },
                 { value: "contain", label: "Contain" },
                 { value: "fill", label: "Fill" },
@@ -2097,7 +2097,7 @@ export const imageShortcode = {
               hint: "Skip the low-quality placeholder background for this image.",
             },
             {
-              name: "wrapper",', 
+              name: "wrapper",
               label: "Wrapper",
               widget: "string",
               required: false,
