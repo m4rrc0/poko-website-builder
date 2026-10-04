@@ -27,7 +27,7 @@ const DARK_MEDIA = "(prefers-color-scheme: dark)";
 const SLOTS = {
   faviconSvg: { file: "favicon.svg", svgOnly: true },
   faviconIco: { file: "favicon.ico" },
-  appleTouch: { file: "apple-touch-icon.png", size: 180, apple: true },
+  appleTouch: { file: "apple-touch-icon.png", size: 180, apple: true, root: true },
   icon192: { file: "icon-192.png", size: 192, manifest: true },
   icon512: { file: "icon-512.png", size: 512, manifest: true },
   maskable512: {
@@ -193,8 +193,18 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
   // One PNG per call — a resizing `transform` replaces eleventy-img's own
   // resize (isTransformResize), so multi-width calls would collapse to one
   // size.
-  const emitPng = async ({ file, size, source, padding = 0, background }) => {
+  const emitPng = async ({
+    file,
+    size,
+    source,
+    padding = 0,
+    background,
+    root = false,
+  }) => {
     const inner = size - padding * 2;
+    // Auto-fetch files (apple-touch-icon) must land at the output root —
+    // iOS requests /apple-touch-icon.png directly, not under the subdir.
+    const subdir = root ? "" : outputIconsSubdir;
     // Named functions: eleventy-img's in-memory cache key serializes
     // functions as "<fn>" + name — a distinct name per output file keeps
     // same-source/same-size slots (icon-512 vs icon-mask-512) from
@@ -222,8 +232,8 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     const stats = await Image(source.src, {
       formats: ["png"],
       widths: [size],
-      outputDir: path.join(outputDir, outputIconsSubdir),
-      urlPath: outputIconsSubdir ? joinUrl("/", outputIconsSubdir) : "/",
+      outputDir: path.join(outputDir, subdir),
+      urlPath: subdir ? joinUrl("/", subdir) : "/",
       transformOnRequest: false,
       sharpOptions: svgSharpOptions(source.meta, size),
       filenameFormat,
@@ -319,6 +329,7 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
                 file: spec.file,
                 size: spec.size,
                 source: src,
+                root: !!spec.root,
                 padding: spec.apple
                   ? appleIconPadding
                   : spec.maskable

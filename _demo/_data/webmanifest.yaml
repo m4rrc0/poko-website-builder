@@ -1,5 +1,5 @@
-favicon: /_files/icons/logo.svg
-touchIcon: /_files/icons/touch.png
+favicon: /_data/icons/logo.svg
+touchIcon: /_data/icons/touch.png
 manifest:
   name: Poko Demo
   short_name: Poko
@@ -8,7 +8,7 @@ manifest:
   theme_color: "#1e5adc"
   background_color: "#ffffff"
 sources:
-  icon192: /_files/icons/icon-192-src.png
+  icon192: /_data/icons/icon-192-src.png
 dark:
-  favicon: /_files/icons/logo-dark.svg
+  favicon: /_data/icons/logo-dark.svg
   theme_color: "#0b0b0f"
