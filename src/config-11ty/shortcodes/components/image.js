@@ -54,8 +54,9 @@ const lastEmittedFile = (stats) => {
 };
 
 // src -> tiny inline webp data URI via the pipeline (dryRun: buffer, no write)
+// Exported for the youtube-facade plugin (poster background layers).
 const tinyCache = new Map();
-const tinyDataUri = (src) => {
+export const tinyDataUri = (src) => {
   if (!tinyCache.has(src)) {
     tinyCache.set(
       src,
@@ -80,7 +81,7 @@ const tinyDataUri = (src) => {
 // real variant filenames). If the q15 output sits under the bpp floor it is
 // regenerated at q40 before anything is written to disk.
 const lqipCache = new Map();
-const ensureLqip = (src, displayW, displayH) => {
+export const ensureLqip = (src, displayW, displayH) => {
   const key = `${src}|${displayW}|${displayH}`;
   if (!lqipCache.has(key)) {
     lqipCache.set(
@@ -113,7 +114,9 @@ const ensureLqip = (src, displayW, displayH) => {
   return lqipCache.get(key);
 };
 
-const bgCssFor = (layers, position, size) =>
+// Multi-layer `background-*` shorthand for the two-layer LQIP technique.
+// Exported for the youtube-facade plugin (poster layers on <lite-youtube>).
+export const bgCssFor = (layers, position, size) =>
   `background-image:${layers.map((u) => `url('${u}')`).join(",")};` +
   `background-position:${layers.map(() => position).join(",")};` +
   `background-size:${layers.map(() => size).join(",")};` +

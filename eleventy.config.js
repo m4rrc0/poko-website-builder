@@ -23,7 +23,7 @@ import pluginSitemap from "@quasibit/eleventy-plugin-sitemap";
 import pluginIcons from "eleventy-plugin-icons";
 import pluginCodeblocks from "@code-blocks/eleventy-plugin";
 import pluginCodeBlocksCharts from "@code-blocks/charts";
-import embedYouTube from "eleventy-plugin-youtube-embed";
+import youtubeFacade from "./src/config-11ty/plugins/youtube-facade/index.js";
 
 // -------- Plugins Internal
 import { imageTransformOptions } from "./src/config-11ty/plugins/imageTransform.js";
@@ -601,7 +601,7 @@ export default async function (eleventyConfig) {
     },
   });
 
-  eleventyConfig.addPlugin(embedYouTube, {
+  eleventyConfig.addPlugin(youtubeFacade, {
     embedClass: "youtube-embed",
     titleOptions: {
       download: true,
@@ -609,9 +609,7 @@ export default async function (eleventyConfig) {
     lite: {
       css: { inline: true },
       js: { inline: true },
-      // thumbnailFormat: "webp", // not available for older videos. Would be nice to fallback to jpg when not available.
       responsive: true,
-      thumbnailQuality: "maxresdefault",
     },
   });
 
