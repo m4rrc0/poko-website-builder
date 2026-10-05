@@ -602,7 +602,7 @@ export default async function (eleventyConfig) {
   });
 
   eleventyConfig.addPlugin(youtubeFacade, {
-    embedClass: "youtube-embed",
+    embedClass: "embed youtube-embed",
     titleOptions: {
       download: true,
     },
