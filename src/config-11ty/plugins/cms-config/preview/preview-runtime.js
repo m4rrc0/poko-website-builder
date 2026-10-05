@@ -389,9 +389,7 @@ export const hydratePreviewFromCms = async () => {
     ? await Promise.all([
         getCmsEntry("_singletons", "globalSettings"),
         getCmsEntry("dataFiles", "translatedData"),
-        ...stylesConfigSlugs.map((slug) =>
-          getCmsEntry("stylesConfig", slug),
-        ),
+        ...stylesConfigSlugs.map((slug) => getCmsEntry("stylesConfig", slug)),
         ...dataFileNames.map((slug) => getCmsEntry("dataFiles", slug)),
       ])
     : [null, null, null, null];
@@ -402,8 +400,26 @@ export const hydratePreviewFromCms = async () => {
   const brandConfig = { ...(stripEmpty(toJs(legacyBrand)?.data) ?? {}) };
   styleEntries.slice(0, -1).forEach((entry, i) => {
     const data = stripEmpty(toJs(entry)?.data);
-    if (data && Object.keys(data).length) brandConfig[stylesConfigSlugs[i]] = data;
+    if (data && Object.keys(data).length)
+      brandConfig[stylesConfigSlugs[i]] = data;
   });
+  // A stylesConfig file being edited isn't in the CMS store yet — overlay its
+  // draft data on the matching brand slice or unsaved style edits wouldn't
+  // preview. `brand` is the legacy flat file: its keys sit at the root.
+  if (previewState.collectionName === "stylesConfig") {
+    const raw = previewState.rawEntry;
+    const slug =
+      raw?.slug ||
+      raw?.path
+        ?.split("/")
+        .pop()
+        ?.replace(/\.[^.]+$/, "");
+    if (stylesConfigSlugs.includes(slug)) {
+      const draftData = stripEmpty(raw?.data) ?? {};
+      if (slug === "brand") Object.assign(brandConfig, draftData);
+      else brandConfig[slug] = draftData;
+    }
+  }
   if (Object.keys(brandConfig).length) brand = brandConfig;
   const collectionData = {};
   dataFileNames.forEach(
@@ -742,6 +758,9 @@ export const preparePreview = async (
   if (typeof getCollection === "function")
     previewState.getCollection = getCollection;
   previewState.collectionName = collectionName;
+  // Stash before hydrate: the stylesConfig draft overlay reads it to replace
+  // the store's saved file data (normalizeEntry re-sets the same value).
+  previewState.rawEntry = toJs(entry);
   // Entry refresh = retry failed asset fetches (a dropped file may have
   // landed in the store since the last render).
   resetAssetRetries();
@@ -789,6 +808,23 @@ export const renderEntryPreview = async () => {
   // Page layout (cascade `layout`, default "base") wraps the rendered body —
   // nav/footer and layout-level fields render like the real page.
   html = await renderer.renderLayout(html);
+  if (stale()) return null;
+  return { html };
+};
+
+// StylesConfig kitchen-sink render: content-agnostic markup — no collections
+// fetch, no eleventyComputed, no layout wrap. The source still goes through
+// renderRich so njk tags/markdown inside it behave like the site. Brand
+// freshness comes from hydrate: the draft overlay + regenerated uno overlay.
+export const renderStylesConfigPreview = async (htmlSource) => {
+  const seq = jobSeq;
+  const stale = () => seq !== jobSeq;
+  let html = "";
+  try {
+    html = await getRenderer().renderRich(String(htmlSource ?? ""));
+  } catch (e) {
+    console.warn("[cms preview] styles sink render failed", e);
+  }
   if (stale()) return null;
   return { html };
 };

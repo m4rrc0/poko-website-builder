@@ -2,6 +2,7 @@ import {
   pagesCollection,
   activeCollections,
   previewOnlyCollections,
+  stylesConfigFiles,
 } from "./env.js";
 import {
   previewState,
@@ -12,6 +13,7 @@ import {
   preparePreview,
   renderEntryPreview,
 } from "./preview-runtime.js";
+import { renderStylesConfigSink } from "./preview-styles-config.js";
 
 // Thin Sveltia adapter: the whole pipeline (hydrate → normalize → collections
 // → computed → render → layout) lives in preview-runtime.js — this class only
@@ -19,7 +21,7 @@ import {
 // no `collection`, so each collection gets its own class bound to its name
 // (collectionName drives the dir-data tier, filePathStem, and the self-upsert
 // into its own collection).
-const makePagePreview = (collectionName) =>
+const makePagePreview = (collectionName, render = renderEntryPreview) =>
   window.createClass({
     componentDidMount() {
       // Asset blobs/icons resolve async — when pending fetches drain with new
@@ -55,7 +57,7 @@ const makePagePreview = (collectionName) =>
       this.renderTimer = setTimeout(() => this.runRender(), 200);
     },
     async runRender() {
-      const result = await renderEntryPreview();
+      const result = await render();
       if (!result) return; // superseded — a newer render owns the state
       this.noPage = result.noPage;
       this.html = result.html ?? "";
@@ -77,12 +79,25 @@ const makePagePreview = (collectionName) =>
   });
 
 export function registerPreviewTemplates(CMS) {
-  [pagesCollection, ...activeCollections]
+  const pageCollections = [pagesCollection, ...activeCollections]
     // Every folder collection gets the custom preview unless its directory
     // data file marks it previewOnly — entries with no body/sections still
     // render their layout (e.g. plays → play.njk renders its fields).
-    .filter((c) => c.folder && !previewOnlyCollections.includes(c.name))
-    .forEach((c) =>
-      CMS.registerPreviewTemplate(c.name, makePagePreview(c.name)),
+    .filter((c) => c.folder && !previewOnlyCollections.includes(c.name));
+  pageCollections.forEach((c) =>
+    CMS.registerPreviewTemplate(c.name, makePagePreview(c.name)),
+  );
+  // File collections key preview templates by FILE name, not collection name —
+  // every stylesConfig file gets the same kitchen-sink preview. The runtime's
+  // hydrate overlays the draft file onto brandConfig so unsaved edits restyle
+  // it. A file name colliding with a registered folder collection is skipped
+  // (the collection's own page preview wins).
+  const registered = new Set(pageCollections.map((c) => c.name));
+  for (const fileName of stylesConfigFiles) {
+    if (registered.has(fileName)) continue;
+    CMS.registerPreviewTemplate(
+      fileName,
+      makePagePreview("stylesConfig", renderStylesConfigSink),
     );
+  }
 }

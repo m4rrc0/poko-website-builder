@@ -2564,11 +2564,21 @@ const widthsContextsField = {
   allow_reorder: true,
   summary: "{{name}}:  [Max width '{{max}}', Prose width '{{prose}}']",
   hint: "The first context is used as the default",
-  default: [{ name: "main", max: "80rem", prose: "50rem" }],
+  default: [{ name: "main", prose: "50rem" }],
   fields: [
     { name: "name", label: "Name", widget: "string", required: true }, // prettier-ignore
-    { name: "max", label: "Max Width", widget: "string", required: true, default: "80rem" }, // prettier-ignore
-    { name: "prose", label: "Prose Width", widget: "string", required: true, default: "50rem" }, // prettier-ignore
+    { name: "prose", label: "Prose Width", widget: "string", required: true, default: "50rem", hint: "Only mandatory value. Other Widths are based on this one automatically if not defined" }, // prettier-ignore
+    { name: "page", label: "Page Width", widget: "string", required: false, hint: "Default: φ¹ ≈ 80.9" }, // prettier-ignore
+    { name: "section", label: "Section Width", widget: "string", required: false, hint: "Default: same as Page Width (φ¹ ≈ 80.9)" }, // prettier-ignore
+    { name: "inset", label: "Inset Width", widget: "string", required: false, hint: "Default: φ⁰·⁵ ≈ 63.6" }, // prettier-ignore
+    { name: "outset", label: "Outset Width", widget: "string", required: false, hint: "Default: φ¹·⁵ ≈ 102.9" }, // prettier-ignore
+    { name: "screen", label: "Screen Width", widget: "string", required: false, hint: "Default: φ² ≈ 130.9" }, // prettier-ignore
+    { name: "bleed", label: "Bleed Width", widget: "string", required: false, hint: "Default: φ³ ≈ 211.8" }, // prettier-ignore
+    { name: "featured", label: "Featured Content Width", widget: "string", required: false, hint: "Default: φ⁻⁰·⁵ ≈ 39.3rem (629px) - Featured content / modal / form / narrow-article" }, // prettier-ignore
+    { name: "card", label: "Card Width", widget: "string", required: false, hint: "Default: φ⁻¹ ≈ 30.9" }, // prettier-ignore
+    { name: "column", label: "Column Width", widget: "string", required: false, hint: "Default: φ⁻¹·⁵ ≈ 24.3rem (389px) — Narrow card / sidebar / input column" }, // prettier-ignore
+    { name: "tile", label: "Tile Width", widget: "string", required: false, hint: "Default: φ⁻² ≈ 19.1" }, // prettier-ignore
+    { name: "token", label: "Token Width", widget: "string", required: false, hint: "Default: φ⁻³ ≈ 11.8" }, // prettier-ignore
   ],
 };
 const fontStacksListField = (name) => ({
@@ -2641,7 +2651,17 @@ const customFontsListField = (name, fontsourceFonts) => ({
               dropdown_threshold: 10,
               hint: "Default to all selected",
               default: ["400"],
-              options: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+              options: [
+                "100",
+                "200",
+                "300",
+                "400",
+                "500",
+                "600",
+                "700",
+                "800",
+                "900",
+              ],
             },
             {
               name: "styles",
@@ -2832,8 +2852,8 @@ const profileColorGroup = (name, label, leaves) => ({
   name,
   label,
   widget: "object",
-  collapsed: "auto",
-  required: false,
+  collapsed: true,
+  required: true,
   fields: leaves.map(([fieldName, fieldLabel]) => ({
     name: fieldName,
     label: fieldLabel,
@@ -2842,17 +2862,38 @@ const profileColorGroup = (name, label, leaves) => ({
 });
 const colorProfileFields = [
   { name: "name", label: "Profile Name", widget: "string", required: true }, // prettier-ignore
+  { name: "text", label: "Text Color", ...profileColorField }, // prettier-ignore
+  { name: "bg", label: "Background Color", ...profileColorField }, // prettier-ignore
+  { name: "border", label: "Border Color", ...profileColorField }, // prettier-ignore
+  { name: "text-decoration", label: "Text Decoration Color", ...profileColorField }, // prettier-ignore
+  { name: "text--marker", label: "Text Marker Color (bullet points, etc.)", ...profileColorField }, // prettier-ignore
   profileColorGroup("defaults", "Defaults", [
-    ["text", "Text Color"],
-    ["bg", "Background Color"],
-    ["border", "Border Color"],
-    ["text-decoration", "Text Decoration Color"],
-    ["text--marker", "Text Marker Color (bullet points, etc.)"],
     ["outline", "Outline Color"],
     ["shadow", "Shadow Color"],
     ["caret", "Caret Color"],
     ["column-rule", "Column Rule Color"],
     ["outline--focus", "Outline Focus Color"],
+  ]),
+  profileColorGroup("heading", "Heading", [
+    ["text__heading", "Heading Text Color"],
+    ["bg__heading", "Heading Background Color"],
+  ]),
+  profileColorGroup("a", "Link (using the <a> tag)", [
+    ["text__a", "Link Text Color"],
+    ["bg__a", "Link Background Color"],
+    ["text__a--hover", "Link Text Hover Color"],
+    ["bg__a--hover", "Link Background Hover Color"],
+  ]),
+  profileColorGroup("button", "Button", [
+    ["text__button", "Button Text Color"],
+    ["bg__button", "Button Background Color"],
+    ["border__button", "Button Border Color"],
+    ["text__button--hover", "Button Text Hover Color"],
+    ["bg__button--hover", "Button Background Hover Color"],
+    ["border__button--hover", "Button Border Hover Color"],
+    ["text__button--disabled", "Button Text Disabled Color"],
+    ["bg__button--disabled", "Button Background Disabled Color"],
+    ["border__button--disabled", "Button Border Disabled Color"],
   ]),
   profileColorGroup("selection", "Selected Text", [
     ["text--selection", "Text Selection Color"],
@@ -2875,27 +2916,6 @@ const colorProfileFields = [
   profileColorGroup("b", "Visually important text (using the <b> tag)", [
     ["text__b", "Visually important Text Color"],
     ["bg__b", "Visually important Background Color"],
-  ]),
-  profileColorGroup("heading", "Heading", [
-    ["text__heading", "Heading Text Color"],
-    ["bg__heading", "Heading Background Color"],
-  ]),
-  profileColorGroup("a", "Link (using the <a> tag)", [
-    ["text__a", "Link Text Color"],
-    ["bg__a", "Link Background Color"],
-    ["text__a--hover", "Link Text Hover Color"],
-    ["bg__a--hover", "Link Background Hover Color"],
-  ]),
-  profileColorGroup("button", "Button", [
-    ["text__button", "Button Text Color"],
-    ["bg__button", "Button Background Color"],
-    ["border__button", "Button Border Color"],
-    ["text__button--hover", "Button Text Hover Color"],
-    ["bg__button--hover", "Button Background Hover Color"],
-    ["border__button--hover", "Button Border Hover Color"],
-    ["text__button--disabled", "Button Text Disabled Color"],
-    ["bg__button--disabled", "Button Background Disabled Color"],
-    ["border__button--disabled", "Button Border Disabled Color"],
   ]),
   profileColorGroup("code", "Code (using tags such as code, kbd, pre, samp)", [
     ["text__code", "Code Text Color"],
@@ -2968,13 +2988,13 @@ const borderStylesField = {
   })),
 };
 
-const stylesConfigCollection = (fontsourceFonts) => ({
+export const stylesConfigCollection = (fontsourceFonts) => ({
   // ...mostCommonMarkdownCollectionConfig,
   // i18n: false,
   icon: "brush",
   name: "stylesConfig",
   label: "Styles Config",
-  editor: { preview: false },
+  // editor: { preview: false },
   i18n: false,
   files: [
     {

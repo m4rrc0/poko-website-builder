@@ -26,6 +26,7 @@ import {
   pagesCollection,
   getActiveCollections,
   getActiveEditorComponents,
+  stylesConfigCollection,
 } from "./config.js";
 import { utilityClassGroups } from "./utility-classes.js";
 import { enginePath, dependencyEnginePath } from "../../../utils/paths.js";
@@ -53,8 +54,7 @@ export default async function (eleventyConfig, pluginOptions) {
       // Sveltia lazily imports dist/chunks/react-dom.js (resolved relative
       // to the bundle URL) to mount custom React field types — it must be
       // served alongside the bundle or it falls back to the CDN.
-      [dependencyEnginePath("@sveltia/cms", "dist/chunks")]:
-        "assets/js/chunks",
+      [dependencyEnginePath("@sveltia/cms", "dist/chunks")]: "assets/js/chunks",
     });
   } else if (CMS_IMPORT.startsWith("../../")) {
     eleventyConfig.addPassthroughCopy({
@@ -72,15 +72,17 @@ export default async function (eleventyConfig, pluginOptions) {
     [enginePath(
       "src/config-11ty/plugins/cms-config/defaultEditorComponents.js",
     )]: "admin/defaultEditorComponents.js",
-    [enginePath(
-      "src/config-11ty/plugins/cms-config/defaultFieldTypes.js",
-    )]: "admin/defaultFieldTypes.js",
+    [enginePath("src/config-11ty/plugins/cms-config/defaultFieldTypes.js")]:
+      "admin/defaultFieldTypes.js",
     [enginePath(
       "src/config-11ty/plugins/cms-config/preview/preview-runtime.js",
     )]: "admin/preview-runtime.js",
     [enginePath(
       "src/config-11ty/plugins/cms-config/preview/previewTemplates.js",
     )]: "admin/previewTemplates.js",
+    [enginePath(
+      "src/config-11ty/plugins/cms-config/preview/preview-styles-config.js",
+    )]: "admin/preview-styles-config.js",
     [enginePath("src/config-11ty/plugins/cms-config/utils/admin-url.js")]:
       "admin/admin-url.js",
   });
@@ -279,6 +281,14 @@ export default async function (eleventyConfig, pluginOptions) {
         .map((c) => c?.name)
         .filter(Boolean);
 
+      // File names of the stylesConfig file collection — Sveltia keys file
+      // previews by file name, so the kitchen-sink preview registers per name.
+      const stylesConfigFiles = stylesConfigCollection(
+        (data.fontServices?.fontsource?.fonts || []).map(
+          ({ family: value }) => ({ value, label: value }),
+        ),
+      ).files.map((f) => f.name);
+
       const envVars = { CONTENT_DIR };
 
       // Collections whose every locale dir file (`<lang>/<coll>/<coll>.yaml`)
@@ -355,6 +365,7 @@ export default async function (eleventyConfig, pluginOptions) {
   // shipped so the browser nunjucks env can stub the ones it doesn't implement.
   export const njkFilterNames = ${JSON.stringify(Object.keys(eleventyConfig.universal?.filters || {}).sort())};
   export const previewOnlyCollections = ${JSON.stringify(previewOnlyCollections)};
+  export const stylesConfigFiles = ${JSON.stringify(stylesConfigFiles)};
   export const utilityClassGroups = ${JSON.stringify(utilityClassGroups)};
   `;
     },

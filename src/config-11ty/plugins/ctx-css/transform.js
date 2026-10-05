@@ -27,7 +27,19 @@ const ROLE_SET = new Set(COLOR_ROLES);
 // A bare identifier is a color token name -> `var(--name)`; anything else
 // (hex, var(), rgb(), color-mix(), calc(), keywords…) passes through verbatim
 // so `select-other` style fields can carry relative color syntax.
-const isTokenName = (v) => /^[a-zA-Z][\w-]*$/.test(v);
+const CSS_COLOR_KEYWORDS = new Set([
+  "transparent",
+  "currentcolor",
+  "inherit",
+  "initial",
+  "unset",
+  "revert",
+  "revert-layer",
+]);
+const isTokenName = (v) =>
+  typeof v === "string" &&
+  /^[a-zA-Z][\w-]*$/.test(v) &&
+  !CSS_COLOR_KEYWORDS.has(v.toLowerCase());
 const colorValue = (v) => (isTokenName(v) ? `var(--${v})` : v);
 
 // --width-{key} per widths-context key. `max` also sets `--width-page`: in the
@@ -90,7 +102,9 @@ export function transformColorProfile(profile, extrasNames = new Set()) {
   const flat = flattenObject(rest);
   const stylesString = Object.entries(flat)
     .filter(([, value]) => value)
-    .map(([key, value]) => `--color-${key}:${profileValue(value, extrasNames)};`)
+    .map(
+      ([key, value]) => `--color-${key}:${profileValue(value, extrasNames)};`,
+    )
     .join("");
   return { name, stylesString };
 }
@@ -107,9 +121,11 @@ const sectionVarsString = (prefixMap, sections) =>
     .join("");
 
 export function compileCtxCss(data = {}) {
-  const widthsContexts = (data.widthsContexts ?? data.spaces?.widthsContexts ?? []).map(
-    transformWidthsContext,
-  );
+  const widthsContexts = (
+    data.widthsContexts ??
+    data.spaces?.widthsContexts ??
+    []
+  ).map(transformWidthsContext);
   const fontStacksContexts = transformFontStacksContexts(
     data.fontStacksContexts,
     data.customFontsImport,
@@ -143,7 +159,10 @@ export function compileCtxCss(data = {}) {
     fontStacksContexts,
     ".fonts-",
   );
-  const typeScalesStyles = mapStyleStringsToClassDef(typeScales, ".type-scale-");
+  const typeScalesStyles = mapStyleStringsToClassDef(
+    typeScales,
+    ".type-scale-",
+  );
   const palettesStyles = mapStyleStringsToClassDef(palettes, ".palette-");
   const colorProfilesStyles = mapStyleStringsToClassDef(
     colorProfiles,

@@ -16,6 +16,9 @@ export {
 } from "./preview-md.js";
 export { registerPreviewFilterStubs } from "./preview-njk.js";
 export { hydratePreviewEnv } from "./browser-env.js";
+// Live binding — re-reads after each hydrate; the stylesConfig kitchen-sink
+// derives palette/profile/context class names from the resolved brand data.
+export { ctxData } from "./browser-env.js";
 // Generated modules (written by cms-config/index.js at build time):
 // - jsPartials: every `.11ty.js` partial, bundled — never a manual list
 // - previewData: `_data/**` yaml/json keyed like Eleventy's data cascade
