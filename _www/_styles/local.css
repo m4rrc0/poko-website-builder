@@ -12,8 +12,9 @@
   --_gradient: linear-gradient(to bottom, transparent 60%, #0d0a26 100%), radial-gradient(at 5% 39%, #1e1656 0px, transparent 50%), radial-gradient(at 32.5% 45%, #0d0a26 0px, transparent 50%), radial-gradient(at 92.6% 66.2%, #302899 0px, transparent 50%), radial-gradient(at 85.7% 14.4%, #e8b2f0 0px, transparent 50%), radial-gradient(at 47% 17%, #f04d98 0px, transparent 50%);
 
   --color-text__code: var(--color-tone);
-  --color-bg__code: color-mix(in srgb, var(--indigo) 40%, black);
-  --code-bg: var(--color-bg__code);
+  /* --color-bg__code: color-mix(in srgb, var(--indigo) 40%, black); */
+  --color-bg__code: color-mix(in srgb, var(--indigo) 40%, white);
+  /* --code-bg: var(--color-bg__code); */
 
   --scroll-margin: 3ex;
 
@@ -89,7 +90,8 @@
 
 
 html {
-  background: #0d0a26;
+  /* TODO: broken background */
+  /* background: #0d0a26; */
   position: relative;
   overflow-x: clip;
 }
@@ -109,10 +111,11 @@ html::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: var(--_gradient);
-  background-size: 100% 100vh;
-  background-repeat: no-repeat;
-  background-position: center;
+  /* TODO: broken background */
+  /* background-image: var(--_gradient); */
+  /* background-size: 100% 100vh; */
+  /* background-repeat: no-repeat; */
+  /* background-position: center; */
   z-index: -1;
   pointer-events: none;
 }
