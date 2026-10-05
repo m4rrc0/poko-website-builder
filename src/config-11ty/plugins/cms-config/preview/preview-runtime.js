@@ -395,18 +395,10 @@ export const hydratePreviewFromCms = async () => {
     : [null, null, null, null];
   const styleEntries = styleAndCollEntries.slice(0, stylesConfigSlugs.length);
   const collEntries = styleAndCollEntries.slice(stylesConfigSlugs.length);
-  let brand = null;
-  const legacyBrand = styleEntries[stylesConfigSlugs.length - 1];
-  const brandConfig = { ...(stripEmpty(toJs(legacyBrand)?.data) ?? {}) };
-  styleEntries.slice(0, -1).forEach((entry, i) => {
-    const data = stripEmpty(toJs(entry)?.data);
-    if (data && Object.keys(data).length)
-      brandConfig[stylesConfigSlugs[i]] = data;
-  });
-  // A stylesConfig file being edited isn't in the CMS store yet — overlay its
-  // draft data on the matching brand slice or unsaved style edits wouldn't
-  // preview. `brand` is the legacy flat file: its keys sit at the root.
-  if (previewState.collectionName === "stylesConfig") {
+  // A stylesConfig file being edited isn't in the CMS store yet — its draft
+  // data stands in for the saved entry or unsaved edits wouldn't preview.
+  const draft = (() => {
+    if (previewState.collectionName !== "stylesConfig") return null;
     const raw = previewState.rawEntry;
     const slug =
       raw?.slug ||
@@ -414,12 +406,28 @@ export const hydratePreviewFromCms = async () => {
         ?.split("/")
         .pop()
         ?.replace(/\.[^.]+$/, "");
-    if (stylesConfigSlugs.includes(slug)) {
-      const draftData = stripEmpty(raw?.data) ?? {};
-      if (slug === "brand") Object.assign(brandConfig, draftData);
-      else brandConfig[slug] = draftData;
-    }
-  }
+    return stylesConfigSlugs.includes(slug)
+      ? { slug, data: stripEmpty(raw?.data) ?? {} }
+      : null;
+  })();
+  let brand = null;
+  const legacyBrand = styleEntries[stylesConfigSlugs.length - 1];
+  // `brand` is the legacy flat file: its keys sit at the ROOT of the merged
+  // brand object. When it's the file being edited, the draft IS the file —
+  // build the base from it so deleted keys fall through to the section-file
+  // overlay (then resolveBrand defaults) instead of surviving via the saved
+  // copy.
+  const brandConfig = {
+    ...(draft?.slug === "brand"
+      ? draft.data
+      : (stripEmpty(toJs(legacyBrand)?.data) ?? {})),
+  };
+  styleEntries.slice(0, -1).forEach((entry, i) => {
+    const slug = stylesConfigSlugs[i];
+    const data =
+      slug === draft?.slug ? draft.data : stripEmpty(toJs(entry)?.data);
+    if (data && Object.keys(data).length) brandConfig[slug] = data;
+  });
   if (Object.keys(brandConfig).length) brand = brandConfig;
   const collectionData = {};
   dataFileNames.forEach(

@@ -505,6 +505,13 @@ export const brandColorField = {
   value_field: "colors.*.name",
   required: false,
 };
+export const legacyBrandColorField = {
+  widget: "relation",
+  collection: "stylesConfig",
+  file: "brand",
+  value_field: "colors.*.name",
+  required: false,
+};
 // Color profile leaf: a palette slot (read/neutral/pop/tone), a palette
 // extras color name, a brand color token name — or "Other" for a raw CSS
 // value (var(), relative color syntax, ...). Resolved in ctx-css transform.
@@ -3567,114 +3574,114 @@ export const stylesConfigCollection = (fontsourceFonts) => ({
               required: true,
             },
             // prettier-ignore
-            { name: "read", label: "read: Most readable Color (Typography)", ...brandColorField, required: true }, // prettier-ignore
-            { name: "tone", label: "tone: Alternative tone Color", ...brandColorField, required: true }, // prettier-ignore
-            { name: "pop", label: "pop: Accent Color that 'pops'", ...brandColorField, required: true }, // prettier-ignore
-            { name: "neutral", label: "neutral: Neutral Color for surface", ...brandColorField, required: true }, // prettier-ignore
+            { name: "read", label: "read: Most readable Color (Typography)", ...legacyBrandColorField, required: true }, // prettier-ignore
+            { name: "tone", label: "tone: Alternative tone Color", ...legacyBrandColorField, required: true }, // prettier-ignore
+            { name: "pop", label: "pop: Accent Color that 'pops'", ...legacyBrandColorField, required: true }, // prettier-ignore
+            { name: "neutral", label: "neutral: Neutral Color for surface", ...legacyBrandColorField, required: true }, // prettier-ignore
             // prettier-ignore
             {
               name: "advancedDefaults", label: "Advanced Defaults", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text", label: "Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg", label: "Background Color", ...brandColorField }, // prettier-ignore
-                { name: "border", label: "Border Color", ...brandColorField }, // prettier-ignore
-                { name: "text-decoration", label: "Text Decoration Color", ...brandColorField }, // prettier-ignore
-                { name: "text--marker", label: "Text Marker Color (bullet points, etc.)", ...brandColorField }, // prettier-ignore
-                { name: "outline", label: "Outline Color", ...brandColorField }, // prettier-ignore
-                { name: "shadow", label: "Shadow Color", ...brandColorField }, // prettier-ignore
-                { name: "caret", label: "Caret Color", ...brandColorField }, // prettier-ignore
-                { name: "column-rule", label: "Column Rule Color", ...brandColorField }, // prettier-ignore
-                { name: "outline--focus", label: "Outline Focus Color", ...brandColorField }, // prettier-ignore
+                { name: "text", label: "Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg", label: "Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border", label: "Border Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text-decoration", label: "Text Decoration Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text--marker", label: "Text Marker Color (bullet points, etc.)", ...legacyBrandColorField }, // prettier-ignore
+                { name: "outline", label: "Outline Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "shadow", label: "Shadow Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "caret", label: "Caret Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "column-rule", label: "Column Rule Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "outline--focus", label: "Outline Focus Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "selection", label: "Selected Text", widget: "object", collapsed: "auto", required: false, fields: [ // prettier-ignore
-                { name: "text--selection", label: "Text Selection Color", ...brandColorField }, // prettier-ignore
-                { name: "bg--selection", label: "Background Selection Color", ...brandColorField }, // prettier-ignore
+                { name: "text--selection", label: "Text Selection Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg--selection", label: "Background Selection Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "strong", label: "Strong (Bold text using the <strong> tag)", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__strong", label: "Bold Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__strong", label: "Bold Background Color", ...brandColorField }, // prettier-ignore
+                { name: "text__strong", label: "Bold Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__strong", label: "Bold Background Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "em", label: "Emphasis (Italic text using the <em> tag)", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__em", label: "Italic Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__em", label: "Italic Background Color", ...brandColorField }, // prettier-ignore
-                { name: "text-emphasis", label: "Emphasis symbol Color", ...brandColorField }, // prettier-ignore
+                { name: "text__em", label: "Italic Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__em", label: "Italic Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text-emphasis", label: "Emphasis symbol Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "mark", label: "Highlighted Text (using the <mark> tag)", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__mark", label: "Highlighted Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__mark", label: "Highlighted Background Color", ...brandColorField }, // prettier-ignore
-                { name: "border__mark", label: "Highlighted Border Color", ...brandColorField }, // prettier-ignore
+                { name: "text__mark", label: "Highlighted Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__mark", label: "Highlighted Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border__mark", label: "Highlighted Border Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "b", label: "Visually important text (using the <b> tag)", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__b", label: "Visually important Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__b", label: "Visually important Background Color", ...brandColorField }, // prettier-ignore
+                { name: "text__b", label: "Visually important Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__b", label: "Visually important Background Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "heading", label: "Heading", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__heading", label: "Heading Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__heading", label: "Heading Background Color", ...brandColorField }, // prettier-ignore
+                { name: "text__heading", label: "Heading Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__heading", label: "Heading Background Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "a", label: "Link (using the <a> tag)", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__a", label: "Link Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__a", label: "Link Background Color", ...brandColorField }, // prettier-ignore
-                { name: "text__a--hover", label: "Link Text Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__a--hover", label: "Link Background Hover Color", ...brandColorField }, // prettier-ignore
+                { name: "text__a", label: "Link Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__a", label: "Link Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__a--hover", label: "Link Text Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__a--hover", label: "Link Background Hover Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "button", label: "Button", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__button", label: "Button Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__button", label: "Button Background Color", ...brandColorField }, // prettier-ignore
-                { name: "border__button", label: "Button Border Color", ...brandColorField }, // prettier-ignore
-                { name: "text__button--hover", label: "Button Text Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__button--hover", label: "Button Background Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "border__button--hover", label: "Button Border Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "text__button--disabled", label: "Button Text Disabled Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__button--disabled", label: "Button Background Disabled Color", ...brandColorField }, // prettier-ignore
-                { name: "border__button--disabled", label: "Button Border Disabled Color", ...brandColorField }, // prettier-ignore
+                { name: "text__button", label: "Button Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__button", label: "Button Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border__button", label: "Button Border Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__button--hover", label: "Button Text Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__button--hover", label: "Button Background Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border__button--hover", label: "Button Border Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__button--disabled", label: "Button Text Disabled Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__button--disabled", label: "Button Background Disabled Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border__button--disabled", label: "Button Border Disabled Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "code", label: "Code (using tags such as code, kbd, pre, samp)", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "text__code", label: "Code Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__code", label: "Code Background Color", ...brandColorField }, // prettier-ignore
-                { name: "border__code", label: "Code Border Color", ...brandColorField }, // prettier-ignore
+                { name: "text__code", label: "Code Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__code", label: "Code Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border__code", label: "Code Border Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "svg", label: "Default SVG & icon", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "fill", label: "Fill Color", ...brandColorField }, // prettier-ignore
-                { name: "stroke", label: "Stroke Color", ...brandColorField }, // prettier-ignore
-                { name: "icon-fill", label: "Icon Fill Color", ...brandColorField }, // prettier-ignore
-                { name: "icon-stroke", label: "Icon Stroke Color", ...brandColorField }, // prettier-ignore
+                { name: "fill", label: "Fill Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "stroke", label: "Stroke Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "icon-fill", label: "Icon Fill Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "icon-stroke", label: "Icon Stroke Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             // prettier-ignore
             {
               name: "scrollbar", label: "Scroll Bar ", widget: "object", collapsed: "auto", required: false, fields: [
-                { name: "track-color", label: "Scrollbar Track Color", ...brandColorField }, // prettier-ignore
-                { name: "thumb-color", label: "Scrollbar Thumb Color", ...brandColorField }, // prettier-ignore
+                { name: "track-color", label: "Scrollbar Track Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "thumb-color", label: "Scrollbar Thumb Color", ...legacyBrandColorField }, // prettier-ignore
               ]
             },
             {
@@ -3684,28 +3691,28 @@ export const stylesConfigCollection = (fontsourceFonts) => ({
               collapsed: true,
               required: false,
               fields: [
-                { name: "text__heading", label: "Heading Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__heading", label: "Heading Background Color", ...brandColorField }, // prettier-ignore
-                { name: "text__a", label: "Link Text  Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__a", label: "Link Background Color", ...brandColorField }, // prettier-ignore
-                { name: "text__a--hover", label: "Link Text Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__a--hover", label: "Link Background Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "text__button", label: "Button Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__button", label: "Button Background Color", ...brandColorField }, // prettier-ignore
-                { name: "text__button--hover", label: "Button Text Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__button--hover", label: "Button Background Hover Color", ...brandColorField }, // prettier-ignore
-                { name: "text__button--disabled", label: "Button Text Disabled Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__button--disabled", label: "Button Background Disabled Color", ...brandColorField }, // prettier-ignore
-                { name: "icon-fill", label: "Icon Fill Color", ...brandColorField }, // prettier-ignore
-                { name: "icon-stroke", label: "Icon Stroke Color", ...brandColorField }, // prettier-ignore
-                { name: "text__code", label: "Code Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__code", label: "Code Background Color", ...brandColorField }, // prettier-ignore
-                { name: "border__code", label: "Code Border Color", ...brandColorField }, // prettier-ignore
-                { name: "text__mark", label: "Mark Text Color", ...brandColorField }, // prettier-ignore
-                { name: "bg__mark", label: "Mark Background Color", ...brandColorField }, // prettier-ignore
-                { name: "border__mark", label: "Mark Border Color", ...brandColorField }, // prettier-ignore
-                { name: "track-color", label: "Scrollbar Track Color", ...brandColorField }, // prettier-ignore
-                { name: "thumb-color", label: "Scrollbar Thumb Color", ...brandColorField }, // prettier-ignore
+                { name: "text__heading", label: "Heading Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__heading", label: "Heading Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__a", label: "Link Text  Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__a", label: "Link Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__a--hover", label: "Link Text Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__a--hover", label: "Link Background Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__button", label: "Button Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__button", label: "Button Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__button--hover", label: "Button Text Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__button--hover", label: "Button Background Hover Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__button--disabled", label: "Button Text Disabled Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__button--disabled", label: "Button Background Disabled Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "icon-fill", label: "Icon Fill Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "icon-stroke", label: "Icon Stroke Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__code", label: "Code Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__code", label: "Code Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border__code", label: "Code Border Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "text__mark", label: "Mark Text Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "bg__mark", label: "Mark Background Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "border__mark", label: "Mark Border Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "track-color", label: "Scrollbar Track Color", ...legacyBrandColorField }, // prettier-ignore
+                { name: "thumb-color", label: "Scrollbar Thumb Color", ...legacyBrandColorField }, // prettier-ignore
               ],
             },
           ],
@@ -3731,10 +3738,10 @@ export const stylesConfigCollection = (fontsourceFonts) => ({
               hint: "Used to generate the class name associated with this context (e.g. '.ctx-main')",
             },
             // prettier-ignore
-            { label: "Widths Context", name: "widthsContext", ...styleContextRelationField("spaces", "widthsContexts") }, // prettier-ignore
-            { label: "Font Stacks Context", name: "fontStacksContext", ...styleContextRelationField("fontStacks", "fontStacks") }, // prettier-ignore
-            { label: "Type Scale", name: "typeScale", ...styleContextRelationField("typeScales", "typeScales") }, // prettier-ignore
-            { label: "Palette", name: "palette", ...styleContextRelationField("palettes", "palettes") }, // prettier-ignore
+            { label: "Widths Context", name: "widthsContext", ...styleContextRelationField("brand", "widthsContexts") }, // prettier-ignore
+            { label: "Font Stacks Context", name: "fontStacksContext", ...styleContextRelationField("brand", "fontStacks") }, // prettier-ignore
+            { label: "Type Scale", name: "typeScale", ...styleContextRelationField("brand", "typeScales") }, // prettier-ignore
+            { label: "Palette", name: "palette", ...styleContextRelationField("brand", "palettes") }, // prettier-ignore
             { label: "Color Profile", name: "colorProfile", ...styleContextRelationField("colorProfiles", "colorProfiles") }, // prettier-ignore
           ],
         },
