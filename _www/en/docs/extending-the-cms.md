@@ -6,8 +6,8 @@ createdAt: 2026-05-13T07:46:00.000Z
 ldType: WebPage
 name: Extending the CMS
 docsNav:
-  section: advanced
-  order: 3
+  section: developers
+  order: 10
 vars: {}
 ---
 {% raw %}
