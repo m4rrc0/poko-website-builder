@@ -55,7 +55,7 @@
     "dotenv": "^16.4.7",
     "eleventy-plugin-icons": "^4.5.3",
     "eleventy-plugin-robotstxt": "^1.0.2",
-    "lite-youtube-embed": "^0.3.4",
+    "eleventy-plugin-youtube-embed": "^1.13.2",
     "esbuild": "^0.28.2",
     "fast-glob": "^3.3.3",
     "fast-sort": "^3.4.1",

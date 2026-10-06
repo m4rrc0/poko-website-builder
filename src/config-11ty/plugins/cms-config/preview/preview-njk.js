@@ -30,7 +30,7 @@ import {
   linkPaired,
   buttonPaired,
 } from "../../../shortcodes/components/links.js";
-import { embedPreview as embed } from "../../private-embed/preview-stub.js";
+import { embed } from "../../../shortcodes/components/embed.js";
 import { gallery } from "../../../shortcodes/components/gallery.js";
 import { newLine, htmlLineBreak } from "../../../shortcodes/newLine.js";
 import { locale_url, locale_links, tagLabel } from "../../../filters/i18n.js";
@@ -445,7 +445,7 @@ export function createNjkEnv({ lang = "", helpers }) {
   addPaired("button", previewLink(buttonPaired, true));
   addSingle("linkSimple", previewLink(link, false));
   addSingle("buttonSimple", previewLink(button, false));
-  addSingle("embed", embed); // preview stub — real embeds need build-time fetches
+  addSingle("embed", embed);
   addSingle("gallery", gallery);
   addSingle("n", newLine);
   addSingle("br", htmlLineBreak);

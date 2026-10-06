@@ -23,7 +23,7 @@ import pluginSitemap from "@quasibit/eleventy-plugin-sitemap";
 import pluginIcons from "eleventy-plugin-icons";
 import pluginCodeblocks from "@code-blocks/eleventy-plugin";
 import pluginCodeBlocksCharts from "@code-blocks/charts";
-import privateEmbed from "./src/config-11ty/plugins/private-embed/index.js";
+import embedYouTube from "eleventy-plugin-youtube-embed";
 
 // -------- Plugins Internal
 import { imageTransformOptions } from "./src/config-11ty/plugins/imageTransform.js";
@@ -145,6 +145,7 @@ import {
   wireLqipBundleManager,
   gallery,
   wrapper,
+  embed,
 } from "./src/config-11ty/shortcodes/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
 
@@ -600,14 +601,17 @@ export default async function (eleventyConfig) {
     },
   });
 
-  eleventyConfig.addPlugin(privateEmbed, {
-    // Bare-URL rewriting stays off — embeds are authored via {% embed url="…" %}.
-    // (import { attachUrlTransform } to register the transform manually.)
-    transform: false,
-    embedClass: "embed",
-    providers: {
-      youtube: { titleOptions: { download: true } },
-      vimeo: { titleOptions: { download: true } },
+  eleventyConfig.addPlugin(embedYouTube, {
+    embedClass: "youtube-embed",
+    titleOptions: {
+      download: true,
+    },
+    lite: {
+      css: { inline: true },
+      js: { inline: true },
+      // thumbnailFormat: "webp", // not available for older videos. Would be nice to fallback to jpg when not available.
+      responsive: true,
+      thumbnailQuality: "maxresdefault",
     },
   });
 
@@ -769,7 +773,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addShortcode("image", image);
   eleventyConfig.addShortcode("gallery", gallery);
   // eleventyConfig.addPairedShortcode("wrapper", wrapper);
-  // {% embed %} is registered by the private-embed plugin.
+  eleventyConfig.addShortcode("embed", embed);
   // Note: `sections` shortcode is registered by the partialShortcodes plugin.
   // eleventyConfig.addPairedShortcode("calloutShortcode", calloutShortcode);
   // eleventyConfig.addShortcode("ogImageSelected", ogImageSelected);
