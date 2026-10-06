@@ -3739,7 +3739,7 @@ export const stylesConfigCollection = (fontsourceFonts) => ({
             },
             // prettier-ignore
             { label: "Widths Context", name: "widthsContext", ...styleContextRelationField("brand", "widthsContexts") }, // prettier-ignore
-            { label: "Font Stacks Context", name: "fontStacksContext", ...styleContextRelationField("brand", "fontStacks") }, // prettier-ignore
+            { label: "Font Stacks Context", name: "fontStacksContext", ...styleContextRelationField("brand", "fontStacksContexts") }, // prettier-ignore
             { label: "Type Scale", name: "typeScale", ...styleContextRelationField("brand", "typeScales") }, // prettier-ignore
             { label: "Palette", name: "palette", ...styleContextRelationField("brand", "palettes") }, // prettier-ignore
             { label: "Color Profile", name: "colorProfile", ...styleContextRelationField("colorProfiles", "colorProfiles") }, // prettier-ignore
