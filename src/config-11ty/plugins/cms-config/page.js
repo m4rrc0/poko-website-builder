@@ -39,6 +39,13 @@ export class CmsPage {
     <script src=${sveltiaScriptSrc} eleventy:ignore></script>
     <link href="config.json" type="application/json" rel="cms-config-url" />
     <script eleventy:ignore>
+      window.__POKO_CMS_AUTH__ = ${JSON.stringify({
+        clientId: data.env.POKO_GITHUB_CLIENT_ID,
+        relayUrl: data.env.CMS_AUTH_RELAY_URL,
+      })};
+    </script>
+    <script src="/admin/device-flow.js" eleventy:ignore></script>
+    <script eleventy:ignore>
       </script>
       <script eleventy:ignore>
         ${JSON.stringify(previewStyleUrls)}.forEach((url) => CMS.registerPreviewStyle(url));

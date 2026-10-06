@@ -222,6 +222,12 @@ export const CMS_AUTH_URL = processEnv.CMS_AUTH_URL;
 export const CMS_REPO = processEnv.CMS_REPO || REPO;
 export const CMS_BACKEND = processEnv.CMS_BACKEND || "github";
 export const CMS_BRANCH = processEnv.CMS_BRANCH || BRANCH;
+// GitHub OAuth device flow (see template/functions/README.md): public client
+// ID of the poko OAuth app — not a secret. Empty disables the sign-in card.
+export const POKO_GITHUB_CLIENT_ID = processEnv.POKO_GITHUB_CLIENT_ID || "";
+// Device-flow relay base URL. Same-origin Pages Function by default; override
+// when the site is not deployed on Cloudflare Pages.
+export const CMS_AUTH_RELAY_URL = processEnv.CMS_AUTH_RELAY_URL || "/cms-auth";
 
 // Fallback hosting service for local dev
 export const PREFERRED_HOSTING = processEnv.PREFERRED_HOSTING || "node";
