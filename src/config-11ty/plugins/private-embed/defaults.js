@@ -1,6 +1,6 @@
 // Shared facade rules — always emitted with the first embed of a page
 // (into the "css" bundle when bundle managers are wired, else inline).
-export const facadeCss = `lite-youtube .embed-disclaimer,lite-vimeo .embed-disclaimer{position:absolute;left:0;right:0;bottom:0;margin:0;padding:.45em .8em;font:500 .8rem/1.35 system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.62);pointer-events:none}
+export const facadeCss = `lite-youtube .embed-disclaimer,lite-vimeo .embed-disclaimer{position:absolute;left:0;right:0;bottom:0;margin:0;padding:.45em .8em;font:500 1rem/1.35 system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.8);pointer-events:none;text-align:center;text-wrap:balance}
 lite-youtube.lyt-activated .embed-disclaimer,lite-vimeo.ltv-activated .embed-disclaimer{display:none}
 .cms-preview lite-youtube,.cms-preview lite-vimeo{cursor:not-allowed}`;
 
