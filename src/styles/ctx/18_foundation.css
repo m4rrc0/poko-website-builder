@@ -375,7 +375,8 @@ body > footer ~ div:not([class*="poko"]) {
 
 /* 3.1 Images */
 :where(img, picture, video, svg) {
-  max-inline-size: 100%;
+  /* NOTE: --max-width to match ctx system. must be kept or the 100% default will override it */
+  max-inline-size: var(--max-width, 100%);
   /* Center images by default */
   /*margin-inline: auto;*/
   /*inline-size: 100%;*/
