@@ -24,7 +24,6 @@
         "dotenv": "^16.4.7",
         "eleventy-plugin-icons": "^4.5.3",
         "eleventy-plugin-robotstxt": "^1.0.2",
-        "eleventy-plugin-youtube-embed": "^1.13.2",
         "esbuild": "^0.28.2",
         "fast-glob": "^3.3.3",
         "fast-sort": "^3.4.1",
@@ -33,6 +32,7 @@
         "html-rewriter-wasm": "^0.4.1",
         "js-yaml": "^4.3.1",
         "lightningcss": "^1.30.1",
+        "lite-youtube-embed": "^0.3.4",
         "luxon": "^3.7.2",
         "markdown-it": "^14.1.0",
         "markdown-it-attrs": "^4.3.1",
@@ -563,8 +563,6 @@
 
     "eleventy-plugin-robotstxt": ["eleventy-plugin-robotstxt@1.0.2", "", { "peerDependencies": { "@11ty/eleventy": "^3.0.0" } }, "sha512-W3Rr0232kT0IYvot9Vbf8QOksHFEaRHNwTBzlPLBHoE7lLd2uDyJqZmzM1XGjoOZ3DDJSxWiweIOOtiPQt+cVg=="],
 
-    "eleventy-plugin-youtube-embed": ["eleventy-plugin-youtube-embed@1.13.2", "", { "dependencies": { "@11ty/eleventy-fetch": "^5.1.2", "deepmerge": "^4.3.1", "lite-youtube-embed": "^0.3.4", "string-replace-async": "^3.0.2" } }, "sha512-dd5VnphtAvF4lWbZ/Z5kXnkcGLVYTUIYtBsbOTNQ5PfU+dZ/qRgsXvtzaH4+/txBbcsSm9AtRi5mtYHgD2WNPA=="],
-
     "emoji-regex": ["emoji-regex@8.0.0", "", {}, "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A=="],
 
     "encodeurl": ["encodeurl@2.0.0", "", {}, "sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg=="],
@@ -914,8 +912,6 @@
     "ssri": ["ssri@11.0.0", "", { "dependencies": { "minipass": "^7.0.3" } }, "sha512-aZpUoMN/Jj2MqA4vMCeiKGnc/8SuSyHbGSBdgFbZxP8OJGF/lFkIuElzPxsN0q8TQQ+prw3P4EDfB3TBHHgfXw=="],
 
     "statuses": ["statuses@2.0.2", "", {}, "sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw=="],
-
-    "string-replace-async": ["string-replace-async@3.0.2", "", {}, "sha512-s6hDtXJ7FKyRap/amefqrOMpkEQvxUDueyvJygQeHxCK5Za90dOMgdibCCrPdfdAYAkr8imrZ1PPXW7DOf0RzQ=="],
 
     "string-width": ["string-width@4.2.3", "", { "dependencies": { "emoji-regex": "^8.0.0", "is-fullwidth-code-point": "^3.0.0", "strip-ansi": "^6.0.1" } }, "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g=="],
 
