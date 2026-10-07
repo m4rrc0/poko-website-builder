@@ -14,13 +14,13 @@ common case.
 ### How sign-in works
 
 ```
-/admin page                      /cms-auth/* (this function)         GitHub
+/admin page                      /admin/cms-auth/* (this function)         GitHub
 ─────────────                    ─────────────────────────          ─────────
-"Sign in with GitHub"   →   POST /cms-auth/device/code     →   POST /login/oauth/device/code
+"Sign in with GitHub"   →   POST /admin/cms-auth/device/code     →   POST /login/oauth/device/code
                             (public client_id only)              → device_code + user_code
 ◄── shows "ABCD-1234" ──────────────────────────────────────────────────────────
 user opens github.com/login/device, types the code, approves "poko CMS"
-POST /cms-auth/device/token →   POST /login/oauth/access_token     → access_token
+POST /admin/cms-auth/device/token →   POST /login/oauth/access_token     → access_token
   (poll every `interval`)        (grant_type device_code)
 GET api.github.com/user ───────────────────────────────────────── → profile (CORS OK)
 localStorage["sveltia-cms.user"] = {backendName:"github", token, …profile}
@@ -61,26 +61,26 @@ built-in token sign-in and `backend.base_url` OAuth clients still work.
 ## TODO / plan / future ideas
 
 - [ ] Create the shared poko OAuth app and bake the real `POKO_GITHUB_CLIENT_ID`
-  default into the engine (currently env-only).
+      default into the engine (currently env-only).
 - [ ] Local dev path: `wrangler pages dev` serves the function — verify and
-  document; `site_id=localhost` handling if needed.
+      document; `site_id=localhost` handling if needed.
 - [ ] Upstream: propose native device-flow sign-in to Sveltia CMS (fits their
-  blocked-on-PKCE roadmap). The shim then becomes unnecessary.
+      blocked-on-PKCE roadmap). The shim then becomes unnecessary.
 - [ ] Classic authorization-code flow endpoints (`/auth`, `/callback`) ported
-  from sveltia-cms-auth — only if per-site OAuth apps are ever wanted; device
-  flow covers the common case. If added: Host-derived allowlist
-  (`*.{project}.pages.dev` + `EXTRA_DOMAINS` env), PKCE verifier in the CSRF
-  cookie.
+      from sveltia-cms-auth — only if per-site OAuth apps are ever wanted; device
+      flow covers the common case. If added: Host-derived allowlist
+      (`*.{project}.pages.dev` + `EXTRA_DOMAINS` env), PKCE verifier in the CSRF
+      cookie.
 - [ ] GitHub client-side PKCE: adopt once GitHub ships it (token-endpoint CORS
-  + secretless exchange — currently on hold upstream); the relay then retires.
+  - secretless exchange — currently on hold upstream); the relay then retires.
 - [ ] GitHub App variant: per-repo scoped tokens — blocked on ~8h expiring user
-  tokens (refresh needs a secret). Revisit if GitHub relaxes this.
+      tokens (refresh needs a secret). Revisit if GitHub relaxes this.
 - [ ] UX polish: QR code / `verification_uri` button, localized strings,
-  expiry countdown on the code, remember-dismissed across sessions.
+      expiry countdown on the code, remember-dismissed across sessions.
 - [ ] `auth_scope` config option (e.g. `public_repo` for public-only sites).
 - [ ] Optional per-site OAuth app support: `POKO_GITHUB_CLIENT_ID` already
-  accepts any app's ID — document that sites can bring their own app for
-  branding ("Sign in with GitHub" shows the app name on GitHub's consent page).
+      accepts any app's ID — document that sites can bring their own app for
+      branding ("Sign in with GitHub" shows the app name on GitHub's consent page).
 
 ## Files
 

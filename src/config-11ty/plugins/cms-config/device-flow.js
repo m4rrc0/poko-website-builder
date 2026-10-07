@@ -3,22 +3,35 @@
  *
  * Drives GitHub's OAuth Device Authorization Grant: shows a code, the user
  * approves at github.com/login/device, and on success this writes Sveltia's
- * stored user (`sveltia-cms.user` localStorage) and reloads — the CMS then
- * resumes signed in, as it does for tokens left over from Netlify/Decap.
+ * stored user (`sveltia-cms.user` localStorage) and boots the CMS — it inits
+ * already signed in, as it does for tokens left over from Netlify/Decap.
  *
  * The OAuth app's client ID is public (build-time config, window.__POKO_CMS_AUTH__);
  * no secret exists anywhere, so this flow needs no callback URL and no
- * allowlist. Disabled silently when no client ID is configured or a user is
- * already signed in.
+ * allowlist. The CMS bundle is not loaded until needed (lazy __POKO_BOOT_CMS__):
+ * while signed out a full-screen prompt is all that runs. Dismissal is not
+ * persisted: the prompt returns on the next load while still signed out.
  */
 (() => {
   const STORAGE_KEY = "sveltia-cms.user";
-  const DISMISS_KEY = "poko-cms-auth.dismissed";
-  const { clientId, relayUrl = "/cms-auth", scope = "repo user" } =
-    window.__POKO_CMS_AUTH__ ?? {};
+  const {
+    clientId,
+    relayUrl = "/admin/cms-auth",
+    scope = "repo user",
+  } = window.__POKO_CMS_AUTH__ ?? {};
 
-  if (!clientId || localStorage.getItem(STORAGE_KEY)) return;
-  if (sessionStorage.getItem(DISMISS_KEY)) return;
+  // Sveltia leaves `sveltia-cms.user = {}` behind on logout or a failed
+  // sign-in — truthy, but not a session. Only a stored token counts.
+  let storedUser = null;
+  try {
+    storedUser = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch {}
+
+  // Signed in (or the shim disabled): the CMS boots right away.
+  if (!clientId || storedUser?.token) {
+    window.__POKO_BOOT_CMS__?.();
+    return;
+  }
 
   const post = (path, body) =>
     fetch(`${relayUrl}${path}`, {
@@ -27,29 +40,41 @@
       body: JSON.stringify(body),
     }).then((r) => r.json());
 
-  const el = document.createElement("div");
-  el.style.cssText = [
+  // Opaque full-viewport layer — only the quick sign-in is visible until
+  // success or dismissal; the CMS keeps loading behind it.
+  // light-dark() + color-scheme follow the OS preference (no toggle).
+  const overlay = document.createElement("div");
+  overlay.style.cssText = [
     "position:fixed",
-    "bottom:1rem",
-    "inset-inline:0",
-    "margin-inline:auto",
-    "max-width:26rem",
-    "padding:1rem 1.25rem",
-    "background:#fff",
-    "color:#111",
-    "border:1px solid #ccc",
-    "border-radius:8px",
-    "box-shadow:0 4px 20px rgb(0 0 0 / 0.15)",
+    "inset:0",
+    "display:flex",
+    "align-items:center",
+    "justify-content:center",
+    "padding:1rem",
+    "color-scheme:light dark",
+    "background:light-dark(#f6f8fa,#141417)",
+    "color:light-dark(#111,#eee)",
     "font:14px/1.5 system-ui,sans-serif",
     "z-index:2147483647",
   ].join(";");
+
+  const el = document.createElement("div");
+  el.style.cssText = [
+    "max-width:24rem",
+    "padding:1.25rem 1.5rem",
+    "background:light-dark(#fff,#1e1e22)",
+    "border:1px solid light-dark(#ddd,#3a3a40)",
+    "border-radius:10px",
+    "box-shadow:0 8px 30px light-dark(rgb(0 0 0 / 0.12),rgb(0 0 0 / 0.5))",
+  ].join(";");
+  overlay.appendChild(el);
 
   let pollTimer = null;
   const render = (nodes) => el.replaceChildren(...nodes);
   const dismiss = () => {
     clearTimeout(pollTimer);
-    sessionStorage.setItem(DISMISS_KEY, "1");
-    el.remove();
+    window.__POKO_BOOT_CMS__?.();
+    overlay.remove();
   };
 
   // --- tiny DOM builders (relay-supplied strings only ever land in text nodes)
@@ -71,11 +96,11 @@
     node.textContent = label;
     return node;
   };
-  const closeButton = () =>
+  const dismissButton = () =>
     button(
       "poko-auth-close",
-      "✕",
-      "margin-inline-start:.5rem;background:none;border:none;cursor:pointer",
+      "Dismiss quick sign-in",
+      "margin-inline-start:.5rem;background:none;border:none;cursor:pointer;text-decoration:underline;vertical-align:center;",
     );
 
   /** Only a real github.com page may be linked — anything else renders as text. */
@@ -91,17 +116,14 @@
   };
 
   const idleView = () => [
-    strong("Sign in to the CMS"),
-    p(
-      "margin:.5rem 0",
-      "Approve access on GitHub — no app setup needed on this site.",
-    ),
+    strong("GitHub Quick sign-in"),
+    p("margin:.5rem 0 1rem", "Approve access on GitHub — no app setup needed."),
     button(
       "poko-auth-start",
       "Sign in with GitHub",
-      "padding:.4rem .9rem;cursor:pointer",
+      "padding:.45rem 1rem;cursor:pointer",
     ),
-    closeButton(),
+    dismissButton(),
   ];
 
   const waitingView = ({ userCode, verificationUri }) => {
@@ -113,12 +135,30 @@
     if (href) link.href = href;
     const status = p("margin:.5rem 0;opacity:.7", "Waiting for approval…");
     status.id = "poko-auth-status";
+
+    const code = document.createElement("span");
+    code.style.cssText =
+      "font:700 1.4rem/1 ui-monospace,monospace;letter-spacing:.15em";
+    code.textContent = userCode;
+    const copy = button(
+      "poko-auth-copy",
+      "Copy",
+      "padding:.3rem .7rem;cursor:pointer;font-size:.85em",
+    );
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(userCode);
+        copy.textContent = "Copied";
+      } catch {}
+    });
+
     return [
       strong("Approve this code on GitHub"),
       p("margin:.5rem 0", "Open ", link, " and enter:"),
       p(
-        "margin:.5rem 0;font:700 1.4rem/1 ui-monospace,monospace;letter-spacing:.15em",
-        userCode,
+        "margin:.5rem 0;display:flex;align-items:center;gap:.75rem",
+        code,
+        copy,
       ),
       status,
       button(
@@ -132,8 +172,12 @@
   const errorView = (message) => [
     strong("Sign-in failed"),
     p("margin:.5rem 0", message),
-    button("poko-auth-start", "Try again", "padding:.4rem .9rem;cursor:pointer"),
-    closeButton(),
+    button(
+      "poko-auth-start",
+      "Try again",
+      "padding:.4rem .9rem;cursor:pointer",
+    ),
+    dismissButton(),
   ];
 
   const wireClose = () =>
@@ -147,7 +191,7 @@
     wireClose();
   };
 
-  const persistAndReload = async (token) => {
+  const persistAndBoot = async (token) => {
     const response = await fetch("https://api.github.com/user", {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -169,13 +213,20 @@
         profileURL: profile.html_url,
       }),
     );
-    location.reload();
+    // The CMS was never booted while signed out — injecting it now picks the
+    // stored user up at init, no reload needed. Fall back to reload if the
+    // bundle stalls (it resumes signed in on the next load either way).
+    window.__POKO_BOOT_CMS__?.();
+    const timeout = new Promise((r) => setTimeout(() => r("timeout"), 30000));
+    const ready = window.__POKO_CMS_READY__ ?? Promise.resolve();
+    if ((await Promise.race([ready, timeout])) === "timeout") location.reload();
+    else overlay.remove();
   };
 
   /** The token already works — a profile failure retries only the profile fetch. */
   const finish = async (token) => {
     try {
-      await persistAndReload(token);
+      await persistAndBoot(token);
     } catch {
       showError(
         "GitHub approved, but loading your profile failed — try again.",
@@ -256,9 +307,9 @@
     render(idleView());
     wireStart();
     wireClose();
-    document.body.appendChild(el);
+    // Runs as a sync head script while the (deferred) CMS bundle still loads —
+    // body doesn't exist yet; a fixed overlay works as a child of <html> too.
+    (document.body ?? document.documentElement).appendChild(overlay);
   };
-  document.readyState === "loading"
-    ? document.addEventListener("DOMContentLoaded", mount)
-    : mount();
+  mount();
 })();

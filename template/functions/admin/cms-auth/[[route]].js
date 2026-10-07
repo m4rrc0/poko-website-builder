@@ -7,11 +7,11 @@
  * therefore no domain allowlist is needed: the relay can only ever deliver a
  * token to whoever initiated the flow.
  *
- * Routes (all under /cms-auth/):
- *   POST /cms-auth/device/code   → POST github.com/login/oauth/device/code
- *   POST /cms-auth/device/token  → POST github.com/login/oauth/access_token
+ * Routes (all under /admin/cms-auth/):
+ *   POST /admin/cms-auth/device/code   → POST github.com/login/oauth/device/code
+ *   POST /admin/cms-auth/device/token  → POST github.com/login/oauth/access_token
  *                                  (grant_type device_code)
- *   GET  /cms-auth/*             → 405-style info response
+ *   GET  /admin/cms-auth/*             → 405-style info response
  */
 
 const GITHUB_ENDPOINTS = {
@@ -45,7 +45,8 @@ const jsonResponse = (body, status = 200) =>
     headers: { ...JSON_HEADERS, ...corsHeaders },
   });
 
-const errorResponse = (message, status) => jsonResponse({ error: message }, status);
+const errorResponse = (message, status) =>
+  jsonResponse({ error: message }, status);
 
 /** OAuth app client IDs are public identifiers (e.g. `Iv1.…`, `Ov23li…`), never secrets. */
 const isValidClientId = (value) =>
