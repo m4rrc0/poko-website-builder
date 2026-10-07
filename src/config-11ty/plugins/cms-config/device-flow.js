@@ -185,6 +185,10 @@
   };
 
   async function start() {
+    const startButton = el.querySelector("#poko-auth-start");
+    if (!startButton || startButton.disabled) return;
+    startButton.disabled = true;
+
     let ticket;
     try {
       ticket = await post("/device/code", { client_id: clientId, scope });
