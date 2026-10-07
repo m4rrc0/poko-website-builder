@@ -352,7 +352,7 @@ a.reset {
 
 /* Try an nuke browser extensions added at the end of the body */
 /* TODO: Find a better way */
-body > footer ~ div:not([class*="poko"]) {
+body > footer ~ *:not([class*="poko"]) {
   all: revert;
   margin: 0;
   padding: 0;
