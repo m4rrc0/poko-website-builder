@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import deepmerge from "deepmerge";
 import { languages, defaultLangCode } from "../../../../env.config.js";
+import { langCodeForPage } from "../../../utils/languages.js";
 import { defaults, facadeCss } from "./defaults.js";
 import { providers, renderEmbed, normalizeEmbedArgs } from "./emit.js";
 import { makeUrlTransform } from "./transform.js";
@@ -72,9 +73,11 @@ function makeCtx(eleventyConfig, options) {
     },
     langForPage(page) {
       if (options.langForPage) return options.langForPage(page);
-      const stem = page?.filePathStem || "";
-      const found = languages?.find((l) => l?.defaultPrefixRegex?.test(stem));
-      return found?.code || page?.lang || defaultLangCode || "en";
+      return langCodeForPage(
+        { filePathStem: page?.filePathStem, lang: page?.lang },
+        languages,
+        defaultLangCode || "en",
+      );
     },
   };
 }
@@ -100,7 +103,9 @@ async function embedUrl(args, ctx) {
     return `<p><a href="${url}">${url}</a></p>`;
   }
   if (hit.data.playlist) {
-    console.error(`[private-embed] playlists unsupported, left as link: ${url}`);
+    console.error(
+      `[private-embed] playlists unsupported, left as link: ${url}`,
+    );
     return `<p><a href="${url}">${url}</a></p>`;
   }
   return renderEmbed(hit, args, ctx);

@@ -112,14 +112,23 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
       collection,
     );
 
-    if (typeof pageData === "object") {
-      const attrsStr = stringifyAttributesObject({
-        ...attrs,
-        target: inferTarget("internal"),
-      });
-      const anchorStr = anchor ? `#${slugify(anchor)}` : "";
-      return `<a href="${pageData.url}${anchorStr}" ${attrsStr} ${instantAttrStr}>${htmlContent || pageData.name || pageData.url}</a>`;
+    if (typeof pageData === "undefined") {
+      console.warn(`[link] Page not found: ${urlRef}`);
     }
+
+    const attrsStr = stringifyAttributesObject({
+      ...attrs,
+      target: inferTarget("internal"),
+    });
+    const anchorStr = anchor ? `#${slugify(anchor)}` : "";
+    // Lookup miss (unresolved/missing translation): still render the anchor
+    // with the raw url so the content is not swallowed silently.
+    const hrefFallback = `/${collection}/${urlRef}/`
+      .replace(/\/+/g, "/")
+      .replace(/^\/pages\//, "/");
+    const href = pageData?.url || hrefFallback;
+    const label = htmlContent || pageData?.name || pageData?.url || urlRef;
+    return `<a href="${href}${anchorStr}" ${attrsStr} ${instantAttrStr}>${label}</a>`;
   }
 
   if (isExternal) {

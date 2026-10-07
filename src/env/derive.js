@@ -14,13 +14,17 @@ export function deriveEnv({
 } = {}) {
   const selectedCollections = globalSettings?.collections || [];
 
-  const allLanguages =
-    globalSettings?.languages?.map(transformLanguage) || [];
+  const allLanguages = globalSettings?.languages?.map(transformLanguage) || [];
   const initialCmsSetup = !allLanguages?.length;
   const languages = allLanguages.filter(
     (lang) => !statusesToUnrender.includes(lang.status),
   );
-  const defaultLanguage = allLanguages.find((lang) => lang.isWebsiteDefault);
+  // Prefer a rendered language: a `draft`/`inactive` website default must not
+  // leak into `defaultLangCode`, which is the fallback lang for every page.
+  const defaultLanguage =
+    languages.find((lang) => lang.isWebsiteDefault) ||
+    languages[0] ||
+    allLanguages.find((lang) => lang.isWebsiteDefault);
   const defaultLangCode = defaultLanguage?.code || "en";
   const unrenderedLanguages = allLanguages
     .filter((lang) => statusesToUnrender.includes(lang.status))

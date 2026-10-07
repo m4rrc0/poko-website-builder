@@ -1,4 +1,8 @@
 import { languages, SITE_NAME, COLLECTIONS } from "../../env.config.js";
+import {
+  languageFromFilePathStem,
+  langCodeForPage,
+} from "../utils/languages.js";
 // Was usefull when parents were declared in references
 // import temp from './temp.js';
 import mapInputPathToUrl from "../utils/mapInputPathToUrl.js";
@@ -33,21 +37,15 @@ export default {
   },
   language: (data) => {
     // Display collection names only
-    const filePathStem = data.page.filePathStem;
-    const language = langList(data).find((lang) =>
-      lang.defaultPrefixRegex.test(filePathStem),
-    );
-
-    return language;
+    return languageFromFilePathStem(data.page.filePathStem, langList(data));
   },
   lang: (data) => {
     // TODO: We should be able to rely on data.languages computed above but it seems unreliable...
-    const filePathStem = data.page.filePathStem;
-    const language = langList(data).find((lang) =>
-      lang.defaultPrefixRegex.test(filePathStem),
+    return langCodeForPage(
+      { filePathStem: data.page.filePathStem, lang: data.lang },
+      langList(data),
+      defaultLang(data),
     );
-
-    return language?.code || data.lang || defaultLang(data);
   },
   layout: (data) => {
     return data?.pageLayout || data?.layout;

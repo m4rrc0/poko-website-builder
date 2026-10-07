@@ -31,7 +31,12 @@ function lookupTemplateTranslations(
   // TODO: Make this more robust
   // Removing lang prefix and collection name from input makes collision more probable
 
-  const langPrefixes = getLanguages(this.ctx).map((lang) => lang.prefix);
+  // Strip both URL prefixes and raw lang codes: users legitimately write
+  // `url="fr/slug"` even when `fr`'s prefix is "" or a custom one.
+  const langPrefixes = getLanguages(this.ctx).flatMap((lang) => [
+    lang.prefix,
+    lang.code,
+  ]);
   const langPrefixRegex = new RegExp(`^\/*(${langPrefixes.join("|")})\/`);
   const eleventyCollections = this.ctx.collections;
   const collectionNames = Object.keys(eleventyCollections);
@@ -89,7 +94,7 @@ export function locale_url(...args) {
   const collectionName = args[3] || "all";
 
   try {
-    const lang = langOverride || this.page.lang;
+    const lang = langOverride || this.ctx?.lang || this.page.lang;
     const templateTranslations = lookupTemplateTranslations.call(
       this,
       input,
@@ -122,16 +127,17 @@ export function locale_url(...args) {
 export function locale_links(input, inclusionOption = "others") {
   const templateTranslations =
     lookupTemplateTranslations.call(this, input) || [];
+  const currentLang = this.ctx?.lang || this.page.lang;
 
   if (inclusionOption === "all") {
     return templateTranslations;
   } else if (inclusionOption === "others") {
     return templateTranslations.filter((translation) => {
-      return translation.lang !== this.page.lang;
+      return translation.lang !== currentLang;
     });
   } else if (inclusionOption === "self") {
     return templateTranslations.filter((translation) => {
-      return translation.lang === this.page.lang;
+      return translation.lang === currentLang;
     });
   } else if (
     typeof inclusionOption === "string" &&

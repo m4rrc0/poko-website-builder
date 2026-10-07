@@ -57,6 +57,7 @@ import {
 // -------- Env Variables
 import * as envConf from "./env.config.js";
 import { enginePath, dependencyEnginePath } from "./src/utils/paths.js";
+import { langCodeForPage } from "./src/utils/languages.js";
 import {
   recordIconUse,
   setIconSources,
@@ -515,6 +516,19 @@ export default async function (eleventyConfig) {
       // find the other localized content for a specific input file
       links: "locale_links_original",
     },
+  });
+  // I18nPlugin derives `page.lang` from the URL's first segment, which is the
+  // page *slug* on unprefixed default-language pages — a slug like
+  // "la-vie-de-l-ecole" passes its ISO-639 check and becomes the "lang".
+  // Re-derive it from filePathStem like the `lang` computed (must be
+  // registered after the plugin to win the merge).
+  eleventyConfig.addGlobalData("eleventyComputed.page.lang", () => {
+    return (data) =>
+      langCodeForPage(
+        { filePathStem: data.page.filePathStem, lang: data.lang },
+        data.languages || languages,
+        defaultLangCode,
+      );
   });
   eleventyConfig.addPlugin(eleventyNavigationPlugin);
   eleventyConfig.addPlugin(eleventyImageTransformPlugin, imageTransformOptions);
