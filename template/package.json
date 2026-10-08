@@ -15,7 +15,7 @@
     "upgrade": "npm i poko-website-builder@latest && npm i && bun i"
   },
   "dependencies": {
-    "poko-website-builder": "^0.2.0"
+    "poko-website-builder": "^0.2.1"
   },
   "engines": {
     "bun": ">=1.2.22",
