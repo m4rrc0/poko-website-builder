@@ -24,8 +24,12 @@ POST /admin/cms-auth/device/token →   POST /login/oauth/access_token     → a
   (poll every `interval`)        (grant_type device_code)
 GET api.github.com/user ───────────────────────────────────────── → profile (CORS OK)
 localStorage["sveltia-cms.user"] = {backendName:"github", token, …profile}
-reload → Sveltia CMS resumes signed in
+CMS bundle injected → Sveltia boots already signed in
 ```
+
+While signed out the page loads no CMS at all: the sign-in overlay is the only
+thing running — the Sveltia bundle is injected lazily on success (init picks up
+the stored user, no reload) or when the prompt is dismissed.
 
 - The **client ID is public** — it travels in the request body, is baked into
   the page at build time, and identifies (not authenticates) the app. No secret
@@ -34,7 +38,7 @@ reload → Sveltia CMS resumes signed in
   leak a token to a third party.
 - The stored-user shape mirrors what Sveltia persists after a normal sign-in
   (`backendName`, `token`, `id`, `name`, `login`, `email`, `avatarURL`,
-  `profileURL`), so Sveltia picks it up on reload — the same mechanism it uses
+  `profileURL`), so Sveltia picks it up at init — the same mechanism it uses
   to adopt tokens left over by Netlify/Decap CMS.
 
 ### Setup
@@ -42,14 +46,19 @@ reload → Sveltia CMS resumes signed in
 1. Create the poko OAuth app **once** (owner of the poko project): register an
    OAuth app on GitHub with **Device Flow enabled**. No callback URL is used by
    the device flow (the form still requires one — the project homepage works).
-2. Set `POKO_GITHUB_CLIENT_ID` to the app's client ID (build env var, e.g.
-   Pages → Settings → Variables, or `.env`). It is public and safe to commit.
+2. Nothing to set for the common case: the shared app's client ID is the
+   `POKO_GITHUB_CLIENT_ID` default in `env.config.js` (public, safe to commit).
+   Override it to use your own OAuth app; set it empty to disable the prompt.
 3. Deploy on Cloudflare Pages. Open `/admin` → "Sign in with GitHub" → enter
    the code → authorized.
 
-Scope requested: `repo user` (par with sveltia-cms-auth's default), so the token
-can read/write the repo and read the profile. Tokens are classic non-expiring
-OAuth tokens, revocable at <https://github.com/settings/applications>.
+Scope requested: `repo user` by default (par with sveltia-cms-auth's default),
+so the token can read/write the repo and read the profile. `CMS_AUTH_SCOPE`
+overrides it — e.g. `public_repo read:user` suffices for public-only repos;
+the relay only accepts `repo`, `public_repo`, `user`, `read:user`, `user:email`
+and silently falls back to `repo user` for anything else. Tokens are classic
+non-expiring OAuth tokens, revocable at
+<https://github.com/settings/applications>.
 
 ### Other deploy targets
 
@@ -76,8 +85,9 @@ built-in token sign-in and `backend.base_url` OAuth clients still work.
 - [ ] GitHub App variant: per-repo scoped tokens — blocked on ~8h expiring user
       tokens (refresh needs a secret). Revisit if GitHub relaxes this.
 - [ ] UX polish: QR code / `verification_uri` button, localized strings,
-      expiry countdown on the code, remember-dismissed across sessions.
-- [ ] `auth_scope` config option (e.g. `public_repo` for public-only sites).
+      expiry countdown on the code.
+- [x] `auth_scope` config option — shipped as `CMS_AUTH_SCOPE` in
+      `env.config.js` (e.g. `public_repo` for public-only sites).
 - [ ] Optional per-site OAuth app support: `POKO_GITHUB_CLIENT_ID` already
       accepts any app's ID — document that sites can bring their own app for
       branding ("Sign in with GitHub" shows the app name on GitHub's consent page).
