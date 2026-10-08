@@ -5,7 +5,7 @@
     "": {
       "name": "autre-ecole-website",
       "dependencies": {
-        "poko-website-builder": "^0.2.0",
+        "poko-website-builder": "^0.2.1",
       },
     },
   },
@@ -740,7 +740,7 @@
 
     "pngjs": ["pngjs@7.0.0", "", {}, "sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow=="],
 
-    "poko-website-builder": ["poko-website-builder@0.2.0", "", { "dependencies": { "@11ty/eleventy": "^3.1.2", "@11ty/eleventy-fetch": "^5.1.0", "@11ty/eleventy-img": "^6.0.3", "@11ty/eleventy-navigation": "^1.0.4", "@11ty/eleventy-plugin-directory-output": "^1.0.1", "@11ty/eleventy-plugin-webc": "^0.11.2", "@code-blocks/charts": "^0.1.9", "@code-blocks/eleventy-plugin": "^0.1.8", "@mdit/plugin-container": "^0.22.1", "@quasibit/eleventy-plugin-sitemap": "^2.2.0", "@sindresorhus/slugify": "^2.2.1", "@sveltia/cms": "^0.228.0", "@tabler/icons": "^3.34.0", "chalk": "^5.4.1", "dayjs": "^1.11.13", "deepmerge": "^4.3.1", "dotenv": "^16.4.7", "eleventy-plugin-icons": "^4.5.3", "eleventy-plugin-robotstxt": "^1.0.2", "esbuild": "^0.28.2", "fast-glob": "^3.3.3", "fast-sort": "^3.4.1", "hash-sum": "^2.0.0", "he": "^1.2.0", "html-rewriter-wasm": "^0.4.1", "js-yaml": "^4.3.1", "lightningcss": "^1.30.1", "lite-youtube-embed": "^0.3.4", "luxon": "^3.7.2", "markdown-it": "^14.1.0", "markdown-it-attrs": "^4.3.1", "markdown-it-bracketed-spans": "^1.0.1", "markdown-it-container": "^4.0.0", "markdown-it-link-attributes": "^4.0.1", "markdown-it-mark": "^4.0.0", "memoize": "^10.1.0", "nunjucks": "^3.2.4", "png-to-ico": "^3.0.2", "simple-icons": "^15.5.0", "unocss": "^66.4.2", "utopia-core": "^1.6.0" }, "bin": { "poko": "scripts/cli.js" } }, "sha512-pjD7o0h9PoqSU9HurmH0n2v+k3K6KagABRuTV2vijBfN1hknaxYkMqqhVjqUjgY93urQZLqy8FHUrLfEJzql2A=="],
+    "poko-website-builder": ["poko-website-builder@0.2.1", "", { "dependencies": { "@11ty/eleventy": "^3.1.2", "@11ty/eleventy-fetch": "^5.1.0", "@11ty/eleventy-img": "^6.0.3", "@11ty/eleventy-navigation": "^1.0.4", "@11ty/eleventy-plugin-directory-output": "^1.0.1", "@11ty/eleventy-plugin-webc": "^0.11.2", "@code-blocks/charts": "^0.1.9", "@code-blocks/eleventy-plugin": "^0.1.8", "@mdit/plugin-container": "^0.22.1", "@quasibit/eleventy-plugin-sitemap": "^2.2.0", "@sindresorhus/slugify": "^2.2.1", "@sveltia/cms": "^0.228.0", "@tabler/icons": "^3.34.0", "chalk": "^5.4.1", "dayjs": "^1.11.13", "deepmerge": "^4.3.1", "dotenv": "^16.4.7", "eleventy-plugin-icons": "^4.5.3", "eleventy-plugin-robotstxt": "^1.0.2", "esbuild": "^0.28.2", "fast-glob": "^3.3.3", "fast-sort": "^3.4.1", "hash-sum": "^2.0.0", "he": "^1.2.0", "html-rewriter-wasm": "^0.4.1", "js-yaml": "^4.3.1", "lightningcss": "^1.30.1", "lite-youtube-embed": "^0.3.4", "luxon": "^3.7.2", "markdown-it": "^14.1.0", "markdown-it-attrs": "^4.3.1", "markdown-it-bracketed-spans": "^1.0.1", "markdown-it-container": "^4.0.0", "markdown-it-link-attributes": "^4.0.1", "markdown-it-mark": "^4.0.0", "memoize": "^10.1.0", "nunjucks": "^3.2.4", "png-to-ico": "^3.0.2", "simple-icons": "^15.5.0", "unocss": "^66.4.2", "utopia-core": "^1.6.0" }, "bin": { "poko": "scripts/cli.js" } }, "sha512-PjU34AZwHPUZsJey1N8STasI2CeiTUO+R23m2J9D9G68qItp6xNwdZMiviK8G5FDExzFFbAettuKyPuGTEeXJw=="],
 
     "postcss": ["postcss@8.5.28", "", { "dependencies": { "nanoid": "^3.3.18", "picocolors": "^1.1.1", "source-map-js": "^1.2.1" } }, "sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A=="],
 
