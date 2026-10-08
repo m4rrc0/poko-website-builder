@@ -45,7 +45,7 @@ export class CmsPage {
       })};
       // Lazy CMS boot — device-flow.js injects the Sveltia bundle only once
       // sign-in state requires it; registration modules await __POKO_CMS_READY__.
-      window.__POKO_CMS_READY__ = new Promise((resolve) => {
+      window.__POKO_CMS_READY__ = new Promise((resolve, reject) => {
         let booted = false;
         window.__POKO_BOOT_CMS__ = () => {
           if (booted) return;
@@ -53,6 +53,8 @@ export class CmsPage {
           const s = document.createElement("script");
           s.src = ${JSON.stringify(sveltiaScriptSrc)};
           s.onload = resolve;
+          s.onerror = () =>
+            reject(new Error("Failed to load the CMS bundle: " + s.src));
           document.head.append(s);
         };
       });

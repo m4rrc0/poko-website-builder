@@ -219,8 +219,15 @@
     window.__POKO_BOOT_CMS__?.();
     const timeout = new Promise((r) => setTimeout(() => r("timeout"), 30000));
     const ready = window.__POKO_CMS_READY__ ?? Promise.resolve();
-    if ((await Promise.race([ready, timeout])) === "timeout") location.reload();
-    else overlay.remove();
+    try {
+      if ((await Promise.race([ready, timeout])) === "timeout")
+        location.reload();
+      else overlay.remove();
+    } catch {
+      showError("The CMS bundle failed to load — reload to retry.", () =>
+        location.reload(),
+      );
+    }
   };
 
   /** The token already works — a profile failure retries only the profile fetch. */

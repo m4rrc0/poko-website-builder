@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import he from "he";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -89,6 +90,19 @@ const ctxFor = (page, ctx) => ({
   lang: ctx.langForPage(page),
 });
 
+// Fallback for URLs no provider claims: only real http(s) URLs become links —
+// anything unparseable or on an exotic scheme (javascript:, data:, …) renders
+// as escaped plain text.
+const safeUrlLink = (url) => {
+  let protocol;
+  try {
+    protocol = new URL(url).protocol;
+  } catch {}
+  return protocol === "https:" || protocol === "http:"
+    ? `<a href="${he.escape(url)}">${he.escape(url)}</a>`
+    : he.escape(url);
+};
+
 async function embedUrl(args, ctx) {
   const url = args.url;
   if (!url) {
@@ -100,13 +114,13 @@ async function embedUrl(args, ctx) {
     .find((h) => h.data);
   if (!hit) {
     console.warn(`[private-embed] no provider for url, left as link: ${url}`);
-    return `<p><a href="${url}">${url}</a></p>`;
+    return `<p>${safeUrlLink(url)}</p>`;
   }
   if (hit.data.playlist) {
     console.error(
       `[private-embed] playlists unsupported, left as link: ${url}`,
     );
-    return `<p><a href="${url}">${url}</a></p>`;
+    return `<p>${safeUrlLink(url)}</p>`;
   }
   return renderEmbed(hit, args, ctx);
 }

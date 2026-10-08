@@ -2869,7 +2869,7 @@ const profileColorGroup = (name, label, leaves) => ({
   })),
 });
 const colorProfileFields = [
-  { name: "name", label: "Profile Name", widget: "string", required: true, default: "default" }, // prettier-ignore
+  { name: "name", label: "Profile Name", widget: "string", required: true }, // prettier-ignore
   { name: "text", label: "Text Color", ...profileColorField, default: "read" }, // prettier-ignore
   { name: "bg", label: "Background Color", ...profileColorField, default: "neutral" }, // prettier-ignore
   { name: "border", label: "Border Color", ...profileColorField }, // prettier-ignore

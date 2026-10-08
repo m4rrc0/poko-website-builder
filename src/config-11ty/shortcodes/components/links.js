@@ -1,4 +1,5 @@
 // import obfuscateEmail from "../../utils/emailObfuscate.js";
+import he from "he";
 import slugify from "@sindresorhus/slugify";
 import { locale_url } from "../../filters/i18n.js";
 import { emailLink } from "../../filters/email.js";
@@ -125,10 +126,11 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
     // with the raw url so the content is not swallowed silently.
     const hrefFallback = `/${collection}/${urlRef}/`
       .replace(/\/+/g, "/")
-      .replace(/^\/pages\//, "/");
+      .replace(/^\/(pages|undefined)\//, "/");
     const href = pageData?.url || hrefFallback;
-    const label = htmlContent || pageData?.name || pageData?.url || urlRef;
-    return `<a href="${href}${anchorStr}" ${attrsStr} ${instantAttrStr}>${label}</a>`;
+    const label =
+      htmlContent || he.escape(pageData?.name || pageData?.url || urlRef);
+    return `<a href="${he.escape(href)}${anchorStr}" ${attrsStr} ${instantAttrStr}>${label}</a>`;
   }
 
   if (isExternal) {
@@ -137,7 +139,7 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
       target: inferTarget("external"),
       rel: attrs.rel || externalLinksRel.join(" ") || null,
     });
-    return `<a href="${urlRef}" ${attrsStr} ${instantAttrStr}>${htmlContent || urlRef}</a>`;
+    return `<a href="${he.escape(urlRef)}" ${attrsStr} ${instantAttrStr}>${htmlContent || he.escape(urlRef)}</a>`;
   }
 
   if (isEmail) {
@@ -160,7 +162,7 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
       ...attrs,
       target: inferTarget("file"),
     });
-    return `<a href="${urlRef}" ${attrsStr} ${instantAttrStr}>${htmlContent || urlRef}</a>`;
+    return `<a href="${he.escape(urlRef)}" ${attrsStr} ${instantAttrStr}>${htmlContent || he.escape(urlRef)}</a>`;
   }
 
   return "";
