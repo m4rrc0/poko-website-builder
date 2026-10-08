@@ -60,8 +60,8 @@ built-in token sign-in and `backend.base_url` OAuth clients still work.
 
 ## TODO / plan / future ideas
 
-- [ ] Create the shared poko OAuth app and bake the real `POKO_GITHUB_CLIENT_ID`
-      default into the engine (currently env-only).
+- [x] Create the shared poko OAuth app — done (`Ov23li…` client ID is the
+      `POKO_GITHUB_CLIENT_ID` default in `env.config.js`; empty disables).
 - [ ] Local dev path: `wrangler pages dev` serves the function — verify and
       document; `site_id=localhost` handling if needed.
 - [ ] Upstream: propose native device-flow sign-in to Sveltia CMS (fits their
