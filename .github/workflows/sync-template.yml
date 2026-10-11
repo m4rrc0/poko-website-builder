@@ -5,7 +5,7 @@ name: Sync template
 # publish-only — never commit to it directly, every push here force-overwrites.
 #
 # One-time setup: a TEMPLATE_SYNC_TOKEN repository secret holding a fine-grained
-# PAT scoped to m4rrc0/poko-website-template with Contents: Read+Write.
+# PAT scoped to m4rrc0/poko-website-template with Contents: Read+Write + Workflows: Read+Write.
 
 on:
   push:
