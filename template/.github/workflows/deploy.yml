@@ -65,7 +65,7 @@ jobs:
       bun_version: ${{ steps.bun.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Check for [skip ci] in commit message
         id: check
@@ -181,7 +181,7 @@ jobs:
       needs.validate.outputs.can_deploy == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Select the runtime before provisioning Bun so the npm/Node fallback
       # stays reachable: Setup Bun only runs when Bun is already in context
@@ -203,7 +203,7 @@ jobs:
 
       - name: Setup Node
         if: steps.runtime.outputs.bun != 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -211,7 +211,7 @@ jobs:
 
       - name: Cache Bun dependencies
         if: steps.runtime.outputs.bun == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock', '**/bun.lockb') }}
@@ -219,7 +219,7 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Cache build assets
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache
           key: ${{ runner.os }}-assets-${{ github.run_id }}
@@ -254,7 +254,7 @@ jobs:
       - name: Setup Pages
         id: pages
         if: needs.setup.outputs.deployment_target == 'github-pages'
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Build with 11ty
         run: |
@@ -269,7 +269,7 @@ jobs:
           GITHUB_PAGES_URL: ${{ steps.pages.outputs.base_url }}
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-files
           path: ${{ env.BUILD_PATH }}/dist
@@ -288,23 +288,25 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-files
           path: dist
 
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
+          # v4+ excludes dotfiles by default; keep v3 behavior (.assetsignore etc.)
+          include-hidden-files: true
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   deploy-cloudflare:
     name: Deploy to Cloudflare Pages
@@ -316,34 +318,23 @@ jobs:
       needs.setup.outputs.deployment_target == 'cloudflare-pages'
     environment:
       name: cloudflare-pages
-      url: ${{ steps.deploy.outputs.url }}
+      url: ${{ steps.deploy.outputs.deployment-url }}
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-files
           path: dist
 
       - name: Deploy to Cloudflare Pages
         id: deploy
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }}
-          directory: dist
           # main -> production; any other branch -> preview URL (<branch>.<project>.pages.dev)
-          branch: ${{ github.head_ref || github.ref_name }}
+          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          wranglerVersion: "3"
-      # For using wrangler-action instead of pages-action (deprecated):
-      # - name: Deploy to Cloudflare Pages
-      #   id: deploy
-      #   uses: cloudflare/wrangler-action@v3
-      #   with:
-      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      #     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      #     command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
 
   # Report skipped builds
   report-skipped:
