@@ -2,6 +2,8 @@
 
 Minimal website setup consuming the [`poko-website-builder`](https://github.com/m4rrc0/poko-website-builder) engine.
 
+Template source: [https://github.com/m4rrc0/poko-website-template](https://github.com/m4rrc0/poko-website-template)
+
 ## Layout
 
 - `package.json` — depends on the engine, exposes `poko build` / `poko dev`

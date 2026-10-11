@@ -205,7 +205,7 @@ jobs:
         if: steps.runtime.outputs.bun != 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
           cache-dependency-path: ${{ env.BUILD_PATH }}/package-lock.json
 
