@@ -344,19 +344,28 @@ jobs:
           command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-  # Report skipped builds
+  # Report skipped builds. Cancels the run so it shows grey "Cancelled" instead
+  # of a green success. Missing deploy secrets stay a failure (config error).
   report-skipped:
     name: Build Skipped
     needs: [setup, validate]
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
+    permissions:
+      actions: write
+      contents: read
     if: |
-      needs.setup.outputs.should_skip == 'true' || 
+      needs.setup.outputs.should_skip == 'true' ||
       needs.validate.outputs.can_deploy == 'false'
     steps:
       - name: Report skip reason
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           if [ "${{ needs.setup.outputs.should_skip }}" = "true" ]; then
             echo "⏭️ Build skipped: [skip ci] found in commit message"
+            gh run cancel "$RUN_ID"
           else
             echo "❌ Build skipped: ${{ needs.validate.outputs.error_message }}"
+            exit 1
           fi
