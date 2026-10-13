@@ -320,6 +320,11 @@ jobs:
       name: cloudflare-pages
       url: ${{ steps.deploy.outputs.deployment-url }}
     steps:
+      # Required for Pages Functions: `wrangler pages deploy` picks up the
+      # `functions/` dir from the working directory (repo root), not from `dist/`.
+      - name: Checkout
+        uses: actions/checkout@v7
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
