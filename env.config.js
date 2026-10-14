@@ -222,6 +222,10 @@ export const CMS_AUTH_URL = processEnv.CMS_AUTH_URL;
 export const CMS_REPO = processEnv.CMS_REPO || REPO;
 export const CMS_BACKEND = processEnv.CMS_BACKEND || "github";
 export const CMS_BRANCH = processEnv.CMS_BRANCH || BRANCH;
+// Managed-track relay endpoints (poko-cloud): when set, Sveltia's
+// api calls route through the poko proxy instead of api.github.com.
+export const CMS_API_ROOT = processEnv.CMS_API_ROOT;
+export const CMS_GRAPHQL_API_ROOT = processEnv.CMS_GRAPHQL_API_ROOT;
 // GitHub OAuth device flow (see template/functions/README.md): public client
 // ID of the poko OAuth app — not a secret. Empty disables the sign-in card.
 export const POKO_GITHUB_CLIENT_ID =
