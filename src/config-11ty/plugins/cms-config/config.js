@@ -9,6 +9,8 @@ import {
   PROD_URL,
   DISPLAY_URL,
   CMS_AUTH_URL,
+  CMS_API_ROOT,
+  CMS_GRAPHQL_API_ROOT,
   CMS_REPO,
   CMS_BACKEND,
   CMS_BRANCH,
@@ -3825,6 +3827,11 @@ export class CmsConfig {
         repo: CMS_REPO,
         branch: CMS_BRANCH,
         base_url: CMS_AUTH_URL,
+        // poko managed sites only — the poko relay proxies GitHub.
+        ...(CMS_API_ROOT ? { api_root: CMS_API_ROOT } : {}),
+        ...(CMS_GRAPHQL_API_ROOT
+          ? { graphql_api_root: CMS_GRAPHQL_API_ROOT }
+          : {}),
         automatic_deployments: false, // Deprecated but keeping it for a while until I'm sure everyone is upgraded
         skip_ci: true,
       },
