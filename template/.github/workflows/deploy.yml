@@ -237,16 +237,16 @@ jobs:
           fi
         working-directory: ${{ env.BUILD_PATH }}
 
-      # Exposes every GitHub Actions secret as an env var for subsequent steps,
-      # so any secret you add in repo settings is available in process.env at build time.
-      # Multiline-safe; values remain masked in logs. Excludes the auto github_token.
-      - name: Export secrets to environment
-        env:
-          SECRETS_JSON: ${{ toJson(secrets) }}
-        run: |
-          echo "$SECRETS_JSON" \
-            | jq -r 'to_entries[] | select(.key != "github_token") | "\(.key)<<__POKO_EOF__\n\(.value)\n__POKO_EOF__"' \
-            >> "$GITHUB_ENV"
+      # # Exposes every GitHub Actions secret as an env var for subsequent steps,
+      # # so any secret you add in repo settings is available in process.env at build time.
+      # # Multiline-safe; values remain masked in logs. Excludes the auto github_token.
+      # - name: Export secrets to environment
+      #   env:
+      #     SECRETS_JSON: ${{ toJson(secrets) }}
+      #   run: |
+      #     echo "$SECRETS_JSON" \
+      #       | jq -r 'to_entries[] | select(.key != "github_token") | "\(.key)<<__POKO_EOF__\n\(.value)\n__POKO_EOF__"' \
+      #       >> "$GITHUB_ENV"
 
       # Exposes the URL configured in the repository Pages settings, custom
       # domain included, so the build knows whether it is served from a
