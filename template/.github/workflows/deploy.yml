@@ -150,11 +150,11 @@ jobs:
         run: |
           case "$PACKAGE_MANAGER" in
             bun|npm) ;;
-            *) echo "::error::Invalid PACKAGE_MANAGER '$PACKAGE_MANAGER' - expected 'bun' or 'npm'"; exit 1 ;;
+            *) echo "Invalid PACKAGE_MANAGER: '$PACKAGE_MANAGER' (expected 'bun' or 'npm')"; echo "::error::Invalid PACKAGE_MANAGER"; exit 1 ;;
           esac
           case "$DEPLOY_MODE" in
             fast|split) ;;
-            *) echo "::error::Invalid DEPLOY_MODE '$DEPLOY_MODE' - expected 'fast' or 'split'"; exit 1 ;;
+            *) echo "Invalid DEPLOY_MODE: '$DEPLOY_MODE' (expected 'fast' or 'split')"; echo "::error::Invalid DEPLOY_MODE"; exit 1 ;;
           esac
           echo "deploy_mode=$DEPLOY_MODE" >> "$GITHUB_OUTPUT"
           echo "::notice::Runtime: $PACKAGE_MANAGER | deploy: $DEPLOY_MODE | target: ${{ steps.target.outputs.deployment_target }}"
@@ -196,7 +196,8 @@ jobs:
           DEADLINE=$((SECONDS + 120))
           while true; do
             STARTED=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs" \
-              --jq '[.jobs[] | select(.labels[] == env.SELECTED) | select(.status != "queued" and .status != "requested")] | length')
+              --jq '[.jobs[] | select(.labels[] == env.SELECTED) | select(.status != "queued" and .status != "requested")] | length' \
+              2>/dev/null || echo 0)
             if [ "$STARTED" -gt 0 ]; then
               echo "Runner '$SELECTED' responded - watchdog done."
               exit 0
@@ -321,10 +322,11 @@ jobs:
           needs.setup.outputs.deployment_target == 'cloudflare-pages'
         uses: cloudflare/wrangler-action@v4
         with:
+          # ⚠️ Keep this `with:` block in sync with the deploy-cloudflare job below.
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # `pages deploy` can't create a missing project in non-interactive CI,
-          # so ensure it exists first. Fails silently when already present.
+          # Un-comment to make sure it exists first. Fails silently when already present.
           # preCommands: wrangler pages project create ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
           # main -> production; any other branch -> preview URL (<branch>.<project>.pages.dev)
           command: pages deploy ${{ env.BUILD_PATH }}/dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
@@ -398,10 +400,11 @@ jobs:
         id: deploy
         uses: cloudflare/wrangler-action@v4
         with:
+          # ⚠️ Keep this `with:` block in sync with the fast deploy step in build.
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # `pages deploy` can't create a missing project in non-interactive CI,
-          # so ensure it exists first. Fails silently when already present.
+          # Un-comment to make sure it exists first. Fails silently when already present.
           # preCommands: wrangler pages project create ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
           # main -> production; any other branch -> preview URL (<branch>.<project>.pages.dev)
           command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
