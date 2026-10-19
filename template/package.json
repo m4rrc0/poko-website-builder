@@ -17,6 +17,9 @@
   "dependencies": {
     "poko-website-builder": "^0.2.1"
   },
+  "devDependencies": {
+    "wrangler": "^4.61.1"
+  },
   "engines": {
     "bun": ">=1.2.22",
     "node": ">=24"
