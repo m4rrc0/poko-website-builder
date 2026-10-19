@@ -15,6 +15,9 @@ env:
   REPO_URL: ${{ github.event.repository.html_url }}
   # Optional: override Bun version. Falls back to package.json engines.bun if unset.
   BUN_VERSION: ${{ vars.BUN_VERSION }}
+  # Package manager for install/build. Opt out of Bun via the workflow_dispatch
+  # input or repo variable PACKAGE_MANAGER=npm.
+  PACKAGE_MANAGER: ${{ inputs.package_manager || vars.PACKAGE_MANAGER || 'bun' }}
 
 on:
   # Runs on pushes to any branch (unless commit contains [skip ci]).
@@ -43,6 +46,14 @@ on:
         options:
           - ubuntu-latest
           - blacksmith-4vcpu-ubuntu-2404
+      package_manager:
+        description: "Choose package manager"
+        required: true
+        default: "bun"
+        type: choice
+        options:
+          - bun
+          - npm
 
 permissions:
   contents: read
@@ -59,6 +70,9 @@ jobs:
   setup:
     name: Setup Deployment
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
+    permissions:
+      actions: write
+      contents: read
     outputs:
       should_skip: ${{ steps.check.outputs.should_skip }}
       deployment_target: ${{ steps.target.outputs.deployment_target }}
@@ -71,10 +85,13 @@ jobs:
         id: check
         env:
           HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
         run: |
           if [[ "$HEAD_COMMIT_MESSAGE" == *"[skip ci]"* ]]; then
             echo "should_skip=true" >> $GITHUB_OUTPUT
-            echo "Found [skip ci] in commit message, skipping workflow"
+            echo "⏭️ Build skipped: [skip ci] found in commit message"
+            gh run cancel "$RUN_ID"
           else
             echo "should_skip=false" >> $GITHUB_OUTPUT
           fi
@@ -100,6 +117,28 @@ jobs:
             fi
           fi
 
+      - name: Validate deployment configuration
+        id: validate
+        if: steps.check.outputs.should_skip == 'false'
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          TARGET: ${{ steps.target.outputs.deployment_target }}
+        run: |
+          if [ "$TARGET" = "cloudflare-pages" ] && { [ -z "$CF_API_TOKEN" ] || [ -z "$CF_ACCOUNT_ID" ]; }; then
+            echo "::error::Missing Cloudflare secrets: CLOUDFLARE_API_TOKEN and/or CLOUDFLARE_ACCOUNT_ID"
+            exit 1
+          fi
+          echo "$TARGET deployment configuration is valid"
+
+      - name: Resolve package manager
+        if: steps.check.outputs.should_skip == 'false'
+        run: |
+          case "$PACKAGE_MANAGER" in
+            bun|npm) echo "::notice::Using package manager: $PACKAGE_MANAGER" ;;
+            *) echo "::error::Invalid PACKAGE_MANAGER '$PACKAGE_MANAGER' - expected 'bun' or 'npm'"; exit 1 ;;
+          esac
+
       - name: Get Bun version
         id: bun
         if: steps.check.outputs.should_skip == 'false'
@@ -108,14 +147,14 @@ jobs:
             echo "version=$BUN_VERSION" >> "$GITHUB_OUTPUT"
           else
             # Read from package.json engines.bun (strip any leading >=, ^, ~)
-            VERSION=$(jq -r '.engines.bun' package.json | sed 's/[>=~^]//g')
+            VERSION=$(jq -r '.engines.bun // "latest"' package.json | sed 's/[>=~^]//g')
             echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           fi
 
   # Escape hatch: a selected runner label that never picks up (e.g. Blacksmith
   # requested on a repo that isn't connected) leaves jobs queued until GitHub's
   # 24h self-hosted queue ceiling. This job runs on ubuntu-latest, polls until
-  # the runner responds, and cancels the run if nothing started within 5min.
+  # the runner responds, and cancels the run if nothing started within 2min.
   # Only runs for non-default runners.
   watchdog:
     name: Runner Watchdog
@@ -134,7 +173,7 @@ jobs:
         run: |
           # Poll jobs bound for the selected runner; exit as soon as one leaves
           # the queue (runner proven alive). Only cancel at the deadline.
-          DEADLINE=$((SECONDS + 300))
+          DEADLINE=$((SECONDS + 120))
           while true; do
             STARTED=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs" \
               --jq '[.jobs[] | select(.labels[] == env.SELECTED) | select(.status != "queued" and .status != "requested")] | length')
@@ -143,76 +182,29 @@ jobs:
               exit 0
             fi
             [ $SECONDS -ge $DEADLINE ] && break
-            sleep 15
+            sleep 10
           done
-          echo "::error::No job started on '$SELECTED' within 5min - runner label unavailable. Rerun with runner=ubuntu-latest or fix the Blacksmith connection."
+          echo "::error::No job started on '$SELECTED' within 2min - runner label unavailable. Rerun with runner=ubuntu-latest or fix the Blacksmith connection."
           gh run cancel "$RUN_ID" || true
-
-  # Validate required secrets and configurations
-  validate:
-    name: Validate Configuration
-    needs: setup
-    runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
-    if: needs.setup.outputs.should_skip == 'false'
-    outputs:
-      can_deploy: ${{ steps.validate.outputs.can_deploy }}
-      error_message: ${{ steps.validate.outputs.error_message }}
-    steps:
-      - name: Validate deployment configuration
-        id: validate
-        env:
-          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          TARGET="${{ needs.setup.outputs.deployment_target }}"
-          CAN_DEPLOY="true"
-          ERROR_MSG=""
-
-          if [ "$TARGET" = "cloudflare-pages" ]; then
-            if [ -z "$CF_API_TOKEN" ] || [ -z "$CF_ACCOUNT_ID" ]; then
-              CAN_DEPLOY="false"
-              ERROR_MSG="Missing Cloudflare secrets: CLOUDFLARE_API_TOKEN and/or CLOUDFLARE_ACCOUNT_ID"
-            fi
-          elif [ "$TARGET" = "github-pages" ]; then
-            # GitHub Pages doesn't require additional secrets
-            echo "GitHub Pages deployment configuration is valid"
-          fi
-
-          echo "can_deploy=$CAN_DEPLOY" >> "$GITHUB_OUTPUT"
-          echo "error_message=$ERROR_MSG" >> "$GITHUB_OUTPUT"
 
   build:
     name: Build
-    needs: [setup, validate]
+    needs: setup
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 10
-    if: |
-      needs.setup.outputs.should_skip == 'false' && 
-      needs.validate.outputs.can_deploy == 'true'
+    if: needs.setup.outputs.should_skip == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # Select the runtime before provisioning Bun so the npm/Node fallback
-      # stays reachable: Setup Bun only runs when Bun is already in context
-      # (pinning its version); otherwise the job goes straight to Node.
-      - name: Detect runtime
-        id: runtime
-        run: |
-          if command -v bun >/dev/null 2>&1; then
-            echo "bun=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "bun=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Setup Bun
-        if: steps.runtime.outputs.bun == 'true'
+        if: env.PACKAGE_MANAGER == 'bun'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ needs.setup.outputs.bun_version }}
 
       - name: Setup Node
-        if: steps.runtime.outputs.bun != 'true'
+        if: env.PACKAGE_MANAGER == 'npm'
         uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -220,7 +212,7 @@ jobs:
           cache-dependency-path: ${{ env.BUILD_PATH }}/package-lock.json
 
       - name: Cache Bun dependencies
-        if: steps.runtime.outputs.bun == 'true'
+        if: env.PACKAGE_MANAGER == 'bun'
         uses: actions/cache@v6
         with:
           path: ~/.bun/install/cache
@@ -238,12 +230,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if command -v bun >/dev/null 2>&1; then
-            bun install
-          elif [ -f package-lock.json ]; then
-            npm ci
+          if [ "$PACKAGE_MANAGER" = "npm" ]; then
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
           else
-            npm install
+            bun install --frozen-lockfile
           fi
         working-directory: ${{ env.BUILD_PATH }}
 
@@ -269,11 +259,7 @@ jobs:
 
       - name: Build with 11ty
         run: |
-          if command -v bun >/dev/null 2>&1; then
-            bun run build
-          else
-            npm run build
-          fi
+          if [ "$PACKAGE_MANAGER" = "npm" ]; then npm run build; else bun run build; fi
         working-directory: ${{ env.BUILD_PATH }}
         env:
           DEPLOYMENT_TARGET: ${{ needs.setup.outputs.deployment_target }}
@@ -288,11 +274,10 @@ jobs:
 
   deploy-github-pages:
     name: Deploy to GitHub Pages
-    needs: [setup, validate, build]
+    needs: [setup, build]
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
     if: |
-      needs.setup.outputs.should_skip == 'false' && 
-      needs.validate.outputs.can_deploy == 'true' &&
+      needs.setup.outputs.should_skip == 'false' &&
       needs.setup.outputs.deployment_target == 'github-pages'
     environment:
       name: github-pages
@@ -321,11 +306,10 @@ jobs:
 
   deploy-cloudflare:
     name: Deploy to Cloudflare Pages
-    needs: [setup, validate, build]
+    needs: [setup, build]
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
     if: |
-      needs.setup.outputs.should_skip == 'false' && 
-      needs.validate.outputs.can_deploy == 'true' &&
+      needs.setup.outputs.should_skip == 'false' &&
       needs.setup.outputs.deployment_target == 'cloudflare-pages'
     environment:
       name: cloudflare-pages
@@ -350,33 +334,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # `pages deploy` can't create a missing project in non-interactive CI,
           # so ensure it exists first. Fails silently when already present.
-          preCommands: wrangler pages project create ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
+          # preCommands: wrangler pages project create ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
           # main -> production; any other branch -> preview URL (<branch>.<project>.pages.dev)
           command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-
-  # Report skipped builds. Cancels the run so it shows grey "Cancelled" instead
-  # of a green success. Missing deploy secrets stay a failure (config error).
-  report-skipped:
-    name: Build Skipped
-    needs: [setup, validate]
-    runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
-    permissions:
-      actions: write
-      contents: read
-    if: |
-      needs.setup.outputs.should_skip == 'true' ||
-      needs.validate.outputs.can_deploy == 'false'
-    steps:
-      - name: Report skip reason
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          if [ "${{ needs.setup.outputs.should_skip }}" = "true" ]; then
-            echo "⏭️ Build skipped: [skip ci] found in commit message"
-            gh run cancel "$RUN_ID"
-          else
-            echo "❌ Build skipped: ${{ needs.validate.outputs.error_message }}"
-            exit 1
-          fi
