@@ -114,8 +114,9 @@ jobs:
 
   # Escape hatch: a selected runner label that never picks up (e.g. Blacksmith
   # requested on a repo that isn't connected) leaves jobs queued until GitHub's
-  # 24h self-hosted queue ceiling. This job runs on ubuntu-latest, waits, and
-  # cancels the run if nothing ever started. Only runs for non-default runners.
+  # 24h self-hosted queue ceiling. This job runs on ubuntu-latest, polls until
+  # the runner responds, and cancels the run if nothing started within 5min.
+  # Only runs for non-default runners.
   watchdog:
     name: Runner Watchdog
     if: ${{ (inputs.runner || vars.RUNNER || 'ubuntu-latest') != 'ubuntu-latest' }}
@@ -129,14 +130,23 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ github.run_id }}
+          SELECTED: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
         run: |
-          sleep 300
-          STARTED=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs" \
-            --jq '[.jobs[] | select(.name != "Runner Watchdog") | select(.status == "in_progress" or .status == "completed")] | length')
-          if [ "$STARTED" -eq 0 ]; then
-            echo "::error::No job started within 5min - runner label unavailable. Rerun with runner=ubuntu-latest or fix the Blacksmith connection."
-            gh run cancel "$RUN_ID" || true
-          fi
+          # Poll jobs bound for the selected runner; exit as soon as one leaves
+          # the queue (runner proven alive). Only cancel at the deadline.
+          DEADLINE=$((SECONDS + 300))
+          while true; do
+            STARTED=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/jobs" \
+              --jq '[.jobs[] | select(.labels[] == env.SELECTED) | select(.status != "queued" and .status != "requested")] | length')
+            if [ "$STARTED" -gt 0 ]; then
+              echo "Runner '$SELECTED' responded - watchdog done."
+              exit 0
+            fi
+            [ $SECONDS -ge $DEADLINE ] && break
+            sleep 15
+          done
+          echo "::error::No job started on '$SELECTED' within 5min - runner label unavailable. Rerun with runner=ubuntu-latest or fix the Blacksmith connection."
+          gh run cancel "$RUN_ID" || true
 
   # Validate required secrets and configurations
   validate:
@@ -240,6 +250,7 @@ jobs:
       # # Exposes every GitHub Actions secret as an env var for subsequent steps,
       # # so any secret you add in repo settings is available in process.env at build time.
       # # Multiline-safe; values remain masked in logs. Excludes the auto github_token.
+      # # WARNING: Enabling this step forces manual approval for the workflow when deployed.
       # - name: Export secrets to environment
       #   env:
       #     SECRETS_JSON: ${{ toJson(secrets) }}
