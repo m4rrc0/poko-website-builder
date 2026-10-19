@@ -18,6 +18,10 @@ env:
   # Package manager for install/build. Opt out of Bun via the workflow_dispatch
   # input or repo variable PACKAGE_MANAGER=npm.
   PACKAGE_MANAGER: ${{ inputs.package_manager || vars.PACKAGE_MANAGER || 'bun' }}
+  # Deploy route: 'fast' deploys inside the build job (no `environment:` gating,
+  # no artifact round-trip); 'split' keeps separate deploy jobs so environment
+  # protection rules and environment-scoped secrets apply. Repo var DEPLOY_MODE=split.
+  DEPLOY_MODE: ${{ inputs.deploy_mode || vars.DEPLOY_MODE || 'fast' }}
 
 on:
   # Runs on pushes to any branch (unless commit contains [skip ci]).
@@ -54,6 +58,14 @@ on:
         options:
           - bun
           - npm
+      deploy_mode:
+        description: "Choose deploy route"
+        required: true
+        default: "fast"
+        type: choice
+        options:
+          - fast
+          - split
 
 permissions:
   contents: read
@@ -77,6 +89,7 @@ jobs:
       should_skip: ${{ steps.check.outputs.should_skip }}
       deployment_target: ${{ steps.target.outputs.deployment_target }}
       bun_version: ${{ steps.bun.outputs.version }}
+      deploy_mode: ${{ steps.options.outputs.deploy_mode }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -131,13 +144,20 @@ jobs:
           fi
           echo "$TARGET deployment configuration is valid"
 
-      - name: Resolve package manager
+      - name: Resolve runtime options
+        id: options
         if: steps.check.outputs.should_skip == 'false'
         run: |
           case "$PACKAGE_MANAGER" in
-            bun|npm) echo "::notice::Using package manager: $PACKAGE_MANAGER" ;;
+            bun|npm) ;;
             *) echo "::error::Invalid PACKAGE_MANAGER '$PACKAGE_MANAGER' - expected 'bun' or 'npm'"; exit 1 ;;
           esac
+          case "$DEPLOY_MODE" in
+            fast|split) ;;
+            *) echo "::error::Invalid DEPLOY_MODE '$DEPLOY_MODE' - expected 'fast' or 'split'"; exit 1 ;;
+          esac
+          echo "deploy_mode=$DEPLOY_MODE" >> "$GITHUB_OUTPUT"
+          echo "::notice::Runtime: $PACKAGE_MANAGER | deploy: $DEPLOY_MODE | target: ${{ steps.target.outputs.deployment_target }}"
 
       - name: Get Bun version
         id: bun
@@ -265,12 +285,58 @@ jobs:
           DEPLOYMENT_TARGET: ${{ needs.setup.outputs.deployment_target }}
           GITHUB_PAGES_URL: ${{ steps.pages.outputs.base_url }}
 
+      # Split mode only: hand dist/ to the deploy jobs. Fast mode deploys below.
       - name: Upload build artifacts
+        if: needs.setup.outputs.deploy_mode == 'split'
         uses: actions/upload-artifact@v7
         with:
           name: build-files
           path: ${{ env.BUILD_PATH }}/dist
           retention-days: 1
+
+      # Fast route: deploy straight from this job's disk. No `environment:` block
+      # (it can't be conditional) - so no protection rules and no env-scoped
+      # secrets here; repos needing them set DEPLOY_MODE=split.
+      - name: Upload Pages artifact
+        if: |
+          needs.setup.outputs.deploy_mode == 'fast' &&
+          needs.setup.outputs.deployment_target == 'github-pages'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ${{ env.BUILD_PATH }}/dist
+          # v4+ excludes dotfiles by default; keep v3 behavior (.assetsignore etc.)
+          include-hidden-files: true
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        if: |
+          needs.setup.outputs.deploy_mode == 'fast' &&
+          needs.setup.outputs.deployment_target == 'github-pages'
+        uses: actions/deploy-pages@v5
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        if: |
+          needs.setup.outputs.deploy_mode == 'fast' &&
+          needs.setup.outputs.deployment_target == 'cloudflare-pages'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # `pages deploy` can't create a missing project in non-interactive CI,
+          # so ensure it exists first. Fails silently when already present.
+          # preCommands: wrangler pages project create ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
+          # main -> production; any other branch -> preview URL (<branch>.<project>.pages.dev)
+          command: pages deploy ${{ env.BUILD_PATH }}/dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report deployment URL
+        if: needs.setup.outputs.deploy_mode == 'fast'
+        env:
+          GHP_URL: ${{ steps.deployment.outputs.page_url }}
+          CF_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          echo "🚀 Deployed: ${GHP_URL:-$CF_URL}" | tee -a "$GITHUB_STEP_SUMMARY"
 
   deploy-github-pages:
     name: Deploy to GitHub Pages
@@ -278,6 +344,7 @@ jobs:
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
     if: |
       needs.setup.outputs.should_skip == 'false' &&
+      needs.setup.outputs.deploy_mode == 'split' &&
       needs.setup.outputs.deployment_target == 'github-pages'
     environment:
       name: github-pages
@@ -310,6 +377,7 @@ jobs:
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
     if: |
       needs.setup.outputs.should_skip == 'false' &&
+      needs.setup.outputs.deploy_mode == 'split' &&
       needs.setup.outputs.deployment_target == 'cloudflare-pages'
     environment:
       name: cloudflare-pages
