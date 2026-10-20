@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import { dependencyPath } from "../../../utils/paths.js";
+
 export class CmsPage {
   data() {
     return {
@@ -26,6 +29,26 @@ export class CmsPage {
     );
     previewStyleUrls.splice(ctxIndex + 1, 0, "/admin/preview.css");
 
+    // Dev tokens only exist for `eleventy --serve` localhost sessions —
+    // never embed them in a build artifact, they'd be public HTML.
+    const devServe = data.env.ELEVENTY_RUN_MODE === "serve";
+
+    // Contract sentinel: the installed @sveltia/cms version (npm mode)
+    // is compared against POKO_SVELTIA_CONTRACT in the banner below —
+    // CDN imports are unpinned and always report a mismatch.
+    let sveltiaVersion = "";
+    if (data.env.CMS_IMPORT !== "cdn") {
+      try {
+        const pkg = JSON.parse(
+          await readFile(
+            dependencyPath("@sveltia/cms", "package.json"),
+            "utf-8",
+          ),
+        );
+        sveltiaVersion = pkg.version;
+      } catch {}
+    }
+
     return (
       `
 <!DOCTYPE html>
@@ -42,6 +65,14 @@ export class CmsPage {
         clientId: data.env.POKO_GITHUB_CLIENT_ID,
         relayUrl: data.env.CMS_AUTH_RELAY_URL,
         scope: data.env.CMS_AUTH_SCOPE,
+        // Gitless (poko relay) mode: CMS_API_ROOT set → Sveltia's own
+        // popup handshake; device-flow overlay must not interfere.
+        gitless: !!data.env.CMS_API_ROOT,
+        devToken: devServe ? data.env.POKO_CMS_DEV_TOKEN : undefined,
+        devRefresh: devServe ? data.env.POKO_CMS_DEV_REFRESH : undefined,
+        disableDeviceFlow: !!data.env.DISABLE_DEVICE_FLOW,
+        sveltiaContract: data.env.POKO_SVELTIA_CONTRACT,
+        sveltiaVersion,
       })};
       // Lazy CMS boot — device-flow.js injects the Sveltia bundle only once
       // sign-in state requires it; registration modules await __POKO_CMS_READY__.
@@ -58,6 +89,31 @@ export class CmsPage {
           document.head.append(s);
         };
       });
+      // Contract drift warning — loud, not blocking. Sveltia evolves
+      // fast; a mismatched build vs. POKO_SVELTIA_CONTRACT means the
+      // relay handshake/API shapes should be re-verified.
+      {
+        const { gitless, sveltiaVersion, sveltiaContract } =
+          window.__POKO_CMS_AUTH__;
+        if (gitless && sveltiaContract && sveltiaVersion !== sveltiaContract) {
+          const msg =
+            "poko: Sveltia " +
+            (sveltiaVersion || "unpinned CDN") +
+            " is untested against relay contract " +
+            sveltiaContract +
+            " — auth may break";
+          console.error(msg);
+          addEventListener("DOMContentLoaded", () => {
+            const b = document.createElement("div");
+            b.style.cssText =
+              "position:fixed;inset-inline:0;bottom:0;z-index:2147483647;" +
+              "background:#b91c1c;color:#fff;font:13px/1.4 system-ui;" +
+              "padding:.5rem 1rem;text-align:center";
+            b.textContent = msg;
+            document.body.append(b);
+          });
+        }
+      }
     </script>
     <script src="/admin/device-flow.js" eleventy:ignore></script>
     <script eleventy:ignore>

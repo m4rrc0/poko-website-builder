@@ -112,6 +112,7 @@
     "dev:content": "node scripts/run.js dev:content",
     "dev:script": "node scripts/run.js dev:script",
     "poko": "node scripts/cli.js",
+    "test": "node --test src/config-11ty/plugins/cms-config/sveltia-contract.test.js",
     "pack:check": "npm pack --dry-run",
     "release:patch": "npm version patch",
     "release:minor": "npm version minor",

@@ -217,6 +217,28 @@ export const MINIFY =
 export const statusesToUnrender =
   BUILD_LEVEL === "production" ? ["inactive", "draft"] : ["inactive"];
 
+// CMS gitless relay config
+export const CMS_API_ROOT = processEnv.CMS_API_ROOT;
+export const CMS_GRAPHQL_API_ROOT = processEnv.CMS_GRAPHQL_API_ROOT;
+// Managed-site identifier — emitted as backend.site_domain so poko's
+// /cms/auth resolves the site regardless of the admin host (branch
+// deploys, preview URLs, localhost).
+export const POKO_SITE_ID = processEnv.POKO_SITE_ID;
+// Dev token from the dashboard "Copy dev token" mint — lets a localhost
+// /admin run pre-authenticated (session.dev allows localhost origins).
+export const POKO_CMS_DEV_TOKEN = processEnv.POKO_CMS_DEV_TOKEN;
+export const POKO_CMS_DEV_REFRESH = processEnv.POKO_CMS_DEV_REFRESH;
+// Sveltia version the relay contract was verified against — surfaced in
+// the admin page as a loud drift warning on gitless sites. Defaults to the
+// @sveltia/cms version this builder release was verified against; poko may
+// override it when minting site vars. Bump after re-running
+// `node --test src/config-11ty/plugins/cms-config/sveltia-contract.test.js`
+// against the new version.
+export const POKO_SVELTIA_CONTRACT =
+  processEnv.POKO_SVELTIA_CONTRACT || "0.228.0";
+// Explicit kill switch for the GitHub device-flow overlay (gitless
+// sites also skip it implicitly via CMS_API_ROOT).
+export const DISABLE_DEVICE_FLOW = processEnv.DISABLE_DEVICE_FLOW;
 // CMS
 export const CMS_AUTH_URL = processEnv.CMS_AUTH_URL;
 export const CMS_REPO = processEnv.CMS_REPO || REPO;

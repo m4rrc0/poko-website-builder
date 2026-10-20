@@ -18,6 +18,10 @@
     clientId,
     relayUrl = "/admin/cms-auth",
     scope = "repo user",
+    gitless,
+    devToken,
+    devRefresh,
+    disableDeviceFlow,
   } = window.__POKO_CMS_AUTH__ ?? {};
 
   // Sveltia leaves `sveltia-cms.user = {}` behind on logout or a failed
@@ -27,8 +31,34 @@
     storedUser = JSON.parse(localStorage.getItem(STORAGE_KEY));
   } catch {}
 
+  // Dev shim: a dashboard-minted CMS token lets a localhost /admin run
+  // pre-authenticated — the popup handshake can't deliver a token to a
+  // localhost opener (postMessage is pinned to allowlisted origins).
+  // The relay only accepts localhost origins for dev-flagged sessions.
+  // gitless-gated: the token is only valid against the poko relay. And
+  // only injected into empty storage — overwriting a stored pair on
+  // every load would replay a rotated (dead) refresh token.
+  const onLocalhost =
+    location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (onLocalhost && gitless && devToken && !storedUser?.token) {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        backendName: "github",
+        token: devToken,
+        ...(devRefresh && { refreshToken: devRefresh }),
+        login: "poko-dev",
+        name: "poko dev",
+      }),
+    );
+    window.__POKO_BOOT_CMS__?.();
+    return;
+  }
+
   // Signed in (or the shim disabled): the CMS boots right away.
-  if (!clientId || storedUser?.token) {
+  // gitless sites (poko relay configured) and explicit opt-outs skip the
+  // GitHub overlay entirely — auth happens in Sveltia's own flow.
+  if (!clientId || storedUser?.token || gitless || disableDeviceFlow) {
     window.__POKO_BOOT_CMS__?.();
     return;
   }
