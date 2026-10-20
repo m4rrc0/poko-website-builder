@@ -98,12 +98,18 @@ jobs:
         id: check
         env:
           HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          # First push creating refs/heads/main (repo creation from template)
+          FIRST_PUSH: ${{ github.event_name == 'push' && github.event.created && github.ref == 'refs/heads/main' }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_ID: ${{ github.run_id }}
         run: |
           if [[ "$HEAD_COMMIT_MESSAGE" == *"[skip ci]"* ]]; then
             echo "should_skip=true" >> $GITHUB_OUTPUT
             echo "⏭️ Build skipped: [skip ci] found in commit message"
+            gh run cancel "$RUN_ID"
+          elif [ "$FIRST_PUSH" = "true" ]; then
+            echo "should_skip=true" >> $GITHUB_OUTPUT
+            echo "⏭️ Build skipped: first push on repo creation"
             gh run cancel "$RUN_ID"
           else
             echo "should_skip=false" >> $GITHUB_OUTPUT
