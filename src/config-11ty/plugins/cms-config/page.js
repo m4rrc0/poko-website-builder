@@ -73,7 +73,37 @@ export class CmsPage {
         disableDeviceFlow: !!data.env.DISABLE_DEVICE_FLOW,
         sveltiaContract: data.env.POKO_SVELTIA_CONTRACT,
         sveltiaVersion,
+        // Deploy hook (SPEC-deploy-hook): prefs.js binds a per-device
+        // key here; the URLs derive from CMS_AUTH_URL so poko host moves
+        // propagate through rebuilds. branch is the config backend's
+        // branch — a preview-deploy admin publishes its own branch.
+        ...(data.env.CMS_API_ROOT && {
+          deployBindUrl: `${data.env.CMS_AUTH_URL}/deploy/bind`,
+          deployUrl: `${data.env.CMS_AUTH_URL}/deploy/${data.env.POKO_SITE_ID}`,
+          pokoSiteId: data.env.POKO_SITE_ID,
+          branch: data.env.CMS_BRANCH || "main",
+        }),
       })};
+      // Declarative prefs registry for prefs.js — extension point for
+      // future auto-provisioned Sveltia settings (incl. server-synced
+      // session config). Empty when the site isn't poko-relay managed.
+      window.__POKO_CMS_PREFS__ = ${JSON.stringify(
+        data.env.CMS_API_ROOT && data.env.CMS_AUTH_URL && data.env.POKO_SITE_ID
+          ? [
+              {
+                key: "deployHookURL",
+                value: `${data.env.CMS_AUTH_URL}/deploy/${data.env.POKO_SITE_ID}`,
+                when: "managed",
+                match: `/deploy/${data.env.POKO_SITE_ID}`,
+              },
+              {
+                key: "deployHookAuthHeader",
+                valueFrom: "deployKey",
+                when: "sync",
+              },
+            ]
+          : [],
+      )};
       // Lazy CMS boot — device-flow.js injects the Sveltia bundle only once
       // sign-in state requires it; registration modules await __POKO_CMS_READY__.
       window.__POKO_CMS_READY__ = new Promise((resolve, reject) => {
@@ -115,6 +145,7 @@ export class CmsPage {
         }
       }
     </script>
+    <script src="/admin/prefs.js" eleventy:ignore></script>
     <script src="/admin/device-flow.js" eleventy:ignore></script>
     <script eleventy:ignore>
       </script>

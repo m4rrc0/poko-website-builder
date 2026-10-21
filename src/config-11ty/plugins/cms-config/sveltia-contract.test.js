@@ -145,3 +145,37 @@ test("REST/GraphQL base URL normalization keeps our suffixes", () => {
 test("auth header scheme stays 'token'", () => {
   assert.match(api, /authScheme[:=]?\s*['"]token['"]/);
 });
+
+// SPEC-deploy-hook — prefs.js seeds these exact pref keys; a rename in
+// Sveltia silently disables Publish Changes on managed sites.
+test("deploy hook prefs contract (SPEC-deploy-hook)", () => {
+  const publish = src("services/deployments/publish.js");
+  // Pref key names — our registry emits these verbatim.
+  assert.match(publish, /deployHookURL/, "deployHookURL key renamed");
+  assert.match(
+    publish,
+    /deployHookAuthHeader/,
+    "deployHookAuthHeader key renamed",
+  );
+  // With an auth header the call is CORS-mode POST + Authorization —
+  // poko's OPTIONS handler must answer the preflight.
+  assert.match(
+    publish,
+    /mode:\s*deployHookAuthHeader\s*\?\s*'cors'\s*:\s*'no-cors'/,
+    "cors/no-cors switch changed",
+  );
+  assert.match(
+    publish,
+    /Authorization:\s*deployHookAuthHeader/,
+    "auth header wiring changed",
+  );
+  // HTTPS-or-localhost URL gate.
+  assert.match(
+    publish,
+    /isSecureURL\(deployHookURL\)/,
+    "deployHookURL secure-scheme check changed",
+  );
+  // Button enablement reads prefs — not shown here, but the inverse
+  // matters: with NO header the request is no-cors → opaque → errors
+  // invisible. Guarded by the header assertion above.
+});

@@ -87,6 +87,8 @@ export default async function (eleventyConfig, pluginOptions) {
       "admin/admin-url.js",
     [enginePath("src/config-11ty/plugins/cms-config/device-flow.js")]:
       "admin/device-flow.js",
+    [enginePath("src/config-11ty/plugins/cms-config/prefs.js")]:
+      "admin/prefs.js",
   });
 
   // ---- generated preview modules -------------------------------------------
