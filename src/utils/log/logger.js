@@ -111,8 +111,13 @@ export function createLogger({
     spinner = null;
     spinnerScope = null;
     if (!s) return;
-    s.clear();
-    if (msg) prettyLine(finalGlyph ?? GLYPHS.done, s.__scope ?? "", msg);
+    // stop() — not clear(): clear() only erases the line while the interval
+    // keeps rendering and keeps the event loop alive (process never exits).
+    s.stop(
+      msg
+        ? `${chalk.dim((s.__scope ?? "").padEnd(10))} ${finalGlyph ?? GLYPHS.done} ${msg}`
+        : undefined,
+    );
   };
 
   const log = {
