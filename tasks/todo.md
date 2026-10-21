@@ -1,6 +1,6 @@
 # Tasks: build-log system
 
-## Task 1: Logger facade (`src/utils/logger.js` + test)
+## Task 1: Logger facade (`src/utils/log/logger.js` + test)
 **Description:** `createLogger({level,format,mode,writer,isTTY})` factory + shared `log` singleton. Levels `silent|error|warn|info|debug`; formats `pretty|ndjson`. API: `debug/info/warn/error(scope,event,msg,data)`, `warnOnce(key,…)`, `phase(scope,label)`, `progress(msg)`, `redact(obj)`, `setMode`, `summary` buffer (warnings/errors). NDJSON envelope `{v:1,ts,runId,mode,level,scope,event,msg,...}`.
 **Acceptance:**
 - [x] Suppression matrix correct per level
@@ -9,18 +9,18 @@
 - [x] `redact` drops `*secret*|*token*|*key*|*password*|*auth*` keys
 **Verification:** `node --test src/utils/logger.test.js`
 **Dependencies:** None
-**Files:** `src/utils/logger.js`, `src/utils/logger.test.js`
+**Files:** `src/utils/log/logger.js`, `src/utils/logger.test.js`
 **Scope:** M
 
-## Task 2: Eleventy logger adapter (`src/utils/eleventy-logger.js` + test)
+## Task 2: Eleventy logger adapter (`src/utils/log/eleventy-logger.js` + test)
 **Description:** Full `ConsoleLogger` surface forwarding to facade. `logWithOptions` → mapped event; `[11ty/eleventy-img] Processing X` → `progress` tick + debug line; `[11ty/eleventy-img]` summary → img-scope info; `forceLog` → info; `outputStream/closeStream` stubs for ndjson API compat.
 **Acceptance:**
 - [x] All methods Eleventy calls exist and route correctly
 - [x] `Processing` msgs → `onProgress` callback, not printed at info
 - [x] `message()` honors level gating
-**Verification:** `node --test src/utils/eleventy-logger.test.js`
+**Verification:** `node --test src/utils/log/eleventy-logger.test.js`
 **Dependencies:** T1
-**Files:** `src/utils/eleventy-logger.js`, `src/utils/eleventy-logger.test.js`
+**Files:** `src/utils/log/eleventy-logger.js`, `src/utils/log/eleventy-logger.test.js`
 **Scope:** M
 
 ## Task 3: CLI wiring + spinner (`scripts/cli.js`, dep install)

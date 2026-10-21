@@ -4,7 +4,7 @@ Spec: `docs/specs/build-log.md` (approved; manifest deferred to future work)
 
 ## Overview
 
-Single log facade (`src/utils/logger.js`) with level + format env control, an
+Single log facade (`src/utils/log/logger.js`) with level + format env control, an
 Eleventy-logger adapter routing all engine/plugin output through it, a TTY spinner for
 the image phase, and a versioned NDJSON event stream for machine ingestion.
 
@@ -31,29 +31,29 @@ the image phase, and a versioned NDJSON event stream for machine ingestion.
 ## Task List
 
 ### Phase 1: Foundation
-- [ ] T1: `src/utils/logger.js` + `logger.test.js` — facade, levels, ndjson, warnOnce, redact
-- [ ] T2: `src/utils/eleventy-logger.js` + tests — ConsoleLogger-compatible adapter
+- [x] T1: `src/utils/log/logger.js` + `logger.test.js` — facade, levels, ndjson, warnOnce, redact
+- [x] T2: `src/utils/log/eleventy-logger.js` + tests — ConsoleLogger-compatible adapter
 
 ### Checkpoint A
-- [ ] `npm test` green; facade + adapter unit-tested
+- [x] `npm test` green; facade + adapter unit-tested
 
 ### Phase 2: Wiring
-- [ ] T3: `npm i yocto-spinner`; `scripts/cli.js` — dotenv-first, adapter inject, header, phases, `build.done` summary
-- [ ] T4: `env.config.js` — export `POKO_LOG_LEVEL`/`POKO_LOG_FORMAT`; warns → `warnOnce`; env dumps → redacted `log.debug`
-- [ ] T5: `eleventy.config.js` — dumps → facade; `directoryOutputPlugin` @debug; section-shortcode warns → facade
-- [ ] T6: `populateInputDir` → facade (drop its `logger` util + `logLevel` option)
+- [x] T3: `npm i yocto-spinner`; `scripts/cli.js` — dotenv-first, adapter inject, header, phases, `build.done` summary
+- [x] T4: `env.config.js` — export `POKO_LOG_LEVEL`/`POKO_LOG_FORMAT`; warns → `warnOnce`; env dumps → redacted `log.debug`
+- [x] T5: `eleventy.config.js` — dumps → facade; `directoryOutputPlugin` @debug; section-shortcode warns → facade
+- [x] T6: `populateInputDir` → facade (drop its `logger` util + `logLevel` option)
 
 ### Checkpoint B
-- [ ] `npm run clean:cache && npm run build` — verify level matrix + spinner + ndjson manually
+- [x] `npm run clean:cache && npm run build` — verify level matrix + spinner + ndjson manually
 
 ### Phase 3: Migration + polish
-- [ ] T7a: plugins' `console.*` → facade (favicons, private-embed, partials, partialShortcodes, customRenderers, buildExternalCSS, unocss, ctxCss, io/html-classes transforms, keystatic manual-passthrough)
-- [ ] T7b: filters/shortcodes/misc `console.*` → facade (image.js, links.js, html.js, i18n.js, init.js, utils/build.js, cms-config config.js/page.js/defaultEditorComponents dumps)
-- [ ] T8: `poko dev` verification (watch + rebuild phases)
-- [ ] T9: `npm test` glob → `src/`; ADR-002; final matrix verification
+- [x] T7a: plugins' `console.*` → facade (favicons, private-embed, partials, partialShortcodes, customRenderers, buildExternalCSS, unocss, ctxCss, io/html-classes transforms, keystatic manual-passthrough)
+- [x] T7b: filters/shortcodes/misc `console.*` → facade (image.js, links.js, html.js, i18n.js, init.js, utils/build.js, cms-config config.js/page.js/defaultEditorComponents dumps)
+- [x] T8: `poko dev` verification (watch + rebuild phases)
+- [x] T9: `npm test` glob → `src/`; ADR-002; final matrix verification
 
 ### Checkpoint C
-- [ ] Full suite green; spec success criteria met
+- [x] Full suite green; spec success criteria met
 
 ## Risks and Mitigations
 
