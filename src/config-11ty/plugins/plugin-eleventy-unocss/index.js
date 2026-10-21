@@ -1,5 +1,6 @@
 // import { loadConfig } from "@unocss/config";
 import { getUnoGenerator } from "./generator.js";
+import { log } from "../../../utils/log/logger.js";
 
 // TODO: Minify CSS on prod
 
@@ -22,7 +23,12 @@ export default async function (eleventyConfig, pluginOptions) {
         const generated = await generator.generate(content);
         css = generated.css;
       } catch (error) {
-        console.error("UnoCSS error:\n", error);
+        log.error(
+          "unocss",
+          "unocss.generate.error",
+          `UnoCSS error: ${error?.message ?? error}`,
+          { error },
+        );
         throw error;
       }
       // console.log(`UnoCSS generated:\n${css}`);

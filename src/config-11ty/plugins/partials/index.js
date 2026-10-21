@@ -1,7 +1,7 @@
 import path from "node:path";
 import fglob from "fast-glob";
 // import deepmerge from "deepmerge";
-import { DEBUG } from "../../../../env.config.js";
+import { log } from "../../../utils/log/logger.js";
 // import { createKeyFromData } from "../../../utils/hash.js";
 // import hashSum from "hash-sum";
 // import { cleanupExpensiveData } from "../../../utils/eleventyData.js";
@@ -78,9 +78,13 @@ export default async function (eleventyConfig, pluginOptions) {
       return matches[0];
     }
 
-    if (DEBUG) {
-      console.warn(`Partial "${filename}" not found in "${dirs}"`);
-    }
+    // Routine fallback probing across candidate names/dirs — debug detail
+    // (a truly missing partial renders as empty output, not a warning).
+    log.debug(
+      "partials",
+      "partial.missing",
+      `Partial "${filename}" not found in "${dirs}"`,
+    );
     return "";
   }
 
@@ -125,7 +129,12 @@ export default async function (eleventyConfig, pluginOptions) {
       return await renderFileShortcodeFn
         .call(this, file, data, templateEngineOverride)
         .catch((e) => {
-          console.error(e);
+          log.error(
+            "partials",
+            "partial.render.error",
+            e?.message ?? String(e),
+            { error: e },
+          );
           return "";
         })
         .then((result) => {
@@ -176,21 +185,33 @@ export default async function (eleventyConfig, pluginOptions) {
           return await retrievePartial(f, this.ctx);
         }),
       );
-      console.log({ rawFilenames, filenames, partialRetrieved });
+      log.debug("partials", "partial.fallback", "partialFallback resolved", {
+        rawFilenames,
+        filenames,
+        partialRetrieved,
+      });
       return partialRetrieved.find((f) => f !== "");
     },
   );
 
   for (const alias of shortcodeAliases) {
     if (typeof alias !== "string") {
-      console.warn(`Invalid shortcode alias: ${alias}`);
+      log.warn(
+        "partials",
+        "partial.alias.invalid",
+        `Invalid shortcode alias: ${alias}`,
+      );
       continue;
     }
     await eleventyConfig.addAsyncShortcode(alias, renderPartial);
   }
   for (const alias of pairedShortcodeAliases) {
     if (typeof alias !== "string") {
-      console.warn(`Invalid shortcode alias: ${alias}`);
+      log.warn(
+        "partials",
+        "partial.alias.invalid",
+        `Invalid shortcode alias: ${alias}`,
+      );
       continue;
     }
     await eleventyConfig.addPairedAsyncShortcode(alias, renderPairedPartial);

@@ -1,5 +1,6 @@
 import Image from "@11ty/eleventy-img";
 import deepmerge from "deepmerge";
+import { log } from "../../../utils/log/logger.js";
 import { imageTransformOptions } from "../imageTransform.js";
 import { bgCssFor, tinyDataUri } from "../../shortcodes/components/image.js";
 
@@ -106,9 +107,11 @@ export async function posterStyleFromRemote(remoteUrl, key, poster) {
               };
             }
           } catch (e) {
-            console.warn(
-              `[private-embed] poster pipeline failed for ${key}:`,
-              e?.message,
+            log.warnOnce(
+              `embed:poster:${key}`,
+              "embed",
+              "embed.poster.error",
+              `poster pipeline failed for ${key}: ${e?.message}`,
             );
           }
         }

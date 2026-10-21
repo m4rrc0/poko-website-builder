@@ -1,4 +1,5 @@
 import { providers, renderEmbed } from "./emit.js";
+import { log } from "../../../utils/log/logger.js";
 
 /**
  * Optional bare-URL transform: provider URLs standing alone in a <p> (what
@@ -26,8 +27,11 @@ export function makeUrlTransform(ctx) {
           const data = provider.parseUrl(url);
           if (!data || data.playlist) {
             if (data?.playlist) {
-              console.error(
-                `[private-embed] playlists unsupported, left as link: ${url}`,
+              log.warnOnce(
+                `embed:playlist:${url}`,
+                "embed",
+                "embed.playlist",
+                `playlists unsupported, left as link: ${url}`,
               );
             }
             return m[0];
@@ -41,7 +45,10 @@ export function makeUrlTransform(ctx) {
       );
       for (let i = matches.length - 1; i >= 0; i--) {
         const m = matches[i];
-        out = out.slice(0, m.index) + rendered[i] + out.slice(m.index + m[0].length);
+        out =
+          out.slice(0, m.index) +
+          rendered[i] +
+          out.slice(m.index + m[0].length);
       }
     }
     return out;

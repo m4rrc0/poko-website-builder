@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import he from "he";
 import fs from "node:fs";
+import { log } from "../../../utils/log/logger.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import deepmerge from "deepmerge";
@@ -106,19 +107,32 @@ const safeUrlLink = (url) => {
 async function embedUrl(args, ctx) {
   const url = args.url;
   if (!url) {
-    console.warn("[private-embed] {% embed %} called without url");
+    log.warnOnce(
+      "embed:no-url",
+      "embed",
+      "embed.no_url",
+      "{% embed %} called without url",
+    );
     return "";
   }
   const hit = providers
     .map((provider) => ({ provider, data: provider.parseUrl(url) }))
     .find((h) => h.data);
   if (!hit) {
-    console.warn(`[private-embed] no provider for url, left as link: ${url}`);
+    log.warnOnce(
+      `embed:no-provider:${url}`,
+      "embed",
+      "embed.no_provider",
+      `no provider for url, left as link: ${url}`,
+    );
     return `<p>${safeUrlLink(url)}</p>`;
   }
   if (hit.data.playlist) {
-    console.error(
-      `[private-embed] playlists unsupported, left as link: ${url}`,
+    log.warnOnce(
+      `embed:playlist:${url}`,
+      "embed",
+      "embed.playlist",
+      `playlists unsupported, left as link: ${url}`,
     );
     return `<p>${safeUrlLink(url)}</p>`;
   }

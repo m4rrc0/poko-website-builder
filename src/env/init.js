@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { execFileSync } from "node:child_process";
+import { log } from "../utils/log/logger.js";
 
 function git(args, cwd) {
   try {
@@ -35,9 +36,9 @@ export async function initPokoEnv({
 
   const knowsBranch = Boolean(
     env.BRANCH ||
-      env.CF_PAGES_BRANCH ||
-      env.VERCEL_GIT_COMMIT_REF ||
-      env.GIT_BRANCH,
+    env.CF_PAGES_BRANCH ||
+    env.VERCEL_GIT_COMMIT_REF ||
+    env.GIT_BRANCH,
   );
   if (!knowsBranch) {
     const branch =
@@ -45,8 +46,10 @@ export async function initPokoEnv({
       git(["rev-parse", "--abbrev-ref", "HEAD"], cwd);
     env.BRANCH = branch || env.PROD_BRANCH || "main";
     if (!branch) {
-      console.warn(
-        `INFO: No git branch detected, falling back to BRANCH="${env.BRANCH}"`,
+      log.debug(
+        "env",
+        "env.branch.fallback",
+        `No git branch detected, falling back to BRANCH="${env.BRANCH}"`,
       );
     }
   }

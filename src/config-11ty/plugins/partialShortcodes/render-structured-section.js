@@ -1,4 +1,5 @@
 import { classListFromUtilities } from "../cms-config/utility-classes.js";
+import { log } from "../../../utils/log/logger.js";
 
 // Shared rendering logic for the structured ("data-driven") section types
 // dispatched by the `sections` shortcode. Mirrors the canonical CMS schema
@@ -290,7 +291,10 @@ export async function renderAreasInner({
 
         default:
           // eslint-disable-next-line no-console
-          console.warn(
+          log.warnOnce(
+            `sections:unknown:${area?.type}`,
+            "partials",
+            "section.unknown_type",
             `sectionBuilder: unknown area type "${area?.type}" — skipping.`,
           );
           return "";

@@ -1,3 +1,5 @@
+import { log } from "../../../utils/log/logger.js";
+
 export function transformLink(link) {
   const self = this;
   const localeUrlFilter = this.env.filters.locale_url;
@@ -188,7 +190,12 @@ export default async function (eleventyConfig, pluginOptions) {
           const linkStr = await partialShortcodeFn
             .call(this, itemPartialFileName, { link: l })
             .catch((e) => {
-              console.error(e);
+              log.error(
+                "partials",
+                "partial.render.error",
+                e?.message ?? String(e),
+                { error: e },
+              );
               return "";
             });
 
@@ -214,7 +221,12 @@ export default async function (eleventyConfig, pluginOptions) {
           htmlLinks,
         })
         .catch((e) => {
-          console.error(e);
+          log.error(
+            "partials",
+            "partial.render.error",
+            e?.message ?? String(e),
+            { error: e },
+          );
           return "";
         });
 

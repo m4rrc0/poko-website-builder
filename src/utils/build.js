@@ -1,10 +1,11 @@
-import fglob from 'fast-glob'
-import chalk from 'chalk';
-import fs from 'fs/promises';
+import fglob from "fast-glob";
+import chalk from "chalk";
+import fs from "fs/promises";
+import { log } from "./log/logger.js";
 
 export const consoleInfo = (message) => {
-    console.info(chalk.blue.bold('INFO:'), chalk.blue(message));
-}
+  log.info("build", "build.info", message);
+};
 
 export const loadFiles = async (globParam) => {
   // Read all files in the content directory using glob
@@ -15,18 +16,22 @@ export const loadFiles = async (globParam) => {
   const filePromises = filePaths.map(async (filePath) => {
     try {
       const stats = await fs.stat(filePath);
-    
+
       if (stats.isFile()) {
         // Read the content of each file
-        const content = await fs.readFile(filePath, 'utf8');
+        const content = await fs.readFile(filePath, "utf8");
         return {
           path: filePath,
-          content
+          content,
         };
       }
       return null;
     } catch (error) {
-      console.error(`Error reading file ${filePath}:`, error);
+      log.error(
+        "build",
+        "build.file.error",
+        `Error reading file ${filePath}: ${error.message}`,
+      );
       return null;
     }
   });
@@ -35,17 +40,17 @@ export const loadFiles = async (globParam) => {
   const files = (await Promise.all(filePromises)).filter(Boolean);
 
   return files;
-}
+};
 
 export const readFirstExistingFile = async (paths) => {
-    for (const path of paths) {
-      try {
-        return await fs.readFile(path, 'utf8');
-      } catch (e) {
-        // Continue to next path
-      }
+  for (const path of paths) {
+    try {
+      return await fs.readFile(path, "utf8");
+    } catch (e) {
+      // Continue to next path
     }
-    return null;
+  }
+  return null;
 };
 
 // export const tryImport = async (paths) => {

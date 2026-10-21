@@ -54,6 +54,7 @@ import {
 } from "./section-primitives.js";
 import { utilitiesField } from "./utility-classes.js";
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
+import { log } from "../../../utils/log/logger.js";
 
 const isDev = NODE_ENV === "development";
 
@@ -1025,7 +1026,7 @@ try {
     ...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/gm),
   ].map((match) => match[1]);
 } catch (error) {
-  console.error("Failed to retrieve default Editor Components\n", error);
+  log.warnOnce("cms:default-components", "cms", "cms.components.missing", "Failed to retrieve default Editor Components: " + (error?.message ?? error));
 }
 try {
   const path = `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`;
@@ -1035,8 +1036,10 @@ try {
     ...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/gm),
   ].map((match) => match[1]);
 } catch (error) {
-  console.warn(
-    `INFO: No user's Editor Components found at "${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js"`,
+  log.debug(
+    "cms",
+    "config.missing",
+    `No user's Editor Components found at "${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js"`,
   );
 }
 

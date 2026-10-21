@@ -8,6 +8,7 @@ import {
 import { isManifestSource, recordImageStats } from "../../image-manifest.js";
 import { prepareImageArgs } from "./image.args.js";
 import { WORKING_DIR } from "../../../../env.config.js";
+import { log } from "../../../utils/log/logger.js";
 
 // ---------------------------------------------------------------------------
 // LQIP (Low-Quality Image Placeholder) — implements the technique from
@@ -142,8 +143,12 @@ const parseAspectRatio = (ar) => {
 // The `html` bundle manager, wired once from eleventy.config.js so eager-image
 // preload links can be pushed into the page's `head` bucket.
 let bundleManagers = null;
+let eleventyConfigRef = null;
 export function wireLqipBundleManager(eleventyConfig) {
   bundleManagers = eleventyConfig.getBundleManagers?.() || null;
+  // eleventy-img only logs Processing/optimized messages when the per-call
+  // options carry eleventyConfig — shortcode calls don't get it implicitly.
+  eleventyConfigRef = eleventyConfig;
 }
 
 // Merge `bg` css into the generated <img> tag's style attr and optionally
@@ -210,13 +215,26 @@ export async function image(args) {
   const src = srcRaw.startsWith("/")
     ? `${WORKING_DIR}/${srcRaw}`.replace(/\/+/g, "/")
     : srcRaw;
+  // Non-enumerable so deepmerge/attrs consumers never see it — eleventy-img
+  // reads opts.eleventyConfig directly to wire its BuildLogger.
+  if (eleventyConfigRef) {
+    Object.defineProperty(options, "eleventyConfig", {
+      value: eleventyConfigRef,
+      enumerable: false,
+    });
+  }
   let html = await Image(src, options);
   // CMS preview manifest — key by the CMS-facing path (`/_images/…`).
   if (isManifestSource(srcRaw)) {
     try {
       recordImageStats(srcRaw, Image.statsSync(src, options));
     } catch (e) {
-      console.warn(`[image-manifest] stats failed for ${srcRaw}:`, e?.message);
+      log.warnOnce(
+        `img:manifest:${srcRaw}`,
+        "img",
+        "img.manifest.error",
+        `stats failed for ${srcRaw}: ${e?.message}`,
+      );
     }
   }
   // if (!html) {
@@ -281,7 +299,12 @@ export async function image(args) {
         }
       }
     } catch (e) {
-      console.warn(`[lqip] skipped ${srcRaw}:`, e?.message);
+      log.warnOnce(
+        `img:lqip:${srcRaw}`,
+        "img",
+        "img.lqip.skipped",
+        `[lqip] skipped ${srcRaw}: ${e?.message}`,
+      );
     }
   }
 

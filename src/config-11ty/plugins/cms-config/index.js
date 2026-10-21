@@ -245,13 +245,16 @@ export default async function (eleventyConfig, pluginOptions) {
       importMapCode(jsLayoutFiles, "jsLayouts"),
   );
 
-  // Shared modules import `env.config.js` (dotenv/fs) — redirect to the
-  // browser shim hydrated from the CMS store.
+  // Shared modules import `env.config.js` (dotenv/fs) and the node log
+  // facade (chalk/yocto-spinner) — redirect both to browser shims.
   const browserEnvAlias = {
     name: "browser-env",
     setup(build) {
       build.onResolve({ filter: /(^|\/)env\.config\.js$/ }, () => ({
         path: path.join(import.meta.dirname, "preview/browser-env.js"),
+      }));
+      build.onResolve({ filter: /utils\/log\/logger\.js$/ }, () => ({
+        path: path.join(import.meta.dirname, "preview/log-shim.js"),
       }));
     },
   };

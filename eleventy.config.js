@@ -2,6 +2,7 @@ import path from "node:path";
 import fs from "node:fs";
 import yaml from "js-yaml";
 import fglob from "fast-glob";
+import { log } from "./src/utils/log/logger.js";
 // import { fileURLToPath } from "node:url";
 // import Nunjucks from "nunjucks";
 import { transform as lightningTransform } from "lightningcss";
@@ -63,7 +64,6 @@ import {
   setIconSources,
 } from "./src/config-11ty/icon-manifest.js";
 import {
-  DEBUG,
   CMS_IMPORT,
   ELEVENTY_RUN_MODE,
   BUILD_LEVEL,
@@ -149,9 +149,8 @@ import {
 } from "./src/config-11ty/shortcodes/index.js";
 // import { ogImageSelected } from "./src/config-11ty/shortcodes/index.js";
 
-if (DEBUG) {
-  console.log("---------ENV-----------\n", env, "\n---------/ENV---------");
-}
+// Full env snapshot is emitted by env.config.js through the log facade at
+// POKO_LOG_LEVEL=debug (allowlisted, secret-free).
 
 function shouldNotRender(data) {
   // This excludes files whose path contains a `.` or a `_` directly after a `/`
@@ -251,7 +250,9 @@ export const config = {
 
 export default async function (eleventyConfig) {
   // --------------------- Base Config
-  eleventyConfig.setQuietMode(true);
+  // Quiet mode intentionally NOT set: the poko log facade (injected via
+  // elev.logger) owns filtering by POKO_LOG_LEVEL — quiet mode would divert
+  // eleventy-img progress messages to the debug() channel instead.
 
   eleventyConfig.setWatchThrottleWaitTime(500); // in milliseconds
 
@@ -500,7 +501,9 @@ export default async function (eleventyConfig) {
   });
 
   // --------------------- Plugins Early
-  eleventyConfig.addPlugin(directoryOutputPlugin);
+  // The per-output file tree is debug-level detail; it also bypasses the
+  // logger (raw console.log) so it can only be gated by registration.
+  if (log.isEnabled("debug")) eleventyConfig.addPlugin(directoryOutputPlugin);
   eleventyConfig.addPlugin(HtmlBasePlugin);
   eleventyConfig.addPlugin(RenderPlugin);
   eleventyConfig.addPlugin(IdAttributePlugin, {
@@ -574,7 +577,7 @@ export default async function (eleventyConfig) {
   //     ],
   //   },
   // });
-  console.log({ BUILD_LEVEL, BASE_URL });
+  log.debug("build", "build.context", `${BUILD_LEVEL} · base ${BASE_URL}`);
   /** @type {import("eleventy-plugin-robotstxt/typedefs.js").EleventyPluginRobotsTxtOptions} */
   const eleventyPluginRobotsTxtOptions =
     BUILD_LEVEL === "production"
@@ -828,19 +831,26 @@ export default async function (eleventyConfig) {
       if (args.length > 1) {
         const partialFileName = args[0];
         const data = args[1] || {};
-        console.warn(
+        log.warnOnce(
+          `dep:section:${partialFileName}`,
+          "partials",
+          "shortcode.deprecated",
           `DEPRECATED: Section (calling "${partialFileName}") is using the old syntax.`,
         );
 
         return await partialShortcodeFn
           .call(this, partialFileName, data)
           .catch((e) => {
-            console.error(e);
+            log.error("partials", "shortcode.error", e?.message ?? String(e), {
+              error: e,
+            });
             return "";
           });
       }
       if (args.length !== 1 || typeof args[0] !== "object") {
-        console.error(
+        log.error(
+          "partials",
+          "shortcode.error",
           `Section shortcode called with invalid arguments: ${args}`,
         );
         return "";
@@ -856,7 +866,9 @@ export default async function (eleventyConfig) {
       return await partialShortcodeFn
         .call(this, partialFileName, { blocks, ...vars, ...advancedVars })
         .catch((e) => {
-          console.error(e);
+          log.error("partials", "shortcode.error", e?.message ?? String(e), {
+            error: e,
+          });
           return "<< SECTION ERROR >>";
         });
     });

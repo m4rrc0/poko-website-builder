@@ -3,6 +3,7 @@ import { resolve, join, relative } from "node:path";
 import fs from "node:fs";
 import yaml from "js-yaml";
 import { PACKAGE_ROOT, packagePath } from "./src/utils/paths.js";
+import { log, resolveLevel, resolveFormat } from "./src/utils/log/logger.js";
 import { deriveEnv } from "./src/env/derive.js";
 import { loadBrandData } from "./src/config-11ty/plugins/ctx-css/load.js";
 
@@ -20,6 +21,8 @@ export { PACKAGE_ROOT, packagePath };
 
 // GENERAL
 export const DEBUG = processEnv.DEBUG === "true" ? true : false;
+export const POKO_LOG_LEVEL = resolveLevel(processEnv);
+export const POKO_LOG_FORMAT = resolveFormat(processEnv);
 export const NODE_ENV = processEnv.NODE_ENV || "production";
 export const ELEVENTY_RUN_MODE = processEnv.ELEVENTY_RUN_MODE;
 // Can be "cdn", "npm", "<relative-path>", local // Default should be npm
@@ -365,12 +368,24 @@ try {
   const globalSettingsYaml = fs.readFileSync(globalSettingsPath, "utf-8");
   globalSettings = yaml.load(globalSettingsYaml);
 } catch (error) {
-  console.error("Error reading globalSettings.yaml:", error);
+  if (error?.code === "ENOENT") {
+    log.debug(
+      "env",
+      "config.missing",
+      `No globalSettings.yaml at ${globalSettingsPath}`,
+    );
+  } else {
+    log.error(
+      "env",
+      "env.global_settings.error",
+      `Error reading globalSettings.yaml: ${error.message}`,
+    );
+  }
 }
 try {
   brandConfig = loadBrandData(WORKING_DIR_ABSOLUTE);
 } catch (error) {
-  console.warn("WARN: brand data not found");
+  log.warnOnce("env:brand", "env", "env.brand.missing", "brand data not found");
   brandConfig = {};
 }
 export { globalSettings, brandConfig };
@@ -388,8 +403,11 @@ export const userCmsConfig = async function () {
       ...uc,
     };
   } catch (error) {
-    console.warn(
-      `WARN: Could not import user config from "${WORKING_DIR_ABSOLUTE}/_config/index.js"`,
+    log.warnOnce(
+      "env:user-config",
+      "env",
+      "config.missing",
+      `Could not import user config from "${WORKING_DIR_ABSOLUTE}/_config/index.js"`,
     );
   }
   return userCmsConfigTemp;
@@ -410,8 +428,10 @@ export const userHtmlClasses = async function () {
 
     userHtmlClassesTemp = { ...(uhc?.default || {}) };
   } catch (error) {
-    console.warn(
-      `INFO: No custom HTML classes found from "${WORKING_DIR_ABSOLUTE}/_config/htmlClasses.js"`,
+    log.debug(
+      "env",
+      "config.missing",
+      `No custom HTML classes found from "${WORKING_DIR_ABSOLUTE}/_config/htmlClasses.js"`,
     );
   }
   return userHtmlClassesTemp;
@@ -526,11 +546,27 @@ export const WEBSITE_PATH_PREFIX =
 
 export const SITE_NAME = processEnv.SITE_NAME || derivedEnv.SITE_NAME || "";
 
-if (DEBUG) {
-  console.log({ processEnv });
-  console.log({
-    GIT_REMOTES: processEnv.GIT_REMOTES,
-    GITHUB_REPO_INFERRED,
-    REPO,
+// Debug snapshot — allowlisted fields only, never raw processEnv (secrets).
+if (log.isEnabled("debug")) {
+  log.debug("env", "env.snapshot", "build env", {
+    env: {
+      BUILD_LEVEL,
+      BASE_URL,
+      BRANCH,
+      REPO,
+      NODE_ENV,
+      ELEVENTY_RUN_MODE,
+      DEPLOYMENT_TARGET,
+      OUTPUT_DIR,
+      WORKING_DIR_ABSOLUTE,
+      CONTENT_DIR,
+      providers: {
+        github: GITHUB_PAGES_BUILD,
+        netlify: NETLIFY_BUILD,
+        cloudflare: CLOUDFLARE_BUILD,
+        vercel: VERCEL_BUILD,
+        local: LOCAL_BUILD,
+      },
+    },
   });
 }

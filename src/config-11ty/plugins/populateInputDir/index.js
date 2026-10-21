@@ -1,5 +1,6 @@
 import fglob from "fast-glob";
-import { logger, printDiffTree, loadFiles } from "./utils.js";
+import { printDiffTree, loadFiles } from "./utils.js";
+import { log } from "../../../utils/log/logger.js";
 
 export default async function (eleventyConfig, pluginOptions) {
   eleventyConfig.versionCheck(">=3.0.0-alpha.1");
@@ -19,20 +20,11 @@ export default async function (eleventyConfig, pluginOptions) {
   //   ...dataExtensions.keys(),
   // ];
 
-  // Get log level from plugin options, eleventy config, or default to 'info'
-  // Valid levels: 'debug', 'info', 'warn', 'error', 'silent'
-  const logLevel = pluginOptions?.logLevel || "info";
+  // Legacy plugin option: "silent" still suppresses this plugin's output;
+  // all real level control now lives in POKO_LOG_LEVEL.
+  const quiet = pluginOptions?.logLevel === "silent";
 
-  if (logLevel !== "silent") {
-    logger.log(
-      logLevel === "debug" ? "debug" : "info",
-      `---------- Populate Input Directory : Start ----------`,
-    );
-    logger.log(
-      logLevel === "debug" ? "debug" : "info",
-      `Populating input directory with logLevel: ${logLevel} (possible options: debug, info, warn, error, silent)`,
-    );
-  }
+  const phase = quiet ? null : log.phase("populate", "populating input dir…");
   const inputDir = eleventyConfig.dir.input;
   const sources = Array.isArray(pluginOptions?.sources)
     ? pluginOptions.sources
@@ -60,11 +52,11 @@ export default async function (eleventyConfig, pluginOptions) {
     ...actualContentFilePaths.map((p) => p.replace(`${inputDir}/`, "")),
   );
 
-  if (logLevel === "debug") {
-    logger.debug(
-      `Number of paths in input dir: ${actualContentFilePaths.length}`,
-    );
-  }
+  log.debug(
+    "populate",
+    "populate.scan",
+    `Number of paths in input dir: ${actualContentFilePaths.length}`,
+  );
   await Promise.all(
     sources.map(async (source) => {
       let srcDir = "";
@@ -78,7 +70,11 @@ export default async function (eleventyConfig, pluginOptions) {
       }
 
       if (!srcDir) {
-        logger.error(`Invalid source configuration: ${JSON.stringify(source)}`);
+        log.error(
+          "populate",
+          "populate.config",
+          `Invalid source configuration: ${JSON.stringify(source)}`,
+        );
         return; // Skip this iteration
       }
 
@@ -106,29 +102,22 @@ export default async function (eleventyConfig, pluginOptions) {
           // Actually add the template
           eleventyConfig.addTemplate(transposedFilePath, file.content);
 
-          // Log based on the specified log level
-          if (logLevel !== "silent") {
-            if (logLevel === "debug") {
-              logger.debug(
-                `Virtual Template added: '${transposedFilePath}' from source: '${file.path}'`,
-              );
-            } else if (logLevel === "info") {
-              logger.info(
-                `Virtual Template added: '${transposedFilePath}' (from '${file.path}')`,
-              );
-            }
-          }
+          log.debug(
+            "populate",
+            "populate.template",
+            `Virtual Template added: '${transposedFilePath}' (from '${file.path}')`,
+          );
           occupiedPaths.push(transposedFilePath);
           // Track the source of this path for the diff view
           pathSourceMap[transposedFilePath] = file.path;
         } else {
           // Track paths that were skipped because they already existed
           skippedPathsMap[transposedFilePath] = file.path;
-          if (logLevel === "debug") {
-            logger.debug(
-              `Skipped existing path: '${transposedFilePath}' (would be from '${file.path}')`,
-            );
-          }
+          log.debug(
+            "populate",
+            "populate.skipped",
+            `Skipped existing path: '${transposedFilePath}' (would be from '${file.path}')`,
+          );
           // Important: If a path is both added and skipped (from different sources),
           // make sure we still have it in the skippedPathsMap
         }
@@ -136,49 +125,39 @@ export default async function (eleventyConfig, pluginOptions) {
     }),
   );
 
-  // Summary logging at the end based on log level
-  if (logLevel === "debug") {
-    logger.debug(`Sources processed: ${sources.length}`);
-    logger.debug(
-      `Total paths added from sources: ${occupiedPaths.length - actualContentFilePaths.length}`,
-    );
-  } else if (logLevel === "info") {
-    logger.info(
-      `Completed processing ${occupiedPaths.length - actualContentFilePaths.length} templates from ${sources.length} sources`,
-    );
-  } else if (logLevel === "warn" || logLevel === "error") {
-    // Only log if there were any issues
-    if (sources.some((s) => !s || (typeof s === "object" && !s.in))) {
-      logger.warn(
-        `Completed with some configuration issues. Check error logs for details.`,
-      );
-    }
-  }
-  // Print tree-like structure of paths if in debug mode
-  if (logLevel === "debug") {
-    // Create a combined visualization that includes all paths
-    const allPathsForVisualization = [...occupiedPaths];
+  const added = occupiedPaths.length - actualContentFilePaths.length;
 
-    // Make sure skipped paths are included in the visualization
+  if (sources.some((s) => !s || (typeof s === "object" && !s.in))) {
+    log.warn(
+      "populate",
+      "populate.config",
+      `Completed with some configuration issues. Check error logs for details.`,
+    );
+  }
+
+  // Tree visualization of original/added/skipped paths — debug detail
+  if (log.isEnabled("debug")) {
+    const allPathsForVisualization = [...occupiedPaths];
     Object.keys(skippedPathsMap).forEach((skippedPath) => {
       if (!allPathsForVisualization.includes(skippedPath)) {
         allPathsForVisualization.push(skippedPath);
       }
     });
-
-    logger.debug(`Path structure:
+    log.debug(
+      "populate",
+      "populate.tree",
+      `Path structure:
 - Gray: existing files
 - Yellow with red source: original files that would also be added from other sources
 - Blue with blue source: added files
 - Yellow with red source: skipped files (already existed)
 - Blue with blue source and red source: files added from one source and skipped from another
-${printDiffTree(allPathsForVisualization, actualContentFilePaths, pathSourceMap, skippedPathsMap, inputDir)}`);
-  }
-
-  if (logLevel !== "silent") {
-    logger.log(
-      logLevel === "debug" ? "debug" : "info",
-      `---------- Populate Input Directory : End ------------`,
+${printDiffTree(allPathsForVisualization, actualContentFilePaths, pathSourceMap, skippedPathsMap, inputDir)}`,
     );
   }
+
+  phase?.done(`${added} templates from ${sources.length} sources`, {
+    added,
+    sources: sources.length,
+  });
 }

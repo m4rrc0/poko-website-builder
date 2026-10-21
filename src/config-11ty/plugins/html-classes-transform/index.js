@@ -1,4 +1,5 @@
 import { isBun } from "../../../utils/runtime.js";
+import { log } from "../../../utils/log/logger.js";
 
 // html-rewriter-wasm runs the same lol-html engine as Bun's HTMLRewriter.
 async function loadNodeHTMLRewriter() {
@@ -6,10 +7,11 @@ async function loadNodeHTMLRewriter() {
     const { HTMLRewriter } = await import("html-rewriter-wasm");
     return HTMLRewriter;
   } catch (error) {
-    console.error("HTMLRewriter not available without Bun.");
-    console.error(
-      "Install `html-rewriter-wasm` to enable it under Node.",
-      error,
+    log.error(
+      "build",
+      "transform.rewriter.missing",
+      "HTMLRewriter not available without Bun. Install `html-rewriter-wasm` to enable it under Node.",
+      { error },
     );
     throw error;
   }

@@ -4,6 +4,8 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { initPokoEnv } from "../src/env/init.js";
 import { packagePath, toPosix } from "../src/utils/paths.js";
+import { log } from "../src/utils/log/logger.js";
+import { makeEleventyLogger } from "../src/utils/log/eleventy-logger.js";
 
 const CONFIG_CANDIDATES = [
   "eleventy.config.js",
@@ -65,8 +67,18 @@ export async function run(argv) {
   const cwd = process.cwd();
   const serve = command === "dev";
   if (serve) process.env.ELEVENTY_RUN_MODE ||= "serve";
+  log.configure({ mode: command });
 
   const env = await initPokoEnv({ cwd });
+  log.info(
+    "cli",
+    "cli.start",
+    `${command} · ${env.BUILD_LEVEL} · base ${env.BASE_URL}`,
+    {
+      buildLevel: env.BUILD_LEVEL,
+      baseUrl: env.BASE_URL,
+    },
+  );
   const { default: Eleventy } = await import("@11ty/eleventy");
 
   const input = env.WORKING_DIR_ABSOLUTE;
@@ -84,9 +96,48 @@ export async function run(argv) {
   // handler reports the whole chain, like `npx eleventy` does.
   try {
     await elev.init();
+    // eleventyConfig only exists after init(); setLogger propagates the
+    // facade to plugins and eleventy-img. The writer keeps the logger it
+    // was assigned during init, so it must be swapped too — templates
+    // inherit from the writer (per-file "Writing …" lines).
+    const eleventyLogger = makeEleventyLogger(log);
+    elev.logger = eleventyLogger;
+    elev.writer.logger = eleventyLogger;
+    // Dev-mode only: routes eleventy-dev-server messages (Server at, file
+    // changed) through the facade as well.
+    elev.eleventyServe.logger = eleventyLogger;
 
     if (!serve) {
+      const phase = log.phase("build", "building…");
+      const started = Date.now();
       await elev.write();
+      const meta = elev.writer.getMetadata();
+      phase.done(
+        `${meta.writeCount} written, ${meta.copyCount} copied${meta.skipCount ? `, ${meta.skipCount} skipped` : ""}`,
+        {
+          event: "build.done",
+          written: meta.writeCount,
+          copied: meta.copyCount,
+          skipped: meta.skipCount,
+          durationMs: Date.now() - started,
+        },
+      );
+      const { warnings } = log.finish();
+      if (warnings.length) {
+        log.info(
+          "build",
+          "warnings.summary",
+          `${warnings.length} warning${warnings.length === 1 ? "" : "s"} (POKO_LOG_LEVEL=debug for detail)`,
+          {
+            warnings: warnings.map(({ scope, event, msg, occurrences }) => ({
+              scope,
+              event,
+              msg,
+              occurrences,
+            })),
+          },
+        );
+      }
       return;
     }
 

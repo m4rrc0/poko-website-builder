@@ -3,6 +3,7 @@ import he from "he";
 import slugify from "@sindresorhus/slugify";
 import { locale_url } from "../../filters/i18n.js";
 import { emailLink } from "../../filters/email.js";
+import { log } from "../../../utils/log/logger.js";
 
 function isFileUrl(urlString) {
   try {
@@ -114,7 +115,12 @@ export async function link(unnamedAttrOrObj, optionalAttrsObj) {
     );
 
     if (typeof pageData === "undefined") {
-      console.warn(`[link] Page not found: ${urlRef}`);
+      log.warnOnce(
+        `link:missing:${urlRef}`,
+        "partials",
+        "link.missing",
+        `Page not found: ${urlRef}`,
+      );
     }
 
     const attrsStr = stringifyAttributesObject({

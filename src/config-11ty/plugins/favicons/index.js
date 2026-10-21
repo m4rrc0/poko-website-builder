@@ -19,6 +19,7 @@ import Image from "@11ty/eleventy-img";
 import sharp from "sharp";
 import yaml from "js-yaml";
 import toIco from "png-to-ico";
+import { log } from "../../../utils/log/logger.js";
 
 const DARK_MEDIA = "(prefers-color-scheme: dark)";
 
@@ -27,7 +28,12 @@ const DARK_MEDIA = "(prefers-color-scheme: dark)";
 const SLOTS = {
   faviconSvg: { file: "favicon.svg", svgOnly: true },
   faviconIco: { file: "favicon.ico" },
-  appleTouch: { file: "apple-touch-icon.png", size: 180, apple: true, root: true },
+  appleTouch: {
+    file: "apple-touch-icon.png",
+    size: 180,
+    apple: true,
+    root: true,
+  },
   icon192: { file: "icon-192.png", size: 192, manifest: true },
   icon512: { file: "icon-512.png", size: 512, manifest: true },
   maskable512: {
@@ -230,6 +236,7 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     const nameFormat = `filename_${file.replace(/\W/g, "_")}`;
     const filenameFormat = { [nameFormat]: () => file }[nameFormat];
     const stats = await Image(source.src, {
+      eleventyConfig, // wires eleventy-img's BuildLogger into the facade
       formats: ["png"],
       widths: [size],
       outputDir: path.join(outputDir, subdir),
@@ -249,6 +256,7 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     const buffers = [];
     for (const size of achievable) {
       const stats = await Image(source.src, {
+        eleventyConfig,
         dryRun: true,
         formats: ["png"],
         widths: [size],
@@ -320,8 +328,11 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
               }
               const src = await pickSource(scope, sourceKey, spec.size);
               if (!src) {
-                console.warn(
-                  `[favicons] skipped ${spec.file}: no ${variant} source reaches ${spec.size}px without upscaling`,
+                log.warnOnce(
+                  `favicons:src:${spec.file}`,
+                  "favicons",
+                  "favicons.source",
+                  `skipped ${spec.file}: no ${variant} source reaches ${spec.size}px without upscaling`,
                 );
                 return;
               }
@@ -349,9 +360,11 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
                 };
               }
             } catch (error) {
-              console.warn(
-                `[favicons] ${spec.file} failed:`,
-                error?.message || error,
+              log.warnOnce(
+                `favicons:emit:${spec.file}`,
+                "favicons",
+                "favicons.emit.error",
+                `${spec.file} failed: ${error?.message || error}`,
               );
             }
           })(),
@@ -499,7 +512,11 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     try {
       state = await generate();
     } catch (error) {
-      console.warn("[favicons] generation failed:", error?.message || error);
+      log.warn(
+        "favicons",
+        "favicons.generate.error",
+        `generation failed: ${error?.message || error}`,
+      );
       state = { manifest: null, headHtml: "" };
     }
   });

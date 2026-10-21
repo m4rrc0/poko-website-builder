@@ -2,6 +2,7 @@
 import { MINIFY } from "../../../../env.config.js";
 import { enginePath } from "../../../utils/paths.js";
 import { buildCss } from "../../../utils/runtime.js";
+import { log } from "../../../utils/log/logger.js";
 
 // TODO: plugin not working. May be because
 // const cssTransformPlugin = {
@@ -51,7 +52,7 @@ export default async function (eleventyConfig, pluginOptions) {
     minify: MINIFY,
     cssChunking: false,
   }).catch((e) => {
-    console.error(e);
+    log.error("css", "css.build.error", e?.message ?? String(e), { error: e });
     throw e;
   });
 

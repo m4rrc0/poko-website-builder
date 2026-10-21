@@ -1,3 +1,5 @@
+import { log } from "../../../utils/log/logger.js";
+
 // Shared between the build plugin (index.js) and the CMS preview nunjucks
 // env (cms-config/preview/preview-njk.js): the paired-shortcode names and
 // the handlers that dispatch them to `_*` partials. Both sides register the
@@ -108,7 +110,12 @@ export const makePartialHandlers = ({ renderPartial, renderContent }) => {
           if (!section || typeof section !== "object") return "";
           const { type, content, ...dataManual } = section;
           if (!type) {
-            console.warn(`sections[${index}] is missing a "type"; skipping.`);
+            log.warnOnce(
+              `sections:no-type:${index}`,
+              "partials",
+              "section.no_type",
+              `sections[${index}] is missing a "type"; skipping.`,
+            );
             return "";
           }
           return renderNamedPartial.call(

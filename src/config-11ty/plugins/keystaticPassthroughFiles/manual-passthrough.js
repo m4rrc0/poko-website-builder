@@ -5,6 +5,7 @@ import { dirname, resolve, join, relative, basename, extname } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
+import { log } from '../../../utils/log/logger.js';
 
 // NOTE: Instead of this, I may use a 11ty.js template and EleventyFetch streaming... Any upside?
 
@@ -44,7 +45,7 @@ export default async function(eleventyConfig, pluginOptions = {}) {
     // Extract file information
     const { file, filename } = yamlData;
     if (!file || !filename) {
-      console.warn(`Missing required file information in ${yamlFile}`);
+      log.warnOnce(`keystatic:missing:${yamlFile}`, "populate", "populate.file.missing", `Missing required file information in ${yamlFile}`);
       continue;
     }
     
@@ -67,13 +68,12 @@ export default async function(eleventyConfig, pluginOptions = {}) {
         createWriteStream(destFile)
       );
       
-      console.log(`Copied: ${relative(process.cwd(), sourceFile)} → ${relative(process.cwd(), destFile)}`);
+      log.debug("populate", "populate.file.copied", `Copied: ${relative(process.cwd(), sourceFile)} → ${relative(process.cwd(), destFile)}`);
     } catch (err) {
-      console.error(`Failed to copy file: ${relative(process.cwd(), sourceFile)}`);
-      console.error(err);
+      log.error("populate", "populate.file.error", `Failed to copy file: ${relative(process.cwd(), sourceFile)}`, { error: err });
     }
   }
   
   // Log completion
-  console.log(`Finished processing ${yamlFiles.length} keystatic public file uploads`);
+  log.info("populate", "populate.keystatic.done", `Processed ${yamlFiles.length} keystatic public file uploads`, { count: yamlFiles.length });
 }

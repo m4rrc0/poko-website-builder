@@ -6,6 +6,7 @@ import {
   iconLists,
   utilityClassGroups,
 } from "./env.js";
+import { log } from "../../../utils/log/logger.js";
 // import {
 //   asyncPreview,
 //   getRenderer,
@@ -396,7 +397,11 @@ const extractSectionAreaData = (contentString, tagName) => {
   const { extracted, remaining } = extractAttributes(attributes || "", [
     "class",
   ]);
-  return { ...splitClassTokens(extracted?.class), attributes: remaining, content };
+  return {
+    ...splitClassTokens(extracted?.class),
+    attributes: remaining,
+    content,
+  };
 };
 
 const extractAllSectionAreaData = (contentString, tagName) => {
@@ -1134,7 +1139,11 @@ const parsePartialSyntax = (match) => {
       // Use Function constructor to safely evaluate JS object literal (not just JSON)
       data = new Function("return " + objectMatch[1])();
     } catch (e) {
-      console.log("Error parsing data object:", e);
+      log.debug(
+        "cms",
+        "cms.editor.parse",
+        `Error parsing data object: ${e?.message}`,
+      );
     }
     if (objectMatch[2]) {
       templateEngineOverride = objectMatch[2];
@@ -1953,7 +1962,10 @@ export const icon = {
     const iconLib = data?.icon?.iconLib?.type;
     const iconName = data?.icon?.iconLib?.iconName;
     const size = data?.icon?.size;
-    const className = [data?.icon?.class, classListFromUtilities(data?.icon?.utilities)]
+    const className = [
+      data?.icon?.class,
+      classListFromUtilities(data?.icon?.utilities),
+    ]
       .filter(Boolean)
       .join(" ");
     const otherAttrs = data?.icon?.otherAttrs;
@@ -2462,7 +2474,9 @@ export const htmlPartial = {
   // },
 };
 
-console.log({ editorComponents });
+log.debug("cms", "cms.editor.components", "editorComponents", {
+  editorComponents,
+});
 
 export const wrapper = {
   id: "wrapper",
@@ -2517,7 +2531,7 @@ export const wrapper = {
           name: "attributes",
           label: "Raw Attributes",
           widget: "string",
-          hint: "Any other attribute string (e.g. id=\"main\", data-foo=\"bar\")",
+          hint: 'Any other attribute string (e.g. id="main", data-foo="bar")',
           required: false,
         },
       ],

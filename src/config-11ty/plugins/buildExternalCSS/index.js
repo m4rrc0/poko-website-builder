@@ -1,4 +1,5 @@
 import fglob from "fast-glob";
+import { log } from "../../../utils/log/logger.js";
 import { MINIFY, ctxData, POKO_THEME } from "../../../../env.config.js";
 import { enginePath } from "../../../utils/paths.js";
 import { buildCss } from "../../../utils/runtime.js";
@@ -42,7 +43,9 @@ export default async function (eleventyConfig, pluginOptions) {
       minify: MINIFY,
       cssChunking: true,
     }).catch((e) => {
-      console.error(e);
+      log.error("css", "css.build.error", e?.message ?? String(e), {
+        error: e,
+      });
       throw e;
     });
 
@@ -70,7 +73,9 @@ export default async function (eleventyConfig, pluginOptions) {
       minify: MINIFY,
       cssChunking: true,
     }).catch((e) => {
-      console.error(e);
+      log.error("css", "css.build.error", e?.message ?? String(e), {
+        error: e,
+      });
       throw e;
     });
 
