@@ -103,9 +103,6 @@ export async function run(argv) {
     const eleventyLogger = makeEleventyLogger(log);
     elev.logger = eleventyLogger;
     elev.writer.logger = eleventyLogger;
-    // Dev-mode only: routes eleventy-dev-server messages (Server at, file
-    // changed) through the facade as well.
-    elev.eleventyServe.logger = eleventyLogger;
 
     if (!serve) {
       const phase = log.phase("build", "building…");
@@ -140,6 +137,13 @@ export async function run(argv) {
       }
       return;
     }
+
+    // Dev-mode only: routes eleventy-dev-server messages (Server at, file
+    // changed) through the facade as well.
+    elev.eleventyServe.logger = eleventyLogger;
+    // Per-rebuild summary + drain so warning counts stay per-build and the
+    // maps don't accumulate across a dev session.
+    elev.eleventyConfig?.on?.("eleventy.after", () => log.finish());
 
     await elev.watch();
     elev.serve(Number(options.port) || 8080);

@@ -235,8 +235,7 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     }[transformName];
     const nameFormat = `filename_${file.replace(/\W/g, "_")}`;
     const filenameFormat = { [nameFormat]: () => file }[nameFormat];
-    const stats = await Image(source.src, {
-      eleventyConfig, // wires eleventy-img's BuildLogger into the facade
+    const imgOpts = {
       formats: ["png"],
       widths: [size],
       outputDir: path.join(outputDir, subdir),
@@ -245,7 +244,14 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
       sharpOptions: svgSharpOptions(source.meta, size),
       filenameFormat,
       transform,
+    };
+    // Wires eleventy-img's BuildLogger into the facade; non-enumerable so
+    // eleventy-img's option merging never walks the config object.
+    Object.defineProperty(imgOpts, "eleventyConfig", {
+      value: eleventyConfig,
+      enumerable: false,
     });
+    const stats = await Image(source.src, imgOpts);
     return stats.png?.[0] || null;
   };
 
@@ -255,14 +261,18 @@ export default function faviconsPlugin(eleventyConfig, pluginOptions = {}) {
     if (!achievable.length) return null;
     const buffers = [];
     for (const size of achievable) {
-      const stats = await Image(source.src, {
-        eleventyConfig,
+      const imgOpts = {
         dryRun: true,
         formats: ["png"],
         widths: [size],
         sharpOptions: svgSharpOptions(source.meta, size),
         transform: contain(size, TRANSPARENT),
+      };
+      Object.defineProperty(imgOpts, "eleventyConfig", {
+        value: eleventyConfig,
+        enumerable: false,
       });
+      const stats = await Image(source.src, imgOpts);
       const buf = stats.png?.[0]?.buffer;
       if (buf) buffers.push(buf);
     }
