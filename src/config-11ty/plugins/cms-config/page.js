@@ -77,12 +77,14 @@ export class CmsPage {
         // key here; the URLs derive from CMS_AUTH_URL so poko host moves
         // propagate through rebuilds. branch is the config backend's
         // branch — a preview-deploy admin publishes its own branch.
-        ...(data.env.CMS_API_ROOT && {
-          deployBindUrl: `${data.env.CMS_AUTH_URL}/deploy/bind`,
-          deployUrl: `${data.env.CMS_AUTH_URL}/deploy/${data.env.POKO_SITE_ID}`,
-          pokoSiteId: data.env.POKO_SITE_ID,
-          branch: data.env.CMS_BRANCH || "main",
-        }),
+        ...(data.env.CMS_API_ROOT &&
+          data.env.CMS_AUTH_URL &&
+          data.env.POKO_SITE_ID && {
+            deployBindUrl: `${data.env.CMS_AUTH_URL}/deploy/bind`,
+            deployUrl: `${data.env.CMS_AUTH_URL}/deploy/${data.env.POKO_SITE_ID}`,
+            pokoSiteId: data.env.POKO_SITE_ID,
+            branch: data.env.CMS_BRANCH || "main",
+          }),
       })};
       // Declarative prefs registry for prefs.js — extension point for
       // future auto-provisioned Sveltia settings (incl. server-synced

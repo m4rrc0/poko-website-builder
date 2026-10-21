@@ -139,6 +139,9 @@ test("auth-success message binds with the payload token", async () => {
     source: { popup: true },
     data: 'authorization:github:success:{"token":"tok-live"}',
   });
+  // Sveltia's own listener persists the session on the same event —
+  // it lands before our async bind resolves.
+  h.store["sveltia-cms.user"] = JSON.stringify({ token: "tok-live" });
   await flush();
   assert.equal(h.fetches.length, 1);
   assert.equal(h.fetches[0].opts.headers.Authorization, "token tok-live");

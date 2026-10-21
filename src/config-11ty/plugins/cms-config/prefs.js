@@ -146,11 +146,13 @@
       // A successful FIRST bind means Sveltia booted without the header
       // (post-boot prefs writes never reach its in-memory snapshot) —
       // reload once so Publish Changes carries auth from the start.
+      // Guard on the session token actually being persisted — the
+      // auth-success listener may still be racing Sveltia's own write.
       if (!headerAtBoot) {
         try {
           if (!sessionStorage.getItem(RELOADED)) {
             sessionStorage.setItem(RELOADED, "1");
-            location.reload();
+            if (storedToken()) location.reload();
           }
         } catch {}
       }
@@ -177,10 +179,14 @@
 
   // The auth-success payload (fresh token) doubles as the bind trigger —
   // origin pinned to poko's, source must be the popup window.
-  const pokoOrigin = new URL(deployBindUrl).origin;
+  let pokoOrigin;
+  try {
+    pokoOrigin = new URL(deployBindUrl).origin;
+  } catch {
+    return; // misconfigured env emitted a non-URL — stay inert
+  }
   addEventListener("message", (ev) => {
-    if (ev.origin !== pokoOrigin || !ev.source || ev.source === window)
-      return;
+    if (ev.origin !== pokoOrigin || !ev.source || ev.source === window) return;
     if (typeof ev.data !== "string") return;
     const m = ev.data.match(/^authorization:\w+:(?:success|error):(.*)$/s);
     if (!m) return;
