@@ -11,6 +11,15 @@ env:
   CMS_REPO: ${{ vars.CMS_REPO }}
   CMS_BACKEND: ${{ vars.CMS_BACKEND }}
   CMS_BRANCH: ${{ vars.CMS_BRANCH }}
+  # Relay
+  CMS_API_ROOT: ${{ vars.CMS_API_ROOT }}
+  CMS_GRAPHQL_API_ROOT: ${{ vars.CMS_GRAPHQL_API_ROOT }}
+  POKO_SITE_ID: ${{ vars.POKO_SITE_ID }}
+  POKO_CMS_DEV_TOKEN: ${{ vars.POKO_CMS_DEV_TOKEN }}
+  POKO_CMS_DEV_REFRESH: ${{ vars.POKO_CMS_DEV_REFRESH }}
+  POKO_SVELTIA_CONTRACT: ${{ vars.POKO_SVELTIA_CONTRACT }}
+  DISABLE_DEVICE_FLOW: ${{ vars.DISABLE_DEVICE_FLOW }}
+  # General
   _VARS: ${{ toJson(vars) }}
   REPO_URL: ${{ github.event.repository.html_url }}
   # Optional: override Bun version. Falls back to package.json engines.bun if unset.
