@@ -15,7 +15,7 @@
     "upgrade": "npm i poko-website-builder@latest && npm i && bun i"
   },
   "dependencies": {
-    "poko-website-builder": "^0.3.0"
+    "poko-website-builder": "^0.3.1"
   },
   "devDependencies": {
     "wrangler": "^4.61.1"
