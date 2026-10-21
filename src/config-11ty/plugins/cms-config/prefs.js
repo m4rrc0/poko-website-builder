@@ -146,13 +146,13 @@
       // A successful FIRST bind means Sveltia booted without the header
       // (post-boot prefs writes never reach its in-memory snapshot) —
       // reload once so Publish Changes carries auth from the start.
-      // Guard on the session token actually being persisted — the
-      // auth-success listener may still be racing Sveltia's own write.
+      // The sessionStorage flag alone prevents loops: if the session
+      // write truly failed, the next boot just shows login again.
       if (!headerAtBoot) {
         try {
           if (!sessionStorage.getItem(RELOADED)) {
             sessionStorage.setItem(RELOADED, "1");
-            if (storedToken()) location.reload();
+            location.reload();
           }
         } catch {}
       }
