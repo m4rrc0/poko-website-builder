@@ -89,7 +89,7 @@
   "description": "A low cost, high power website builder you trully own",
   "engines": {
     "bun": ">=1.2.22",
-    "node": ">=22.6"
+    "node": ">=24"
   },
   "homepage": "https://github.com/m4rrc0/poko-website-builder#readme",
   "keywords": [

@@ -1,3 +1,36 @@
+# poko-website-builder
+
+Eleventy 3 SSG engine shipped **unbundled** as an npm package, consumed via the `poko` CLI. ESM only. Dual runtime: Bun + Node ≥24 — runtime-specific APIs go through `src/utils/runtime.js`, never `bun:*` or node-only calls inline.
+
+Read `CONSTRAINTS.md` before writing code. Do not weaken it to make a change pass.
+
+## Commands
+
+- Engine content dev/build: `npm run dev:content` / `npm run build:content` (`:demo` variants for the demo site)
+- Test: `npm test` (`node --test`, `*.test.js` colocated with source)
+- Package dry-run: `npm run pack:check`
+- Release: `npm run release:{patch,minor,major,rc}` — versions, syncs template, tags, pushes; CI publishes
+
+## Boundaries
+
+- `template/**` is subtree-split and force-pushed to the **public** `poko-website-template` repo on every main push — no secrets, no engine-internal paths, no dev-only config inside it. Change it only from this repo, never the mirror.
+- Runtime dependencies ship to every consumer — keep them minimal; justify additions.
+- Conventional commits (`feat(scope):`, `fix(scope):`, `chore:`) — commit/PR titles become the changelog.
+- Architecture/toolchain decisions → ADR in `docs/decisions/`.
+
+## Skill triggers
+
+- Feature or behavior change → `spec-driven-development` → `incremental-implementation` → `test-driven-development`
+- UI, theme, palette, component work → `frontend-ui-engineering` (+ color system rules below)
+- `template/**` or `.github/workflows/**` → `ci-cd-and-automation`
+- Pre-merge review → `code-review-and-quality`; commits/branches/PRs → `git-workflow-and-versioning`
+- Bug/unexpected behavior → `debugging-and-error-recovery`
+- Release/deploy → `shipping-and-launch`; recording a decision → `documentation-and-adrs`
+
+# Tooling decisions
+
+Architecture Decision Records live in `docs/decisions/`. Notably: ADR-001 — do not adopt Vite+ (Eleventy drives the build; use standalone oxlint/oxfmt if lint/format is added).
+
 # Color system
 
 ## Absolute permutation model
