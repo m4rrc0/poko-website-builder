@@ -1,6 +1,6 @@
 /**
  * Build-log facade contract tests.
- * Run: node --test src/utils/
+ * Run: node --test src/utils/log/
  */
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
@@ -131,7 +131,7 @@ describe("pretty format", () => {
     log.warn("env", "config.missing", "No user config");
     assert.match(lines[0], /env/);
     assert.match(lines[0], /No user config/);
-    assert.ok(!lines[0].includes("config.missing") || true); // event name not required in pretty
+    assert.ok(!lines[0].includes("config.missing")); // event name not shown in pretty
   });
 });
 
@@ -170,6 +170,143 @@ describe("redact", () => {
     assert.equal(out.MY_API_SECRET, "<redacted>");
     assert.equal(out.PRIVATE_KEY, "<redacted>");
     assert.equal(out.nested.POKO_CMS_DEV_TOKEN, "<redacted>");
+  });
+});
+
+describe("ndjson envelope protection", () => {
+  test("reserved keys in data cannot clobber the envelope", () => {
+    const { log, lines } = make({ format: "ndjson" });
+    log.info("s", "e", "real", {
+      msg: "fake",
+      scope: "fake",
+      level: "error",
+      runId: "fake",
+      v: 99,
+      ts: "fake",
+    });
+    const evt = JSON.parse(lines[0]);
+    assert.equal(evt.msg, "real");
+    assert.equal(evt.scope, "s");
+    assert.equal(evt.level, "info");
+    assert.equal(evt.runId, "test-run");
+    assert.equal(evt.v, 1);
+  });
+  test("data.event intentionally overrides the event name", () => {
+    const { log, lines } = make({ format: "ndjson" });
+    log.info("build", "phase.done", "done", { event: "build.done" });
+    assert.equal(JSON.parse(lines[0]).event, "build.done");
+  });
+  test("secret-looking data keys are redacted", () => {
+    const { log, lines } = make({ format: "ndjson" });
+    log.info("s", "e", "m", { apiToken: "hunter2", count: 3 });
+    const evt = JSON.parse(lines[0]);
+    assert.equal(evt.apiToken, "<redacted>");
+    assert.equal(evt.count, 3);
+  });
+});
+
+describe("silent level emits nothing", () => {
+  test("no lines in ndjson — incl. phase.start and log.summary", () => {
+    const { log, lines } = make({ format: "ndjson", level: "silent" });
+    const ph = log.phase("build", "building");
+    ph.done("done");
+    log.warn("s", "e", "hidden");
+    log.finish();
+    assert.equal(lines.length, 0);
+  });
+  test("no lines in pretty either", () => {
+    const { log, lines } = make({ level: "silent" });
+    const ph = log.phase("build", "building");
+    ph.done("done");
+    log.finish();
+    assert.equal(lines.length, 0);
+  });
+});
+
+describe("warn occurrence counting", () => {
+  test("repeated identical warn increments occurrences", () => {
+    const { log } = make();
+    log.warn("s", "e", "same");
+    log.warn("s", "e", "same");
+    log.warn("s", "e", "same");
+    const entry = [...log.warnings.values()][0];
+    assert.equal(entry.occurrences, 3);
+  });
+});
+
+describe("eleventy adapter routing", () => {
+  const adapter = async (opts = {}) => {
+    const { makeEleventyLogger } = await import("./eleventy-logger.js");
+    const ctx = make(opts);
+    return { el: makeEleventyLogger(ctx.log), ...ctx };
+  };
+  const imgMsg = (message) => ({
+    message,
+    type: "info",
+    prefix: "[11ty/eleventy-img]",
+  });
+
+  test("Processing messages become a progress tick + debug detail", async () => {
+    const { el, lines, log } = await adapter();
+    el.logWithOptions(imgMsg("Processing /abs/path/hero.png (via transform)"));
+    assert.equal(lines.length, 1);
+    assert.match(lines[0], /img/);
+    assert.match(lines[0], /1 processed/);
+    assert.equal(log.warnings.size + log.errors.size, 0);
+  });
+  test("Processing strips the transform suffix from debug detail", async () => {
+    const { el, lines } = await adapter({ level: "debug" });
+    el.logWithOptions(imgMsg("Processing /a/hero.png (via transform)"));
+    const detail = lines.find((l) => l.includes("hero.png"));
+    assert.ok(!detail.includes("(via transform)"));
+  });
+  test("optimized summary emits img.done with parsed counts", async () => {
+    const { el, lines } = await adapter({ format: "ndjson" });
+    el.logWithOptions(imgMsg("612 images optimized (475 cached, 3 deferred)"));
+    const evt = JSON.parse(lines.at(-1));
+    assert.equal(evt.event, "img.done");
+    assert.equal(evt.total, 612);
+    assert.equal(evt.cached, 475);
+    assert.equal(evt.deferred, 3);
+  });
+  test("img warnings stay warnings", async () => {
+    const { el, log } = await adapter();
+    el.logWithOptions({
+      message: "lqip failed",
+      type: "warning",
+      prefix: "[11ty/eleventy-img]",
+    });
+    assert.equal(log.warnings.size, 1);
+  });
+  test("eleventy warn/error map to their levels", async () => {
+    const { el, lines } = await adapter({ format: "ndjson" });
+    el.logWithOptions({ message: "w", type: "warning", prefix: "[11ty]" });
+    el.logWithOptions({ message: "e", type: "error", prefix: "[11ty]" });
+    assert.equal(JSON.parse(lines[0]).level, "warn");
+    assert.equal(JSON.parse(lines[1]).level, "error");
+  });
+  test("ordinary eleventy info is demoted to debug", async () => {
+    const { el, lines } = await adapter();
+    el.logWithOptions({ message: "Writing /dist/a/", type: "info" });
+    assert.equal(lines.length, 0);
+  });
+  test("Server at stays visible at info", async () => {
+    const { el, lines } = await adapter();
+    el.logWithOptions({
+      message: "Server at http://localhost:8080/",
+      type: "info",
+    });
+    assert.equal(lines.length, 1);
+    assert.match(lines[0], /Server at/);
+  });
+  test("processed counter resets after the summary", async () => {
+    const { el, lines } = await adapter({ format: "ndjson" });
+    el.logWithOptions(imgMsg("Processing /a.png"));
+    el.logWithOptions(imgMsg("2 images optimized (1 cached)"));
+    el.logWithOptions(imgMsg("Processing /b.png"));
+    const last = JSON.parse(lines.at(-1));
+    assert.equal(last.event, "img.progress");
+    assert.equal(last.processed, 1);
   });
 });
 

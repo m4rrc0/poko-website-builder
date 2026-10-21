@@ -1,7 +1,7 @@
 import { Readable } from "node:stream";
 import chalk from "chalk";
 
-const stripAnsi = (s) => s.replace(/\[[0-9;]*m/g, "");
+const stripAnsi = (s) => s.replace(/\x1b\[[0-9;]*m/g, "");
 
 /**
  * Adapter presenting Eleventy's ConsoleLogger surface so `elev.logger = …`
@@ -37,9 +37,12 @@ export function makeEleventyLogger(log) {
           cached: Number(optimized[2] ?? 0),
           deferred: Number(optimized[3] ?? 0),
         });
+        imgProcessed = 0;
         return;
       }
-      log.emit(lvl === "info" ? "debug" : lvl, "img", `img.${type}`, msg);
+      if (lvl === "warn") return log.warn("img", `img.${type}`, msg);
+      if (lvl === "error") return log.error("img", `img.${type}`, msg);
+      log.debug("img", `img.${type}`, msg);
       return;
     }
 

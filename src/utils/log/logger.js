@@ -10,6 +10,18 @@ const LEVEL_ALIASES = { verbose: "debug", quiet: "warn" };
 const SECRET_RE =
   /(secret|token|password|passwd|credential|private|api[_-]?key)/i;
 
+// Envelope fields callers may not clobber via `data`; `event` is deliberately
+// allowed — it is the documented way to rename the emitted event.
+const RESERVED_KEYS = new Set([
+  "v",
+  "ts",
+  "runId",
+  "mode",
+  "level",
+  "scope",
+  "msg",
+]);
+
 const GLYPHS = {
   error: chalk.red("✗"),
   warn: chalk.yellow("!"),
@@ -23,7 +35,8 @@ export function resolveLevel(env = process.env) {
   if (raw && raw in LEVELS) return raw;
   if (raw && raw in LEVEL_ALIASES) return LEVEL_ALIASES[raw];
   if (raw) return "info";
-  if (env.DEBUG === "true") return "debug";
+  if (["true", "1", "yes", "on"].includes(env.DEBUG?.toLowerCase()))
+    return "debug";
   return "info";
 }
 
@@ -35,7 +48,10 @@ const sanitizeData = (data) => {
   if (!data || typeof data !== "object") return data;
   const out = {};
   for (const [k, v] of Object.entries(data)) {
-    if (v instanceof Error) out[k] = { message: v.message, stack: v.stack };
+    if (RESERVED_KEYS.has(k)) continue;
+    if (SECRET_RE.test(k)) out[k] = "<redacted>";
+    else if (v instanceof Error)
+      out[k] = { message: v.message, stack: v.stack };
     else if (v === undefined || typeof v === "function") continue;
     else out[k] = v;
   }
@@ -47,7 +63,7 @@ export function createLogger({
   format,
   mode = "build",
   writer = (s) => process.stderr.write(s),
-  isTTY = Boolean(process.stderr.isTTY) && !process.env.CI,
+  isTTY = () => Boolean(process.stderr.isTTY) && !process.env.CI,
   now = () => new Date(),
   runId = crypto.randomUUID(),
   spinnerFactory = (text) => yoctoSpinner({ text, stream: process.stderr }),
@@ -65,6 +81,8 @@ export function createLogger({
 
   const currentLevel = () => state.level ?? resolveLevel();
   const currentFormat = () => state.format ?? resolveFormat();
+  const currentTTY = () =>
+    typeof isTTY === "function" ? isTTY() : Boolean(isTTY);
   const gate = (lvl) =>
     LEVELS[currentLevel()] > 0 && LEVELS[lvl] <= LEVELS[currentLevel()];
 
@@ -80,7 +98,8 @@ export function createLogger({
       msg,
       ...sanitizeData(data),
     };
-    if (currentFormat() === "ndjson") writer(JSON.stringify(evt) + "\n");
+    if (gate(lvl) && currentFormat() === "ndjson")
+      writer(JSON.stringify(evt) + "\n");
     return evt;
   };
 
@@ -135,13 +154,10 @@ export function createLogger({
 
     warn(scope, event, msg, data) {
       const evt = log.emit("warn", scope, event, msg, data);
-      log.warnings.set(`${scope}:${event}:${msg}`, {
-        scope,
-        event,
-        msg,
-        data,
-        occurrences: 1,
-      });
+      const key = `${scope}:${event}:${msg}`;
+      const seen = log.warnings.get(key);
+      if (seen) seen.occurrences += 1;
+      else log.warnings.set(key, { scope, event, msg, data, occurrences: 1 });
       return evt;
     },
 
@@ -207,7 +223,7 @@ export function createLogger({
       };
 
       if (currentFormat() === "pretty" && gate("info")) {
-        if (isTTY) {
+        if (currentTTY()) {
           spinner = spinnerFactory(`${chalk.dim(scope)} ${label}`);
           spinner.__scope = scope;
           spinnerScope = scope;
@@ -257,6 +273,8 @@ export function createLogger({
       stopSpinner();
       const warnings = [...log.warnings.values()];
       const errors = [...log.errors.values()];
+      log.warnings.clear();
+      log.errors.clear();
       if (warnings.length || errors.length) {
         writeEvent(
           "info",
