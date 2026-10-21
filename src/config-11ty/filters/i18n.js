@@ -1,4 +1,5 @@
 import { getNestedValue } from "../../utils/objects.js";
+import { log } from "../../utils/log/logger.js";
 
 // `languages` is global data (eleventy.config.js addGlobalData) so it is always
 // available on `this.ctx` — keeping it out of module scope lets this file run
@@ -118,7 +119,7 @@ export function locale_url(...args) {
 
     return propMatch;
   } catch (error) {
-    console.error(error);
+    log.error("i18n", "lookup.failed", error?.message || String(error));
     throw error;
   }
 }

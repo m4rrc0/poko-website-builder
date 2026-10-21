@@ -154,7 +154,9 @@ export function runCli(argv = process.argv.slice(2)) {
   return run(argv).catch((error) => {
     // Errors already reported by elev.errorHandler are not printed twice.
     if (!error?.eleventyReported) {
-      console.error(error?.stack || error?.message || error);
+      log.error("cli", "cli.fatal", error?.message || String(error), {
+        stack: error?.stack,
+      });
     }
     process.exitCode = 1;
   });

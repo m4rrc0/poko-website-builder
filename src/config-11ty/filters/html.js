@@ -1,6 +1,8 @@
 // prettier-ignore
 const allValidHtmlAttributes = ["accept", "action", "alt", "aria-*", "async", "autocomplete", "autofocus", "autoplay", "capture", "checked", "cite", "class", "cols", "colspan", "content", "contenteditable", "controls", "controlslist", "coords", "crossorigin", "data-*", "datetime", "decoding", "default", "defer", "dir", "dirname", "disabled", "download", "draggable", "enctype", "enterkeyhint", "for", "form", "formaction", "formenctype", "formmethod", "formnovalidate", "formtarget", "headers", "height", "hidden", "high", "href", "hreflang", "http-equiv", "id", "ismap", "inputmode", "integrity", "interactions", "ismap", "kind", "label", "lang", "list", "loading", "loop", "low", "max", "maxlength", "media", "method", "min", "minlength", "multiple", "muted", "name", "nomodule", "novalidate", "nonce", "open", "optimum", "pattern", "placeholder", "playsinline", "poster", "preload", "pubdate", "radiogroup", "readonly", "rel", "required", "reversed", "rows", "rowspan", "sandbox", "scope", "scoped", "selected", "shape", "size", "sizes", "slot", "span", "spellcheck", "src", "srcdoc", "srclang", "srcset", "start", "step", "summary", "tabindex", "target", "title", "translate", "type", "usemap", "value", "width", "wrap"];
 
+import { log } from "../../utils/log/logger.js";
+
 const allValidHtmlAttributesRegex = new RegExp(
   `^(${allValidHtmlAttributes.join("|")})$`,
 );
@@ -18,7 +20,7 @@ export function htmlAttrs(rawAttrsObj = {}, overwriteObj = {}) {
   }
 
   if (Object.keys(rejectedAttrs).length > 0) {
-    console.warn(`Rejected Attributes on page "${pageUrl}":`, rejectedAttrs);
+    log.warn("html", "attrs.rejected", `page "${pageUrl}"`, rejectedAttrs);
   }
 
   const mainString = Object.entries(attrsObj)
