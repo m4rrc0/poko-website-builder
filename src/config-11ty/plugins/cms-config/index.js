@@ -29,6 +29,7 @@ import {
   stylesConfigCollection,
 } from "./config.js";
 import { utilityClassGroups } from "./utility-classes.js";
+import { importSpec } from "./utils/import-spec.js";
 import { enginePath, dependencyEnginePath } from "../../../utils/paths.js";
 import { buildJs } from "../../../utils/runtime.js";
 import { writeImageManifest } from "../../image-manifest.js";
@@ -142,13 +143,8 @@ export default async function (eleventyConfig, pluginOptions) {
   const importMapCode = (files, exportName) =>
     Object.values(files)
       .map(
-        (file, i) => {
-          const rel = path.relative(generatedDir, path.resolve(file));
-          const spec = path.isAbsolute(rel)
-            ? rel
-            : "./" + rel.split(path.sep).join("/");
-          return `import s${i} from ${JSON.stringify(spec)};`;
-        },
+        (file, i) =>
+          `import s${i} from ${JSON.stringify(importSpec(generatedDir, file))};`,
       )
       .join("\n") +
     `\nexport ${exportName ? `const ${exportName} =` : "default"} {\n` +
@@ -211,7 +207,7 @@ export default async function (eleventyConfig, pluginOptions) {
     `${generatedDir}/preview-userconfig.generated.js`,
     (await fglob(htmlClassesFile)).length
       ? `export { default as htmlClasses } from ${JSON.stringify(
-          `./${path.relative(generatedDir, htmlClassesFile).split(path.sep).join("/")}`,
+          importSpec(generatedDir, htmlClassesFile),
         )};\n`
       : `export const htmlClasses = {};\n`,
   );
