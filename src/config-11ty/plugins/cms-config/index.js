@@ -144,7 +144,7 @@ export default async function (eleventyConfig, pluginOptions) {
       .map(
         (file, i) =>
           `import s${i} from ${JSON.stringify(
-            path.relative(generatedDir, path.resolve(file)),
+            "./" + path.relative(generatedDir, path.resolve(file)).split(path.sep).join("/"),
           )};`,
       )
       .join("\n") +
@@ -208,7 +208,7 @@ export default async function (eleventyConfig, pluginOptions) {
     `${generatedDir}/preview-userconfig.generated.js`,
     (await fglob(htmlClassesFile)).length
       ? `export { default as htmlClasses } from ${JSON.stringify(
-          `./${path.relative(generatedDir, htmlClassesFile)}`,
+          `./${path.relative(generatedDir, htmlClassesFile).split(path.sep).join("/")}`,
         )};\n`
       : `export const htmlClasses = {};\n`,
   );

@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { resolve, join, relative } from "node:path";
+import { pathToFileURL } from "node:url";
 import fs from "node:fs";
 import yaml from "js-yaml";
 import { PACKAGE_ROOT, packagePath } from "./src/utils/paths.js";
@@ -396,7 +397,7 @@ export const userCmsConfig = async function () {
     singletons: [],
   };
   try {
-    const uc = await import(`${WORKING_DIR_ABSOLUTE}/_config/index.js`);
+    const uc = await import(pathToFileURL(`${WORKING_DIR_ABSOLUTE}/_config/index.js`).href);
 
     userCmsConfigTemp = {
       ...userCmsConfigTemp,
@@ -424,7 +425,7 @@ export const hasUserFieldTypes = fs.existsSync(
 export const userHtmlClasses = async function () {
   let userHtmlClassesTemp = {};
   try {
-    const uhc = await import(`${WORKING_DIR_ABSOLUTE}/_config/htmlClasses.js`);
+    const uhc = await import(pathToFileURL(`${WORKING_DIR_ABSOLUTE}/_config/htmlClasses.js`).href);
 
     userHtmlClassesTemp = { ...(uhc?.default || {}) };
   } catch (error) {
