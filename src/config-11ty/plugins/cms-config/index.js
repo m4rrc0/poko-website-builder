@@ -142,10 +142,13 @@ export default async function (eleventyConfig, pluginOptions) {
   const importMapCode = (files, exportName) =>
     Object.values(files)
       .map(
-        (file, i) =>
-          `import s${i} from ${JSON.stringify(
-            "./" + path.relative(generatedDir, path.resolve(file)).split(path.sep).join("/"),
-          )};`,
+        (file, i) => {
+          const rel = path.relative(generatedDir, path.resolve(file));
+          const spec = path.isAbsolute(rel)
+            ? rel
+            : "./" + rel.split(path.sep).join("/");
+          return `import s${i} from ${JSON.stringify(spec)};`;
+        },
       )
       .join("\n") +
     `\nexport ${exportName ? `const ${exportName} =` : "default"} {\n` +
