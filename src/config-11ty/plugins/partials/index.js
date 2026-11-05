@@ -1,5 +1,6 @@
 import path from "node:path";
 import fglob from "fast-glob";
+import { toPosix } from "../../../utils/paths.js";
 // import deepmerge from "deepmerge";
 import { log } from "../../../utils/log/logger.js";
 // import { createKeyFromData } from "../../../utils/hash.js";
@@ -58,7 +59,7 @@ export default async function (eleventyConfig, pluginOptions) {
 
     // Otherwise, try to find the file in the provided directories in order and take the first match
     for (const { pattern: dirPath, resolveDiscriminant } of normalisedDirs) {
-      const pattern = path.join(dirPath, filename);
+      const pattern = toPosix(path.join(dirPath, filename));
       const matches = fglob.globSync(pattern);
       if (!matches.length) continue;
 

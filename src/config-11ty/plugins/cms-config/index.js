@@ -30,7 +30,7 @@ import {
 } from "./config.js";
 import { utilityClassGroups } from "./utility-classes.js";
 import { importSpec } from "./utils/import-spec.js";
-import { enginePath, dependencyEnginePath } from "../../../utils/paths.js";
+import { enginePath, dependencyEnginePath, toPosix } from "../../../utils/paths.js";
 import { buildJs } from "../../../utils/runtime.js";
 import { writeImageManifest } from "../../image-manifest.js";
 import { ensureIconsModule, writeIconsModule } from "../../icon-manifest.js";
@@ -205,7 +205,7 @@ export default async function (eleventyConfig, pluginOptions) {
   const htmlClassesFile = path.resolve(`${WORKING_DIR}/_config/htmlClasses.js`);
   await writeIfChanged(
     `${generatedDir}/preview-userconfig.generated.js`,
-    (await fglob(htmlClassesFile)).length
+    (await fglob(toPosix(htmlClassesFile))).length
       ? `export { default as htmlClasses } from ${JSON.stringify(
           importSpec(generatedDir, htmlClassesFile),
         )};\n`
