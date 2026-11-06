@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "sveltia-cms": {
+      "source": "sveltia/ai-tools",
+      "sourceType": "github",
+      "skillPath": "plugins/sveltia-cms/skills/sveltia-cms/SKILL.md",
+      "computedHash": "bd560ce3d6ac1bdcff4a798ce552b4cc83661c55848ddb39ef0b1cc8431c6aa9"
+    }
+  }
+}
