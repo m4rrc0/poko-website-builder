@@ -714,7 +714,7 @@ export const advancedDataFilesCollection = {
   label: "Advanced Files",
   label_singular: "Advanced File",
   editor: { preview: false },
-  i18n: true,
+  i18n: false,
   files: [
     {
       name: "metadata",
@@ -1026,7 +1026,13 @@ try {
     ...code.matchAll(/^export\s+(?:const|let|var|function|class)\s+(\w+)/gm),
   ].map((match) => match[1]);
 } catch (error) {
-  log.warnOnce("cms:default-components", "cms", "cms.components.missing", "Failed to retrieve default Editor Components: " + (error?.message ?? error));
+  log.warnOnce(
+    "cms:default-components",
+    "cms",
+    "cms.components.missing",
+    "Failed to retrieve default Editor Components: " +
+      (error?.message ?? error),
+  );
 }
 try {
   const path = `${WORKING_DIR_ABSOLUTE}/_config/editorComponents.js`;
