@@ -160,9 +160,15 @@ export class CmsPage {
         ? ""
         : `
       <script type="module" eleventy:ignore>
-        import * as defaultEditorComponents from "./defaultEditorComponents.js";
-        import { defaultComponentPreview } from "./preview-runtime.js";
         await window.__POKO_CMS_READY__;
+        // Dynamic imports: module eval must wait for the CMS bundle to expose
+        // window.h/createClass/CMS — files in this graph may touch them at
+        // top level (e.g. defaultFieldTypes.js).
+        const [defaultEditorComponents, { defaultComponentPreview }] =
+          await Promise.all([
+            import("./defaultEditorComponents.js"),
+            import("./preview-runtime.js"),
+          ]);
         const decNames = Object.keys(defaultEditorComponents)
         decNames.forEach(name => {
           // Sveltia requires a toPreview fn; default renders toBlock output
@@ -175,8 +181,8 @@ export class CmsPage {
         })
       </script>
       <script type="module" eleventy:ignore>
-        import * as defaultFieldTypes from "./defaultFieldTypes.js";
         await window.__POKO_CMS_READY__;
+        const defaultFieldTypes = await import("./defaultFieldTypes.js");
         const dftNames = Object.keys(defaultFieldTypes)
         console.log(dftNames, defaultFieldTypes);
         dftNames.forEach(name => {
@@ -188,8 +194,8 @@ export class CmsPage {
           (data.env.hasUserFieldTypes
             ? `
       <script type="module" eleventy:ignore>
-        import * as userFieldTypes from "./userFieldTypes.js";
         await window.__POKO_CMS_READY__;
+        const userFieldTypes = await import("./userFieldTypes.js");
         const uftNames = Object.keys(userFieldTypes)
         console.log(uftNames, userFieldTypes);
         uftNames.forEach(name => {
@@ -202,9 +208,12 @@ export class CmsPage {
           (data.env.hasUserEditorComponents
             ? `
       <script type="module" eleventy:ignore>
-        import * as userEditorComponents from "./userEditorComponents.js";
-        import { defaultComponentPreview } from "./preview-runtime.js";
         await window.__POKO_CMS_READY__;
+        const [userEditorComponents, { defaultComponentPreview }] =
+          await Promise.all([
+            import("./userEditorComponents.js"),
+            import("./preview-runtime.js"),
+          ]);
         const uecNames = Object.keys(userEditorComponents)
         uecNames.forEach(name => {
           const component = userEditorComponents[name];
@@ -218,8 +227,8 @@ export class CmsPage {
             : "") +
           `
       <script type="module" eleventy:ignore>
-        import { registerPreviewTemplates } from "./previewTemplates.js";
         await window.__POKO_CMS_READY__;
+        const { registerPreviewTemplates } = await import("./previewTemplates.js");
         registerPreviewTemplates(CMS);
       </script>
       `) +

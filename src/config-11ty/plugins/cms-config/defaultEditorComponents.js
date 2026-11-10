@@ -6,7 +6,6 @@ import {
   iconLists,
   utilityClassGroups,
 } from "./env.js";
-import { log } from "../../../utils/log/logger.js";
 // import {
 //   asyncPreview,
 //   getRenderer,
@@ -1139,11 +1138,7 @@ const parsePartialSyntax = (match) => {
       // Use Function constructor to safely evaluate JS object literal (not just JSON)
       data = new Function("return " + objectMatch[1])();
     } catch (e) {
-      log.debug(
-        "cms",
-        "cms.editor.parse",
-        `Error parsing data object: ${e?.message}`,
-      );
+      console.log("Error parsing data object:", e);
     }
     if (objectMatch[2]) {
       templateEngineOverride = objectMatch[2];
@@ -2474,9 +2469,7 @@ export const htmlPartial = {
   // },
 };
 
-log.debug("cms", "cms.editor.components", "editorComponents", {
-  editorComponents,
-});
+console.log({ editorComponents });
 
 export const wrapper = {
   id: "wrapper",
