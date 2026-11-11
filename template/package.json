@@ -15,6 +15,7 @@
     "upgrade": "npm i poko-website-builder@latest && npm i && bun i"
   },
   "dependencies": {
+    "@11ty/eleventy": "^3.1.2",
     "poko-website-builder": "^0.3.6"
   },
   "devDependencies": {

@@ -24,6 +24,27 @@ const version = view.stdout.trim();
 
 const templatePath = "template/package.json";
 const template = JSON.parse(fs.readFileSync(templatePath, "utf8"));
+
+const FRAMEWORK_DEPS = ["@11ty/eleventy", "@awesome.me/buildawesome"];
+const engineDeps = JSON.parse(fs.readFileSync("package.json", "utf8"))
+  .dependencies;
+const frameworkDep = FRAMEWORK_DEPS.find((name) => engineDeps[name]);
+if (!frameworkDep) {
+  console.error(
+    `sync-template: engine has no ${FRAMEWORK_DEPS.join(" or ")} dep — ` +
+      `required as a direct dep so Cloudflare Pages caches .cache.`,
+  );
+  process.exit(1);
+}
+
+for (const name of FRAMEWORK_DEPS) delete template.dependencies[name];
+template.dependencies[frameworkDep] = engineDeps[frameworkDep];
+template.dependencies = Object.fromEntries(
+  Object.entries(template.dependencies).sort(([a], [b]) =>
+    a.localeCompare(b),
+  ),
+);
+
 template.dependencies["poko-website-builder"] = `^${version}`;
 fs.writeFileSync(templatePath, JSON.stringify(template, null, 2) + "\n");
 
