@@ -79,8 +79,18 @@ export const GITHUB_PAGES_BUILD =
 export const NETLIFY_BUILD = Boolean(
   processEnv.NETLIFY || processEnv.NETLIFY_DEPLOYMENT_ID,
 );
+// Deployment provider reported by CI (`vars.DEPLOY_PROVIDER` in deploy.yml:
+// "cloudflare-pages", "github-pages", ...). When set it decides host
+// detection; unset (connected or pre-contract repos), fall back to
+// credential presence.
+export const DEPLOY_PROVIDER = processEnv.DEPLOY_PROVIDER;
 export const CLOUDFLARE_BUILD = Boolean(
-  processEnv.CF_PAGES || processEnv.CLOUDFLARE_ACCOUNT_ID,
+  processEnv.CF_PAGES ||
+    (DEPLOY_PROVIDER
+      ? DEPLOY_PROVIDER === "cloudflare-pages"
+      : processEnv.DEPLOY_TOKEN ||
+        processEnv.DEPLOY_ACCOUNT_ID ||
+        processEnv.CLOUDFLARE_ACCOUNT_ID),
 );
 export const VERCEL_BUILD = Boolean(processEnv.VERCEL_DEPLOYMENT_ID);
 export const LOCAL_BUILD = Boolean(

@@ -31,10 +31,22 @@ env:
   # no artifact round-trip); 'split' keeps separate deploy jobs so environment
   # protection rules and environment-scoped secrets apply. Repo var DEPLOY_MODE=split.
   DEPLOY_MODE: ${{ inputs.deploy_mode || vars.DEPLOY_MODE || 'fast' }}
+  # Deploy contract (SPEC-hosting-providers §Repo deploy contract):
+  # provider-neutral DEPLOY_* vars with legacy CLOUDFLARE_* fallbacks.
+  # DEPLOY_PROVIDER (var: cloudflare-pages/github-pages/bunny) replaces the
+  # "CF secrets present => cloudflare" auto-detect (still used by connected
+  # and pre-contract repos that never got the var).
+  # DEPLOY_TOKEN/DEPLOY_ACCOUNT_ID secrets are deliberately NOT mapped here:
+  # the names are custody-agnostic — opaque console token on managed sites,
+  # the site's own provider credential on connected sites — so each step
+  # binds them raw, only where its deploy path needs them.
+  DEPLOY_PROVIDER: ${{ vars.DEPLOY_PROVIDER }}
+  DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME }}
+  DEPLOY_API_BASE: ${{ vars.DEPLOY_API_BASE || vars.CLOUDFLARE_API_BASE_URL }}
 
 on:
   # Runs on pushes to any branch (unless commit contains [skip ci]).
-  # main -> production deploy; any other branch -> Cloudflare preview URL.
+  # main -> production deploy; any other branch -> provider preview URL.
   push:
     branches:
       - "**"
@@ -97,6 +109,7 @@ jobs:
     outputs:
       should_skip: ${{ steps.check.outputs.should_skip }}
       deployment_target: ${{ steps.target.outputs.deployment_target }}
+      deploy_path: ${{ steps.target.outputs.deploy_path }}
       bun_version: ${{ steps.bun.outputs.version }}
       deploy_mode: ${{ steps.options.outputs.deploy_mode }}
     steps:
@@ -128,36 +141,70 @@ jobs:
         id: target
         if: steps.check.outputs.should_skip == 'false'
         env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "deployment_target=${{ github.event.inputs.deployment_target }}" >> "$GITHUB_OUTPUT"
+            TARGET="${{ github.event.inputs.deployment_target }}"
           elif [ "${{ github.ref_name }}" != "main" ]; then
-            # Non-main branches only produce Cloudflare preview deployments
-            echo "deployment_target=cloudflare-pages" >> "$GITHUB_OUTPUT"
+            # Non-main branches produce preview deployments on the configured
+            # provider; repos without DEPLOY_PROVIDER keep the CF default.
+            TARGET="${DEPLOY_PROVIDER:-cloudflare-pages}"
+          elif [ -n "$DEPLOY_PROVIDER" ]; then
+            TARGET="$DEPLOY_PROVIDER"
+          elif [ -n "$CF_API_TOKEN" ] || [ -n "$DEPLOY_TOKEN" ]; then
+            # No DEPLOY_PROVIDER var (connected or pre-contract repos):
+            # infer the provider from deploy credential presence.
+            TARGET="cloudflare-pages"
           else
-            # main: default to cloudflare-pages when CF secrets are set, else github-pages
-            if [ -n "$CF_API_TOKEN" ] && [ -n "$CF_ACCOUNT_ID" ]; then
-              echo "deployment_target=cloudflare-pages" >> "$GITHUB_OUTPUT"
+            TARGET="github-pages"
+          fi
+
+          # Credential model for the cloudflare-pages target: 'console' when
+          # poko-console minted the repo (DEPLOY_API_BASE vend endpoint var
+          # present) — DEPLOY_TOKEN is then an opaque site token exchanged
+          # for a project-scoped JWT. 'direct' otherwise — the repo holds
+          # its own provider credential under DEPLOY_TOKEN (connected
+          # sites, Bunny later) or legacy CLOUDFLARE_API_TOKEN.
+          if [ "$TARGET" = "cloudflare-pages" ]; then
+            if [ -n "$DEPLOY_API_BASE" ]; then
+              echo "deploy_path=console" >> "$GITHUB_OUTPUT"
             else
-              echo "deployment_target=github-pages" >> "$GITHUB_OUTPUT"
+              echo "deploy_path=direct" >> "$GITHUB_OUTPUT"
             fi
           fi
+          echo "deployment_target=$TARGET" >> "$GITHUB_OUTPUT"
 
       - name: Validate deployment configuration
         id: validate
         if: steps.check.outputs.should_skip == 'false'
         env:
+          TARGET: ${{ steps.target.outputs.deployment_target }}
+          DEPLOY_PATH: ${{ steps.target.outputs.deploy_path }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          DEPLOY_ACCOUNT_ID: ${{ secrets.DEPLOY_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          TARGET: ${{ steps.target.outputs.deployment_target }}
         run: |
-          if [ "$TARGET" = "cloudflare-pages" ] && { [ -z "$CF_API_TOKEN" ] || [ -z "$CF_ACCOUNT_ID" ]; }; then
-            echo "::error::Missing Cloudflare secrets: CLOUDFLARE_API_TOKEN and/or CLOUDFLARE_ACCOUNT_ID"
-            exit 1
-          fi
-          echo "$TARGET deployment configuration is valid"
+          case "$TARGET" in
+            cloudflare-pages)
+              if [ "$DEPLOY_PATH" = "console" ]; then
+                if [ -z "$DEPLOY_TOKEN" ] || [ -z "$DEPLOY_API_BASE" ]; then
+                  echo "::error::Missing console deploy config: DEPLOY_TOKEN secret and/or DEPLOY_API_BASE var"
+                  exit 1
+                fi
+              elif [ -z "${DEPLOY_TOKEN:-$CF_API_TOKEN}" ] || [ -z "${DEPLOY_ACCOUNT_ID:-$CF_ACCOUNT_ID}" ]; then
+                echo "::error::Missing deploy credentials: DEPLOY_TOKEN/DEPLOY_ACCOUNT_ID (or legacy CLOUDFLARE_API_TOKEN/CLOUDFLARE_ACCOUNT_ID)"
+                exit 1
+              fi
+              ;;
+            github-pages) ;;
+            *)
+              echo "::error::Unsupported deployment target '$TARGET' (DEPLOY_PROVIDER: '${DEPLOY_PROVIDER:-unset}')"
+              exit 1
+              ;;
+          esac
+          echo "$TARGET deployment configuration is valid${DEPLOY_PATH:+ ($DEPLOY_PATH)}"
 
       - name: Resolve runtime options
         id: options
@@ -309,6 +356,9 @@ jobs:
           name: build-files
           path: ${{ env.BUILD_PATH }}/dist
           retention-days: 1
+          # v4+ excludes dotfiles by default; dist may carry .assetsignore,
+          # .well-known, .nojekyll — keep them.
+          include-hidden-files: true
 
       # Fast route: deploy straight from this job's disk. No `environment:` block
       # (it can't be conditional) - so no protection rules and no env-scoped
@@ -330,28 +380,47 @@ jobs:
           needs.setup.outputs.deployment_target == 'github-pages'
         uses: actions/deploy-pages@v5
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Pages (direct)
         id: deploy
         if: |
           needs.setup.outputs.deploy_mode == 'fast' &&
-          needs.setup.outputs.deployment_target == 'cloudflare-pages'
+          needs.setup.outputs.deployment_target == 'cloudflare-pages' &&
+          needs.setup.outputs.deploy_path == 'direct'
         uses: cloudflare/wrangler-action@v4
         with:
           # ⚠️ Keep this `with:` block in sync with the deploy-cloudflare job below.
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ secrets.DEPLOY_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.DEPLOY_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           # `pages deploy` can't create a missing project in non-interactive CI,
           # Un-comment to make sure it exists first. Fails silently when already present.
-          # preCommands: wrangler pages project create ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
+          # preCommands: wrangler pages project create ${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
           # main -> production; any other branch -> preview URL (<branch>.<project>.pages.dev)
-          command: pages deploy ${{ env.BUILD_PATH }}/dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
+          command: pages deploy ${{ env.BUILD_PATH }}/dist --project-name=${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Console path: DEPLOY_TOKEN buys a project-scoped CF Direct Upload JWT
+      # from poko-console's /begin; the engine script drives wrangler's
+      # `pages project upload` with it (assets go repo->CF directly).
+      - name: Deploy to Cloudflare Pages (console)
+        id: deploy_console
+        if: |
+          needs.setup.outputs.deploy_mode == 'fast' &&
+          needs.setup.outputs.deployment_target == 'cloudflare-pages' &&
+          needs.setup.outputs.deploy_path == 'console'
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }}
+          DEPLOY_BRANCH: ${{ github.head_ref || github.ref_name }}
+        # Invoke via the package bin surface — node_modules layout is an npm
+        # contract; a scripts/ path would freeze engine internals into repos.
+        run: |
+          "${{ env.BUILD_PATH }}/node_modules/.bin/poko" deploy-cloudflare "${{ env.BUILD_PATH }}/dist"
 
       - name: Report deployment URL
         if: needs.setup.outputs.deploy_mode == 'fast'
         env:
           GHP_URL: ${{ steps.deployment.outputs.page_url }}
-          CF_URL: ${{ steps.deploy.outputs.deployment-url }}
+          CF_URL: ${{ steps.deploy.outputs.deployment-url || steps.deploy_console.outputs.deployment-url }}
         run: |
           echo "🚀 Deployed: ${GHP_URL:-$CF_URL}" | tee -a "$GITHUB_STEP_SUMMARY"
 
@@ -392,16 +461,17 @@ jobs:
     name: Deploy to Cloudflare Pages
     needs: [setup, build]
     runs-on: ${{ inputs.runner || vars.RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 10
     if: |
       needs.setup.outputs.should_skip == 'false' &&
       needs.setup.outputs.deploy_mode == 'split' &&
       needs.setup.outputs.deployment_target == 'cloudflare-pages'
     environment:
       name: cloudflare-pages
-      url: ${{ steps.deploy.outputs.deployment-url }}
+      url: ${{ steps.deploy.outputs.deployment-url || steps.deploy_console.outputs.deployment-url }}
     steps:
-      # Required for Pages Functions: `wrangler pages deploy` picks up the
-      # `functions/` dir from the working directory (repo root), not from `dist/`.
+      # Required for Pages Functions and the console deploy script:
+      # `wrangler pages deploy` picks up `functions/` from the repo checkout.
       - name: Checkout
         uses: actions/checkout@v7
 
@@ -411,16 +481,35 @@ jobs:
           name: build-files
           path: dist
 
-      - name: Deploy to Cloudflare Pages
+      # The console script ships inside the poko-website-builder package and
+      # shells out to wrangler (a devDep) — install the full dep tree.
+      - name: Install engine
+        if: needs.setup.outputs.deploy_path == 'console'
+        working-directory: ${{ env.BUILD_PATH }}
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Deploy to Cloudflare Pages (direct)
         id: deploy
+        if: needs.setup.outputs.deploy_path == 'direct'
         uses: cloudflare/wrangler-action@v4
         with:
           # ⚠️ Keep this `with:` block in sync with the fast deploy step in build.
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ secrets.DEPLOY_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.DEPLOY_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           # `pages deploy` can't create a missing project in non-interactive CI,
           # Un-comment to make sure it exists first. Fails silently when already present.
-          # preCommands: wrangler pages project create ${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
+          # preCommands: wrangler pages project create ${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --production-branch=${PROD_BRANCH:-main} || true
           # main -> production; any other branch -> preview URL (<branch>.<project>.pages.dev)
-          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
+          command: pages deploy dist --project-name=${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }} --branch=${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to Cloudflare Pages (console)
+        id: deploy_console
+        if: needs.setup.outputs.deploy_path == 'console'
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME || github.event.repository.name }}
+          DEPLOY_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          "${{ env.BUILD_PATH }}/node_modules/.bin/poko" deploy-cloudflare dist

@@ -45,6 +45,7 @@ export let CMS_IMPORT = "";
 export let CMS_REPO = "";
 export let CONTENT_PATH_PREFIX = "";
 export let DEPLOYMENT_TARGET = "";
+export let DEPLOY_PROVIDER = "";
 export let ELEVENTY_RUN_MODE = "build";
 export let FILES_LIBRARY_OUTPUT_DIR = "";
 export let FILES_OUTPUT_DIR = "";

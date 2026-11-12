@@ -19,6 +19,7 @@ const USAGE = `poko <command> [options]
 Commands:
   build            Build the site into the output directory
   dev              Build, watch and serve the site
+  deploy-cloudflare <dir>  Deploy a built site via poko-console (CI use)
 
 Options:
   --config <path>  Eleventy config file (default: the first eleventy.config.* found in the current directory)
@@ -54,6 +55,13 @@ function resolveConfigPath(cwd, explicitPath) {
 }
 
 export async function run(argv) {
+  // deploy-cloudflare runs inside a consumer site's CI without a site config
+  // — dispatch before parseArgs/initPokoEnv so it stays env-independent.
+  if (argv[0] === "deploy-cloudflare") {
+    const { main } = await import("./deploy-cloudflare.mjs");
+    return main(argv[1]);
+  }
+
   const { command, options } = parseArgs(argv);
 
   if (!command || command === "help" || command === "--help") {

@@ -19,7 +19,7 @@
     "poko-website-builder": "^0.3.6"
   },
   "devDependencies": {
-    "wrangler": "^4.61.1"
+    "wrangler": "^4.160.1"
   },
   "engines": {
     "bun": ">=1.2.22",

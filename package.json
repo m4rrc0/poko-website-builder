@@ -82,7 +82,7 @@
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.8.2",
-    "wrangler": "^4.61.1"
+    "wrangler": "^4.160.1"
   },
   "bugs": {
     "url": "https://github.com/m4rrc0/poko-website-builder/issues"
