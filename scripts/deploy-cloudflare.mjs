@@ -25,7 +25,7 @@ import { createHash } from "node:crypto";
 import { appendFile, cp, mkdtemp, readdir, readFile, stat } from "node:fs/promises";
 import { existsSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, dirname, join, relative, resolve, sep } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const RETRIES = 3;
@@ -77,15 +77,10 @@ async function post(url, body, { bearer, headers = {}, tries = RETRIES } = {}) {
   }
 }
 
-// The package root and the site root that contains it. When invoked as a
-// dependency (…/<site>/node_modules/poko-website-builder/scripts/x.mjs) the
-// site root is the node_modules parent; when invoked in-repo it's the repo
-// root itself.
+// The package root — used as cwd for npx so `wrangler` resolves from this
+// package's dep tree regardless of the caller's directory. (The site root
+// is process.cwd() — see collectArtifacts.)
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const siteRoot =
-  basename(dirname(packageRoot)) === "node_modules"
-    ? dirname(dirname(packageRoot))
-    : packageRoot;
 
 // `wrangler pages project upload` silently excludes functions/,
 // _worker.js, _routes.json, _headers and _redirects (root-level) — so
@@ -93,8 +88,12 @@ const siteRoot =
 // fields, exactly what `wrangler pages deploy` sends (SPEC §Containment
 // addendum). Mirrors wrangler's precedence: dist/_worker.js (advanced
 // mode) wins over a functions/ directory.
-// siteDir is injectable for tests; production callers get siteRoot.
-export async function collectArtifacts(dist, tmp, siteDir = siteRoot) {
+// siteDir defaults to the process cwd — the deploy contract runs this
+// script from the site root (same place the dist arg resolves). We do
+// NOT derive it from import.meta.url: Node resolves symlinks there, so
+// node_modules heuristics fail for symlinked installs (pnpm, npm link,
+// workspaces). Injectable for tests.
+export async function collectArtifacts(dist, tmp, siteDir = process.cwd()) {
   const read = async (p) => (existsSync(p) ? await readFile(p, "utf-8") : "");
   const out = {
     headers: await read(join(dist, "_headers")),
@@ -194,7 +193,9 @@ async function dirHasFiles(dir) {
 }
 
 export async function main(distArg) {
-  const dist = distArg || "dist";
+  // Absolute — wrangler spawns with cwd=packageRoot (for npx resolution),
+  // so a relative arg would resolve against the package dir, not the site.
+  const dist = resolve(distArg || "dist");
   const apiBase = env("DEPLOY_API_BASE").replace(/\/+$/, "");
   const token = env("DEPLOY_TOKEN");
   const project = env("DEPLOY_PROJECT");
@@ -241,8 +242,19 @@ export async function main(distArg) {
     {
       // Resolve node_modules beside this package — dist/ may live in a
       // different directory than the dep tree (split deploy job).
+      // CLOUDFLARE_API_TOKEN=$JWT is deliberate: wrangler 4.x routes every
+      // cfetch call through requireLoggedIn() — which demands *some* local
+      // credential — even though the upload calls already carry the JWT as
+      // an explicit Authorization header (addAuthorizationHeader never
+      // overrides it). Without this the vend path dies with "Not logged in"
+      // before issuing a single request. The JWT is never sent as an API
+      // token; the gate is purely local.
       cwd: packageRoot,
-      env: { ...process.env, CF_PAGES_UPLOAD_JWT: jwt },
+      env: {
+        ...process.env,
+        CF_PAGES_UPLOAD_JWT: jwt,
+        CLOUDFLARE_API_TOKEN: jwt,
+      },
       stdio: "inherit",
     },
   );
