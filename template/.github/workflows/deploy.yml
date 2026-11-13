@@ -43,6 +43,12 @@ env:
   DEPLOY_PROVIDER: ${{ vars.DEPLOY_PROVIDER }}
   DEPLOY_PROJECT: ${{ vars.DEPLOY_PROJECT || vars.CLOUDFLARE_PROJECT_NAME }}
   DEPLOY_API_BASE: ${{ vars.DEPLOY_API_BASE || vars.CLOUDFLARE_API_BASE_URL }}
+  # Console vend path only — Pages Functions controls (SPEC §Containment
+  # addendum). FUNCTIONS_EXCLUDE drops route paths before bundling (e.g.
+  # admin/cms-auth on turnkey sites); COMPAT_* feeds the worker metadata.
+  DEPLOY_FUNCTIONS_EXCLUDE: ${{ vars.DEPLOY_FUNCTIONS_EXCLUDE }}
+  DEPLOY_COMPAT_DATE: ${{ vars.DEPLOY_COMPAT_DATE }}
+  DEPLOY_COMPAT_FLAGS: ${{ vars.DEPLOY_COMPAT_FLAGS }}
 
 on:
   # Runs on pushes to any branch (unless commit contains [skip ci]).

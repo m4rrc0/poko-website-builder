@@ -22,10 +22,10 @@
 
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { appendFile, mkdtemp, readFile, stat } from "node:fs/promises";
+import { appendFile, cp, mkdtemp, readdir, readFile, stat } from "node:fs/promises";
 import { existsSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, dirname, join, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const RETRIES = 3;
@@ -87,23 +87,110 @@ const siteRoot =
     ? dirname(dirname(packageRoot))
     : packageRoot;
 
-// The console path uploads only static assets. Pages Functions are never
-// bundled — `wrangler pages project upload` silently excludes functions/,
-// _worker.js and _routes.json — so a site relying on them would deploy
-// "successfully" while losing the feature. Fail loudly instead.
-function assertNoPagesFunctions(dist) {
-  const offenders = [
-    join(dist, "_worker.js"),
-    join(dist, "_routes.json"),
-    join(siteRoot, "functions"),
-  ].filter((p) => existsSync(p));
-  if (offenders.length) {
-    fail(
-      `Pages Functions detected (${offenders.join(", ")}) — the console ` +
-        `deploy path ships static assets only. Deploy via the direct path ` +
-        `(unset DEPLOY_API_BASE) instead.`,
-    );
+// `wrangler pages project upload` silently excludes functions/,
+// _worker.js, _routes.json, _headers and _redirects (root-level) — so
+// we compile/forward them ourselves as the deployments endpoint's file
+// fields, exactly what `wrangler pages deploy` sends (SPEC §Containment
+// addendum). Mirrors wrangler's precedence: dist/_worker.js (advanced
+// mode) wins over a functions/ directory.
+// siteDir is injectable for tests; production callers get siteRoot.
+export async function collectArtifacts(dist, tmp, siteDir = siteRoot) {
+  const read = async (p) => (existsSync(p) ? await readFile(p, "utf-8") : "");
+  const out = {
+    headers: await read(join(dist, "_headers")),
+    redirects: await read(join(dist, "_redirects")),
+    routes_json: await read(join(dist, "_routes.json")),
+    worker_js: "",
+    fbr_config: "",
+  };
+  const distWorker = join(dist, "_worker.js");
+  const functionsDir = join(siteDir, "functions");
+  const hasFunctions =
+    existsSync(functionsDir) && (await stat(functionsDir)).isDirectory();
+  if (existsSync(distWorker)) {
+    // Advanced mode: sent raw — v1 does not esbuild-bundle _worker.js
+    // (self-contained bundles only, matching the spec's caveat).
+    out.worker_js = await readFile(distWorker, "utf-8");
+    if (hasFunctions)
+      console.warn(
+        "deploy-cloudflare: both _worker.js and functions/ present — " +
+          "functions/ ignored (wrangler precedence)",
+      );
+    return out;
   }
+  if (!hasFunctions) return out;
+
+  // DEPLOY_FUNCTIONS_EXCLUDE drops route paths BEFORE bundling — the
+  // excluded code never enters the worker (console's blocklist strips
+  // the routes at finalize too; defence in depth).
+  const excludes = (process.env.DEPLOY_FUNCTIONS_EXCLUDE || "")
+    .split(/[\s,]+/)
+    .filter(Boolean)
+    .map((p) => p.replace(/^\/+|\/+$/g, ""));
+  const buildDir = join(tmp, "functions-src");
+  await cp(functionsDir, buildDir, {
+    recursive: true,
+    filter: (src) => {
+      const rel = relative(functionsDir, src).split(sep).join("/");
+      return !excludes.some((ex) => rel === ex || rel.startsWith(ex + "/"));
+    },
+  });
+  if (!(await dirHasFiles(buildDir))) {
+    console.log(
+      "deploy-cloudflare: functions/ fully excluded — static deploy",
+    );
+    return out;
+  }
+
+  const wDir = join(tmp, "worker");
+  const routesPath = join(tmp, "_routes.json");
+  const fbrPath = join(tmp, "fbr.json");
+  const run = spawnSync(
+    "npx",
+    [
+      "--no-install",
+      "wrangler",
+      "pages",
+      "functions",
+      "build",
+      buildDir,
+      "--outdir",
+      wDir,
+      "--output-routes-path",
+      routesPath,
+      "--output-config-path",
+      fbrPath,
+    ],
+    { cwd: packageRoot, stdio: "inherit", env: process.env },
+  );
+  if (run.error) fail(`could not run wrangler: ${run.error.message}`);
+  // A functions dir with no routable entries yields no index.js —
+  // wrangler's FunctionsNoRoutes path; deploy static-only like it does.
+  if (run.status !== 0 || !existsSync(join(wDir, "index.js"))) {
+    console.warn(
+      "deploy-cloudflare: functions build produced no worker — " +
+        "deploying static assets only",
+    );
+    return out;
+  }
+  out.worker_js = await readFile(join(wDir, "index.js"), "utf-8");
+  // Custom dist/_routes.json wins over the generated one (wrangler).
+  if (!out.routes_json && existsSync(routesPath))
+    out.routes_json = await readFile(routesPath, "utf-8");
+  if (existsSync(fbrPath))
+    out.fbr_config = await readFile(fbrPath, "utf-8");
+  return out;
+}
+
+async function dirHasFiles(dir) {
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (await dirHasFiles(join(dir, entry.name))) return true;
+    } else {
+      return true;
+    }
+  }
+  return false;
 }
 
 export async function main(distArg) {
@@ -118,7 +205,8 @@ export async function main(distArg) {
   ).version;
 
   await stat(dist).catch(() => fail(`output directory not found: ${dist}`));
-  assertNoPagesFunctions(dist);
+  const tmp = await mkdtemp(join(tmpdir(), "poko-deploy-"));
+  const artifacts = await collectArtifacts(dist, tmp);
 
   // 1. Vend the short-lived project JWT — immediately before asset ops;
   //    the TTL is short and it is never cached across runs.
@@ -137,7 +225,6 @@ export async function main(distArg) {
   //    CF_PAGES_UPLOAD_JWT scopes it to this project's asset ops — no
   //    account credential needed. --no-install pins the repo's devDep
   //    version (fails loudly rather than fetching an unpinned one).
-  const tmp = await mkdtemp(join(tmpdir(), "poko-deploy-"));
   const manifestPath = join(tmp, "manifest.json");
   const run = spawnSync(
     "npx",
@@ -166,16 +253,35 @@ export async function main(distArg) {
 
   // 3. Finalize through poko-console — the deployment-create call (the only
   //    Pages-Write need) happens server-side; returns the deployed URL.
-  //    Idempotency-Key lets the server dedup a retried finalize.
-  const idempotencyKey = createHash("sha256").update(manifestRaw).digest("hex");
+  //    Idempotency-Key lets the server dedup a retried finalize — it must
+  //    cover the whole payload, not just the manifest.
+  const idem = createHash("sha256").update(manifestRaw);
+  const finBody = { project, manifest, branch };
+  for (const [field, value] of [
+    ["worker_js", artifacts.worker_js],
+    ["routes_json", artifacts.routes_json],
+    ["fbr_config", artifacts.fbr_config],
+    ["headers", artifacts.headers],
+    ["redirects", artifacts.redirects],
+    ["compat_date", process.env.DEPLOY_COMPAT_DATE || ""],
+    [
+      "compat_flags",
+      (process.env.DEPLOY_COMPAT_FLAGS || "").split(",").map((s) => s.trim()).filter(Boolean),
+    ],
+  ]) {
+    if (value && (!Array.isArray(value) || value.length)) {
+      finBody[field] = value;
+      idem.update(typeof value === "string" ? value : JSON.stringify(value));
+    }
+  }
   const finRes = await post(
     `${apiBase}/finalize`,
-    { project, manifest, branch },
+    finBody,
     {
       bearer: token,
       headers: {
         "x-poko-deploy-version": version,
-        "idempotency-key": idempotencyKey,
+        "idempotency-key": idem.digest("hex"),
       },
     },
   );
