@@ -134,16 +134,17 @@ export class CmsPage {
             " is untested against relay contract " +
             sveltiaContract +
             " — auth may break";
-          console.error(msg);
-          addEventListener("DOMContentLoaded", () => {
-            const b = document.createElement("div");
-            b.style.cssText =
-              "position:fixed;inset-inline:0;bottom:0;z-index:2147483647;" +
-              "background:#b91c1c;color:#fff;font:13px/1.4 system-ui;" +
-              "padding:.5rem 1rem;text-align:center";
-            b.textContent = msg;
-            document.body.append(b);
-          });
+          console.warn(msg);
+          // Banner is too aggressive and probably false positive most of the time.
+          // addEventListener("DOMContentLoaded", () => {
+          //   const b = document.createElement("div");
+          //   b.style.cssText =
+          //     "position:fixed;inset-inline:0;bottom:0;z-index:2147483647;" +
+          //     "background:#b91c1c;color:#fff;font:13px/1.4 system-ui;" +
+          //     "padding:.5rem 1rem;text-align:center";
+          //   b.textContent = msg;
+          //   document.body.append(b);
+          // });
         }
       }
     </script>

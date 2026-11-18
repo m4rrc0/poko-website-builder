@@ -249,7 +249,7 @@ export const POKO_CMS_DEV_REFRESH = processEnv.POKO_CMS_DEV_REFRESH;
 // `node --test src/config-11ty/plugins/cms-config/sveltia-contract.test.js`
 // against the new version.
 export const POKO_SVELTIA_CONTRACT =
-  processEnv.POKO_SVELTIA_CONTRACT || "0.228.0";
+  processEnv.POKO_SVELTIA_CONTRACT || "0.265.1";
 // Explicit kill switch for the GitHub device-flow overlay (gitless
 // sites also skip it implicitly via CMS_API_ROOT).
 export const DISABLE_DEVICE_FLOW = processEnv.DISABLE_DEVICE_FLOW;

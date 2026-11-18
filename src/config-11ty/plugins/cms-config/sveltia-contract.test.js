@@ -27,11 +27,18 @@ const src = (suffix) => {
   return map.sourcesContent[i];
 };
 
+// github/constants.js exports only literals — the bundler inlines them, so
+// the file never appears in sources. Assert its values where they land:
+// the generated bundle.
+const bundle = readFileSync(
+  dependencyPath("@sveltia/cms", "dist/sveltia-cms.js"),
+  "utf-8",
+);
+
 const init = src("backends/git/shared/init.js");
 const auth = src("backends/git/shared/auth.js");
 const api = src("backends/git/shared/api.js");
 const githubInit = src("backends/git/github/index.js");
-const constants = src("backends/git/github/constants.js");
 const githubUser = src("backends/git/github/user.js");
 
 test("popup URL = base_url + '/' + auth_endpoint", () => {
@@ -61,10 +68,15 @@ test("tokenURL derives from authURL via /authorize→/access_token", () => {
 });
 
 test("github defaults: auth_endpoint 'auth', api github.com", () => {
-  assert.match(constants, /DEFAULT_AUTH_PATH\s*=\s*'auth'/);
   assert.match(
-    constants,
-    /DEFAULT_API_ROOT\s*=\s*'https:\/\/api\.github\.com'/,
+    bundle,
+    /auth_endpoint:\s*\w+\s*=\s*['"`]auth['"`]/,
+    "DEFAULT_AUTH_PATH value changed",
+  );
+  assert.match(
+    bundle,
+    /api_root:\s*\w+\s*=\s*['"`]https:\/\/api\.github\.com['"`]/,
+    "DEFAULT_API_ROOT value changed",
   );
   assert.match(
     githubInit,
@@ -86,8 +98,13 @@ test("github defaults: auth_endpoint 'auth', api github.com", () => {
 test("handshake: authorizing ping + authorization success/error", () => {
   assert.match(
     auth,
-    /data\s*===\s*`authorizing:\$\{provider\}`/,
-    "first handshake message changed",
+    /authorizing:\$\{provider\}/,
+    "handshake wire format changed",
+  );
+  assert.match(
+    auth,
+    /data\s*===\s*formatHandshakeMessage\(provider\)/,
+    "first handshake message comparison changed",
   );
   assert.match(
     auth,
@@ -128,18 +145,28 @@ test("/user field mapping consumed by getUserProfile", () => {
 
 test("REST/GraphQL base URL normalization keeps our suffixes", () => {
   const apiSrc = src("backends/git/github/api.js");
+  // GHE roots: strip any /api{,/v3,/graphql} tail, rebuild as /api/{suffix}.
+  // For our relay this still maps api_root/api/v3 → /api/graphql.
   assert.match(
     apiSrc,
-    /url\.endsWith\(['"]\/api\/v3['"]\)/,
-    "api_root /api/v3 pass-through changed",
+    /api\(\?:\\\/v3\|\\\/graphql\)\?\$/,
+    "api_root /api/v3 suffix stripping changed",
+  );
+  assert.match(
+    apiSrc,
+    /\/api\/\$\{suffix\}`/,
+    "/api/{v3|graphql} rebuild changed",
+  );
+  assert.match(
+    apiSrc,
+    /url\s*===\s*DEFAULT_API_ROOT/,
+    "api.github.com default special-casing changed",
   );
   assert.match(
     apiSrc,
     /url\.endsWith\(['"]\/graphql['"]\)/,
     "graphql_api_root /graphql pass-through changed",
   );
-  // graphql_api_root unset must still derive api_root/api/v3 → api/graphql
-  assert.match(apiSrc, /replace\(\/\\\/v3\$\/,\s*['"]\/graphql['"]\)/);
 });
 
 test("auth header scheme stays 'token'", () => {
