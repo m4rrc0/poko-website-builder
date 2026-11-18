@@ -34,8 +34,8 @@ export class CmsPage {
     const devServe = data.env.ELEVENTY_RUN_MODE === "serve";
 
     // Contract sentinel: the installed @sveltia/cms version (npm mode)
-    // is compared against POKO_SVELTIA_CONTRACT in the banner below —
-    // CDN imports are unpinned and always report a mismatch.
+    // is compared against POKO_SVELTIA_CONTRACT in the drift log
+    // below — CDN imports are unpinned and always report a mismatch.
     let sveltiaVersion = "";
     if (data.env.CMS_IMPORT !== "cdn") {
       try {
@@ -121,30 +121,22 @@ export class CmsPage {
           document.head.append(s);
         };
       });
-      // Contract drift warning — loud, not blocking. Sveltia evolves
-      // fast; a mismatched build vs. POKO_SVELTIA_CONTRACT means the
-      // relay handshake/API shapes should be re-verified.
+      // Contract drift log — console only, not blocking (the visible
+      // banner was removed: it fired on every managed build and site
+      // editors can't act on it). Sveltia evolves fast; a mismatched
+      // build vs. POKO_SVELTIA_CONTRACT means the relay handshake/API
+      // shapes should be re-verified — run sveltia-contract.test.js.
       {
         const { gitless, sveltiaVersion, sveltiaContract } =
           window.__POKO_CMS_AUTH__;
         if (gitless && sveltiaContract && sveltiaVersion !== sveltiaContract) {
-          const msg =
+          console.error(
             "poko: Sveltia " +
-            (sveltiaVersion || "unpinned CDN") +
-            " is untested against relay contract " +
-            sveltiaContract +
-            " — auth may break";
-          console.warn(msg);
-          // Banner is too aggressive and probably false positive most of the time.
-          // addEventListener("DOMContentLoaded", () => {
-          //   const b = document.createElement("div");
-          //   b.style.cssText =
-          //     "position:fixed;inset-inline:0;bottom:0;z-index:2147483647;" +
-          //     "background:#b91c1c;color:#fff;font:13px/1.4 system-ui;" +
-          //     "padding:.5rem 1rem;text-align:center";
-          //   b.textContent = msg;
-          //   document.body.append(b);
-          // });
+              (sveltiaVersion || "unpinned CDN") +
+              " is untested against relay contract " +
+              sveltiaContract +
+              " — auth may break",
+          );
         }
       }
     </script>
