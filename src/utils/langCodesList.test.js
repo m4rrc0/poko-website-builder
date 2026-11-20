@@ -24,4 +24,8 @@ test("shortList keeps the variant suffix when stripping would collide", () => {
   assert.equal(byCode.nb, "Norwegian (Bokmal)");
   assert.equal(byCode.nn, "Norwegian (Nynorsk)");
   assert.equal(byCode.no, "Norwegian (Standard)");
+  // and still strips it everywhere else
+  assert.equal(byCode.de, "German");
+  assert.equal(byCode.ar, "Arabic");
+  assert.equal(byCode.gd, "Gaelic");
 });
