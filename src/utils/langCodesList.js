@@ -96,8 +96,8 @@ export const fullList = [
   { code: "ga", name: "Irish" },
   { code: "gd", name: "Gaelic (Scots)" },
   { code: "gd-ie", name: "Gaelic (Irish)" },
-  { code: "gl", name: "Galacian" },
-  { code: "gu", name: "Gujurati" },
+  { code: "gl", name: "Galician" },
+  { code: "gu", name: "Gujarati" },
   { code: "he", name: "Hebrew" },
   { code: "hi", name: "Hindi" },
   { code: "hr", name: "Croatian" },
@@ -142,8 +142,8 @@ export const fullList = [
   { code: "nn", name: "Norwegian (Nynorsk)" },
   { code: "no", name: "Norwegian (Standard)" },
   { code: "oc", name: "Occitan" },
-  { code: "om", name: "Oriya" },
-  { code: "or", name: "Oromo" },
+  { code: "om", name: "Oromo" },
+  { code: "or", name: "Oriya" },
   { code: "pa", name: "Punjabi" },
   { code: "pa-in", name: "Punjabi (India)" },
   { code: "pa-pk", name: "Punjabi (Pakistan)" },
@@ -164,7 +164,7 @@ export const fullList = [
   { code: "si", name: "Singhalese" },
   { code: "sk", name: "Slovak" },
   { code: "sl", name: "Slovenian" },
-  { code: "so", name: "Somani" },
+  { code: "so", name: "Somali" },
   { code: "sq", name: "Albanian" },
   { code: "sr", name: "Serbian" },
   { code: "sv", name: "Swedish" },
@@ -198,9 +198,21 @@ export const fullList = [
   { code: "zu", name: "Zulu" },
 ];
 
-export const shortList = fullList
-  .filter((lang) => lang.code.length < 4)
-  .map((lang) => ({
+const stripVariant = (name) => name.replace(/ \([^)]*\)/, "");
+
+const shortCodes = fullList.filter((lang) => lang.code.length < 4);
+const strippedCounts = new Map();
+for (const { name } of shortCodes) {
+  const stripped = stripVariant(name);
+  strippedCounts.set(stripped, (strippedCounts.get(stripped) ?? 0) + 1);
+}
+
+export const shortList = shortCodes.map((lang) => {
+  const stripped = stripVariant(lang.name);
+  return {
     code: lang.code,
-    name: lang.name.replace(/ \([^)]*\)/, ""), // remove variants in parenthesis
-  }));
+    // remove variants in parenthesis, unless that would duplicate
+    // another label (e.g. the three Norwegian codes)
+    name: strippedCounts.get(stripped) > 1 ? lang.name : stripped,
+  };
+});
