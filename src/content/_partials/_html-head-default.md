@@ -1,7 +1,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="generator" content="{{ poko.generator }}" />
 <meta name="generator" content="{{ eleventy.generator }}" />
-<meta name="generator" content="poko" />
 
 {# NoIndex check #}
 {% if status == "noindex" %}

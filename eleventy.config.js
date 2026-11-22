@@ -101,6 +101,7 @@ import {
 } from "./env.config.js";
 import eleventyComputed from "./src/data/eleventyComputed.js";
 import ldWebSite from "./src/data/structured-data/ldWebSite.js";
+import { poko } from "./src/data/poko.js";
 
 const env = { ...envConf.default, ...envConf };
 delete env.default;
@@ -444,6 +445,7 @@ export default async function (eleventyConfig) {
       fontsource: { fonts: fontsource },
     };
   });
+  eleventyConfig.addGlobalData("poko", poko);
   eleventyConfig.addGlobalData("iconLists", iconLists);
   eleventyConfig.addGlobalData("baseUrl", BASE_URL);
   eleventyConfig.addGlobalData("prodUrl", PROD_URL);
