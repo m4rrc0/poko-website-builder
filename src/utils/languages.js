@@ -5,7 +5,7 @@ import { shortList as langCodesList } from "./langCodesList.js";
 // fixed list on purpose: `isWebsiteDefault`/`isCmsDefault` flags are baked
 // into the language objects and must not flip between dev/prod (the
 // mode-dependent `statusesToUnrender` filter is applied later, in derive.js).
-const RENDERABLE_STATUS = /^(published|draft)$/;
+export const RENDERABLE_STATUS = /^(published|draft)$/;
 
 // `customUrlPrefix` accepts a bare string or a `{ prefix }` object.
 const customUrlPrefixOf = (lang) =>

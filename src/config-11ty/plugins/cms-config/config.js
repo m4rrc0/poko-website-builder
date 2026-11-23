@@ -19,7 +19,6 @@ import {
   COLLECTIONS,
   selectedCollections,
   allLanguages,
-  initialCmsSetup,
   userCmsConfig,
 } from "../../../../env.config.js";
 import { nativeFontStacks } from "../../../utils/transformStyles.js";
@@ -54,14 +53,20 @@ import {
 } from "./section-primitives.js";
 import { utilitiesField } from "./utility-classes.js";
 import { shortList as langCodesList } from "../../../utils/langCodesList.js";
+import { RENDERABLE_STATUS } from "../../../utils/languages.js";
 import { log } from "../../../utils/log/logger.js";
 
 const isDev = NODE_ENV === "development";
 
 const default_locale = allLanguages.find((lang) => lang.isCmsDefault)?.code;
 const locales = allLanguages
-  .filter((lang) => /^published|draft/.test(lang.status))
+  .filter((lang) => RENDERABLE_STATUS.test(lang.status))
   .map((lang) => lang.code);
+// Sveltia blocks sign-in on config errors, so nothing localized may be
+// emitted without a locale: no site-level `i18n` with zero localized
+// collections, and no collection `i18n`/`{{locale}}` path without it.
+// Covers "no languages" and "no editable languages" (all inactive).
+const hasCmsLocales = locales.length > 0;
 
 export const keyField = {
   name: "key",
@@ -3915,17 +3920,22 @@ export class CmsConfig {
       },
       // I18N
       locale: "en", // Locale for the CMS admin ("en" or "jp" while in beta)
-      i18n: {
-        // multiple_folders - persists files in `<folder>/<locale>/<slug>.<extension>`
-        // multiple_files - persists files in `<folder>/<slug>.<locale>.<extension>`
-        // single_file - persists a single file in `<folder>/<slug>.<extension>`
-        structure: "multiple_folders",
-        locales:
-          Array.isArray(locales) && locales.length > 0 ? locales : ["en"],
-        default_locale, // Defaults to the first locale in the list
-        save_all_locales: false, // DEPRECATED: Replaced entirely by initial_locales. default: true // Allows for disabling a localization
-        initial_locales: "default", // default: "all" // Allows for setting the initial locales
-      },
+      // Site-level `i18n` only when a locale exists to localize into —
+      // emitting it otherwise fails Sveltia's validation and blocks sign-in.
+      ...(hasCmsLocales
+        ? {
+            i18n: {
+              // multiple_folders - persists files in `<folder>/<locale>/<slug>.<extension>`
+              // multiple_files - persists files in `<folder>/<slug>.<locale>.<extension>`
+              // single_file - persists a single file in `<folder>/<slug>.<extension>`
+              structure: "multiple_folders",
+              locales,
+              default_locale, // Defaults to the first locale in the list
+              save_all_locales: false, // DEPRECATED: Replaced entirely by initial_locales. default: true // Allows for disabling a localization
+              initial_locales: "default", // default: "all" // Allows for setting the initial locales
+            },
+          }
+        : {}),
       slug: {
         encoding: "unicode", // Default "unicode" to accept all unicode characters. Or "ascii" to only accept ASCII characters
         clean_accents: true, // Transliterate accented characters to their closest ASCII equivalent
@@ -3940,9 +3950,8 @@ export class CmsConfig {
         },
       },
       collections: [
-        ...(initialCmsSetup
-          ? []
-          : [
+        ...(hasCmsLocales
+          ? [
               // `pagesCollection` + `allSelectedCollections` = built-in
               // pages + selected + user-defined, each with its `sections`
               // field patched to know about every active collection (see
@@ -3967,13 +3976,14 @@ export class CmsConfig {
               { divider: true },
               allDataFilesCollection,
               advancedDataFilesCollection,
-            ]),
+            ]
+          : []),
       ],
       singletons: [
-        // ...(initialCmsSetup ? [] : [styleTokensSingleton]),
+        // ...(hasCmsLocales ? [styleTokensSingleton] : []),
         globalSettingsSingleton,
-        { divider: Boolean(!initialCmsSetup && userConfig.singletons?.length) },
-        ...(initialCmsSetup ? [] : [...userConfig.singletons]),
+        { divider: Boolean(hasCmsLocales && userConfig.singletons?.length) },
+        ...(hasCmsLocales ? [...userConfig.singletons] : []),
       ],
     };
 
