@@ -10,13 +10,15 @@
 //
 //   POST $DEPLOY_API_BASE/begin      {project}                  -> {jwt}
 //   CF_PAGES_UPLOAD_JWT=jwt wrangler pages project upload <dist> --output-manifest-path <m>
-//   POST $DEPLOY_API_BASE/finalize   {project, manifest, branch} -> {url}
+//   POST $DEPLOY_API_BASE/finalize   {project, manifest, branch, run_id?} -> {url}
 //
 // Ships inside the poko-website-builder package; deploy.yml invokes it via
 // the package bin surface (node_modules/.bin/poko — the declared `bin`
 // contract, so engine-internal layout stays free to move):
 //   poko deploy-cloudflare [dist-dir]
-// Env in: DEPLOY_API_BASE, DEPLOY_TOKEN, DEPLOY_PROJECT, DEPLOY_BRANCH.
+// Env in: DEPLOY_API_BASE, DEPLOY_TOKEN, DEPLOY_PROJECT, DEPLOY_BRANCH;
+// GITHUB_RUN_ID (Actions-provided, optional) links the deploy to the
+// console's deploy_events row so the dashboard can render preview links.
 // Writes `url` + `deployment-url` to $GITHUB_OUTPUT for parity with
 // pages-action/wrangler-action. Never prints DEPLOY_TOKEN or the vended JWT.
 
@@ -181,6 +183,14 @@ export async function collectArtifacts(dist, tmp, siteDir = process.cwd()) {
   return out;
 }
 
+// GITHUB_RUN_ID is set automatically by Actions — no secret/var needed.
+// 0 means "not provided" (local runs, non-Actions callers): finalize
+// treats a missing/zero run_id as no-op (poko-console #7).
+export function deployRunId(env_ = process.env) {
+  const n = Number.parseInt(env_.GITHUB_RUN_ID || "", 10);
+  return n > 0 ? n : 0;
+}
+
 async function dirHasFiles(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     if (entry.isDirectory()) {
@@ -270,6 +280,7 @@ export async function main(distArg) {
   const idem = createHash("sha256").update(manifestRaw);
   const finBody = { project, manifest, branch };
   for (const [field, value] of [
+    ["run_id", deployRunId()],
     ["worker_js", artifacts.worker_js],
     ["routes_json", artifacts.routes_json],
     ["fbr_config", artifacts.fbr_config],

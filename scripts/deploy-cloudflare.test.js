@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { collectArtifacts } from "./deploy-cloudflare.mjs";
+import { collectArtifacts, deployRunId } from "./deploy-cloudflare.mjs";
 
 const FN = `export function onRequest(ctx) { return new Response("ok"); }`;
 const LIB = `export const ANSWER = 42;`;
@@ -42,6 +42,18 @@ const fnFile = async (site, rel, src = FN) => {
   await mkdir(join(p, ".."), { recursive: true });
   await writeFile(p, src);
 };
+
+describe("deployRunId", () => {
+  test("parses the Actions-provided GITHUB_RUN_ID", () => {
+    assert.equal(deployRunId({ GITHUB_RUN_ID: "12345" }), 12345);
+  });
+
+  test("0 when unset or unparsable — finalize treats it as absent", () => {
+    assert.equal(deployRunId({}), 0);
+    assert.equal(deployRunId({ GITHUB_RUN_ID: "not-a-number" }), 0);
+    assert.equal(deployRunId({ GITHUB_RUN_ID: "0" }), 0);
+  });
+});
 
 describe("collectArtifacts", () => {
   t("compiles functions and forwards Pages config files", async ({ site, dist, tmp }) => {
